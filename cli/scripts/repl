@@ -1,0 +1,1 @@
+export $(cat ./config/.env | grep -v "^#" | xargs) && PEOPLER_CONFIG_PATH=.peopler PEOPLER_CONFIG_FILE=config.json mix Peopler.CLI repl $*
