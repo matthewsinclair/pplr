@@ -1,5 +1,6 @@
 ---
-verblock: "2024-04-24:v0.1: Matthew Sinclair - Initial version"
+verblock: "2024-05-02:v0.1: Matthew Sinclair - Initial version"
 ---
-# {{TEMPLATE_PRJ}} README.md 
+# Peopler README.md 
 
+A simple CLI for managing information about People stored as plain text and stored in directories.
