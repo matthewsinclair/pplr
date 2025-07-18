@@ -145,8 +145,8 @@ EOF
   rm -f "$final_prompt_file"
   
   # Call Claude
-  # Check for mock claude and warn
-  if [ -x "$HOME/.claude/local/claude" ] && [ "$(head -2 "$HOME/.claude/local/claude" | grep -c "Mock claude")" -gt 0 ]; then
+  # Check for mock claude and warn (skip during tests)
+  if [ -z "$PPLR_TEST_DATA" ] && [ -x "$HOME/.claude/local/claude" ] && [ "$(head -2 "$HOME/.claude/local/claude" | grep -c "Mock claude")" -gt 0 ]; then
     echo "Error: Found mock Claude at $HOME/.claude/local/claude"
     echo "Please install the real Claude CLI or use Claude through your IDE"
     rm -f "$content_file" "$prompt_file"

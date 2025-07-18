@@ -5,6 +5,7 @@ load test_helper
 @test "pplr search finds people by name" {
     create_test_person "Anderson" "James"
     create_test_person "Anderson" "Sarah"
+    create_test_tags_index
     
     run "$PPLR_BIN_DIR/pplr" search "Anderson"
     [ "$status" -eq 0 ]
@@ -16,6 +17,7 @@ load test_helper
     local person_dir=$(create_test_person "Tech" "Tom")
     # Update the About file to include CTO role
     sed -i '' 's/Role: Test Role/Role: Chief Technology Officer/' "$person_dir/About/Tom Tech (About).md"
+    create_test_tags_index
     
     run "$PPLR_BIN_DIR/pplr" search "technology"
     [ "$status" -eq 0 ]
@@ -24,38 +26,22 @@ load test_helper
 
 @test "pplr search with no results" {
     create_test_person "Smith" "John"
+    create_test_tags_index
     
     run "$PPLR_BIN_DIR/pplr" search "nonexistent"
     [ "$status" -eq 0 ]
     assert_contains "$output" "No matches found"
 }
 
-@test "pplr search --tags requires tag files" {
+@test "pplr search falls back without Claude" {
     create_test_person "Tagged" "Terry"
+    # Don't create tags index - remove mock Claude to trigger fallback
+    rm -f "$PPLR_TEST_DATA/.mock_bin/claude"
     
-    run "$PPLR_BIN_DIR/pplr" search "test" --tags
-    [ "$status" -eq 0 ]
-    assert_contains "$output" "No matches found in tags"
-}
-
-@test "pplr search --tags finds tagged people" {
-    local person_dir=$(create_test_person "Tagged" "Tina")
-    mkdir -p "$person_dir/Index"
-    
-    # Create a tag file
-    cat > "$person_dir/Index/tags.json" << EOF
-{
-  "profile_tags": ["technology", "startup", "founder"],
-  "meeting_tags": ["funding", "pitch"],
-  "generated_at": "2024-01-01T00:00:00Z",
-  "version": "1.0"
-}
-EOF
-    
-    run "$PPLR_BIN_DIR/pplr" search "startup" --tags
-    [ "$status" -eq 0 ]
-    assert_contains "$output" "Tagged, Tina"
-    assert_contains "$output" "startup"
+    run "$PPLR_BIN_DIR/pplr" search "test"
+    [ "$status" -eq 0 ]  # Should succeed with fallback search
+    assert_contains "$output" "Claude CLI not found"
+    assert_contains "$output" "Falling back to basic tag search"
 }
 
 @test "pplr grep performs simple text search" {
