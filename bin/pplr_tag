@@ -145,11 +145,21 @@ EOF
   rm -f "$final_prompt_file"
   
   # Call Claude
-  if [ -x "$HOME/.claude/local/claude" ]; then
-    response=$(cat "$prompt_file" | "$HOME/.claude/local/claude" --dangerously-skip-permissions 2>&1)
+  # Check for mock claude and warn
+  if [ -x "$HOME/.claude/local/claude" ] && [ "$(head -2 "$HOME/.claude/local/claude" | grep -c "Mock claude")" -gt 0 ]; then
+    echo "Error: Found mock Claude at $HOME/.claude/local/claude"
+    echo "Please install the real Claude CLI or use Claude through your IDE"
+    rm -f "$content_file" "$prompt_file"
+    return 1
+  fi
+  
+  # Try to find real claude command
+  if command -v claude >/dev/null 2>&1; then
+    response=$(cat "$prompt_file" | claude 2>&1)
     exit_code=$?
   else
-    echo "Error: Claude CLI not found at $HOME/.claude/local/claude"
+    echo "Error: Claude CLI not found. Please install Claude CLI to use this feature."
+    echo "Tags cannot be generated without Claude AI."
     rm -f "$content_file" "$prompt_file"
     return 1
   fi

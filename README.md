@@ -17,19 +17,28 @@ pplr (pronounced "peopler") is a bash-based CLI tool that helps you manage your 
 
 ## Installation
 
-1. Clone or download the pplr scripts to your preferred location
-2. Set environment variables (optional):
+1. Clone or download the pplr codebase to your preferred location (e.g., `~/Code/pplr`)
+2. Set environment variables:
    ```bash
-   export PPLR_DIR="$HOME/Dropbox/Career/People"  # Default location
-   export PPLR_BIN_DIR="$PPLR_DIR/bin"           # Scripts location
+   # Data directory (where your contacts are stored)
+   export PPLR_DIR="$HOME/Dropbox/Career/People"
+   
+   # Code directory (where pplr scripts are located) 
+   export PPLR_BIN_DIR="$HOME/Code/pplr/bin"
    ```
 3. Add the bin directory to your PATH:
    ```bash
    export PATH="$PATH:$PPLR_BIN_DIR"
    ```
 
+**Note**: pplr separates code and data:
+- **Code**: Scripts and executables (this repository)
+- **Data**: Your personal contact database (`$PPLR_DIR`)
+
 ## Directory Structure
 
+### Data Directory (`$PPLR_DIR`)
+Your personal contact database:
 ```
 People/
 ├── A-Z/                          # Alphabetical directories
@@ -46,9 +55,23 @@ People/
 │       │       └── YYYYMMDD Meeting Name.md
 │       └── Client/               # Client-specific data
 ├── _Templates/                   # Templates for new entries
-├── bin/                          # pplr scripts
-├── index.json                    # JSON index of all contacts
-└── index.md                      # Markdown index of all contacts
+├── .index/                       # Search and indexing files
+│   ├── index.json               # JSON index of all contacts
+│   ├── index.md                 # Markdown index of all contacts
+│   └── tags_index.json          # Optimized search context for Claude
+└── [other files]
+```
+
+### Code Directory (`$PPLR_BIN_DIR`)
+pplr scripts and executables:
+```
+bin/
+├── pplr                         # Main command
+├── pplr_search                  # Natural language search
+├── pplr_new                     # Create new contacts
+├── pplr_tag                     # Generate AI tags
+├── pplr_reindex                 # Rebuild indexes
+└── [other commands]
 ```
 
 ## Commands

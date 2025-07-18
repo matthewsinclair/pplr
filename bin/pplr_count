@@ -7,8 +7,8 @@
 : "${PPLR_DIR:=$PPLR_DATA}"
 
 # Count people from index.md if it exists, otherwise count directories
-if [ -f "$PPLR_DATA/index.md" ]; then
-    grep -o '\[.*\]\(.*\)' "$PPLR_DATA/index.md" | wc -l | tr -d ' '
+if [ -f "$PPLR_DATA/.index/index.md" ]; then
+    grep -o '\[.*\]\(.*\)' "$PPLR_DATA/.index/index.md" | wc -l | tr -d ' '
 else
     # Count directories in A-Z folders that match "Surname, Firstname" pattern
     count=0
