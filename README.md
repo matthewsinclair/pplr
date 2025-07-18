@@ -81,9 +81,9 @@ People/
 │       │       └── YYYYMMDD Meeting Name.md
 │       └── Client/               # Client-specific data
 ├── .index/                       # Search and indexing files
-│   ├── index.json               # JSON index of all contacts
-│   ├── index.md                 # Markdown index of all contacts
-│   └── tags_index.json          # Optimized search context for Claude
+│   ├── index.json                # JSON index of all contacts
+│   ├── index.md                  # Markdown index of all contacts
+│   └── tags_index.json           # Optimized search context for Claude
 └── [other data files]
 ```
 
