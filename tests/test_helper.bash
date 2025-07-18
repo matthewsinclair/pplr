@@ -13,8 +13,8 @@ setup() {
         mkdir -p "$PPLR_TEST_DATA/$letter"
     done
     
-    # Create templates directory in test data
-    mkdir -p "$PPLR_TEST_DATA/_Templates"
+    # Create .index directory for search files
+    mkdir -p "$PPLR_TEST_DATA/.index"
     
     # Set up environment
     export PPLR_DATA="$PPLR_TEST_DATA"
@@ -22,6 +22,9 @@ setup() {
     export PPLR_ROOT="$(dirname "$BATS_TEST_DIRNAME")"
     export PPLR_BIN_DIR="$PPLR_ROOT/bin"
     export PPLR_TEMPLATE_DIR="$PPLR_ROOT/templates"
+    
+    # Create mock Claude command for testing
+    setup_mock_claude
 }
 
 # Teardown function - runs after each test
@@ -60,6 +63,201 @@ This is a test bio for $firstname $surname.
 EOF
     
     echo "$person_dir"
+}
+
+# Helper function to set up mock Claude for testing
+setup_mock_claude() {
+    local mock_claude_dir="$PPLR_TEST_DATA/.mock_bin"
+    mkdir -p "$mock_claude_dir"
+    
+    # Create mock claude command
+    cat > "$mock_claude_dir/claude" << 'EOF'
+#!/bin/bash
+# Mock Claude for testing
+# Read the input and generate a simple response based on query
+
+input=$(cat)
+query=$(echo "$input" | grep 'SEARCH QUERY:' | sed 's/.*SEARCH QUERY: "\(.*\)".*/\1/')
+
+# Simple mock responses based on query
+case "$query" in
+    *"Anderson"*)
+        cat << 'RESPONSE'
+{
+  "results": [
+    {
+      "name": "Anderson, James",
+      "path": "A/Anderson, James",
+      "role": "Test Role",
+      "company": "Test Company",
+      "relevance_score": 0.9,
+      "explanation": "Name matches Anderson"
+    },
+    {
+      "name": "Anderson, Sarah", 
+      "path": "A/Anderson, Sarah",
+      "role": "Test Role",
+      "company": "Test Company", 
+      "relevance_score": 0.85,
+      "explanation": "Name matches Anderson"
+    }
+  ],
+  "total_matches": 2
+}
+RESPONSE
+        ;;
+    *"technology"*)
+        cat << 'RESPONSE'
+{
+  "results": [
+    {
+      "name": "Tech, Tom",
+      "path": "T/Tech, Tom", 
+      "role": "Chief Technology Officer",
+      "company": "Test Company",
+      "relevance_score": 0.95,
+      "explanation": "Role matches technology query"
+    }
+  ],
+  "total_matches": 1
+}
+RESPONSE
+        ;;
+    *"nonexistent"*)
+        cat << 'RESPONSE'
+{
+  "results": [],
+  "total_matches": 0
+}
+RESPONSE
+        ;;
+    *)
+        cat << 'RESPONSE'
+{
+  "results": [],
+  "total_matches": 0
+}
+RESPONSE
+        ;;
+esac
+EOF
+    
+    chmod +x "$mock_claude_dir/claude"
+    export PATH="$mock_claude_dir:$PATH"
+}
+
+# Helper function to create a basic tags index for testing
+create_test_tags_index() {
+    local tags_index="$PPLR_TEST_DATA/.index/tags_index.json"
+    
+    cat > "$tags_index" << 'EOF'
+{
+  "generated_at": "2024-01-01T00:00:00Z",
+  "people_count": 0,
+  "people": []
+}
+EOF
+}
+
+# Mock Claude functions for tag tests
+mock_claude() {
+    # Already set up in setup_mock_claude, but we need a more sophisticated version for tags
+    local mock_claude_dir="$PPLR_TEST_DATA/.mock_bin"
+    
+    # Update mock claude to handle tag generation
+    cat > "$mock_claude_dir/claude" << 'EOF'
+#!/bin/bash
+# Enhanced mock Claude for testing tags and search
+
+input=$(cat)
+
+# Check if this is a tag generation request
+if echo "$input" | grep -qi "generate.*tags.*based.*content"; then
+    # Tag generation response
+    cat << 'RESPONSE'
+{
+  "profile_tags": ["test-role", "technology", "startup"],
+  "meeting_tags": ["intro-meeting", "collaboration"],
+  "generated_at": "2024-01-01T00:00:00Z", 
+  "version": "1.0"
+}
+RESPONSE
+elif echo "$input" | grep -q "SEARCH QUERY:"; then
+    # Search request - use the existing search logic
+    query=$(echo "$input" | grep 'SEARCH QUERY:' | sed 's/.*SEARCH QUERY: "\(.*\)".*/\1/')
+    
+    case "$query" in
+        *"Anderson"*)
+            cat << 'RESPONSE'
+{
+  "results": [
+    {
+      "name": "Anderson, James",
+      "path": "A/Anderson, James",
+      "role": "Test Role",
+      "company": "Test Company",
+      "relevance_score": 0.9,
+      "explanation": "Name matches Anderson"
+    },
+    {
+      "name": "Anderson, Sarah", 
+      "path": "A/Anderson, Sarah",
+      "role": "Test Role",
+      "company": "Test Company", 
+      "relevance_score": 0.85,
+      "explanation": "Name matches Anderson"
+    }
+  ],
+  "total_matches": 2
+}
+RESPONSE
+            ;;
+        *"technology"*)
+            cat << 'RESPONSE'
+{
+  "results": [
+    {
+      "name": "Tech, Tom",
+      "path": "T/Tech, Tom", 
+      "role": "Chief Technology Officer",
+      "company": "Test Company",
+      "relevance_score": 0.95,
+      "explanation": "Role matches technology query"
+    }
+  ],
+  "total_matches": 1
+}
+RESPONSE
+            ;;
+        *"nonexistent"*)
+            cat << 'RESPONSE'
+{
+  "results": [],
+  "total_matches": 0
+}
+RESPONSE
+            ;;
+        *)
+            cat << 'RESPONSE'
+{
+  "results": [],
+  "total_matches": 0
+}
+RESPONSE
+            ;;
+    esac
+else
+    # Default response
+    echo '{"error": "Unknown request type"}'
+fi
+EOF
+    
+    chmod +x "$mock_claude_dir/claude"
+}
+
+remove_mock_claude() {
+    # Mock claude is cleaned up in teardown automatically
+    true
 }
 
 # Helper function to create a test meeting
