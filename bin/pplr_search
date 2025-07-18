@@ -1,0 +1,204 @@
+#!/bin/bash
+
+# USAGE: Natural language search across people and meetings using Claude
+# USAGE: <query> natural language query to search for
+# USAGE: <query> --tags search using pre-generated tags (fast mode)
+
+## Default location of PPLR_DIR if not already set
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_BIN_DIR:=$PPLR_ROOT/bin}"
+: "${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}"
+
+# Check if query is provided
+if [ -z "$1" ]; then
+  echo "Usage: pplr search <natural-language-query> [--tags]"
+  echo "Examples:"
+  echo "  pplr search \"people who work in film production\""
+  echo "  pplr search \"meetings about AI in the last month\""
+  echo "  pplr search \"founders I met recently\""
+  echo "  pplr search \"fintech\" --tags     (fast tag-based search)"
+  exit 1
+fi
+
+# Parse arguments
+use_tags=0
+query=""
+for arg in "$@"; do
+  if [ "$arg" = "--tags" ]; then
+    use_tags=1
+  else
+    if [ -z "$query" ]; then
+      query="$arg"
+    else
+      query="$query $arg"
+    fi
+  fi
+done
+
+# Main execution
+echo "Searching for: $query"
+if [ $use_tags -eq 1 ]; then
+  echo "(Using tag-based search)"
+fi
+echo ""
+
+# Function for tag-based search
+tag_search() {
+  local search_query="$1"
+  local temp_found=$(mktemp)
+  echo "0" > "$temp_found"
+  
+  # Convert query to lowercase for case-insensitive matching
+  search_lower=$(echo "$search_query" | tr '[:upper:]' '[:lower:]')
+  
+  # Search through all tag files
+  find "$PPLR_DIR" -path "*/_Templates" -prune -o -path "*/Index/tags.json" -type f -print | while read -r tag_file; do
+    # Extract person directory
+    person_dir=$(dirname "$(dirname "$tag_file")")
+    person_name=$(basename "$person_dir")
+    
+    # Search in tags
+    if [ -f "$tag_file" ]; then
+      # Get matching tags
+      profile_matches=$(cat "$tag_file" | jq -r '.profile_tags[]' 2>/dev/null | grep -i "$search_lower" || true)
+      meeting_matches=$(cat "$tag_file" | jq -r '.meeting_tags[]' 2>/dev/null | grep -i "$search_lower" || true)
+      
+      if [ -n "$profile_matches" ] || [ -n "$meeting_matches" ]; then
+        echo "1" > "$temp_found"
+        
+        # Get role and company from About file
+        about_file=$(find "$person_dir/About" -name "*About*.md" -type f 2>/dev/null | head -1)
+        if [ -f "$about_file" ]; then
+          role=$(grep -E "^Role:" "$about_file" 2>/dev/null | sed 's/^Role: *//' | head -1)
+          company=$(grep -E "^Company:" "$about_file" 2>/dev/null | sed 's/^Company: *//' | head -1)
+        fi
+        
+        echo "👤 $person_name"
+        [ -n "$role" ] && echo "   $role"
+        [ -n "$company" ] && echo "   at $company"
+        
+        # Show matching tags
+        if [ -n "$profile_matches" ]; then
+          echo "   → Profile tags: $(echo $profile_matches | tr '\n' ', ' | sed 's/, $//')"
+        fi
+        if [ -n "$meeting_matches" ]; then
+          echo "   → Meeting tags: $(echo $meeting_matches | tr '\n' ', ' | sed 's/, $//')"
+        fi
+        echo ""
+      fi
+    fi
+  done
+  
+  # Check if any results were found
+  local found=$(cat "$temp_found")
+  rm -f "$temp_found"
+  
+  if [ "$found" -eq 0 ]; then
+    echo "No matches found in tags."
+    echo "Try running 'pplr tag --all' to generate tags, or use search without --tags flag."
+  fi
+}
+
+# Function for full-text search (existing implementation)
+full_text_search() {
+  local search_query="$1"
+  
+  # Create temp file for results
+  results_file=$(mktemp)
+  
+  # Search in About files for relevant people
+  {
+    # First, try to extract key terms from the query for grep
+    # Common patterns: "people who work in X", "X professionals", "people from X company"
+    
+    # Direct grep for the query terms
+    grep -l -i "$search_query" "$PPLR_DIR"/*/*/About/*.md 2>/dev/null | while read -r file; do
+      person_dir=$(dirname "$(dirname "$file")")
+      person_name=$(basename "$person_dir")
+      role=$(grep -E "^Role:" "$file" 2>/dev/null | sed 's/^Role: *//' | head -1)
+      company=$(grep -E "^Company:" "$file" 2>/dev/null | sed 's/^Company: *//' | head -1)
+      
+      echo "👤 $person_name"
+      [ -n "$role" ] && echo "   $role"
+      [ -n "$company" ] && echo "   at $company"
+      echo ""
+    done
+    
+    # Also search for industry/domain terms
+    # Extract potential search terms from query
+    if echo "$search_query" | grep -qiE "film|movie|production|entertainment|media"; then
+      grep -l -iE "film|movie|production|entertainment|media|tv|television|broadcast" "$PPLR_DIR"/*/*/About/*.md 2>/dev/null | while read -r file; do
+        person_dir=$(dirname "$(dirname "$file")")
+        person_name=$(basename "$person_dir")
+        
+        # Skip if already found
+        if ! grep -q "$person_name" "$results_file" 2>/dev/null; then
+          role=$(grep -E "^Role:" "$file" 2>/dev/null | sed 's/^Role: *//' | head -1)
+          company=$(grep -E "^Company:" "$file" 2>/dev/null | sed 's/^Company: *//' | head -1)
+          
+          echo "👤 $person_name"
+          [ -n "$role" ] && echo "   $role"
+          [ -n "$company" ] && echo "   at $company"
+          echo "   → Matches film/media industry"
+          echo ""
+        fi
+      done
+    fi
+    
+    if echo "$search_query" | grep -qiE "tech|technology|software|engineer|developer"; then
+      grep -l -iE "tech|technology|software|engineer|developer|CTO|programmer" "$PPLR_DIR"/*/*/About/*.md 2>/dev/null | while read -r file; do
+        person_dir=$(dirname "$(dirname "$file")")
+        person_name=$(basename "$person_dir")
+        
+        # Skip if already found
+        if ! grep -q "$person_name" "$results_file" 2>/dev/null; then
+          role=$(grep -E "^Role:" "$file" 2>/dev/null | sed 's/^Role: *//' | head -1)
+          company=$(grep -E "^Company:" "$file" 2>/dev/null | sed 's/^Company: *//' | head -1)
+          
+          echo "👤 $person_name"
+          [ -n "$role" ] && echo "   $role"
+          [ -n "$company" ] && echo "   at $company"
+          echo "   → Matches technology sector"
+          echo ""
+        fi
+      done
+    fi
+    
+    if echo "$search_query" | grep -qiE "founder|ceo|entrepreneur|startup"; then
+      grep -l -iE "founder|co-founder|ceo|entrepreneur|startup" "$PPLR_DIR"/*/*/About/*.md 2>/dev/null | while read -r file; do
+        person_dir=$(dirname "$(dirname "$file")")
+        person_name=$(basename "$person_dir")
+        
+        # Skip if already found
+        if ! grep -q "$person_name" "$results_file" 2>/dev/null; then
+          role=$(grep -E "^Role:" "$file" 2>/dev/null | sed 's/^Role: *//' | head -1)
+          company=$(grep -E "^Company:" "$file" 2>/dev/null | sed 's/^Company: *//' | head -1)
+          
+          echo "👤 $person_name"
+          [ -n "$role" ] && echo "   $role"
+          [ -n "$company" ] && echo "   at $company"
+          echo "   → Matches founder/entrepreneur"
+          echo ""
+        fi
+      done
+    fi
+    
+  } | tee "$results_file"
+  
+  # If no results found
+  if [ ! -s "$results_file" ]; then
+    echo "No matches found. Try using 'pplr grep' for a broader text search."
+  fi
+  
+  # Cleanup
+  rm -f "$results_file"
+}
+
+# Main search logic
+if [ $use_tags -eq 1 ]; then
+  tag_search "$query"
+else
+  full_text_search "$query"
+fi

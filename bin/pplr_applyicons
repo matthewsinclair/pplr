@@ -1,0 +1,82 @@
+#!/bin/bash
+# USAGE: pplr_applyicons <firstname> <surname>
+# Locates the directory for the person and applies icons to the About/ and Meetings/ directories
+# and files based on the templates in $PPLR_DIR/_Templates/_Icons
+
+# Default location of PPLR_DIR if not already set
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_BIN_DIR:=$PPLR_ROOT/bin}"
+: "${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}"
+icon_dir="$PPLR_DIR/_Templates/_Icons"
+
+# Check if fileicon is installed
+if ! command -v fileicon >/dev/null 2>&1; then
+  echo "Error: 'fileicon' command not found."
+  echo "Please install it using: brew install fileicon"
+  exit 1
+fi
+
+# Check if the correct number of arguments is provided
+if [ "$#" -lt 2 ]; then
+  echo "Usage: $(basename "$0") <FIRSTNAME> <SURNAME>"
+  exit 1
+fi
+
+firstname=$1
+surname=$2
+
+# Construct the target person's directory path
+first_letter=$(echo "$surname" | cut -c1 | tr '[:lower:]' '[:upper:]')
+person_dir="$PPLR_DIR/$first_letter/$surname, $firstname"
+
+# Check if the person's directory exists
+if [ ! -d "$person_dir" ]; then
+  echo "Error: Directory for '$firstname $surname' not found."
+  exit 1
+fi
+
+echo "Applying icons to $person_dir..."
+
+# Paths to the About and Meetings directories
+about_dir="$person_dir/About"
+meetings_dir="$person_dir/Meetings"
+
+# Verify if the icon files exist in _Templates/_Icons
+if [ ! -f "$icon_dir/About.pdf" ] || [ ! -f "$icon_dir/Meeting.pdf" ] || [ ! -f "$icon_dir/Calendar.pdf" ]; then
+  echo "Error: Required icon files not found in $icon_dir."
+  exit 1
+fi
+
+# Apply the About icon
+if [ -d "$about_dir" ]; then
+  echo "Applying About icon to $about_dir..."
+  fileicon set "$about_dir" "$icon_dir/About.pdf" || {
+    echo "Error: Failed to apply About icon."
+  }
+else
+  echo "Warning: About directory not found for $firstname $surname."
+fi
+
+# Apply the Meetings icon
+if [ -d "$meetings_dir" ]; then
+  echo "Applying Meetings icon to $meetings_dir..."
+  fileicon set "$meetings_dir" "$icon_dir/Meeting.pdf" || {
+    echo "Error: Failed to apply Meetings icon."
+  }
+
+  # Apply the Calendar icon to each subdirectory and file under Meetings/
+  echo "Applying Calendar icon to directories and files in $meetings_dir..."
+  for item in "$meetings_dir"/*; do
+    if [ -e "$item" ]; then  # Check if file or directory exists
+      fileicon set "$item" "$icon_dir/Calendar.pdf" || {
+        echo "Error: Failed to apply Calendar icon to $item."
+      }
+    fi
+  done
+else
+  echo "Warning: Meetings directory not found for $firstname $surname."
+fi
+
+echo "Icons successfully applied for $firstname $surname."

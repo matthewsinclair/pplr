@@ -1,0 +1,136 @@
+#!/bin/bash
+
+# USAGE: create a new person in $PPLR_DIR
+# USAGE: <first>        firstname of new person
+# USAGE: <surname>      surname of new person 
+# USAGE: [linkedin_url] LinkedIn URL of the new person
+
+
+# Default location of PPLR_DIR if not already set
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_BIN_DIR:=$PPLR_ROOT/bin}"
+: "${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}"
+
+
+# Check if the correct number of arguments is provided
+if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
+  echo "Usage: $(basename "$0") <FIRSTNAME> <SURNAME> [URL]"
+  exit 1
+fi
+
+# Get the first name, surname, and optionally the URL from the command line arguments
+firstname=$1
+surname=$2
+url=$3
+fullname_underlined="_$firstname $surname_"
+
+# Define a function to generate the updated About file content
+generate_about_content() {
+  local firstname=$1
+  local surname=$2
+  local url=$3
+  local linkedin_id=$(echo "$url" | sed -n 's#.*/in/\(.*\)#\1#p')
+
+  cat <<EOF
+---
+verblock: "$(date +%Y-%m-%d):v0.1: Matthew Sinclair - Initial version"
+---
+# $firstname $surname (About)
+
+_$(echo $firstname) $(echo $surname)_
+- Role:     []()
+- Company:  []()
+- LinkedIn: [in/$linkedin_id]($url)
+- Email:    [](mailto:)
+- Phone:
+
+_About_
+
+EOF
+}
+
+# Step 1: Define the generic template directory path
+generic_template_dir="${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}/Surname, Firstname"
+
+# Check if the generic template directory exists
+if [ ! -d "$generic_template_dir" ]; then
+  echo "Error: Template directory '$generic_template_dir' does not exist."
+  exit 1
+fi
+# echo "Template directory exists."
+
+# Step 2: Construct the target directory path under PPLR_DIR that is the same letter as the first letter of the surname
+first_letter=$(echo "$surname" | cut -c1 | tr '[:lower:]' '[:upper:]')
+target_dir="$PPLR_DIR/$first_letter/$surname, $firstname"
+
+# Create the target directory if it doesn't exist
+mkdir -p "$target_dir"
+if [ $? -ne 0 ]; then
+  echo "Error: Could not create target directory '$target_dir'."
+  exit 1
+fi
+# echo "Target directory '$target_dir' created or already exists."
+
+# Step 3: Copy the generic template directory to the target directory
+# echo "Copying template directory to the target directory..."
+cp -r "$generic_template_dir"/* "$target_dir"
+if [ $? -ne 0 ]; then
+  echo "Error: Could not copy the template directory."
+  exit 1
+fi
+# echo "Successfully copied '$generic_template_dir' to '$target_dir'."
+
+# Step 4: Rename the "(About)" file in the copied template
+about_file_src="$target_dir/About/Firstname Surname (About).md"
+about_file_dest="$target_dir/About/$firstname $surname (About).md"
+
+if [ -f "$about_file_src" ]; then
+  # echo "Renaming '(About)' file..."
+  mv "$about_file_src" "$about_file_dest"
+  if [ $? -ne 0 ]; then
+    echo "Error: Could not rename the '(About)' file."
+    exit 1
+  fi
+  # echo "Successfully renamed '(About)' file to '$about_file_dest'."
+else
+  echo "Warning: '(About)' file does not exist in the template directory."
+fi
+
+# Step 5: If a URL is provided, create the LinkedIn .webloc file and update the About file
+if [ -n "$url" ]; then
+  # echo "Creating LinkedIn .webloc file..."
+  webloc_content=$(cat <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>URL</key>
+  <string>${url}</string>
+</dict>
+</plist>
+EOF
+  )
+
+  webloc_file="$target_dir/About/$firstname $surname (LinkedIn).webloc"
+  echo "$webloc_content" > "$webloc_file"
+  if [ $? -ne 0 ]; then
+    echo "Error: Could not create the LinkedIn .webloc file."
+    exit 1
+  fi
+  # echo "Successfully created the LinkedIn .webloc file at '$webloc_file'."
+
+  # echo "Updating the About file with LinkedIn URL..."
+  about_content=$(generate_about_content "$firstname" "$surname" "$url")
+  echo "$about_content" > "$about_file_dest"
+  if [ $? -ne 0 ]; then
+    echo "Error: Could not update the About file."
+    exit 1
+  fi
+  # echo "Successfully updated the About file."
+else
+  echo "Warning: URL not supplied, About file not updated and .webloc not created"
+fi
+
+echo $about_file_dest

@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# USAGE: Copy or output the location of a person's file to the clipboard or stdout
+# USAGE: <first>        firstname of person to edit
+# USAGE: <surname>      surname of person to edit
+# USAGE: [--type | -t]  type of file (about | a, linkedin | l, profile | p)
+# USAGE: [-o]           output the result to stdout instead of copying to clipboard
+
+# Default location of PPLR_DIR if not already set
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_BIN_DIR:=$PPLR_ROOT/bin}"
+: "${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}"
+
+# Function to print usage and exit
+usage() {
+  echo "Usage: $(basename "$0") [-t about|linkedin|profile] [-o] <FIRSTNAME> <SURNAME>" >&2
+  exit 1
+}
+
+# Default file type
+file_type="about"
+output_to_stdout=false
+
+# Parse options
+while getopts ":t:o" opt; do
+  case $opt in
+    t)
+      case $OPTARG in
+        about|a) file_type="about";;
+        linkedin|l) file_type="linkedin";;
+        profile|p) file_type="profile";;
+        *) usage;;
+      esac
+      ;;
+    o)
+      output_to_stdout=true
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
+# Check if the correct number of arguments is provided
+if [ "$#" -ne 2 ]; then
+  usage
+fi
+
+# Get the first name and surname
+firstname=$1
+surname=$2
+
+# Construct the target directory path under PPLR_DIR that is the same letter as the first letter of the surname
+first_letter=$(echo "$surname" | cut -c1 | tr '[:lower:]' '[:upper:]')
+target_dir="$PPLR_DIR/$first_letter/$surname, $firstname"
+
+# Construct the file path based on the file type
+case $file_type in
+  about) file_suffix="About/$firstname $surname (About).md";;
+  linkedin) file_suffix="About/$firstname $surname (LinkedIn).webloc";;
+  profile) file_suffix="About/$firstname $surname (Profile).pdf";;
+esac
+
+file_path="$target_dir/$file_suffix"
+
+# Check if the file exists
+if [ ! -f "$file_path" ]; then
+  echo "Error: File not found: $file_path" >&2
+  exit 1
+fi
+
+# Output the file path or copy to clipboard
+if $output_to_stdout; then
+  echo "\"$file_path\""
+else
+  echo -n "\"$file_path\"" | pbcopy
+fi

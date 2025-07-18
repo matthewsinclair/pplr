@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# USAGE: (re)create the index.md and index.json files into $PPLR_DIR
+# USAGE: --tags also regenerate all tags using Claude AI
+
+
+# Default location of PPLR_DIR if not already set
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_BIN_DIR:=$PPLR_ROOT/bin}"
+: "${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}"
+
+
+CURRENT_DIR=$(pwd)
+cd $PPLR_DIR
+
+# Check for --tags flag
+generate_tags=0
+if [ "$1" = "--tags" ]; then
+  generate_tags=1
+fi
+
+echo "Generating: $PPLR_DIR/index.json"
+$PPLR_BIN_DIR/pplr_json | jq . > index.json
+
+echo "Generating: $PPLR_DIR/index.md"
+$PPLR_BIN_DIR/pplr_index > index.md
+
+# Generate tags if requested
+if [ $generate_tags -eq 1 ]; then
+  echo ""
+  echo "Generating tags for all people..."
+  $PPLR_BIN_DIR/pplr_tag --all
+fi
+
+cd $CURRENT_DIR

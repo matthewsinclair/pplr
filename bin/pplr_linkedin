@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# USAGE: open a person's LinkedIn URL (if it exists)
+# USAGE: <first>        firstname of person to edit
+# USAGE: <surname>      surname of person to edit
+
+
+# Default location of PPLR_DIR if not already set
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_BIN_DIR:=$PPLR_ROOT/bin}"
+: "${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}"
+
+
+# Check if the correct number of arguments is provided
+if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
+  echo "Usage: $(basename "$0") <FIRSTNAME> <SURNAME>"
+  exit 1
+fi
+
+# Get the first name, surname
+firstname=$1
+surname=$2
+
+
+# Step 2: Construct the target directory path under PPLR_DIR that is the same letter as the first letter of the surname
+first_letter=$(echo "$surname" | cut -c1 | tr '[:lower:]' '[:upper:]')
+target_dir="$PPLR_DIR/$first_letter/$surname, $firstname"
+
+# Step 3: Invoke $EDITOR on the About
+webloc_file_dest="$target_dir/About/$firstname $surname (LinkedIn).webloc"
+
+open "$webloc_file_dest"

@@ -1,0 +1,85 @@
+#!/bin/bash
+
+# USAGE: generate index.json based on contents of $PPLR_DIR
+
+
+# Script name: people_json
+# Description: Generate a JSON file listing all people from the directory structure, ignoring specific directories.
+
+# Default location of PPLR_DIR if not already set
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_BIN_DIR:=$PPLR_ROOT/bin}"
+: "${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}"
+
+
+# Define the base directory (set to the current directory for execution within "People/")
+BASE_DIR="."
+
+# Regular expression for directories and files to ignore
+IGNORE_DIRS="^_Templates$|^bin$|^index\.md$|^index\.json$"
+
+echo '{ "people": {'
+
+# Loop through each letter directory under the current directory
+first_letter=true
+for letter_dir in "$BASE_DIR"/*; do
+    letter=$(basename "$letter_dir")
+
+    # Check if the directory should be ignored
+    if [[ $letter =~ $IGNORE_DIRS ]]; then
+        continue
+    fi
+
+    if [[ -d "$letter_dir" ]]; then
+        if [ "$first_letter" != true ]; then
+            echo ','
+        fi
+        first_letter=false
+
+        echo "\"$letter\": ["
+
+        first_person=true
+        for person_dir in "$letter_dir"/*; do
+            if [[ -d "$person_dir" ]]; then
+                if [ "$first_person" != true ]; then
+                    echo ','
+                fi
+                first_person=false
+
+                person_name=$(basename "$person_dir")
+                about_file="$person_dir/About/${person_name} (About).md"
+                linkedin_file="$person_dir/About/${person_name} (LinkedIn).webloc"
+                picture_file="$person_dir/About/${person_name} (Picture).png"
+                profile_file="$person_dir/About/${person_name} (Profile).pdf"
+
+                # Emit person entry
+                echo -n "{ \"name\": \"$person_name\", \"about\": {"
+                echo -n "\"about\": \"$about_file\", "
+                echo -n "\"linkedin\": \"$linkedin_file\", "
+                echo -n "\"picture\": \"$picture_file\", "
+                echo "\"profile\": \"$profile_file\" }, \"meetings\": ["
+
+                # Handle meetings
+                first_meeting=true
+                for meeting_dir in "$person_dir/Meetings"/*; do
+                    if [ -d "$meeting_dir" ]; then
+                        if [ "$first_meeting" != true ]; then
+                            echo ','
+                        fi
+                        first_meeting=false
+
+                        meeting_id=$(basename "$meeting_dir")
+                        meeting_details="$meeting_dir/${meeting_id}.md"
+                        echo -n "{ \"id\": \"$meeting_id\", \"details\": \"$meeting_details\" }"
+                    fi
+                done
+                echo -n "] }"
+            fi
+        done
+        echo ''
+        echo ']'
+    fi
+done
+echo '}}'

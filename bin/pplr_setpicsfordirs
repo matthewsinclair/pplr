@@ -1,0 +1,44 @@
+#!/bin/bash
+# USAGE: Set directory icons for all people in the People directory
+# Loops through all alphabetic directories and sets the icon for each "Surname, Firstname" directory
+
+# Default location of PPLR_DIR if not already set
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_BIN_DIR:=$PPLR_ROOT/bin}"
+: "${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}"
+
+# Check if pplr_setpicfordir exists in PPLR_BIN_DIR
+if [ ! -f "$PPLR_BIN_DIR/pplr_setpicfordir" ]; then
+  echo "Error: 'pplr_setpicfordir' script not found in $PPLR_BIN_DIR."
+  exit 1
+fi
+
+# Loop through all alphabetic directories (A to Z)
+for letter_dir in "$PPLR_DIR"/[A-Z]; do
+  # Check if the letter directory exists
+  if [ ! -d "$letter_dir" ]; then
+    continue
+  fi
+
+  echo "Processing letter directory: $letter_dir"
+
+  # Loop through each "Surname, Firstname" directory inside the letter directory
+  for person_dir in "$letter_dir"/*; do
+    # Check if it's a valid directory
+    if [ -d "$person_dir" ]; then
+      # Extract the base name (Surname, Firstname)
+      person_name=$(basename "$person_dir")
+
+      # Log and run pplr_setpicfordir
+      echo "Setting icon for: $person_name"
+      "$PPLR_BIN_DIR/pplr_setpicfordir" $(echo "$person_name" | awk -F, '{print $2, $1}') || {
+        echo "Error: Failed to set icon for $person_name"
+        continue
+      }
+    fi
+  done
+done
+
+echo "Done setting icons for all directories."

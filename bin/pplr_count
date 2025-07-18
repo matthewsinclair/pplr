@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# USAGE: counts the number of people in the pplr db
+
+
+PEOPLE_DIR="$HOME/Dropbox/Career/People"
+PEOPLE_BIN_DIR="$PEOPLE_DIR/bin"
+
+CURRENT_DIR=$(pwd)
+cd $PEOPLE_DIR
+
+grep -o '\[.*\]\(.*\)' index.md | wc -l
+
+cd $CURRENT_DIR
