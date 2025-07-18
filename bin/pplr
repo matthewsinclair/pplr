@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Wrapper script for Peopler CLI tool
+# Assumes commands are located in $PPLR_DIR/bin
+
+
+# Default location of PPLR_DIR if not already set
+: "${PPLR_DIR:=$HOME/Dropbox/Career/People}"
+
+
+# Get the basename of the script
+script_name=$(basename "$0")
+
+# Check if PPLR_DIR is set
+if [ -z "$PPLR_DIR" ]; then
+  echo "Error: PPLR_DIR environment variable is not set."
+  exit 1
+fi
+
+# Check if at least one argument is provided
+if [ "$#" -lt 1 ]; then
+  echo "Usage: $script_name <cmd>"
+  exit 1
+fi
+
+# Get the command
+cmd=$1
+
+# Construct the full path to the command script
+cmd_script="$PPLR_BIN_DIR/pplr_$cmd"
+
+# Check if the command script exists and is executable
+if [ ! -x "$cmd_script" ]; then
+  echo "Error: Command '$cmd' not found."
+  echo "Usage: $script_name <cmd>"
+  exit 1
+fi
+
+# Save the current directory
+current_dir=$(pwd)
+
+# Change to the PPLR_DIR
+cd "$PPLR_DIR" || {
+  echo "Error: Could not change to directory $PPLR_DIR."
+  exit 1
+}
+
+# Run the command
+"$cmd_script" "${@:2}"
+
+# Save the exit status of the command
+exit_status=$?
+
+# Change back to the original directory
+cd "$current_dir" || {
+  echo "Error: Could not change back to the original directory."
+  exit 1
+}
+
+# Exit with the status of the command
+exit $exit_status

@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# USAGE: provide help for a specific command (if provided) or all commands
+# USAGE: [cmd] specific command to get help for
+# USAGE: --details show comprehensive documentation
+
+
+# Default location of PPLR_DIR if not already set
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_BIN_DIR:=$PPLR_ROOT/bin}"
+: "${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}"
+
+# Find the length of the longest command name
+max_length=0
+for cmd_script in "$PPLR_BIN_DIR"/pplr_*; do
+  cmd=$(basename "$cmd_script" | sed 's/^pplr_//')
+  if [ ${#cmd} -gt $max_length ]; then
+    max_length=${#cmd}
+  fi
+done
+
+# Function to display usage for a given command with proper alignment
+pad_output() {
+  cmd=$1
+  usage_lines=$(grep "^# USAGE: " "$PPLR_BIN_DIR/pplr_$cmd" | sed 's/^# USAGE: //')
+  if [ -n "$usage_lines" ]; then
+    # Print the first usage line
+    printf "%-*s: %s\n" $max_length "$cmd" "$(echo "$usage_lines" | sed '1q;d')"
+    # Print any additional usage lines aligned properly
+    echo "$usage_lines" | sed '1d' | while IFS= read -r line; do
+      printf "%-*s  %s\n" $((max_length )) "" "$line"
+    done
+  else
+    printf "%-*s: No usage information found.\n" $max_length "$cmd"
+  fi
+}
+
+# Check for --details flag
+if [ "$1" = "--details" ]; then
+  # Show the README.md file if it exists
+  if [ -f "$PPLR_ROOT/README.md" ]; then
+    cat "$PPLR_ROOT/README.md"
+  else
+    echo "Detailed documentation not found at $PPLR_ROOT/README.md"
+    echo "Run 'pplr help' for basic command listing"
+  fi
+elif [ "$#" -lt 1 ]; then
+  # If no arguments provided, display usage for all commands
+  for cmd_script in "$PPLR_BIN_DIR"/pplr_*; do
+    cmd=$(basename "$cmd_script" | sed 's/^pplr_//')
+    pad_output "$cmd"
+  done
+  echo ""
+  echo "For comprehensive documentation, use: pplr help --details"
+else
+  # Display usage for the specific command provided
+  for cmd in "$@"; do
+    pad_output "$cmd"
+  done
+fi

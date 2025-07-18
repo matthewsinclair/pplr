@@ -1,0 +1,90 @@
+#!/bin/bash
+# USAGE: Set the directory icon to the profile picture of the person
+# USAGE: [-V|--verbose] <firstname> <surname>
+
+# Default location of PPLR_DIR if not already set
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_BIN_DIR:=$PPLR_ROOT/bin}"
+: "${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}"
+
+# Check if fileicon is installed
+if ! command -v fileicon >/dev/null 2>&1; then
+    echo "Error: 'fileicon' command not found."
+    echo "Please install it using: brew install fileicon"
+    exit 1
+fi
+
+# Default verbosity
+verbose=0
+
+# Parse options
+while [[ "$1" == -* ]]; do
+  case "$1" in
+    -V|--verbose)
+      verbose=1
+      shift
+      ;;
+    *)
+      echo "Unknown option: $1"
+      exit 1
+      ;;
+  esac
+done
+
+# Check if the correct number of arguments is provided
+if [ "$#" -lt 2 ]; then
+    echo "Usage: $(basename "$0") [-V|--verbose] <FIRSTNAME> <SURNAME>"
+    exit 1
+fi
+
+# Get the first name and surname from the command line arguments
+firstname=$1
+surname=$2
+
+# Verbose logging function
+log() {
+  if [ "$verbose" -eq 1 ]; then
+    echo "$@"
+  fi
+}
+
+log "Setting directory icon for $firstname $surname..."
+
+# Construct the target directory and image file paths
+first_letter=$(echo "$surname" | cut -c1 | tr '[:lower:]' '[:upper:]')
+target_dir="$PPLR_DIR/$first_letter/$surname, $firstname"
+about_dir="$target_dir/About"
+
+# Log the paths being used
+log "Target directory: \"$target_dir\""
+log "About directory: \"$about_dir\""
+
+# Check if the directory exists
+if [ ! -d "$target_dir" ]; then
+    echo "Error: Target directory '$target_dir' does not exist."
+    exit 1
+fi
+
+# Search for the picture file in the About directory
+picture_file=$(find "$about_dir" -iname "$firstname $surname (Picture).*" \( -iname "*.jpg" -o -iname "*.png" \) | head -n 1)
+
+# Check if a picture file was found
+if [ -z "$picture_file" ]; then
+    echo "Error: No picture file found for '$firstname $surname' in '$about_dir'."
+    exit 1
+fi
+
+log "Found picture file: \"$picture_file\""
+
+# Set the icon using fileicon
+log "Setting folder icon..."
+fileicon set "$target_dir" "$picture_file" || {
+    echo "Error: Failed to set folder icon"
+    exit 1
+}
+
+log "Successfully set the picture for '$firstname $surname' as the directory icon."
+log "Note: You may need to restart Finder to see the changes."
+log "To restart Finder, hold the Option key and right-click on the Finder icon in the Dock, then select Relaunch."

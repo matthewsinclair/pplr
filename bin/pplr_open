@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# USAGE: Open the location of a person's file
+# USAGE: <first>        firstname of person to edit
+# USAGE: <surname>      surname of person to edit
+# USAGE: [--type | -t]  type of file (about | a, linkedin | l, profile | p)
+
+# Function to print usage and exit
+usage() {
+  echo "Usage: $(basename "$0") [-t about|linkedin|profile] <FIRSTNAME> <SURNAME>" >&2
+  exit 1
+}
+
+# Default file type
+file_type="about"
+
+# Parse options
+while getopts ":t:" opt; do
+  case $opt in
+    t)
+      case $OPTARG in
+        about|a) file_type="about";;
+        linkedin|l) file_type="linkedin";;
+        profile|p) file_type="profile";;
+        *) usage;;
+      esac
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
+# Check if the correct number of arguments is provided
+if [ "$#" -ne 2 ]; then
+  usage
+fi
+
+# Get the first name and surname
+firstname=$1
+surname=$2
+
+# Use pplr_cp to get the file path
+file_path=$(pplr cp -o -t "$file_type" "$firstname" "$surname")
+
+# Check if pplr_cp encountered an error
+if [[ $file_path == Error:* ]]; then
+  echo "$file_path" >&2
+  exit 1
+fi
+
+# Remove any extra quotes around the file path
+file_path=$(echo "$file_path" | sed 's/^"//; s/"$//')
+
+# Open the file
+open "$file_path"

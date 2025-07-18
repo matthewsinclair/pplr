@@ -1,0 +1,265 @@
+#!/bin/bash
+
+# USAGE: Generate tags for a person using Claude AI analysis
+# USAGE: <surname> <firstname> generate tags for one person
+# USAGE: <partial-name> -g|--generate generate tags for all matching people
+# USAGE: --all generate tags for everyone
+
+## Default location of PPLR_DIR if not already set
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_BIN_DIR:=$PPLR_ROOT/bin}"
+: "${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}"
+
+# Function to display usage
+usage() {
+  echo "Usage:"
+  echo "  pplr tag \"Surname\" \"Firstname\"    Generate tags for one person"
+  echo "  pplr tag \"name\" -g|--generate      Generate tags for all matching people"
+  echo "  pplr tag --all                     Generate tags for everyone"
+  echo "  pplr tag \"Surname\" \"Firstname\" -s  Show existing tags"
+  exit 1
+}
+
+# Check arguments
+if [ $# -eq 0 ]; then
+  usage
+fi
+
+# Function to collect all text content for a person
+collect_person_content() {
+  local person_dir="$1"
+  local temp_file=$(mktemp)
+  
+  {
+    echo "=== ABOUT INFORMATION ==="
+    # Get About file content
+    find "$person_dir/About" -name "*.md" -type f 2>/dev/null | while read -r file; do
+      echo "--- File: $(basename "$file") ---"
+      cat "$file" 2>/dev/null || true
+      echo ""
+    done
+    
+    echo -e "\n=== MEETING INFORMATION ==="
+    # Get Meeting content (limit to recent meetings for efficiency)
+    find "$person_dir/Meetings" -name "*.md" -type f 2>/dev/null | sort -r | head -20 | while read -r file; do
+      echo "--- Meeting: $(basename "$(dirname "$file")") ---"
+      # Get key sections from meetings
+      awk '
+        /^#+ (Summary|Key Takeaways|Topics|Action Items|Next Steps)/ {
+          print; getline
+          while (NF > 0 && !/^#/) {
+            print
+            if (!getline) break
+          }
+        }
+      ' "$file" 2>/dev/null || true
+      echo ""
+    done
+    
+    echo -e "\n=== CLIENT INFORMATION ==="
+    # Get any client-related content
+    find "$person_dir/Client" -name "*.md" -type f 2>/dev/null | while read -r file; do
+      echo "--- File: $(basename "$file") ---"
+      head -50 "$file" 2>/dev/null || true
+      echo ""
+    done
+  } > "$temp_file"
+  
+  echo "$temp_file"
+}
+
+# Function to generate tags using Claude
+generate_tags() {
+  local person_dir="$1"
+  local person_name="$2"
+  
+  echo "Generating tags for: $person_name"
+  
+  # Create Index directory if it doesn't exist
+  mkdir -p "$person_dir/Index"
+  
+  # Collect content
+  content_file=$(collect_person_content "$person_dir")
+  
+  # Create prompt for Claude
+  prompt_file=$(mktemp)
+  cat > "$prompt_file" << 'EOF'
+You are analyzing professional profile and meeting data to generate searchable tags.
+
+PERSON: PERSON_NAME_PLACEHOLDER
+
+CONTENT:
+CONTENT_PLACEHOLDER
+
+Generate two sets of tags based on this content:
+
+1. Profile Tags (5-10 tags): Based on the About section, extract tags for:
+   - Professional role/title keywords (e.g., "cto", "founder", "engineer")
+   - Industry/sector (e.g., "fintech", "healthcare", "ai")
+   - Skills/expertise (e.g., "machine-learning", "product-management")
+   - Company type (e.g., "startup", "enterprise", "consulting")
+   - Seniority/level (e.g., "executive", "senior", "advisor")
+
+2. Meeting Tags (5-10 tags): Based on meeting content, extract tags for:
+   - Topics discussed (e.g., "partnerships", "funding", "product-development")
+   - Meeting types (e.g., "intro-meeting", "follow-up", "pitch")
+   - Technologies mentioned (e.g., "kubernetes", "react", "blockchain")
+   - Business areas (e.g., "sales", "marketing", "operations")
+   - Outcomes/actions (e.g., "investment", "collaboration", "hiring")
+
+Rules:
+- Use lowercase with hyphens (e.g., "machine-learning" not "Machine Learning")
+- Be specific but not too narrow
+- Focus on searchable, meaningful terms
+- Avoid generic terms like "meeting", "person", "discussion"
+- Extract only from provided content, don't invent
+
+Respond ONLY with valid JSON in this exact format:
+{
+  "profile_tags": ["tag1", "tag2", "tag3"],
+  "meeting_tags": ["tag1", "tag2", "tag3"],
+  "generated_at": "CURRENT_DATE",
+  "version": "1.0"
+}
+EOF
+  
+  # Build the final prompt
+  current_date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+  content=$(cat "$content_file" | head -5000)  # Limit content size
+  
+  final_prompt_file=$(mktemp)
+  cat "$prompt_file" | \
+    sed "s/PERSON_NAME_PLACEHOLDER/$person_name/g" | \
+    sed "s/CURRENT_DATE/$current_date/g" > "$final_prompt_file"
+  
+  # Insert content at the placeholder
+  awk '/CONTENT_PLACEHOLDER/ {
+    system("cat '"$content_file"' | head -5000")
+    next
+  }
+  {print}' "$final_prompt_file" > "$prompt_file.final"
+  
+  mv "$prompt_file.final" "$prompt_file"
+  rm -f "$final_prompt_file"
+  
+  # Call Claude
+  if [ -x "$HOME/.claude/local/claude" ]; then
+    response=$(cat "$prompt_file" | "$HOME/.claude/local/claude" --dangerously-skip-permissions 2>&1)
+    exit_code=$?
+  else
+    echo "Error: Claude CLI not found at $HOME/.claude/local/claude"
+    rm -f "$content_file" "$prompt_file"
+    return 1
+  fi
+  
+  # Check if Claude succeeded
+  if [ $exit_code -ne 0 ]; then
+    echo "Error calling Claude: $response"
+    rm -f "$content_file" "$prompt_file"
+    return 1
+  fi
+  
+  # Extract JSON from response (Claude might add explanation text)
+  json=$(echo "$response" | awk '/^{/,/^}/' | grep -v "^[[:space:]]*$")
+  
+  # Validate JSON
+  if echo "$json" | jq . >/dev/null 2>&1; then
+    # Save to tags.json
+    echo "$json" | jq . > "$person_dir/Index/tags.json"
+    echo "✓ Tags saved to $person_dir/Index/tags.json"
+    
+    # Display tags
+    echo "Profile tags: $(echo "$json" | jq -r '.profile_tags | join(", ")')"
+    echo "Meeting tags: $(echo "$json" | jq -r '.meeting_tags | join(", ")')"
+  else
+    echo "Error: Invalid JSON response from Claude"
+    echo "Response: $response"
+    rm -f "$content_file" "$prompt_file"
+    return 1
+  fi
+  
+  # Cleanup
+  rm -f "$content_file" "$prompt_file"
+}
+
+# Function to show existing tags
+show_tags() {
+  local person_dir="$1"
+  local person_name="$2"
+  
+  if [ -f "$person_dir/Index/tags.json" ]; then
+    echo "Tags for $person_name:"
+    cat "$person_dir/Index/tags.json" | jq .
+  else
+    echo "No tags found for $person_name"
+    echo "Use 'pplr tag \"$2\" \"$3\"' to generate tags"
+  fi
+}
+
+# Main logic
+if [ "$1" = "--all" ]; then
+  # Generate tags for everyone
+  echo "Generating tags for all people..."
+  count=0
+  
+  find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d ! -path "*/_Templates*" | while read -r person_dir; do
+    if [ -d "$person_dir/About" ]; then
+      person_name=$(basename "$person_dir")
+      generate_tags "$person_dir" "$person_name"
+      ((count++))
+      echo "---"
+    fi
+  done
+  
+  echo "Generated tags for $count people"
+  
+elif [ "$#" -eq 2 ] && { [ "$2" = "-g" ] || [ "$2" = "--generate" ]; }; then
+  # Generate tags for all matching people
+  search_term="$1"
+  echo "Searching for people matching: $search_term"
+  
+  count=0
+  find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d ! -path "*/_Templates*" | while read -r person_dir; do
+    person_name=$(basename "$person_dir")
+    if echo "$person_name" | grep -qi "$search_term"; then
+      if [ -d "$person_dir/About" ]; then
+        generate_tags "$person_dir" "$person_name"
+        ((count++))
+        echo "---"
+      fi
+    fi
+  done
+  
+  echo "Generated tags for $count people matching '$search_term'"
+  
+elif [ "$#" -eq 3 ] && [ "$3" = "-s" ]; then
+  # Show existing tags
+  surname="$1"
+  firstname="$2"
+  person_dir=$(find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d -name "${surname}, ${firstname}" ! -path "*/_Templates*" | head -1)
+  
+  if [ -n "$person_dir" ] && [ -d "$person_dir" ]; then
+    show_tags "$person_dir" "${surname}, ${firstname}"
+  else
+    echo "Error: Person '${surname}, ${firstname}' not found"
+    exit 1
+  fi
+  
+elif [ "$#" -eq 2 ]; then
+  # Generate tags for one person
+  surname="$1"
+  firstname="$2"
+  person_dir=$(find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d -name "${surname}, ${firstname}" ! -path "*/_Templates*" | head -1)
+  
+  if [ -n "$person_dir" ] && [ -d "$person_dir" ]; then
+    generate_tags "$person_dir" "${surname}, ${firstname}"
+  else
+    echo "Error: Person '${surname}, ${firstname}' not found"
+    exit 1
+  fi
+  
+else
+  usage
+fi

@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# USAGE: Simple text search (grep) through all people files
+# USAGE: <text> text to search for using grep
+
+
+## Default location of PPLR_DIR if not already set
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_BIN_DIR:=$PPLR_ROOT/bin}"
+: "${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}"
+
+
+CURRENT_DIR=$(pwd)
+cd $PPLR_DIR
+
+# Check if the text to search is provided as an argument
+if [ -z "$1" ]; then
+  echo "Usage: $0 <text-to-search>"
+  exit 1
+fi
+
+# Store the text to search
+search_text=$1
+
+# Define the base directory
+base_dir=$PPLR_DIR
+
+# Loop through each subdirectory (A-Z) and grep the text in markdown files
+grep -r --include="*.md" "$search_text" "$base_dir"/*/
+
+cd $CURRENT_DIR

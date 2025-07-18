@@ -1,0 +1,121 @@
+#!/bin/bash
+
+# USAGE: Find meetings within a date range and display just the filenames
+# USAGE: <date>  Date in YYYY, YYYYMM, or YYYYMMDD format
+# USAGE: <end_date>  Optional end date in YYYY, YYYYMM, or YYYYMMDD format (if omitted, only <date> is used)
+
+# Default location of PPLR_DIR if not already set
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_BIN_DIR:=$PPLR_ROOT/bin}"
+: "${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}"
+
+# Function to display usage information
+usage() {
+  echo "Usage: $(basename "$0") <date> [<end_date>]"
+  echo "  <date>: Date in YYYY, YYYYMM, or YYYYMMDD format"
+  echo "  <end_date>: Optional end date in YYYY, YYYYMM, or YYYYMMDD format"
+  exit 1
+}
+
+# Check if at least a date is provided
+if [ $# -lt 1 ]; then
+  usage
+fi
+
+# Get search parameters
+input_date=$1
+end_date="${2:-$1}"
+
+# Input validation
+if ! [[ "$input_date" =~ ^[0-9]+$ ]]; then
+  echo "Error: Date must contain only digits"
+  usage
+fi
+
+if ! [[ "$end_date" =~ ^[0-9]+$ ]]; then
+  echo "Error: End date must contain only digits"
+  usage
+fi
+
+# Normalize dates to full YYYYMMDD format for comparison
+normalize_date() {
+  local date=$1
+  local is_start=$2
+  
+  if [[ ${#date} -eq 4 ]]; then
+    # Year only
+    if [[ "$is_start" = "start" ]]; then
+      echo "${date}0101"  # First day of year
+    else
+      echo "${date}1231"  # Last day of year
+    fi
+  elif [[ ${#date} -eq 6 ]]; then
+    # Year and month
+    local year=${date:0:4}
+    local month=${date:4:2}
+    
+    if [[ "$is_start" = "start" ]]; then
+      echo "${date}01"    # First day of month
+    else
+      # Determine last day of month
+      case $month in
+        01|03|05|07|08|10|12) echo "${date}31" ;;
+        04|06|09|11) echo "${date}30" ;;
+        02)
+          if (( year % 4 == 0 && (year % 100 != 0 || year % 400 == 0) )); then
+            echo "${date}29"  # Leap year
+          else
+            echo "${date}28"  # Non-leap year
+          fi
+          ;;
+      esac
+    fi
+  else
+    # Full date already
+    echo "$date"
+  fi
+}
+
+# Set up normalized dates for comparison
+start_date=$(normalize_date "$input_date" "start")
+normalized_end_date=$(normalize_date "$end_date" "end")
+
+# Change to PPLR_DIR
+cd "$PPLR_DIR" || {
+  echo "Error: Could not change to directory $PPLR_DIR."
+  exit 1
+}
+
+# Find all meeting directories in the date range
+find . -path "*/Meetings/*" -type d | grep -v "Icon" | while read -r dir; do
+  dir_name=$(basename "$dir")
+  
+  # Look for dirs starting with 8 digits (date format)
+  if [[ "$dir_name" =~ ^[0-9]{8} ]]; then
+    dir_date=${dir_name:0:8}
+    
+    # Check if within date range
+    if [[ "$dir_date" -ge "$start_date" && "$dir_date" -le "$normalized_end_date" ]]; then
+      # Get the person's name from the directory path
+      # Format: ./A/Adelsbach, Chris/Meetings/YYYYMMDD Meeting/
+      person_dir=$(dirname "$(dirname "$dir")")
+      person_name=$(basename "$person_dir")
+      
+      # Extract first name and last name from "Lastname, Firstname" format
+      if [[ "$person_name" == *", "* ]]; then
+        lastname=$(echo "$person_name" | cut -d',' -f1)
+        firstname=$(echo "$person_name" | cut -d',' -f2 | sed 's/^ *//')
+        person_display="$firstname $lastname"
+      else
+        person_display="$person_name"
+      fi
+      
+      # Output the meeting name with person
+      echo "$dir_name ($person_display)"
+    fi
+  fi
+done | sort
+
+exit 0
