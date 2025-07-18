@@ -4,7 +4,7 @@ A command-line personal relationship management (PRM) system for organising prof
 
 ## Overview
 
-pplr (pronounced "peopler") is a bash-based CLI tool that helps you manage your professional network. It stores information about people you know, tracks meetings and interactions, and provides powerful search capabilities enhanced with AI-powered tagging.
+pplr (pronounced "peopler") is a CLI tool that helps you manage your professional network. It stores information about people you know, tracks meetings and interactions, and provides powerful search capabilities enhanced with AI-powered tagging.
 
 ## Features
 
