@@ -19,7 +19,20 @@ setup() {
     # Set up environment
     export PPLR_DATA="$PPLR_TEST_DATA"
     export PPLR_DIR="$PPLR_DATA"
-    export PPLR_ROOT="$(dirname "$BATS_TEST_DIRNAME")"
+    # Use absolute path - if BATS_TEST_DIRNAME not set, use current test directory
+    local test_dir="${BATS_TEST_DIRNAME:-$PWD}"
+    if [ -n "$BATS_TEST_DIRNAME" ]; then
+        export PPLR_ROOT="$(cd "$(dirname "$test_dir")" && pwd)"
+    else
+        # When run manually, we're likely in tests dir or project root
+        if [ -f "$PWD/bin/pplr" ]; then
+            export PPLR_ROOT="$PWD"
+        elif [ -f "$PWD/../bin/pplr" ]; then
+            export PPLR_ROOT="$(cd "$PWD/.." && pwd)"
+        else
+            export PPLR_ROOT="$(cd "$(dirname "$test_dir")" && pwd)"
+        fi
+    fi
     export PPLR_BIN_DIR="$PPLR_ROOT/bin"
     export PPLR_TEMPLATE_DIR="$PPLR_ROOT/templates"
     
@@ -319,7 +332,62 @@ assert_contains() {
 
 # Mock Claude for testing (creates a simple mock response)
 mock_claude() {
-    # Create a mock claude script
+    # Update the PATH-based mock claude to handle tag generation
+    local mock_claude_dir="$PPLR_TEST_DATA/.mock_bin"
+    cat > "$mock_claude_dir/claude" << 'EOF'
+#!/bin/bash
+# Enhanced mock Claude for testing tags and search
+
+input=$(cat)
+
+# Check if this is a tag generation request
+if echo "$input" | grep -qi "generate.*tags.*based.*content"; then
+    # Tag generation response
+    cat << 'RESPONSE'
+{
+  "profile_tags": ["test", "mock", "person"],
+  "meeting_tags": ["test-meeting", "mock-meeting"],
+  "generated_at": "2024-01-01T00:00:00Z",
+  "version": "1.0"
+}
+RESPONSE
+else
+    # Search query handling
+    query=$(echo "$input" | grep 'SEARCH QUERY:' | sed 's/.*SEARCH QUERY: "\(.*\)".*/\1/')
+    
+    # Simple mock responses based on query
+    case "$query" in
+        *"Anderson"*)
+            cat << 'RESPONSE'
+{
+  "results": [
+    {
+      "name": "Anderson, James",
+      "path": "A/Anderson, James",
+      "role": "Test Role",
+      "company": "Test Company",
+      "relevance_score": 0.9,
+      "explanation": "Name matches Anderson"
+    }
+  ],
+  "total_matches": 1
+}
+RESPONSE
+            ;;
+        *)
+            cat << 'RESPONSE'
+{
+  "results": [],
+  "total_matches": 0
+}
+RESPONSE
+            ;;
+    esac
+fi
+EOF
+    chmod +x "$mock_claude_dir/claude"
+    
+    # Also create the home directory mock for double coverage
     mkdir -p "$HOME/.claude/local"
     cat > "$HOME/.claude/local/claude" << 'EOF'
 #!/bin/bash
