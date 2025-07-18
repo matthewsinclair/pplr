@@ -21,17 +21,87 @@ if [ "$1" = "--tags" ]; then
   generate_tags=1
 fi
 
-echo "Generating: $PPLR_DIR/index.json"
-$PPLR_BIN_DIR/pplr_json | jq . > index.json
+# Create .index directory for search context
+mkdir -p .index
 
-echo "Generating: $PPLR_DIR/index.md"
-$PPLR_BIN_DIR/pplr_index > index.md
+echo "Generating: $PPLR_DIR/.index/index.json"
+$PPLR_BIN_DIR/pplr_json | jq . > .index/index.json
+
+echo "Generating: $PPLR_DIR/.index/index.md"
+$PPLR_BIN_DIR/pplr_index > .index/index.md
+
+echo "Generating: $PPLR_DIR/.index/tags_index.json"
+generate_tags_index() {
+  local current_date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+  
+  echo '{'
+  echo "  \"generated_at\": \"$current_date\","
+  echo -n "  \"people_count\": "
+  find . -mindepth 2 -maxdepth 2 -type d ! -path "*/_Templates*" ! -path "*/.git*" ! -path "*/.index*" | wc -l | tr -d ' '
+  echo ','
+  echo '  "people": ['
+  
+  local first_person=true
+  find . -mindepth 2 -maxdepth 2 -type d ! -path "*/_Templates*" ! -path "*/.git*" ! -path "*/.index*" | sort | while read -r person_dir; do
+    if [ "$first_person" != true ]; then
+      echo ','
+    fi
+    first_person=false
+    
+    local person_name=$(basename "$person_dir")
+    local relative_path=$(echo "$person_dir" | sed 's|^\./||')
+    
+    # Get role and company from About file
+    local about_file=$(find "$person_dir/About" -name "*About*.md" -type f 2>/dev/null | head -1)
+    local role=""
+    local company=""
+    if [ -f "$about_file" ]; then
+      role=$(grep -E "^- *Role:" "$about_file" 2>/dev/null | sed 's/^- *Role: *//' | head -1)
+      company=$(grep -E "^- *Company:" "$about_file" 2>/dev/null | sed 's/^- *Company: *//' | head -1)
+    fi
+    
+    # Get tags from tags.json
+    local profile_tags='[]'
+    local meeting_tags='[]'
+    local tags_file="$person_dir/Index/tags.json"
+    if [ -f "$tags_file" ] && [ -s "$tags_file" ]; then
+      # Validate JSON first
+      if jq empty "$tags_file" 2>/dev/null; then
+        profile_tags=$(cat "$tags_file" | jq -r '.profile_tags // [] | @json' 2>/dev/null || echo '[]')
+        meeting_tags=$(cat "$tags_file" | jq -r '.meeting_tags // [] | @json' 2>/dev/null || echo '[]')
+      fi
+    fi
+    
+    # Escape quotes in role and company
+    role=$(echo "$role" | sed 's/"/\\"/g')
+    company=$(echo "$company" | sed 's/"/\\"/g')
+    
+    echo -n "    {"
+    echo -n "\"name\": \"$person_name\", "
+    echo -n "\"path\": \"$relative_path\", "
+    echo -n "\"role\": \"$role\", "
+    echo -n "\"company\": \"$company\", "
+    echo -n "\"profile_tags\": $profile_tags, "
+    echo -n "\"meeting_tags\": $meeting_tags"
+    echo -n "}"
+  done
+  
+  echo ''
+  echo '  ]'
+  echo '}'
+}
+
+generate_tags_index > .index/tags_index.json
 
 # Generate tags if requested
 if [ $generate_tags -eq 1 ]; then
   echo ""
   echo "Generating tags for all people..."
   $PPLR_BIN_DIR/pplr_tag --all
+  
+  # Regenerate tags index after generating new tags
+  echo "Updating tags index after tag generation..."
+  generate_tags_index > .index/tags_index.json
 fi
 
 cd $CURRENT_DIR

@@ -42,7 +42,7 @@ pplr count
 # Copy a person's file path to clipboard
 pplr cp "Smith" "John"
 
-# Regenerate index files (index.md and index.json)
+# Regenerate index files (.index/index.md, .index/index.json, and .index/tags_index.json)
 pplr reindex
 
 # Generate JSON index
@@ -71,15 +71,18 @@ People/
 │       └── Client/
 ├── _Templates/
 ├── bin/                    # All pplr scripts
-├── index.json
-└── index.md
+├── .index/                   # Search and indexing files
+│   ├── index.json           # JSON index of all contacts
+│   ├── index.md             # Markdown index of all contacts  
+│   └── tags_index.json      # Optimized search context for Claude
+└── [other files]
 ```
 
 ### Key Components
 - **Main Script**: `bin/pplr` - Entry point that delegates to sub-commands
 - **Sub-commands**: Located in `bin/pplr_*` - Each handles specific functionality
 - **Data Format**: Markdown files with verblock headers for About files
-- **Indexing**: Automatic generation of index.md and index.json for navigation
+- **Indexing**: Automatic generation of .index/ files (index.md, index.json, tags_index.json) for navigation and search
 
 ### Environment Variables
 - `PPLR_DIR`: Main directory (defaults to `$HOME/Dropbox/Career/People`)

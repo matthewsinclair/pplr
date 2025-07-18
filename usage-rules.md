@@ -112,7 +112,7 @@ pplr search "action items for me"
 ## Anti-patterns to Avoid
 
 - Don't create people without About files
-- Don't edit index.json or index.md manually
+- Don't edit .index/ files (index.json, index.md, tags_index.json) manually
 - Don't mix firstname/surname order
 - Don't store sensitive data (passwords, keys)
 - Don't use special characters in names
