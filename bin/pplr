@@ -1,11 +1,13 @@
 #!/bin/bash
 
 # Wrapper script for Peopler CLI tool
-# Assumes commands are located in $PPLR_DIR/bin
+# Assumes commands are located in $PPLR_BIN_DIR
 
-
-# Default location of PPLR_DIR if not already set
-: "${PPLR_DIR:=$HOME/Dropbox/Career/People}"
+# Set up environment variables
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_BIN_DIR:=$PPLR_ROOT/bin}"
 
 
 # Get the basename of the script
@@ -39,9 +41,9 @@ fi
 # Save the current directory
 current_dir=$(pwd)
 
-# Change to the PPLR_DIR
-cd "$PPLR_DIR" || {
-  echo "Error: Could not change to directory $PPLR_DIR."
+# Change to the PPLR_DATA directory
+cd "$PPLR_DATA" || {
+  echo "Error: Could not change to directory $PPLR_DATA."
   exit 1
 }
 
