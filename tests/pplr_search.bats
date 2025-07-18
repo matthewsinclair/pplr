@@ -35,12 +35,16 @@ load test_helper
 
 @test "pplr search falls back without Claude" {
     create_test_person "Tagged" "Terry"
-    # Don't create tags index - remove mock Claude to trigger fallback
-    rm -f "$PPLR_TEST_DATA/.mock_bin/claude"
+    # Replace mock Claude with one that fails to trigger fallback
+    cat > "$PPLR_TEST_DATA/.mock_bin/claude" << 'EOF'
+#!/bin/bash
+# Failing mock Claude to test fallback
+exit 1
+EOF
+    chmod +x "$PPLR_TEST_DATA/.mock_bin/claude"
     
     run "$PPLR_BIN_DIR/pplr" search "test"
     [ "$status" -eq 0 ]  # Should succeed with fallback search
-    assert_contains "$output" "Claude CLI not found"
     assert_contains "$output" "Falling back to basic tag search"
 }
 

@@ -1,14 +1,27 @@
 #!/bin/bash
-# Mock Claude for testing
-# Read the input and generate a simple response based on query
+# Enhanced mock Claude for testing tags and search
 
 input=$(cat)
-query=$(echo "$input" | grep 'SEARCH QUERY:' | sed 's/.*SEARCH QUERY: "\(.*\)".*/\1/')
 
-# Simple mock responses based on query
-case "$query" in
-    *"Anderson"*)
-        cat << 'RESPONSE'
+# Check if this is a tag generation request
+if echo "$input" | grep -qi "generate.*tags.*based.*content"; then
+    # Tag generation response
+    cat << 'RESPONSE'
+{
+  "profile_tags": ["test", "mock", "person"],
+  "meeting_tags": ["test-meeting", "mock-meeting"],
+  "generated_at": "2024-01-01T00:00:00Z",
+  "version": "1.0"
+}
+RESPONSE
+else
+    # Search query handling
+    query=$(echo "$input" | grep 'SEARCH QUERY:' | sed 's/.*SEARCH QUERY: "\(.*\)".*/\1/')
+    
+    # Simple mock responses based on query
+    case "$query" in
+        *"Anderson"*)
+            cat << 'RESPONSE'
 {
   "results": [
     {
@@ -18,51 +31,19 @@ case "$query" in
       "company": "Test Company",
       "relevance_score": 0.9,
       "explanation": "Name matches Anderson"
-    },
-    {
-      "name": "Anderson, Sarah", 
-      "path": "A/Anderson, Sarah",
-      "role": "Test Role",
-      "company": "Test Company", 
-      "relevance_score": 0.85,
-      "explanation": "Name matches Anderson"
-    }
-  ],
-  "total_matches": 2
-}
-RESPONSE
-        ;;
-    *"technology"*)
-        cat << 'RESPONSE'
-{
-  "results": [
-    {
-      "name": "Tech, Tom",
-      "path": "T/Tech, Tom", 
-      "role": "Chief Technology Officer",
-      "company": "Test Company",
-      "relevance_score": 0.95,
-      "explanation": "Role matches technology query"
     }
   ],
   "total_matches": 1
 }
 RESPONSE
-        ;;
-    *"nonexistent"*)
-        cat << 'RESPONSE'
+            ;;
+        *)
+            cat << 'RESPONSE'
 {
   "results": [],
   "total_matches": 0
 }
 RESPONSE
-        ;;
-    *)
-        cat << 'RESPONSE'
-{
-  "results": [],
-  "total_matches": 0
-}
-RESPONSE
-        ;;
-esac
+            ;;
+    esac
+fi

@@ -146,7 +146,10 @@ EOF
   
   # Call Claude
   # Check for mock claude and warn (skip during tests)
-  if [ -z "$PPLR_TEST_DATA" ] && [ -x "$HOME/.claude/local/claude" ] && [ "$(head -2 "$HOME/.claude/local/claude" | grep -c "Mock claude")" -gt 0 ]; then
+  if [ -n "$PPLR_TEST_DATA" ] || ! [ -x "$HOME/.claude/local/claude" ] || [ "$(head -2 "$HOME/.claude/local/claude" 2>/dev/null | grep -c "Mock claude")" -eq 0 ]; then
+    # Skip check - either in test mode, no mock claude, or not a mock claude
+    true
+  else
     echo "Error: Found mock Claude at $HOME/.claude/local/claude"
     echo "Please install the real Claude CLI or use Claude through your IDE"
     rm -f "$content_file" "$prompt_file"
