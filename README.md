@@ -80,7 +80,6 @@ People/
 │       │   └── YYYYMMDD Meeting Name/
 │       │       └── YYYYMMDD Meeting Name.md
 │       └── Client/               # Client-specific data
-├── _Templates/                   # Templates for new entries
 ├── .index/                       # Search and indexing files
 │   ├── index.json               # JSON index of all contacts
 │   ├── index.md                 # Markdown index of all contacts
