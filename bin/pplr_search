@@ -102,9 +102,34 @@ EOF
     {print}
   ' "$prompt_file" > "$final_prompt"
   
+  # Start spinner in background
+  start_spinner() {
+    local spinner_chars="⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
+    local delay=0.1
+    local i=0
+    
+    while true; do
+      printf "\r🔍 Searching with Claude %s" "${spinner_chars:$i:1}"
+      i=$(( (i + 1) % ${#spinner_chars} ))
+      sleep $delay
+    done
+  }
+  
+  stop_spinner() {
+    kill $1 2>/dev/null
+    printf "\r🔍 Searching with Claude... done!\n"
+  }
+  
+  # Start spinner
+  start_spinner &
+  spinner_pid=$!
+  
   # Call Claude
   response=$(cat "$final_prompt" | claude 2>&1)
   exit_code=$?
+  
+  # Stop spinner
+  stop_spinner $spinner_pid
   
   # Cleanup temp files
   rm -f "$prompt_file" "$prompt_file.bak" "$final_prompt"
@@ -139,8 +164,8 @@ EOF
   echo "Found $total_matches relevant matches:"
   echo ""
   
-  echo "$json_response" | jq -r '.results[] | 
-    "👤 " + .name + 
+  echo "$json_response" | jq -r --arg pplr_dir "$PPLR_DIR" '.results[] | 
+    "👤 [" + .name + "](" + $pplr_dir + "/" + .path + "/About/" + (.name | gsub(" "; " ")) + " (About).md)" + 
     (if .role != "" then "\n   " + .role else "" end) +
     (if .company != "" then "\n   at " + .company else "" end) +
     "\n   → " + .explanation +
@@ -163,7 +188,7 @@ fallback_search() {
   local tags_index="$PPLR_DIR/.index/tags_index.json"
   if [ -f "$tags_index" ]; then
     # Use jq to find matching people and deduplicate
-    local matches=$(jq -r --arg query "$search_lower" '
+    local matches=$(jq -r --arg query "$search_lower" --arg pplr_dir "$PPLR_DIR" '
       [.people[] | 
        select(
          any(.profile_tags[]?; . | ascii_downcase | contains($query)) or
@@ -174,7 +199,7 @@ fallback_search() {
        )] | 
        unique_by(.name) |
        .[] |
-       "👤 " + .name +
+       "👤 [" + .name + "](" + $pplr_dir + "/" + .path + "/About/" + (.name | gsub(" "; " ")) + " (About).md)" +
        (if .role != "" then "\n   " + .role else "" end) +
        (if .company != "" then "\n   at " + .company else "" end) +
        "\n"
@@ -204,7 +229,7 @@ fallback_search() {
           company=$(grep -E "^- *Company:" "$about_file" 2>/dev/null | sed 's/^- *Company: *//' | head -1)
         fi
         
-        echo "👤 $person_name"
+        echo "👤 [$person_name]($PPLR_DIR/${person_dir#./}/About/$person_name (About).md)"
         [ -n "$role" ] && echo "   $role"
         [ -n "$company" ] && echo "   at $company"
         
