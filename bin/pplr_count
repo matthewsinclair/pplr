@@ -2,13 +2,24 @@
 
 # USAGE: counts the number of people in the pplr db
 
+# Set up environment variables
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
 
-PEOPLE_DIR="$HOME/Dropbox/Career/People"
-PEOPLE_BIN_DIR="$PEOPLE_DIR/bin"
-
-CURRENT_DIR=$(pwd)
-cd $PEOPLE_DIR
-
-grep -o '\[.*\]\(.*\)' index.md | wc -l
-
-cd $CURRENT_DIR
+# Count people from index.md if it exists, otherwise count directories
+if [ -f "$PPLR_DATA/index.md" ]; then
+    grep -o '\[.*\]\(.*\)' "$PPLR_DATA/index.md" | wc -l | tr -d ' '
+else
+    # Count directories in A-Z folders that match "Surname, Firstname" pattern
+    count=0
+    for letter in "$PPLR_DATA"/[A-Z]; do
+        if [ -d "$letter" ]; then
+            for person_dir in "$letter"/*", "*; do
+                if [ -d "$person_dir" ]; then
+                    count=$((count + 1))
+                fi
+            done
+        fi
+    done
+    echo "$count"
+fi

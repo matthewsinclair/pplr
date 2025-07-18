@@ -52,7 +52,7 @@ EOF
 }
 
 # Step 1: Define the generic template directory path
-generic_template_dir="${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}/Surname, Firstname"
+generic_template_dir="${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}/person"
 
 # Check if the generic template directory exists
 if [ ! -d "$generic_template_dir" ]; then
@@ -65,7 +65,13 @@ fi
 first_letter=$(echo "$surname" | cut -c1 | tr '[:lower:]' '[:upper:]')
 target_dir="$PPLR_DIR/$first_letter/$surname, $firstname"
 
-# Create the target directory if it doesn't exist
+# Check if the person already exists
+if [ -d "$target_dir" ]; then
+  echo "Error: Person '$firstname $surname' already exists at '$target_dir'."
+  exit 1
+fi
+
+# Create the target directory
 mkdir -p "$target_dir"
 if [ $? -ne 0 ]; then
   echo "Error: Could not create target directory '$target_dir'."

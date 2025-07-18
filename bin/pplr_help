@@ -41,7 +41,7 @@ pad_output() {
 if [ "$1" = "--details" ]; then
   # Show the README.md file if it exists
   if [ -f "$PPLR_ROOT/README.md" ]; then
-    cat "$PPLR_ROOT/README.md"
+    less "$PPLR_ROOT/README.md"
   else
     echo "Detailed documentation not found at $PPLR_ROOT/README.md"
     echo "Run 'pplr help' for basic command listing"

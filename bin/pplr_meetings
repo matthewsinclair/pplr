@@ -21,21 +21,27 @@ usage() {
 
 # Check if at least a date is provided
 if [ $# -lt 1 ]; then
-  usage
+  # Default to today's date if no arguments
+  input_date=$(date +%Y%m%d)
+  end_date="$input_date"
+else
+  # Get search parameters
+  input_date=$1
+  end_date="${2:-$1}"
 fi
 
-# Get search parameters
-input_date=$1
-end_date="${2:-$1}"
+# Normalize dates by removing hyphens
+input_date=$(echo "$input_date" | tr -d '-')
+end_date=$(echo "$end_date" | tr -d '-')
 
 # Input validation
 if ! [[ "$input_date" =~ ^[0-9]+$ ]]; then
-  echo "Error: Date must contain only digits"
+  echo "Error: Invalid date format"
   usage
 fi
 
 if ! [[ "$end_date" =~ ^[0-9]+$ ]]; then
-  echo "Error: End date must contain only digits"
+  echo "Error: End date must contain only digits (after removing hyphens)"
   usage
 fi
 
@@ -89,7 +95,7 @@ cd "$PPLR_DIR" || {
 }
 
 # Find all meeting directories in the date range
-find . -path "*/Meetings/*" -type d | grep -v "Icon" | while read -r dir; do
+meetings_output=$(find . -path "*/Meetings/*" -type d | grep -v "Icon" | while read -r dir; do
   dir_name=$(basename "$dir")
   
   # Look for dirs starting with 8 digits (date format)
@@ -116,6 +122,13 @@ find . -path "*/Meetings/*" -type d | grep -v "Icon" | while read -r dir; do
       echo "$dir_name ($person_display)"
     fi
   fi
-done | sort
+done | sort)
+
+# Check if any meetings were found
+if [ -z "$meetings_output" ]; then
+  echo "No meetings found"
+else
+  echo "$meetings_output"
+fi
 
 exit 0
