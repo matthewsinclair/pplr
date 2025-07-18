@@ -87,8 +87,6 @@ Attendees: Test Person
 ## Action Items
 - [ ] Test action
 EOF
-    
-    echo "$meeting_dir"
 }
 
 # Helper function to assert file exists
