@@ -17,28 +17,54 @@ pplr (pronounced "peopler") is a bash-based CLI tool that helps you manage your 
 
 ## Installation
 
-1. Clone or download the pplr codebase to your preferred location (e.g., `~/Code/pplr`)
+1. Clone this repository to your preferred location:
+   ```bash
+   git clone <repo-url> ~/Devel/prj/Pplr
+   ```
 2. Set environment variables:
    ```bash
-   # Data directory (where your contacts are stored)
-   export PPLR_DIR="$HOME/Dropbox/Career/People"
+   # Code/config directory (this git repository)
+   export PPLR_ROOT="$HOME/Devel/prj/Pplr"
+   export PPLR_BIN_DIR="$PPLR_ROOT/bin"
    
-   # Code directory (where pplr scripts are located) 
-   export PPLR_BIN_DIR="$HOME/Code/pplr/bin"
+   # Data directory (where your contacts are stored)
+   export PPLR_DATA="$HOME/Dropbox/Career/People"
+   export PPLR_DIR="$PPLR_DATA"  # Legacy compatibility
    ```
 3. Add the bin directory to your PATH:
    ```bash
    export PATH="$PATH:$PPLR_BIN_DIR"
    ```
 
-**Note**: pplr separates code and data:
-- **Code**: Scripts and executables (this repository)
-- **Data**: Your personal contact database (`$PPLR_DIR`)
+**Important**: pplr separates code and data into two distinct directories:
+- **`PPLR_ROOT`**: Code, scripts, and configuration (this git repository)
+- **`PPLR_DATA`**: Your personal contact database (typically in Dropbox for sync)
 
 ## Directory Structure
 
-### Data Directory (`$PPLR_DIR`)
-Your personal contact database:
+### Code Repository (`$PPLR_ROOT`)
+This git repository contains:
+```
+Pplr/
+├── bin/                         # pplr scripts and executables
+│   ├── pplr                     # Main command
+│   ├── pplr_search              # Natural language search
+│   ├── pplr_new                 # Create new contacts
+│   ├── pplr_tag                 # Generate AI tags
+│   ├── pplr_reindex             # Rebuild indexes
+│   └── [other commands]
+├── templates/                   # Templates for new entries
+├── tests/                       # Test suite
+├── CHANGELOG.md                 # Change log
+├── CLAUDE.md                    # Instructions for Claude Code
+├── LICENSE.md                   # License information
+├── README.md                    # This file
+├── setup.sh                     # Setup script
+└── usage-rules.md               # Usage guidelines
+```
+
+### Data Directory (`$PPLR_DATA`)
+Your personal contact database (separate from git repo):
 ```
 People/
 ├── A-Z/                          # Alphabetical directories
@@ -59,19 +85,7 @@ People/
 │   ├── index.json               # JSON index of all contacts
 │   ├── index.md                 # Markdown index of all contacts
 │   └── tags_index.json          # Optimized search context for Claude
-└── [other files]
-```
-
-### Code Directory (`$PPLR_BIN_DIR`)
-pplr scripts and executables:
-```
-bin/
-├── pplr                         # Main command
-├── pplr_search                  # Natural language search
-├── pplr_new                     # Create new contacts
-├── pplr_tag                     # Generate AI tags
-├── pplr_reindex                 # Rebuild indexes
-└── [other commands]
+└── [other data files]
 ```
 
 ## Commands
