@@ -19,6 +19,13 @@ if [ -z "$PPLR_DIR" ]; then
   exit 1
 fi
 
+# Check for version flags
+if [ "$#" -ge 1 ] && { [ "$1" = "-v" ] || [ "$1" = "--version" ]; }; then
+  # Run the version command
+  "$PPLR_BIN_DIR/pplr_version"
+  exit $?
+fi
+
 # Check if at least one argument is provided
 if [ "$#" -lt 1 ]; then
   echo "Usage: $script_name <cmd>"

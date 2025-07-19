@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# USAGE: display the pplr version
+
+# Set up environment variables
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+
+# Read and display version from VERSION.md
+if [ -f "$PPLR_ROOT/VERSION.md" ]; then
+    cat "$PPLR_ROOT/VERSION.md"
+else
+    echo "Version file not found"
+    exit 1
+fi
