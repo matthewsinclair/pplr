@@ -116,7 +116,9 @@ EOF
   }
   
   stop_spinner() {
-    kill $1 2>/dev/null
+    if kill $1 2>/dev/null; then
+      wait $1 2>/dev/null
+    fi
     printf "\r🔍 Searching with Claude... done!\n"
   }
   
