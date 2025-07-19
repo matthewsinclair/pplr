@@ -55,3 +55,21 @@ load test_helper
     [ "$status" -eq 0 ]
     assert_contains "$output" "2"
 }
+
+@test "pplr version displays version from VERSION.md" {
+    run "$PPLR_BIN_DIR/pplr" version
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "1.0.0"
+}
+
+@test "pplr -v displays version" {
+    run "$PPLR_BIN_DIR/pplr" -v
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "1.0.0"
+}
+
+@test "pplr --version displays version" {
+    run "$PPLR_BIN_DIR/pplr" --version
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "1.0.0"
+}
