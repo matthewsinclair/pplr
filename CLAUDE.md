@@ -9,17 +9,17 @@ The pplr (Peopler) system uses the following commonly used commands:
 ### Creating and Managing People Entries
 ```bash
 # Create a new person entry (with optional LinkedIn URL)
-pplr new "Smith" "John" "https://linkedin.com/in/johnsmith"
+pplr new "John" "Smith" "https://linkedin.com/in/johnsmith"
 
 # Search for people by name or content
 pplr search "keyword"
 pplr search "john"
 
 # Open a person's About file
-pplr open "Smith" "John"
+pplr open "John" "Smith"
 
 # Edit a person's About file
-pplr edit "Smith" "John"
+pplr edit "John" "Smith"
 ```
 
 ### Managing Meetings
@@ -40,7 +40,7 @@ pplr help
 pplr count
 
 # Copy a person's file path to clipboard
-pplr cp "Smith" "John"
+pplr cp "John" "Smith"
 
 # Regenerate index files (.index/index.md, .index/index.json, and .index/tags_index.json)
 pplr reindex
