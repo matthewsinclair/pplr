@@ -77,9 +77,6 @@ generate_tags() {
   
   echo "Generating tags for: $person_name"
   
-  # Create Index directory if it doesn't exist
-  mkdir -p "$person_dir/Index"
-  
   # Collect content
   content_file=$(collect_person_content "$person_dir")
   
