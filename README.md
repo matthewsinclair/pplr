@@ -74,13 +74,13 @@ People/
 │       │   ├── [Name] (LinkedIn).webloc
 │       │   ├── [Name] (Picture).[jpg|png]
 │       │   └── [Name] (Profile).pdf
-│       ├── Index/                # Generated data
+│       ├── .index/               # Generated data
 │       │   └── tags.json         # AI-generated tags
 │       ├── Meetings/             # Meeting records
 │       │   └── YYYYMMDD Meeting Name/
 │       │       └── YYYYMMDD Meeting Name.md
 │       └── Client/               # Client-specific data
-├── .index/                       # Search and indexing files
+├── .index/                       # Global search and indexing files
 │   ├── index.json                # JSON index of all contacts
 │   ├── index.md                  # Markdown index of all contacts
 │   └── tags_index.json           # Optimized search context for Claude
@@ -97,12 +97,12 @@ Create a new person entry with optional LinkedIn URL.
 pplr new "Smith" "John" "https://linkedin.com/in/johnsmith"
 ```
 
-#### `pplr search <query> [--tags]`
-Search for people using natural language queries.
+#### `pplr search <query>`
+Search for people using natural language queries powered by Claude AI.
 ```bash
-pplr search "people in fintech"              # Full-text search
-pplr search "film production" --tags         # Fast tag-based search
-pplr search "meetings about AI last month"   # Meeting search
+pplr search "people in fintech"              # Natural language search
+pplr search "film production founders"       # Industry and role search  
+pplr search "engineers I should reconnect with"  # Smart recommendations
 ```
 
 #### `pplr open "Surname" "Firstname"`
@@ -177,12 +177,19 @@ Copy a person's directory path to clipboard.
 pplr cp "Smith" "John"
 ```
 
-#### `pplr reindex [--tags]`
-Regenerate index files and optionally all tags.
+#### `pplr reindex [options]`
+Regenerate index files and optionally tags with intelligent regeneration.
 ```bash
-pplr reindex         # Just indexes
-pplr reindex --tags  # Indexes and tags
+pplr reindex                              # Just indexes
+pplr reindex --tags                       # Indexes and regenerate all tags
+pplr reindex --tags --stale-only          # Only regenerate missing/old tags
+pplr reindex --tags --stale-only --max-age=7d   # Custom staleness threshold
 ```
+
+Options:
+- `--tags`: Generate tags using Claude AI
+- `--stale-only`: Only regenerate tags that are missing or older than max-age
+- `--max-age=N`: Set maximum age for stale detection (e.g., 30d, 7days, 2weeks)
 
 #### `pplr help [command]`
 Show help for all commands or a specific command.
@@ -205,6 +212,21 @@ Set pictures as folder icons for all people directories.
 ```bash
 pplr setpicsfordirs
 ```
+
+## Migration Tools
+
+#### `pplr migrate_tags [--force]`
+Migrate individual tag files from old `Index/tags.json` to new `.index/tags.json` location.
+```bash
+pplr migrate_tags        # Preview migration
+pplr migrate_tags --force # Execute migration
+```
+
+This tool:
+- Creates `.index/` directories for each person
+- Copies `Index/tags.json` to `.index/tags.json`
+- Validates JSON integrity before removing old files
+- Removes empty `Index/` directories
 
 ## AI-Powered Features
 
@@ -300,16 +322,33 @@ Attendees: [[Smith, John]], [[Doe, Jane]]
 
 ### Search returns no results
 - Run `pplr reindex` to rebuild indexes
-- For tag search, ensure tags exist: `pplr tag "Name" -s`
+- Ensure tags exist: `pplr tag "Name" -s`
 - Generate tags if needed: `pplr tag --all`
+- Check if `.index/tags_index.json` exists and is recent
 
 ### Claude/AI features not working
-- Ensure Claude CLI is installed: `~/.claude/local/claude`
-- Check Claude is accessible: `echo "test" | claude`
+- Ensure Claude CLI is installed and in PATH
+- Check Claude is accessible: `which claude` and `echo "test" | claude`
+- If using a mock for testing, ensure `PPLR_TEST_DATA` is not set in production
 
 ### Permission errors
 - Check file permissions in PPLR_DIR
 - Ensure scripts are executable: `chmod +x $PPLR_BIN_DIR/pplr_*`
+
+## Recent Changes (July 2025)
+
+### Directory Structure Update
+Individual tag files have moved from `Index/tags.json` to `.index/tags.json` for better organization:
+- Old: `People/S/Smith, John/Index/tags.json`
+- New: `People/S/Smith, John/.index/tags.json`
+
+**Migration**: Run `pplr migrate_tags` to automatically migrate existing tag files.
+
+### Enhanced Features
+- **Natural Language Search**: Now powered by Claude AI by default (no --tags flag needed)
+- **Smart Tag Regeneration**: `pplr reindex --tags --stale-only` only updates old/missing tags
+- **Improved Performance**: Optimized search context reduces API calls
+- **Better Error Handling**: Graceful fallback when Claude is unavailable
 
 ## Contributing
 

@@ -45,6 +45,12 @@ pplr cp "Smith" "John"
 # Regenerate index files (.index/index.md, .index/index.json, and .index/tags_index.json)
 pplr reindex
 
+# Regenerate indexes and all tags
+pplr reindex --tags
+
+# Only regenerate stale tags (missing or older than 30 days)
+pplr reindex --tags --stale-only
+
 # Generate JSON index
 pplr json
 ```
@@ -67,6 +73,8 @@ People/
 │       │   ├── [Name] (LinkedIn).webloc
 │       │   ├── [Name] (Picture).[jpg|png|etc]
 │       │   └── [Name] (Profile).pdf
+│       ├── .index/
+│       │   └── tags.json    # AI-generated tags for this person
 │       ├── Meetings/
 │       └── Client/
 ├── _Templates/
@@ -89,3 +97,11 @@ People/
 - `PPLR_BIN_DIR`: Binary directory location
 
 When modifying the codebase, maintain consistency with the existing bash script style and ensure all person entries follow the established directory structure.
+
+## Recent Changes (July 2025)
+
+- Individual tag files moved from `Index/tags.json` to `.index/tags.json`
+- Natural language search is now the default (no `--tags` flag needed)
+- Added intelligent tag regeneration with `--stale-only` flag
+- Enhanced test infrastructure with proper mock Claude handling
+- Migration tool available: `bin/pplr_migrate_tags`
