@@ -37,4 +37,4 @@ fi
 
 # Clean up test data
 echo "Cleaning up test data..."
-rm -rf "$PPLR_TEST_DATA"/*
+rm -rf "$PPLR_TEST_DATA"
