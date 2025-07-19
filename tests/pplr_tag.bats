@@ -26,16 +26,16 @@ teardown() {
     run "$PPLR_BIN_DIR/pplr" tag "Tagger" "Tim"
     [ "$status" -eq 0 ]
     
-    assert_file_exists "$PPLR_TEST_DATA/T/Tagger, Tim/Index/tags.json"
+    assert_file_exists "$PPLR_TEST_DATA/T/Tagger, Tim/.index/tags.json"
     assert_contains "$output" "Tags saved"
 }
 
 @test "pplr tag shows existing tags" {
     local person_dir=$(create_test_person "Tagged" "Teresa")
-    mkdir -p "$person_dir/Index"
+    mkdir -p "$person_dir/.index"
     
     # Create existing tags
-    cat > "$person_dir/Index/tags.json" << EOF
+    cat > "$person_dir/.index/tags.json" << EOF
 {
   "profile_tags": ["existing", "tags"],
   "meeting_tags": ["meeting-tag"],
@@ -64,10 +64,10 @@ EOF
     run "$PPLR_BIN_DIR/pplr" tag "Smith" -g
     [ "$status" -eq 0 ]
     
-    assert_file_exists "$PPLR_TEST_DATA/S/Smith, John/Index/tags.json"
-    assert_file_exists "$PPLR_TEST_DATA/S/Smith, Jane/Index/tags.json"
+    assert_file_exists "$PPLR_TEST_DATA/S/Smith, John/.index/tags.json"
+    assert_file_exists "$PPLR_TEST_DATA/S/Smith, Jane/.index/tags.json"
     # Jones should not have tags
-    [ ! -f "$PPLR_TEST_DATA/J/Jones, Bob/Index/tags.json" ]
+    [ ! -f "$PPLR_TEST_DATA/J/Jones, Bob/.index/tags.json" ]
 }
 
 @test "pplr tag creates valid JSON" {
@@ -76,7 +76,7 @@ EOF
     run "$PPLR_BIN_DIR/pplr" tag "Json" "Jerry"
     [ "$status" -eq 0 ]
     
-    local tags_file="$PPLR_TEST_DATA/J/Json, Jerry/Index/tags.json"
+    local tags_file="$PPLR_TEST_DATA/J/Json, Jerry/.index/tags.json"
     
     # Verify it's valid JSON
     run jq . "$tags_file"

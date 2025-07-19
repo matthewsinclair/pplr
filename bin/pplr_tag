@@ -179,9 +179,12 @@ EOF
   
   # Validate JSON
   if echo "$json" | jq . >/dev/null 2>&1; then
+    # Create .index directory if it doesn't exist
+    mkdir -p "$person_dir/.index"
+    
     # Save to tags.json
-    echo "$json" | jq . > "$person_dir/Index/tags.json"
-    echo "✓ Tags saved to $person_dir/Index/tags.json"
+    echo "$json" | jq . > "$person_dir/.index/tags.json"
+    echo "✓ Tags saved to $person_dir/.index/tags.json"
     
     # Display tags
     echo "Profile tags: $(echo "$json" | jq -r '.profile_tags | join(", ")')"
@@ -202,9 +205,9 @@ show_tags() {
   local person_dir="$1"
   local person_name="$2"
   
-  if [ -f "$person_dir/Index/tags.json" ]; then
+  if [ -f "$person_dir/.index/tags.json" ]; then
     echo "Tags for $person_name:"
-    cat "$person_dir/Index/tags.json" | jq .
+    cat "$person_dir/.index/tags.json" | jq .
   else
     echo "No tags found for $person_name"
     echo "Use 'pplr tag \"$2\" \"$3\"' to generate tags"

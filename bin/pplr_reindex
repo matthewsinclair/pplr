@@ -63,7 +63,7 @@ generate_tags_index() {
     # Get tags from tags.json
     local profile_tags='[]'
     local meeting_tags='[]'
-    local tags_file="$person_dir/Index/tags.json"
+    local tags_file="$person_dir/.index/tags.json"
     if [ -f "$tags_file" ] && [ -s "$tags_file" ]; then
       # Validate JSON first
       if jq empty "$tags_file" 2>/dev/null; then

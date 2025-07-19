@@ -1,0 +1,128 @@
+#!/bin/bash
+
+# USAGE: Migrate individual tag files from Index/tags.json to .index/tags.json
+# USAGE: This script moves all individual tag files to the new .index location
+
+## Default location of PPLR_DIR if not already set
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+
+# Check if PPLR_DIR exists
+if [ ! -d "$PPLR_DIR" ]; then
+  echo "Error: PPLR_DIR ($PPLR_DIR) does not exist."
+  exit 1
+fi
+
+# Function to migrate tags for a single person
+migrate_person_tags() {
+  local person_dir="$1"
+  local old_tags_file="$person_dir/Index/tags.json"
+  local new_index_dir="$person_dir/.index"
+  local new_tags_file="$new_index_dir/tags.json"
+  
+  # Check if old tags file exists
+  if [ ! -f "$old_tags_file" ]; then
+    return 0
+  fi
+  
+  # Create new .index directory if it doesn't exist
+  if [ ! -d "$new_index_dir" ]; then
+    mkdir -p "$new_index_dir"
+  fi
+  
+  # Check if new tags file already exists
+  if [ -f "$new_tags_file" ]; then
+    echo "Warning: $new_tags_file already exists, skipping migration for $(basename "$person_dir")"
+    return 0
+  fi
+  
+  # Copy the tags file to new location
+  if cp "$old_tags_file" "$new_tags_file"; then
+    echo "✓ Migrated tags for $(basename "$person_dir")"
+    
+    # Verify the copy was successful by checking JSON validity
+    if jq . "$new_tags_file" >/dev/null 2>&1; then
+      # Remove the old file only if copy was successful and valid
+      rm "$old_tags_file"
+      
+      # Remove old Index directory if it's empty
+      if [ -d "$person_dir/Index" ] && [ -z "$(ls -A "$person_dir/Index")" ]; then
+        rmdir "$person_dir/Index"
+        echo "  └─ Removed empty Index directory"
+      fi
+    else
+      echo "Error: Failed to validate JSON for $(basename "$person_dir"), keeping original file"
+      rm "$new_tags_file"
+      return 1
+    fi
+  else
+    echo "Error: Failed to copy tags file for $(basename "$person_dir")"
+    return 1
+  fi
+}
+
+# Main execution
+echo "Starting migration of individual tag files from Index/tags.json to .index/tags.json"
+echo ""
+
+# Count existing files
+total_files=$(find "$PPLR_DIR" -name "tags.json" -path "*/Index/tags.json" | wc -l | tr -d ' ')
+echo "Found $total_files individual tag files to migrate"
+echo ""
+
+if [ "$total_files" -eq 0 ]; then
+  echo "No tag files found to migrate."
+  exit 0
+fi
+
+# Ask for confirmation unless --force flag is provided
+if [ "$1" != "--force" ]; then
+  echo "This will:"
+  echo "  1. Create .index/ directories for each person"
+  echo "  2. Copy Index/tags.json to .index/tags.json"
+  echo "  3. Remove original Index/tags.json files"
+  echo "  4. Remove empty Index/ directories"
+  echo ""
+  read -p "Continue with migration? (y/N): " confirm
+  if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+    echo "Migration cancelled."
+    exit 0
+  fi
+  echo ""
+fi
+
+# Perform migration
+migrated_count=0
+error_count=0
+
+# Iterate through all person directories (A-Z/Surname, Firstname/)
+for letter_dir in "$PPLR_DIR"/*; do
+  if [ -d "$letter_dir" ]; then
+    for person_dir in "$letter_dir"/*; do
+      if [ -d "$person_dir" ] && [ -f "$person_dir/Index/tags.json" ]; then
+        if migrate_person_tags "$person_dir"; then
+          ((migrated_count++))
+        else
+          ((error_count++))
+        fi
+      fi
+    done
+  fi
+done
+
+echo ""
+echo "Migration completed:"
+echo "  ✓ Successfully migrated: $migrated_count files"
+if [ "$error_count" -gt 0 ]; then
+  echo "  ✗ Errors encountered: $error_count files"
+  exit 1
+else
+  echo "  ✗ Errors encountered: 0 files"
+fi
+
+echo ""
+echo "All individual tag files have been migrated to .index/tags.json"
+echo "Next steps:"
+echo "  1. Update scripts to reference .index/tags.json"
+echo "  2. Test the migration with: pplr search <query>"
+echo "  3. Regenerate global tags index: pplr reindex"

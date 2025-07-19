@@ -211,7 +211,7 @@ fallback_search() {
     fi
   else
     # Fall back to searching individual tag files
-    find "$PPLR_DIR" -path "*/_Templates" -prune -o -path "*/Index/tags.json" -type f -print | while read -r tag_file; do
+    find "$PPLR_DIR" -path "*/_Templates" -prune -o -path "*/.index/tags.json" -type f -print | while read -r tag_file; do
       person_dir=$(dirname "$(dirname "$tag_file")")
       person_name=$(basename "$person_dir")
       
