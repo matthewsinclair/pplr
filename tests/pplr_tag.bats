@@ -23,7 +23,7 @@ teardown() {
 @test "pplr tag generates tags for one person" {
     create_test_person "Tagger" "Tim"
     
-    run "$PPLR_BIN_DIR/pplr" tag "Tagger" "Tim"
+    run "$PPLR_BIN_DIR/pplr" tag "Tim" "Tagger"
     [ "$status" -eq 0 ]
     
     assert_file_exists "$PPLR_TEST_DATA/T/Tagger, Tim/.index/tags.json"
@@ -44,14 +44,14 @@ teardown() {
 }
 EOF
     
-    run "$PPLR_BIN_DIR/pplr" tag "Tagged" "Teresa" -s
+    run "$PPLR_BIN_DIR/pplr" tag "Teresa" "Tagged" -s
     [ "$status" -eq 0 ]
     assert_contains "$output" "existing"
     assert_contains "$output" "meeting-tag"
 }
 
 @test "pplr tag handles non-existent person" {
-    run "$PPLR_BIN_DIR/pplr" tag "Nobody" "Exists"
+    run "$PPLR_BIN_DIR/pplr" tag "Exists" "Nobody"
     [ "$status" -ne 0 ]
     assert_contains "$output" "not found"
 }
@@ -73,7 +73,7 @@ EOF
 @test "pplr tag creates valid JSON" {
     create_test_person "Json" "Jerry"
     
-    run "$PPLR_BIN_DIR/pplr" tag "Json" "Jerry"
+    run "$PPLR_BIN_DIR/pplr" tag "Jerry" "Json"
     [ "$status" -eq 0 ]
     
     local tags_file="$PPLR_TEST_DATA/J/Json, Jerry/.index/tags.json"
