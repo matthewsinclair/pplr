@@ -91,10 +91,10 @@ People/
 
 ### Core Commands
 
-#### `pplr new "Surname" "Firstname" [LinkedIn-URL]`
+#### `pplr new <firstname> <surname> [LinkedIn-URL]`
 Create a new person entry with optional LinkedIn URL.
 ```bash
-pplr new "Smith" "John" "https://linkedin.com/in/johnsmith"
+pplr new "John" "Smith" "https://linkedin.com/in/johnsmith"
 ```
 
 #### `pplr search <query>`
@@ -105,11 +105,16 @@ pplr search "film production founders"       # Industry and role search
 pplr search "engineers I should reconnect with"  # Smart recommendations
 ```
 
-#### `pplr open "Surname" "Firstname"`
-Open a person's About file in your default editor.
+#### `pplr open [-t type] <firstname> <surname>`
+Open a person's file in your default application.
 ```bash
-pplr open "Smith" "John"
+pplr open "John" "Smith"                    # Open About file (default)
+pplr open -t linkedin "John" "Smith"         # Open LinkedIn profile
+pplr open -t profile "John" "Smith"          # Open PDF profile
 ```
+
+Options:
+- `-t, --type`: File type to open (about, linkedin, profile)
 
 #### `pplr meetings [start-date] [end-date]`
 Find meetings within a date range.
@@ -121,7 +126,7 @@ pplr meetings                           # Recent meetings
 
 ### Tag Management
 
-#### `pplr tag "Surname" "Firstname"`
+#### `pplr tag <surname> <firstname>`
 Generate AI-powered tags for a specific person.
 ```bash
 pplr tag "Smith" "John"
@@ -139,7 +144,7 @@ Generate tags for everyone in the database (takes time).
 pplr tag --all
 ```
 
-#### `pplr tag "Surname" "Firstname" -s`
+#### `pplr tag <surname> <firstname> -s`
 Show existing tags for a person.
 ```bash
 pplr tag "Smith" "John" -s
@@ -159,22 +164,22 @@ Count total number of people in the database.
 pplr count
 ```
 
-#### `pplr edit "Surname" "Firstname"`
+#### `pplr edit <firstname> <surname>`
 Edit a person's About file.
 ```bash
-pplr edit "Smith" "John"
+pplr edit "John" "Smith"
 ```
 
-#### `pplr linkedin "Surname" "Firstname"`
+#### `pplr linkedin <firstname> <surname>`
 Open a person's LinkedIn profile in your browser.
 ```bash
-pplr linkedin "Smith" "John"
+pplr linkedin "John" "Smith"
 ```
 
-#### `pplr cp "Surname" "Firstname"`
+#### `pplr cp <firstname> <surname>`
 Copy a person's directory path to clipboard.
 ```bash
-pplr cp "Smith" "John"
+pplr cp "John" "Smith"
 ```
 
 #### `pplr reindex [options]`
@@ -199,12 +204,24 @@ pplr help search    # Specific command
 pplr help --details # Show this README
 ```
 
+#### `pplr about <firstname> <surname>`
+Display a person's About file content in the terminal.
+```bash
+pplr about "John" "Smith"
+```
+
+#### `pplr index`
+Generate the markdown index of all people.
+```bash
+pplr index > index.md
+```
+
 ### Visual Commands
 
-#### `pplr applyicons "Surname" "Firstname"`
+#### `pplr applyicons <firstname> <surname>`
 Apply the person's picture as their folder icon (macOS).
 ```bash
-pplr applyicons "Smith" "John"
+pplr applyicons "John" "Smith"
 ```
 
 #### `pplr setpicsfordirs`
