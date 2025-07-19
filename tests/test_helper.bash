@@ -387,24 +387,12 @@ fi
 EOF
     chmod +x "$mock_claude_dir/claude"
     
-    # Also create the home directory mock for double coverage
-    mkdir -p "$HOME/.claude/local"
-    cat > "$HOME/.claude/local/claude" << 'EOF'
-#!/bin/bash
-# Mock claude for testing
-cat << 'RESPONSE'
-{
-  "profile_tags": ["test", "mock", "person"],
-  "meeting_tags": ["test-meeting", "mock-meeting"],
-  "generated_at": "2024-01-01T00:00:00Z",
-  "version": "1.0"
-}
-RESPONSE
-EOF
-    chmod +x "$HOME/.claude/local/claude"
+    # Note: We do NOT create a mock in the real home directory
+    # Tests should only use the mock in PPLR_TEST_DATA/.mock_bin
 }
 
 # Remove mock claude
 remove_mock_claude() {
-    rm -f "$HOME/.claude/local/claude"
+    # Mock claude is in the test directory and cleaned up automatically
+    true
 }
