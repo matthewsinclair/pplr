@@ -213,21 +213,6 @@ Set pictures as folder icons for all people directories.
 pplr setpicsfordirs
 ```
 
-## Migration Tools
-
-#### `pplr migrate_tags [--force]`
-Migrate individual tag files from old `Index/tags.json` to new `.index/tags.json` location.
-```bash
-pplr migrate_tags        # Preview migration
-pplr migrate_tags --force # Execute migration
-```
-
-This tool:
-- Creates `.index/` directories for each person
-- Copies `Index/tags.json` to `.index/tags.json`
-- Validates JSON integrity before removing old files
-- Removes empty `Index/` directories
-
 ## AI-Powered Features
 
 ### Tag System
@@ -338,11 +323,8 @@ Attendees: [[Smith, John]], [[Doe, Jane]]
 ## Recent Changes (July 2025)
 
 ### Directory Structure Update
-Individual tag files have moved from `Index/tags.json` to `.index/tags.json` for better organization:
-- Old: `People/S/Smith, John/Index/tags.json`
-- New: `People/S/Smith, John/.index/tags.json`
-
-**Migration**: Run `pplr migrate_tags` to automatically migrate existing tag files.
+Individual tag files are now stored in `.index/tags.json` for better organization:
+- Location: `People/S/Smith, John/.index/tags.json`
 
 ### Enhanced Features
 - **Natural Language Search**: Now powered by Claude AI by default (no --tags flag needed)

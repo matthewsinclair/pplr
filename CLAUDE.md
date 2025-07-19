@@ -104,4 +104,3 @@ When modifying the codebase, maintain consistency with the existing bash script 
 - Natural language search is now the default (no `--tags` flag needed)
 - Added intelligent tag regeneration with `--stale-only` flag
 - Enhanced test infrastructure with proper mock Claude handling
-- Migration tool available: `bin/pplr_migrate_tags`

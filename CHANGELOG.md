@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Smart tag regeneration with `--stale-only` flag for `pplr reindex`
 - Configurable staleness threshold with `--max-age` option (e.g., 30d, 7days, 2weeks)
-- Migration tool `pplr_migrate_tags` for moving tag files to new location
 - Enhanced test coverage with proper mock Claude handling
 - Comprehensive documentation updates
 
