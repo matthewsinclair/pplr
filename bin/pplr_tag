@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # USAGE: Generate tags for a person using Claude AI analysis
-# USAGE: <surname> <firstname> generate tags for one person
+# USAGE: <firstname> <surname> generate tags for one person
 # USAGE: <partial-name> -g|--generate generate tags for all matching people
 # USAGE: --all generate tags for everyone
 
@@ -15,10 +15,10 @@
 # Function to display usage
 usage() {
   echo "Usage:"
-  echo "  pplr tag \"Surname\" \"Firstname\"    Generate tags for one person"
+  echo "  pplr tag \"Firstname\" \"Surname\"    Generate tags for one person"
   echo "  pplr tag \"name\" -g|--generate      Generate tags for all matching people"
   echo "  pplr tag --all                     Generate tags for everyone"
-  echo "  pplr tag \"Surname\" \"Firstname\" -s  Show existing tags"
+  echo "  pplr tag \"Firstname\" \"Surname\" -s  Show existing tags"
   exit 1
 }
 
@@ -210,7 +210,7 @@ show_tags() {
     cat "$person_dir/.index/tags.json" | jq .
   else
     echo "No tags found for $person_name"
-    echo "Use 'pplr tag \"$2\" \"$3\"' to generate tags"
+    echo "Use 'pplr tag' to generate tags"
   fi
 }
 
@@ -252,8 +252,8 @@ elif [ "$#" -eq 2 ] && { [ "$2" = "-g" ] || [ "$2" = "--generate" ]; }; then
   
 elif [ "$#" -eq 3 ] && [ "$3" = "-s" ]; then
   # Show existing tags
-  surname="$1"
-  firstname="$2"
+  firstname="$1"
+  surname="$2"
   person_dir=$(find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d -name "${surname}, ${firstname}" ! -path "*/_Templates*" | head -1)
   
   if [ -n "$person_dir" ] && [ -d "$person_dir" ]; then
@@ -265,8 +265,8 @@ elif [ "$#" -eq 3 ] && [ "$3" = "-s" ]; then
   
 elif [ "$#" -eq 2 ]; then
   # Generate tags for one person
-  surname="$1"
-  firstname="$2"
+  firstname="$1"
+  surname="$2"
   person_dir=$(find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d -name "${surname}, ${firstname}" ! -path "*/_Templates*" | head -1)
   
   if [ -n "$person_dir" ] && [ -d "$person_dir" ]; then

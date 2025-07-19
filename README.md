@@ -1,5 +1,7 @@
 # pplr - Personal Relationship Manager
 
+[![Tests](https://github.com/matthewsinclair/Pplr/actions/workflows/test.yml/badge.svg)](https://github.com/matthewsinclair/Pplr/actions/workflows/test.yml)
+
 A command-line personal relationship management (PRM) system for organising professional contacts, meetings, and relationships.
 
 ## Overview
@@ -126,10 +128,10 @@ pplr meetings                           # Recent meetings
 
 ### Tag Management
 
-#### `pplr tag <surname> <firstname>`
+#### `pplr tag <firstname> <surname>`
 Generate AI-powered tags for a specific person.
 ```bash
-pplr tag "Smith" "John"
+pplr tag "John" "Smith"
 ```
 
 #### `pplr tag <partial-name> -g|--generate`
@@ -144,10 +146,10 @@ Generate tags for everyone in the database (takes time).
 pplr tag --all
 ```
 
-#### `pplr tag <surname> <firstname> -s`
+#### `pplr tag <firstname> <surname> -s`
 Show existing tags for a person.
 ```bash
-pplr tag "Smith" "John" -s
+pplr tag "John" "Smith" -s
 ```
 
 ### Utility Commands
