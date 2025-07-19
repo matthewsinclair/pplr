@@ -15,11 +15,45 @@
 CURRENT_DIR=$(pwd)
 cd $PPLR_DIR
 
-# Check for --tags flag
+# Parse command line arguments
 generate_tags=0
-if [ "$1" = "--tags" ]; then
-  generate_tags=1
-fi
+stale_only=0
+max_age_days=30
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --tags)
+      generate_tags=1
+      shift
+      ;;
+    --stale-only)
+      stale_only=1
+      shift
+      ;;
+    --max-age=*)
+      max_age_spec="${1#*=}"
+      # Parse age specification (e.g., 30d, 7days, 2weeks)
+      if [[ "$max_age_spec" =~ ^([0-9]+)d?$ ]]; then
+        max_age_days="${BASH_REMATCH[1]}"
+      elif [[ "$max_age_spec" =~ ^([0-9]+)days?$ ]]; then
+        max_age_days="${BASH_REMATCH[1]}"
+      elif [[ "$max_age_spec" =~ ^([0-9]+)weeks?$ ]]; then
+        max_age_days=$((${BASH_REMATCH[1]} * 7))
+      else
+        echo "Error: Invalid age format '$max_age_spec'. Use formats like: 30d, 7days, 2weeks"
+        exit 1
+      fi
+      shift
+      ;;
+    *)
+      echo "Usage: pplr reindex [--tags] [--stale-only] [--max-age=30d]"
+      echo "  --tags        Generate tags for all people"
+      echo "  --stale-only  Only regenerate tags that are missing or older than max-age"
+      echo "  --max-age=N   Set the maximum age for stale detection (default: 30d)"
+      exit 1
+      ;;
+  esac
+done
 
 # Create .index directory for search context
 mkdir -p .index
@@ -93,13 +127,102 @@ generate_tags_index() {
 
 generate_tags_index > .index/tags_index.json
 
+# Function to check if tags are stale
+is_tags_stale() {
+  local person_dir="$1"
+  local tags_file="$person_dir/.index/tags.json"
+  
+  # If tags file doesn't exist, it's stale
+  if [ ! -f "$tags_file" ]; then
+    return 0  # true - is stale
+  fi
+  
+  # If not checking staleness, consider it current
+  if [ $stale_only -eq 0 ]; then
+    return 1  # false - not stale (regenerate anyway)
+  fi
+  
+  # Check if file is older than max_age_days
+  local file_age_days
+  if command -v stat >/dev/null 2>&1; then
+    # macOS/BSD stat
+    if stat -f "%m" "$tags_file" >/dev/null 2>&1; then
+      local file_mtime=$(stat -f "%m" "$tags_file")
+    else
+      # Linux stat
+      local file_mtime=$(stat -c "%Y" "$tags_file")
+    fi
+    local current_time=$(date +%s)
+    file_age_days=$(( (current_time - file_mtime) / 86400 ))
+  else
+    # Fallback: assume file is old if we can't check
+    return 0  # true - is stale
+  fi
+  
+  if [ $file_age_days -gt $max_age_days ]; then
+    return 0  # true - is stale
+  else
+    return 1  # false - not stale
+  fi
+}
+
 # Generate tags if requested
 if [ $generate_tags -eq 1 ]; then
   echo ""
-  echo "Generating tags for all people..."
-  $PPLR_BIN_DIR/pplr_tag --all
+  if [ $stale_only -eq 1 ]; then
+    echo "Generating tags for people with missing or stale tags (older than ${max_age_days} days)..."
+    
+    # Count stale people first
+    stale_count=0
+    total_count=0
+    
+    for letter_dir in [A-Z]; do
+      if [ -d "$letter_dir" ]; then
+        for person_dir in "$letter_dir"/*; do
+          if [ -d "$person_dir" ]; then
+            total_count=$((total_count + 1))
+            if is_tags_stale "$person_dir"; then
+              stale_count=$((stale_count + 1))
+            fi
+          fi
+        done
+      fi
+    done
+    
+    echo "Found $stale_count people with stale tags out of $total_count total people"
+    
+    if [ $stale_count -eq 0 ]; then
+      echo "All tags are up to date!"
+    else
+      echo ""
+      # Generate tags only for stale people
+      for letter_dir in [A-Z]; do
+        if [ -d "$letter_dir" ]; then
+          for person_dir in "$letter_dir"/*; do
+            if [ -d "$person_dir" ]; then
+              if is_tags_stale "$person_dir"; then
+                person_name=$(basename "$person_dir")
+                echo "Regenerating tags for: $person_name"
+                
+                # Extract surname and firstname for pplr_tag
+                if [[ "$person_name" =~ ^([^,]+),\ (.+)$ ]]; then
+                  surname="${BASH_REMATCH[1]}"
+                  firstname="${BASH_REMATCH[2]}"
+                  $PPLR_BIN_DIR/pplr_tag "$surname" "$firstname"
+                fi
+              fi
+            fi
+          done
+        fi
+      done
+    fi
+  else
+    echo "Generating tags for all people..."
+    $PPLR_BIN_DIR/pplr_tag --all
+  fi
   
   # Regenerate tags index after generating new tags
+  echo ""
   echo "Updating tags index after tag generation..."
   generate_tags_index > .index/tags_index.json
 fi
