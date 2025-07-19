@@ -7,48 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Smart tag regeneration with `--stale-only` flag for `pplr reindex`
-- Configurable staleness threshold with `--max-age` option (e.g., 30d, 7days, 2weeks)
-- Enhanced test coverage with proper mock Claude handling
-- Comprehensive documentation updates
-
-### Changed
-- **BREAKING**: Individual tag files moved from `Index/tags.json` to `.index/tags.json`
-- Natural language search now default behavior (removed `--tags` flag requirement)
-- Search results now include clickable markdown links to About files
-- Improved mock Claude detection to prevent false positives in production
-- Test infrastructure uses absolute paths for better reliability
-
-### Fixed
-- Fixed all failing tests (31/31 now passing)
-- Fixed mock Claude detection bug that prevented tag generation
-- Fixed test helper path resolution issues
-- Fixed search fallback behavior when Claude is unavailable
-- Fixed JSON validation in tag generation tests
-
-### Performance
-- Optimized search context file (`tags_index.json`) to ~116KB for faster Claude queries
-- Smart tag regeneration reduces unnecessary API calls
-- Improved search response times with better fallback handling
-
-## [1.0.0] - 2025-07-18
+## [1.0.0] - 2025-07-19
 
 ### Added
 - Initial release of pplr (Personal Relationship Manager)
-- Core commands: new, search, open, meetings, edit
+- Core commands: new, search, open, meetings, edit, tag, reindex, count, cp, linkedin, about, index
 - AI-powered tagging system using Claude
-- Tag-based search functionality
+- Natural language search functionality powered by Claude AI
+- Smart tag regeneration with `--stale-only` flag for `pplr reindex`
+- Configurable staleness threshold with `--max-age` option (e.g., 30d, 7days, 2weeks)
 - Comprehensive help system with --details flag
-- BATS test suite
+- BATS test suite with 31 tests
+- GitHub Actions CI/CD for automated testing
 - Separated code and data directories
 - Environment variable configuration
+- Search results with clickable markdown links to About files
 
-### Changed
-- Renamed `pplr_search` to `pplr_grep` for simple text search
-- New `pplr_search` now supports natural language queries
-- Updated directory structure to separate code from data
+### Architecture
+- Individual tag files stored in `.index/tags.json` for better organization
+- Optimized search context file (`tags_index.json`) ~116KB for efficient Claude queries
+- Test infrastructure uses absolute paths for better reliability
+- Improved mock Claude detection to prevent false positives in production
 
 ### Fixed
-- Fixed hardcoded paths in scripts
-- Improved error handling in tag generation
+- All parameters now use consistent firstname-surname order
+- Mock Claude detection bug that prevented tag generation
+- Test helper path resolution issues
+- Search fallback behavior when Claude is unavailable
+- Spinner termination message ("Terminated: 15") in search output
+
+### Performance
+- Smart tag regeneration reduces unnecessary API calls
+- Improved search response times with better fallback handling
+- Optimized directory structure for faster file access
