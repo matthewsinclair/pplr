@@ -167,7 +167,7 @@ EOF
   echo ""
   
   echo "$json_response" | jq -r --arg pplr_dir "$PPLR_DIR" '.results[] | 
-    "👤 [" + .name + "](" + $pplr_dir + "/" + .path + "/About/" + (.name | gsub(" "; " ")) + " (About).md)" + 
+    "👤 [" + .name + "](<" + $pplr_dir + "/" + .path + "/About/" + (.name | gsub(" "; " ")) + " \\(About\\).md>)" + 
     (if .role != "" then "\n   " + .role else "" end) +
     (if .company != "" then "\n   at " + .company else "" end) +
     "\n   → " + .explanation +
@@ -201,7 +201,7 @@ fallback_search() {
        )] | 
        unique_by(.name) |
        .[] |
-       "👤 [" + .name + "](" + $pplr_dir + "/" + .path + "/About/" + (.name | gsub(" "; " ")) + " (About).md)" +
+       "👤 [" + .name + "](<" + $pplr_dir + "/" + .path + "/About/" + (.name | gsub(" "; " ")) + " \\(About\\).md>)" +
        (if .role != "" then "\n   " + .role else "" end) +
        (if .company != "" then "\n   at " + .company else "" end) +
        "\n"

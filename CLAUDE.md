@@ -36,8 +36,17 @@ pplr meetings 2024-03-15
 # Show help for all commands
 pplr help
 
+# Show version
+pplr version
+pplr -v
+pplr --version
+
 # Count total number of people
 pplr count
+
+# Text search through files
+pplr grep "keyword"
+pplr grep -t "python"  # Search in tag files
 
 # Copy a person's file path to clipboard
 pplr cp "John" "Smith"

@@ -154,11 +154,15 @@ pplr tag "John" "Smith" -s
 
 ### Utility Commands
 
-#### `pplr grep <text>`
-Simple text search through all files (formerly pplr search).
+#### `pplr grep [options] <text>`
+Text search through people files or tag files.
 ```bash
-pplr grep "conference"
+pplr grep "conference"              # Search in markdown files
+pplr grep -t "python"               # Search in tag files
+pplr grep --tag "backend engineer"  # Search in tag files (long form)
 ```
+Options:
+- `-t, --tag`: Search in tag files instead of markdown files
 
 #### `pplr count`
 Count total number of people in the database.
@@ -182,6 +186,14 @@ pplr linkedin "John" "Smith"
 Copy a person's directory path to clipboard.
 ```bash
 pplr cp "John" "Smith"
+```
+
+#### `pplr version`
+Display the current version of pplr.
+```bash
+pplr version     # Shows version number
+pplr -v          # Short form
+pplr --version   # Long form
 ```
 
 #### `pplr reindex [options]`
