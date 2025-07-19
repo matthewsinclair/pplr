@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2025-07-19
+
+### Added
+- `pplr version` command to display current version
+- `-v` and `--version` flags to main pplr command for quick version checking
+- `-t|--tag` option to `pplr grep` for searching within tag files
+
+### Changed
+- Updated `pplr grep` output format to match `pplr search` format with person links and role/company info
+- Improved markdown URL formatting in `pplr search` and `pplr grep` to use angle brackets and escape parentheses
+
+### Fixed
+- Markdown links now properly render in all markdown viewers by escaping special characters
+- Test suite updated to dynamically read version from VERSION.md instead of hardcoding
+
 ## [1.0.0] - 2025-07-19
 
 ### Added

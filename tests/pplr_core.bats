@@ -57,19 +57,25 @@ load test_helper
 }
 
 @test "pplr version displays version from VERSION.md" {
+    # Read expected version from VERSION.md
+    expected_version=$(cat "$PPLR_ROOT/VERSION.md")
     run "$PPLR_BIN_DIR/pplr" version
     [ "$status" -eq 0 ]
-    assert_contains "$output" "1.0.0"
+    assert_contains "$output" "$expected_version"
 }
 
 @test "pplr -v displays version" {
+    # Read expected version from VERSION.md
+    expected_version=$(cat "$PPLR_ROOT/VERSION.md")
     run "$PPLR_BIN_DIR/pplr" -v
     [ "$status" -eq 0 ]
-    assert_contains "$output" "1.0.0"
+    assert_contains "$output" "$expected_version"
 }
 
 @test "pplr --version displays version" {
+    # Read expected version from VERSION.md
+    expected_version=$(cat "$PPLR_ROOT/VERSION.md")
     run "$PPLR_BIN_DIR/pplr" --version
     [ "$status" -eq 0 ]
-    assert_contains "$output" "1.0.0"
+    assert_contains "$output" "$expected_version"
 }
