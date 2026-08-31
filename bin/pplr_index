@@ -50,7 +50,11 @@ for letter_dir in "$BASE_DIR"/*; do
         person_name=$(basename "$person_dir")
 
         # Extract Firstname and Surname
-        IFS=', ' read -r surname firstname <<< "$person_name"
+        # Split on the comma only. Using IFS=', ' also splits on spaces,
+        # which mangles multi-word surnames ("de Vries, Anna",
+        # "van Dijk, Pieter", "Ap Rhys, Owen").
+        surname="${person_name%%,*}"
+        firstname="${person_name#*, }"
 
         # Form the correct about file name
         about_file="$firstname $surname (About).md"

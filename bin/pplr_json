@@ -49,10 +49,33 @@ for letter_dir in "$BASE_DIR"/*; do
                 first_person=false
 
                 person_name=$(basename "$person_dir")
-                about_file="$person_dir/About/${person_name} (About).md"
-                linkedin_file="$person_dir/About/${person_name} (LinkedIn).webloc"
-                picture_file="$person_dir/About/${person_name} (Picture).png"
-                profile_file="$person_dir/About/${person_name} (Profile).pdf"
+
+                # Person dirs are "Surname, Firstname" but the files inside About/
+                # are named "Firstname Surname (...)". Derive the file stem the same
+                # way pplr_index does, rather than reusing the directory name.
+                # Split on the comma only. Using IFS=', ' also splits on spaces,
+                # which mangles multi-word surnames ("de Vries, Anna",
+                # "van Dijk, Pieter", "Ap Rhys, Owen").
+                surname="${person_name%%,*}"
+                firstname="${person_name#*, }"
+                file_stem="$firstname $surname"
+
+                about_file="$person_dir/About/${file_stem} (About).md"
+                linkedin_file="$person_dir/About/${file_stem} (LinkedIn).webloc"
+                profile_file="$person_dir/About/${file_stem} (Profile).pdf"
+
+                # Pictures are mostly .jpg but sometimes .png, so probe rather
+                # than assuming a single extension.
+                picture_file=""
+                for ext in jpg png jpeg; do
+                    if [ -f "$person_dir/About/${file_stem} (Picture).$ext" ]; then
+                        picture_file="$person_dir/About/${file_stem} (Picture).$ext"
+                        break
+                    fi
+                done
+                if [ -z "$picture_file" ]; then
+                    picture_file="$person_dir/About/${file_stem} (Picture).jpg"
+                fi
 
                 # Emit person entry
                 echo -n "{ \"name\": \"$person_name\", \"about\": {"
@@ -64,6 +87,8 @@ for letter_dir in "$BASE_DIR"/*; do
                 # Handle meetings
                 first_meeting=true
                 for meeting_dir in "$person_dir/Meetings"/*; do
+                    # Skip housekeeping dirs such as _Archive; they are not meetings.
+                    case "$(basename "$meeting_dir")" in _*) continue ;; esac
                     if [ -d "$meeting_dir" ]; then
                         if [ "$first_meeting" != true ]; then
                             echo ','
@@ -71,7 +96,19 @@ for letter_dir in "$BASE_DIR"/*; do
                         first_meeting=false
 
                         meeting_id=$(basename "$meeting_dir")
-                        meeting_details="$meeting_dir/${meeting_id}.md"
+
+                        # Older meetings keep their notes in "<meeting id>.md";
+                        # newer ones split into Summary.md and Notes.md. Prefer
+                        # the legacy single file, then Summary, then Notes.
+                        if [ -f "$meeting_dir/${meeting_id}.md" ]; then
+                            meeting_details="$meeting_dir/${meeting_id}.md"
+                        elif [ -f "$meeting_dir/Summary.md" ]; then
+                            meeting_details="$meeting_dir/Summary.md"
+                        elif [ -f "$meeting_dir/Notes.md" ]; then
+                            meeting_details="$meeting_dir/Notes.md"
+                        else
+                            meeting_details="$meeting_dir/${meeting_id}.md"
+                        fi
                         echo -n "{ \"id\": \"$meeting_id\", \"details\": \"$meeting_details\" }"
                     fi
                 done
