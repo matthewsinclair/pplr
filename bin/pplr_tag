@@ -3,7 +3,7 @@
 # USAGE: Generate tags for a person using Claude AI analysis
 # USAGE: <firstname> <surname> generate tags for one person
 # USAGE: <partial-name> -g|--generate generate tags for all matching people
-# USAGE: --all generate tags for everyone
+# USAGE: --all generate tags for everyone missing them (--all --force regenerates all)
 
 ## Default location of PPLR_DIR if not already set
 : "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
@@ -17,7 +17,8 @@ usage() {
   echo "Usage:"
   echo "  pplr tag \"Firstname\" \"Surname\"    Generate tags for one person"
   echo "  pplr tag \"name\" -g|--generate      Generate tags for all matching people"
-  echo "  pplr tag --all                     Generate tags for everyone"
+  echo "  pplr tag --all                     Generate tags for everyone missing them"
+  echo "  pplr tag --all -f|--force          Regenerate tags for everyone"
   echo "  pplr tag \"Firstname\" \"Surname\" -s  Show existing tags"
   exit 1
 }
@@ -217,9 +218,18 @@ if [ "$1" = "--all" ]; then
   echo "Generating tags for all people..."
   count=0
   
+  # Skip people who already have tags unless --force is given: tag generation
+  # is a per-person Claude call, so a re-run over everyone is expensive.
+  force=0
+  [ "$2" = "-f" ] || [ "$2" = "--force" ] && force=1
+
   find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d ! -path "*/_Templates*" | while read -r person_dir; do
     if [ -d "$person_dir/About" ]; then
       person_name=$(basename "$person_dir")
+      if [ -f "$person_dir/.index/tags.json" ] && [ "$force" -eq 0 ]; then
+        echo "Skipping $person_name (tags exist; use --all --force to regenerate)"
+        continue
+      fi
       generate_tags "$person_dir" "$person_name"
       ((count++))
       echo "---"
