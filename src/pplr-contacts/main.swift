@@ -387,9 +387,9 @@ func backup(to dir: String, fixture: String?) throws -> String {
     return path
 }
 
-func applyFixture(_ plan: LinkPlan, group: String, fixture: String) throws {
+func applyFixture(_ plan: LinkPlan, group: String, fixture: String, limit: Int?) throws {
     var cards = try JSONDecoder().decode([Card].self, from: Data(contentsOf: URL(fileURLWithPath: fixture)))
-    for p in plan.toLink {
+    for p in plan.toLink.prefix(limit ?? Int.max) {
         guard let i = cards.firstIndex(where: { $0.id == p.contact }) else { continue }
         if !p.hasMarker { cards[i].urls.append(LabelledValue(label: "pplr", value: markerURL(p.person))) }
         if !cards[i].groups.contains(group) { cards[i].groups.append(group) }
@@ -399,7 +399,7 @@ func applyFixture(_ plan: LinkPlan, group: String, fixture: String) throws {
     try enc.encode(cards).write(to: URL(fileURLWithPath: fixture))
 }
 
-func applyLive(_ plan: LinkPlan, group: String) throws {
+func applyLive(_ plan: LinkPlan, group: String, limit: Int?) throws {
     let store = openStore()
     var groups: [String: CNGroup] = [:]   // container id -> the group in it
     func groupIn(_ container: String) throws -> CNGroup {
@@ -414,21 +414,34 @@ func applyLive(_ plan: LinkPlan, group: String) throws {
         groups[container] = made
         return made
     }
-    for p in plan.toLink {
+    var linked = 0, failed = 0
+    defer { print("  written \(linked), failed \(failed)") }
+    for p in plan.toLink.prefix(limit ?? Int.max) {
         guard let container = try store.containers(matching: CNContainer.predicateForContainerOfContact(withIdentifier: p.contact)).first else {
             print("  skipped \(p.person): no container for its card"); continue
         }
-        let c = try store.unifiedContact(withIdentifier: p.contact,
-                                         keysToFetch: [CNContactIdentifierKey as CNKeyDescriptor, CNContactUrlAddressesKey as CNKeyDescriptor])
-        let req = CNSaveRequest()
-        if !p.hasMarker {
-            let m = c.mutableCopy() as! CNMutableContact
-            m.urlAddresses.append(CNLabeledValue(label: "pplr", value: markerURL(p.person) as NSString))
-            req.update(m)
+        // One change per save request: an update and a group membership in the
+        // same request failed in CoreData (Cocoa error 134092) on the first card.
+        let keys = [CNContactIdentifierKey, CNContactUrlAddressesKey].map { $0 as CNKeyDescriptor }
+        do {
+            if !p.hasMarker {
+                let m = try store.unifiedContact(withIdentifier: p.contact, keysToFetch: keys).mutableCopy() as! CNMutableContact
+                m.urlAddresses.append(CNLabeledValue(label: "pplr", value: markerURL(p.person) as NSString))
+                let req = CNSaveRequest(); req.update(m)
+                try store.execute(req)
+            }
+            if !p.inGroup {
+                let c = try store.unifiedContact(withIdentifier: p.contact, keysToFetch: keys)
+                let req = CNSaveRequest(); req.addMember(c, to: try groupIn(container.identifier))
+                try store.execute(req)
+            }
+            if !p.hasWebloc { try writeWebloc(p.webloc, p.contact) }
+            linked += 1
+        } catch {
+            print("  FAILED \(p.person): \(error.localizedDescription)")
+            failed += 1
+            if failed >= 3 { print("  stopping after three failures"); break }
         }
-        if !p.inGroup { req.addMember(c, to: try groupIn(container.identifier)) }
-        if !p.hasMarker || !p.inGroup { try store.execute(req) }
-        if !p.hasWebloc { try writeWebloc(p.webloc, p.contact) }
     }
 }
 
@@ -522,6 +535,7 @@ let asJSON = flag("--json")
 let verbose = flag("--verbose") || flag("-v")
 let apply = flag("--apply")
 let allNames = flag("--all-names")
+let limit = take("--limit").flatMap(Int.init)
 let backupDir = take("--backup-dir")
 var names: [String] = []
 while let n = take("--name") { names.append(n) }
@@ -551,7 +565,7 @@ do {
         if apply && !plan.toLink.isEmpty {
             guard let backupDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "--apply needs --backup-dir"]) }
             backupPath = try backup(to: backupDir, fixture: fixture)
-            if let fixture { try applyFixture(plan, group: group, fixture: fixture) } else { try applyLive(plan, group: group) }
+            if let fixture { try applyFixture(plan, group: group, fixture: fixture, limit: limit) } else { try applyLive(plan, group: group, limit: limit) }
         }
         printPlan(plan, group: group, applied: apply, backupPath: backupPath)
     default:

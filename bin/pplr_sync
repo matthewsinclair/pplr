@@ -6,6 +6,7 @@
 # USAGE: --backup         save every Contacts card to a dated .vcf in $PPLR_BACKUP_DIR
 # USAGE: [--apply]        with --link: write, after a .vcf backup of every card
 # USAGE: [--name NAME]    with --link: also link this name-only match ("Surname, First"; repeatable)
+# USAGE: [--limit N]      with --link --apply: write only the first N (to try it on one card)
 # USAGE: [--all-names]    with --link: also link every name-only match
 # USAGE: [--json]         the report as JSON
 # USAGE: [-v|--verbose]   also list everyone only in pplr
@@ -29,6 +30,7 @@ usage() {
   echo "  --backup        Save every Contacts card to a dated .vcf in \$PPLR_BACKUP_DIR"
   echo "  --apply         With --link, write (a dry run otherwise); every card is saved to a .vcf first"
   echo "  --name NAME     With --link, also link this name-only match (repeatable)"
+  echo "  --limit N       With --link --apply, write only the first N"
   echo "  --all-names     With --link, also link every name-only match"
   echo "  --json          Print the report as JSON"
   echo "  -v, --verbose   Also list everyone who is only in pplr"
@@ -55,6 +57,7 @@ while [[ $# -gt 0 ]]; do
     --apply) pass+=(--apply); shift ;;
     --name) pass+=(--name "$2"); shift 2 ;;
     --all-names) pass+=(--all-names); shift ;;
+    --limit) pass+=(--limit "$2"); shift 2 ;;
     --json) pass+=(--json); shift ;;
     -v|--verbose) pass+=(--verbose); shift ;;
     --group) pass+=(--group "$2"); shift 2 ;;
