@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `pplr sync --check`: a read-only comparison of pplr with Apple Contacts (linked, matched by email or LinkedIn, name-only, ambiguous, only in pplr, group orphans, and differing fields), with `--json`, `--verbose` and `--group`. The Contacts side is a Swift engine in `src/pplr-contacts/`, built on first use.
+- `pplr sync --link`: marks matched Contacts cards as pplr's with a `pplr` URL and the `PPLR` group; a dry run unless `--apply`, with `--name` and `--all-names` for name-only matches.
+- `pplr sync --backup`: every Contacts card to a dated `.vcf` in `$PPLR_BACKUP_DIR`; `--link --apply` runs it first.
 
 ## [1.0.1] - 2025-07-19
 

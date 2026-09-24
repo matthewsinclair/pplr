@@ -1,19 +1,29 @@
 // pplr-contacts: the Apple Contacts engine behind `pplr sync`.
 //
-// Read-only for now. `check` compares the pplr people tree with Contacts and
-// reports who is linked, who matches, who is missing on each side, and which
-// schema fields differ. Only the header fields of each About file take part:
-// name, Role, Company, Email, Phone and LinkedIn. Notes, bios and meetings
-// never leave pplr.
+// `check` compares the pplr people tree with Contacts and reports who is
+// linked, who matches, who is missing on each side, and which schema fields
+// differ. `link` marks matched cards as pplr's, and changes nothing else.
+// Only the header fields of each About file take part: name, Role, Company,
+// Email, Phone and LinkedIn. Notes, bios and meetings never leave pplr.
 //
-// Provenance in Contacts (for the later push): membership of the "PPLR" group,
-// plus a URL labelled "pplr" whose value is pplr://<Letter>/<Surname, First>,
-// which is also the stable link back to the person's folder.
+// Provenance in Contacts: membership of the "PPLR" group, plus a URL labelled
+// "pplr" whose value is pplr://<Letter>/<Surname,%20First>, which is also the
+// stable link back to the person's folder. `link` adds both.
 //
 // Usage:
 //   pplr-contacts check --people-dir DIR [--group NAME] [--json] [--verbose]
 //                       [--contacts-json FILE]
+//   pplr-contacts link  --people-dir DIR [--group NAME] [--apply]
+//                       [--name "Surname, First"]... [--all-names]
+//                       [--backup-dir DIR] [--contacts-json FILE]
+//   pplr-contacts backup --backup-dir DIR [--contacts-json FILE]
 //   pplr-contacts dump [--group NAME]
+//
+// `link` is a dry run unless --apply is given. It links the people matched by
+// email or LinkedIn, plus the name-only matches named with --name (or all of
+// them with --all-names); ambiguous people are never linked. Before writing it
+// saves every card to a dated .vcf in --backup-dir (notes excluded: macOS does
+// not give them to an unentitled tool).
 //
 // --contacts-json reads contacts from a file in the `dump` format instead of
 // the Contacts store, so the tests never need Contacts access.
@@ -155,10 +165,7 @@ func requestAccess(_ store: CNContactStore) -> Bool {
     }
 }
 
-func loadCards(fixture: String?) throws -> [Card] {
-    if let fixture {
-        return try JSONDecoder().decode([Card].self, from: Data(contentsOf: URL(fileURLWithPath: fixture)))
-    }
+func openStore() -> CNContactStore {
     let store = CNContactStore()
     guard requestAccess(store) else {
         FileHandle.standardError.write(Data("""
@@ -167,6 +174,14 @@ func loadCards(fixture: String?) throws -> [Card] {
         """.utf8))
         exit(3)
     }
+    return store
+}
+
+func loadCards(fixture: String?) throws -> [Card] {
+    if let fixture {
+        return try JSONDecoder().decode([Card].self, from: Data(contentsOf: URL(fileURLWithPath: fixture)))
+    }
+    let store = openStore()
     var membership: [String: [String]] = [:]
     for g in try store.groups(matching: nil) {
         let ids = try store.unifiedContacts(matching: CNContact.predicateForContactsInGroup(withIdentifier: g.identifier),
@@ -209,6 +224,7 @@ struct Pair: Codable {
     var contactName: String
     var how: String            // linked | email | linkedin | name
     var inGroup: Bool
+    var hasMarker: Bool
     var diffs: [FieldDiff]
 }
 
@@ -269,7 +285,8 @@ func check(people: [Person], cards: [Card], group: String) -> Report {
     func uniq(_ cs: [Card]) -> [Card] { var seen = Set<String>(); return cs.filter { seen.insert($0.id).inserted } }
     func pair(_ p: Person, _ c: Card, _ how: String) -> Pair {
         claimed.insert(c.id)
-        return Pair(person: p.key, contact: c.id, contactName: displayName(c), how: how, inGroup: c.groups.contains(group), diffs: diffs(p, c))
+        return Pair(person: p.key, contact: c.id, contactName: displayName(c), how: how, inGroup: c.groups.contains(group),
+                    hasMarker: pplrMarker(c) == p.key, diffs: diffs(p, c))
     }
     for p in people {
         if let c = byMarker[p.key] { r.linked.append(pair(p, c, "linked")); continue }
@@ -286,6 +303,130 @@ func check(people: [Person], cards: [Card], group: String) -> Report {
     r.groupOrphans = cards.filter { $0.groups.contains(group) && !claimed.contains($0.id) }.map { displayName($0) }.sorted()
     _ = byId
     return r
+}
+
+// MARK: - Link
+
+/// pplr://K/Kemp,%20Jon
+func markerURL(_ key: String) -> String {
+    "pplr://" + (key.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? key)
+}
+
+/// "Kemp, Jon" or "K/Kemp, Jon" -> "K/Kemp, Jon"
+func personKey(_ name: String) -> String {
+    name.contains("/") ? name : "\(name.prefix(1).uppercased())/\(name)"
+}
+
+struct LinkPlan: Codable {
+    var toLink: [Pair]          // the pairs that need a marker, the group, or both
+    var alreadyDone: Int
+    var namesSkipped: [String]  // name-only matches not confirmed
+    var unknownNames: [String]  // --name values that are not a name-only match
+    var ambiguous: [String]
+}
+
+func planLink(_ r: Report, names: [String], allNames: Bool) -> LinkPlan {
+    let wanted = Set(names.map(personKey))
+    let nameKeys = Set(r.nameOnly.map(\.person))
+    let confirmed = r.nameOnly.filter { allNames || wanted.contains($0.person) }
+    let all = r.linked + r.matched + confirmed
+    return LinkPlan(toLink: all.filter { !$0.hasMarker || !$0.inGroup },
+                    alreadyDone: all.filter { $0.hasMarker && $0.inGroup }.count,
+                    namesSkipped: r.nameOnly.filter { !(allNames || wanted.contains($0.person)) }.map(\.person),
+                    unknownNames: wanted.subtracting(nameKeys).subtracting((r.linked + r.matched).map(\.person)).sorted(),
+                    ambiguous: r.ambiguous.keys.sorted())
+}
+
+func stamp() -> String {
+    let f = DateFormatter(); f.dateFormat = "yyyyMMdd-HHmmss"; return f.string(from: Date())
+}
+
+/// Every card, before anything is written. Returns the file written.
+func backup(to dir: String, fixture: String?) throws -> String {
+    try FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
+    if let fixture {
+        let path = (dir as NSString).appendingPathComponent("\(stamp())-contacts.json")
+        try FileManager.default.copyItem(atPath: fixture, toPath: path)
+        return path
+    }
+    let store = openStore()
+    let keys: [CNKeyDescriptor] = [CNContactVCardSerialization.descriptorForRequiredKeys(),
+                                   CNContactImageDataKey as CNKeyDescriptor]
+    var all: [CNContact] = []
+    try store.enumerateContacts(with: CNContactFetchRequest(keysToFetch: keys)) { c, _ in all.append(c) }
+    let path = (dir as NSString).appendingPathComponent("\(stamp())-contacts.vcf")
+    try CNContactVCardSerialization.data(with: all).write(to: URL(fileURLWithPath: path))
+    return path
+}
+
+func applyFixture(_ plan: LinkPlan, group: String, fixture: String) throws {
+    var cards = try JSONDecoder().decode([Card].self, from: Data(contentsOf: URL(fileURLWithPath: fixture)))
+    for p in plan.toLink {
+        guard let i = cards.firstIndex(where: { $0.id == p.contact }) else { continue }
+        if !p.hasMarker { cards[i].urls.append(LabelledValue(label: "pplr", value: markerURL(p.person))) }
+        if !cards[i].groups.contains(group) { cards[i].groups.append(group) }
+    }
+    let enc = JSONEncoder(); enc.outputFormatting = [.prettyPrinted, .sortedKeys]
+    try enc.encode(cards).write(to: URL(fileURLWithPath: fixture))
+}
+
+func applyLive(_ plan: LinkPlan, group: String) throws {
+    let store = openStore()
+    var groups: [String: CNGroup] = [:]   // container id -> the group in it
+    func groupIn(_ container: String) throws -> CNGroup {
+        if let g = groups[container] { return g }
+        let existing = try store.groups(matching: CNGroup.predicateForGroupsInContainer(withIdentifier: container))
+        if let g = existing.first(where: { $0.name == group }) { groups[container] = g; return g }
+        let g = CNMutableGroup(); g.name = group
+        let req = CNSaveRequest(); req.add(g, toContainerWithIdentifier: container)
+        try store.execute(req)
+        let made = try store.groups(matching: CNGroup.predicateForGroupsInContainer(withIdentifier: container))
+            .first(where: { $0.name == group })!
+        groups[container] = made
+        return made
+    }
+    for p in plan.toLink {
+        guard let container = try store.containers(matching: CNContainer.predicateForContainerOfContact(withIdentifier: p.contact)).first else {
+            print("  skipped \(p.person): no container for its card"); continue
+        }
+        let c = try store.unifiedContact(withIdentifier: p.contact,
+                                         keysToFetch: [CNContactIdentifierKey as CNKeyDescriptor, CNContactUrlAddressesKey as CNKeyDescriptor])
+        let req = CNSaveRequest()
+        if !p.hasMarker {
+            let m = c.mutableCopy() as! CNMutableContact
+            m.urlAddresses.append(CNLabeledValue(label: "pplr", value: markerURL(p.person) as NSString))
+            req.update(m)
+        }
+        if !p.inGroup { req.addMember(c, to: try groupIn(container.identifier)) }
+        try store.execute(req)
+    }
+}
+
+func printPlan(_ plan: LinkPlan, group: String, applied: Bool, backupPath: String?) {
+    print(applied ? "pplr sync --link (applied)" : "pplr sync --link (dry run: nothing written; --apply to write)")
+    print("")
+    print("  to link                 \(plan.toLink.count)")
+    print("  already linked          \(plan.alreadyDone)")
+    print("  name only, not linked   \(plan.namesSkipped.count)")
+    print("  ambiguous, not linked   \(plan.ambiguous.count)")
+    if !plan.toLink.isEmpty {
+        print("\n\(applied ? "Linked" : "Would link") (adds the pplr URL and the \"\(group)\" group, nothing else):")
+        for p in plan.toLink {
+            var what: [String] = []
+            if !p.hasMarker { what.append("pplr URL") }
+            if !p.inGroup { what.append("group") }
+            print("  \(p.person)  <->  \(p.contactName)  [\(p.how); \(what.joined(separator: " + "))]")
+        }
+    }
+    if !plan.unknownNames.isEmpty {
+        print("\nNot a name-only match, so ignored:")
+        plan.unknownNames.forEach { print("  \($0)") }
+    }
+    if !plan.namesSkipped.isEmpty {
+        print("\nName-only matches left alone (confirm with --name \"Surname, First\", or --all-names):")
+        plan.namesSkipped.forEach { print("  \($0)") }
+    }
+    if let backupPath { print("\nBackup: \(backupPath)") }
 }
 
 // MARK: - Output
@@ -348,6 +489,11 @@ let fixture = take("--contacts-json")
 let peopleDir = take("--people-dir")
 let asJSON = flag("--json")
 let verbose = flag("--verbose") || flag("-v")
+let apply = flag("--apply")
+let allNames = flag("--all-names")
+let backupDir = take("--backup-dir")
+var names: [String] = []
+while let n = take("--name") { names.append(n) }
 
 do {
     switch cmd {
@@ -363,8 +509,22 @@ do {
             let enc = JSONEncoder(); enc.outputFormatting = [.prettyPrinted, .sortedKeys]
             print(String(data: try enc.encode(report), encoding: .utf8)!)
         } else { printReport(report, verbose: verbose) }
+    case "backup":
+        guard let backupDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "backup needs --backup-dir"]) }
+        print("Backup: \(try backup(to: backupDir, fixture: fixture))")
+    case "link":
+        guard let peopleDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "link needs --people-dir"]) }
+        let report = check(people: loadPeople(peopleDir), cards: try loadCards(fixture: fixture), group: group)
+        let plan = planLink(report, names: names, allNames: allNames)
+        var backupPath: String? = nil
+        if apply && !plan.toLink.isEmpty {
+            guard let backupDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "--apply needs --backup-dir"]) }
+            backupPath = try backup(to: backupDir, fixture: fixture)
+            if let fixture { try applyFixture(plan, group: group, fixture: fixture) } else { try applyLive(plan, group: group) }
+        }
+        printPlan(plan, group: group, applied: apply, backupPath: backupPath)
     default:
-        FileHandle.standardError.write(Data("usage: pplr-contacts check --people-dir DIR [--group NAME] [--json] [--verbose] [--contacts-json FILE]\n       pplr-contacts dump [--group NAME] [--only-group]\n".utf8))
+        FileHandle.standardError.write(Data("usage: pplr-contacts check --people-dir DIR [--group NAME] [--json] [--verbose] [--contacts-json FILE]\n       pplr-contacts link --people-dir DIR [--group NAME] [--apply] [--name NAME]... [--all-names] [--backup-dir DIR]\n       pplr-contacts dump [--group NAME] [--only-group]\n".utf8))
         exit(2)
     }
 } catch {

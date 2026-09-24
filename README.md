@@ -264,6 +264,23 @@ Only the About header fields take part: the name (from the folder), Role, Compan
 
 The Contacts side is a small Swift program, `src/pplr-contacts/main.swift`, built into `.build/` on first use. The first run asks for access to Contacts for the app running pplr (eg iTerm or Terminal).
 
+#### `pplr sync --link [options]`
+
+Mark the cards that match pplr people as pplr's: a URL labelled `pplr` (`pplr://<Letter>/<Surname,%20First>`) and membership of the `PPLR` group. Nothing else on the card changes. It is a dry run unless `--apply` is given.
+
+```bash
+pplr sync --link                               # Dry run: who would be linked
+pplr sync --link --apply                       # Link everyone matched by email or LinkedIn
+pplr sync --link --apply --name "Webb, Owen"    # Also link a confirmed name-only match (repeatable)
+pplr sync --link --apply --all-names           # Also link every name-only match
+```
+
+Ambiguous people (more than one possible card) are never linked. Running it again changes nothing for people already linked.
+
+#### `pplr sync --backup`
+
+Save every Contacts card to a dated `.vcf` in `$PPLR_BACKUP_DIR` (default `~/Library/Application Support/pplr/contacts-backups`). `--link --apply` does this first, every time. Apple's vCard export leaves out notes and photos, so keep a full Contacts Archive (File > Export > Contacts Archive) as well.
+
 #### `pplr help [command]`
 
 Show help for all commands or a specific command.

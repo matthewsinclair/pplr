@@ -1,7 +1,12 @@
 #!/bin/bash
 
-# USAGE: Compare pplr with Apple Contacts (read-only for now)
+# USAGE: Compare pplr with Apple Contacts, and link matched cards to pplr
 # USAGE: --check          report linked, matched, missing and differing people
+# USAGE: --link           mark matched cards as pplr's (a dry run without --apply)
+# USAGE: --backup         save every Contacts card to a dated .vcf in $PPLR_BACKUP_DIR
+# USAGE: [--apply]        with --link: write, after a .vcf backup of every card
+# USAGE: [--name NAME]    with --link: also link this name-only match ("Surname, First"; repeatable)
+# USAGE: [--all-names]    with --link: also link every name-only match
 # USAGE: [--json]         the report as JSON
 # USAGE: [-v|--verbose]   also list everyone only in pplr
 # USAGE: [--group NAME]   the Contacts group that marks pplr people (default PPLR)
@@ -9,6 +14,7 @@
 # Set up environment variables
 : "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
 : "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_BACKUP_DIR:=$HOME/Library/Application Support/pplr/contacts-backups}"
 : "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
 
 src="$PPLR_ROOT/src/pplr-contacts/main.swift"
@@ -16,7 +22,14 @@ engine="$PPLR_ROOT/.build/pplr-contacts"
 
 usage() {
   echo "Usage: pplr sync --check [--json] [-v|--verbose] [--group NAME]"
+  echo "       pplr sync --backup"
+  echo "       pplr sync --link [--apply] [--name \"Surname, First\"]... [--all-names] [--group NAME]"
   echo "  --check         Compare pplr with Apple Contacts; changes nothing"
+  echo "  --link          Mark matched cards as pplr's: the pplr URL and the group, nothing else"
+  echo "  --backup        Save every Contacts card to a dated .vcf in \$PPLR_BACKUP_DIR"
+  echo "  --apply         With --link, write (a dry run otherwise); every card is saved to a .vcf first"
+  echo "  --name NAME     With --link, also link this name-only match (repeatable)"
+  echo "  --all-names     With --link, also link every name-only match"
   echo "  --json          Print the report as JSON"
   echo "  -v, --verbose   Also list everyone who is only in pplr"
   echo "  --group NAME    The Contacts group that marks pplr people (default: PPLR)"
@@ -37,6 +50,11 @@ pass=()
 while [[ $# -gt 0 ]]; do
   case $1 in
     --check) mode="check"; shift ;;
+    --link) mode="link"; shift ;;
+    --backup) mode="backup"; shift ;;
+    --apply) pass+=(--apply); shift ;;
+    --name) pass+=(--name "$2"); shift 2 ;;
+    --all-names) pass+=(--all-names); shift ;;
     --json) pass+=(--json); shift ;;
     -v|--verbose) pass+=(--verbose); shift ;;
     --group) pass+=(--group "$2"); shift 2 ;;
@@ -53,6 +71,10 @@ fi
 # Tests point the engine at a fixture instead of the live Contacts store
 if [ -n "$PPLR_CONTACTS_JSON" ]; then
   pass+=(--contacts-json "$PPLR_CONTACTS_JSON")
+fi
+
+if [ "$mode" = "link" ] || [ "$mode" = "backup" ]; then
+  pass+=(--backup-dir "$PPLR_BACKUP_DIR")
 fi
 
 build_engine

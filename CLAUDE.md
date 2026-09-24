@@ -69,6 +69,8 @@ pplr json
 # Compare with Apple Contacts (read-only)
 pplr sync --check
 pplr sync --check --json
+pplr sync --link            # dry run; --apply writes, after a .vcf backup
+pplr sync --backup
 ```
 
 ## Codebase Architecture

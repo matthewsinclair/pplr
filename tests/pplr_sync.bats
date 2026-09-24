@@ -70,3 +70,47 @@ EOF
     [ "$status" -eq 0 ]
     assert_contains "$output" "N/Nobody, Nemo"
 }
+
+@test "pplr sync --link is a dry run by default" {
+    setup_contacts
+    before=$(cat "$PPLR_CONTACTS_JSON")
+    run "$PPLR_BIN_DIR/pplr" sync --link
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "dry run"
+    assert_contains "$output" "L/Lovelace, Ada"
+    [ "$(cat "$PPLR_CONTACTS_JSON")" = "$before" ]
+}
+
+@test "pplr sync --link --apply adds the marker and group, and backs up first" {
+    setup_contacts
+    export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
+    run "$PPLR_BIN_DIR/pplr" sync --link --apply
+    [ "$status" -eq 0 ]
+    [ "$(ls "$PPLR_BACKUP_DIR" | wc -l | tr -d ' ')" -eq 1 ]
+    marker=$(jq -r '.[] | select(.id == "c1") | .urls[] | select(.label == "pplr") | .value' "$PPLR_CONTACTS_JSON")
+    [ "$marker" = "pplr://L/Lovelace,%20Ada" ]
+    turing_groups=$(jq -r '.[] | select(.id == "c3") | .groups | join(",")' "$PPLR_CONTACTS_JSON")
+    [ "$turing_groups" = "PPLR" ]
+    hopper_groups=$(jq -r '.[] | select(.id == "c2") | .groups | length' "$PPLR_CONTACTS_JSON")
+    [ "$hopper_groups" -eq 0 ]
+}
+
+@test "pplr sync --link --name links a confirmed name-only match" {
+    setup_contacts
+    export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
+    run "$PPLR_BIN_DIR/pplr" sync --link --apply --name "Hopper, Grace"
+    [ "$status" -eq 0 ]
+    hopper_groups=$(jq -r '.[] | select(.id == "c2") | .groups | join(",")' "$PPLR_CONTACTS_JSON")
+    [ "$hopper_groups" = "PPLR" ]
+}
+
+@test "pplr sync --link --apply twice changes nothing the second time" {
+    setup_contacts
+    export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
+    "$PPLR_BIN_DIR/pplr" sync --link --apply
+    run "$PPLR_BIN_DIR/pplr" sync --link --apply
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "to link                 0"
+    urls=$(jq -r '.[] | select(.id == "c1") | .urls | length' "$PPLR_CONTACTS_JSON")
+    [ "$urls" -eq 1 ]
+}
