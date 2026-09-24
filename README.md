@@ -28,7 +28,7 @@ pplr (pronounced "peopler") is a CLI tool that helps you manage your professiona
    # Code/config directory (this git repository)
    export PPLR_ROOT="$HOME/Devel/prj/Pplr"
    export PPLR_BIN_DIR="$PPLR_ROOT/bin"
-   
+
    # Data directory (where your contacts are stored)
    export PPLR_DATA="$HOME/Dropbox/Career/People"
    export PPLR_DIR="$PPLR_DATA"  # Legacy compatibility
@@ -39,13 +39,16 @@ pplr (pronounced "peopler") is a CLI tool that helps you manage your professiona
    ```
 
 **Important**: pplr separates code and data into two distinct directories:
+
 - **`PPLR_ROOT`**: Code, scripts, and configuration (this git repository)
 - **`PPLR_DATA`**: Your personal contact database (typically in Dropbox for sync)
 
 ## Directory Structure
 
 ### Code Repository (`$PPLR_ROOT`)
+
 This git repository contains:
+
 ```
 Pplr/
 ├── bin/                         # pplr scripts and executables
@@ -66,7 +69,9 @@ Pplr/
 ```
 
 ### Data Directory (`$PPLR_DATA`)
+
 Your personal contact database (separate from git repo):
+
 ```
 People/
 ├── A-Z/                          # Alphabetical directories
@@ -94,21 +99,27 @@ People/
 ### Core Commands
 
 #### `pplr new <firstname> <surname> [LinkedIn-URL]`
+
 Create a new person entry with optional LinkedIn URL.
+
 ```bash
 pplr new "John" "Smith" "https://linkedin.com/in/johnsmith"
 ```
 
 #### `pplr search <query>`
+
 Search for people using natural language queries powered by Claude AI.
+
 ```bash
 pplr search "people in fintech"              # Natural language search
-pplr search "film production founders"       # Industry and role search  
+pplr search "film production founders"       # Industry and role search
 pplr search "engineers I should reconnect with"  # Smart recommendations
 ```
 
 #### `pplr open [-t type] <firstname> <surname>`
+
 Open a person's file in your default application.
+
 ```bash
 pplr open "John" "Smith"                    # Open About file (default)
 pplr open -t linkedin "John" "Smith"         # Open LinkedIn profile
@@ -116,10 +127,13 @@ pplr open -t profile "John" "Smith"          # Open PDF profile
 ```
 
 Options:
+
 - `-t, --type`: File type to open (about, linkedin, profile)
 
 #### `pplr meetings [start-date] [end-date]`
+
 Find meetings within a date range.
+
 ```bash
 pplr meetings 2024-01-01 2024-12-31    # All meetings in 2024
 pplr meetings 2024-03-15                # Meetings on specific date
@@ -129,25 +143,33 @@ pplr meetings                           # Recent meetings
 ### Tag Management
 
 #### `pplr tag <firstname> <surname>`
+
 Generate AI-powered tags for a specific person.
+
 ```bash
 pplr tag "John" "Smith"
 ```
 
 #### `pplr tag <partial-name> -g|--generate`
+
 Generate tags for all people matching the partial name.
+
 ```bash
 pplr tag "Smith" -g    # Tag all Smiths
 ```
 
 #### `pplr tag --all`
+
 Generate tags for everyone in the database (takes time).
+
 ```bash
 pplr tag --all
 ```
 
 #### `pplr tag <firstname> <surname> -s`
+
 Show existing tags for a person.
+
 ```bash
 pplr tag "John" "Smith" -s
 ```
@@ -155,41 +177,55 @@ pplr tag "John" "Smith" -s
 ### Utility Commands
 
 #### `pplr grep [options] <text>`
+
 Text search through people files or tag files.
+
 ```bash
 pplr grep "conference"              # Search in markdown files
 pplr grep -t "python"               # Search in tag files
 pplr grep --tag "backend engineer"  # Search in tag files (long form)
 ```
+
 Options:
+
 - `-t, --tag`: Search in tag files instead of markdown files
 
 #### `pplr count`
+
 Count total number of people in the database.
+
 ```bash
 pplr count
 ```
 
 #### `pplr edit <firstname> <surname>`
+
 Edit a person's About file.
+
 ```bash
 pplr edit "John" "Smith"
 ```
 
 #### `pplr linkedin <firstname> <surname>`
+
 Open a person's LinkedIn profile in your browser.
+
 ```bash
 pplr linkedin "John" "Smith"
 ```
 
 #### `pplr cp <firstname> <surname>`
+
 Copy a person's directory path to clipboard.
+
 ```bash
 pplr cp "John" "Smith"
 ```
 
 #### `pplr version`
+
 Display the current version of pplr.
+
 ```bash
 pplr version     # Shows version number
 pplr -v          # Short form
@@ -197,7 +233,9 @@ pplr --version   # Long form
 ```
 
 #### `pplr reindex [options]`
+
 Regenerate index files and optionally tags with intelligent regeneration.
+
 ```bash
 pplr reindex                              # Just indexes
 pplr reindex --tags                       # Indexes and regenerate all tags
@@ -206,12 +244,30 @@ pplr reindex --tags --stale-only --max-age=7d   # Custom staleness threshold
 ```
 
 Options:
+
 - `--tags`: Generate tags using Claude AI
 - `--stale-only`: Only regenerate tags that are missing or older than max-age
 - `--max-age=N`: Set maximum age for stale detection (e.g., 30d, 7days, 2weeks)
 
+#### `pplr sync --check [options]`
+
+Compare pplr with Apple Contacts. Read-only: it changes nothing on either side.
+
+```bash
+pplr sync --check              # Summary, plus name-only, ambiguous and differing matches
+pplr sync --check --verbose    # Also list everyone who is only in pplr
+pplr sync --check --json       # The whole report as JSON
+pplr sync --check --group NAME # The Contacts group that marks pplr people (default: PPLR)
+```
+
+Only the About header fields take part: the name (from the folder), Role, Company, Email, Phone and LinkedIn. Bios, notes and meetings never leave pplr. People are matched in this order: a `pplr` URL on the card (`pplr://<Letter>/<Surname, First>`), then a shared email, then a shared LinkedIn profile, then the name alone, which is reported for you to confirm. Phones are compared as digits (UK numbers without a country code count as +44), and LinkedIn by profile slug.
+
+The Contacts side is a small Swift program, `src/pplr-contacts/main.swift`, built into `.build/` on first use. The first run asks for access to Contacts for the app running pplr (eg iTerm or Terminal).
+
 #### `pplr help [command]`
+
 Show help for all commands or a specific command.
+
 ```bash
 pplr help           # All commands
 pplr help search    # Specific command
@@ -219,13 +275,17 @@ pplr help --details # Show this README
 ```
 
 #### `pplr about <firstname> <surname>`
+
 Display a person's About file content in the terminal.
+
 ```bash
 pplr about "John" "Smith"
 ```
 
 #### `pplr index`
+
 Generate the markdown index of all people.
+
 ```bash
 pplr index > index.md
 ```
@@ -233,13 +293,17 @@ pplr index > index.md
 ### Visual Commands
 
 #### `pplr applyicons <firstname> <surname>`
+
 Apply the person's picture as their folder icon (macOS).
+
 ```bash
 pplr applyicons "John" "Smith"
 ```
 
 #### `pplr setpicsfordirs`
+
 Set pictures as folder icons for all people directories.
+
 ```bash
 pplr setpicsfordirs
 ```
@@ -251,12 +315,14 @@ pplr setpicsfordirs
 pplr uses Claude AI to analyse person profiles and meeting content to generate searchable tags:
 
 **Profile Tags** (from About files):
+
 - Professional roles: `cto`, `founder`, `engineer`
 - Industries: `fintech`, `healthcare`, `ai`
 - Skills: `machine-learning`, `product-management`
 - Company types: `startup`, `enterprise`
 
 **Meeting Tags** (from Meeting files):
+
 - Topics: `partnerships`, `funding`, `product-development`
 - Meeting types: `intro-meeting`, `follow-up`
 - Technologies: `kubernetes`, `blockchain`
@@ -265,6 +331,7 @@ pplr uses Claude AI to analyse person profiles and meeting content to generate s
 ### Smart Search
 
 The search command intelligently processes queries:
+
 - Industry matching: "film" finds "TV", "media", "entertainment"
 - Role matching: "tech" finds "CTO", "engineer", "developer"
 - Temporal queries: "recent meetings", "last month"
@@ -272,6 +339,7 @@ The search command intelligently processes queries:
 ## File Formats
 
 ### About File (Markdown)
+
 ```markdown
 verblock(<version>)
 
@@ -284,30 +352,36 @@ Email: john.smith@example.com
 Phone: +1-555-0123
 
 ## Bio
+
 John is a technology leader with 15 years of experience...
 ```
 
 ### Meeting File (Markdown)
+
 ```markdown
 verblock(<version>)
 
 # 20240315 Strategy Discussion
 
 ## Meeting Summary
+
 Purpose: Discuss Q2 technology strategy
 Date: 2024-03-15
 Attendees: [[Smith, John]], [[Doe, Jane]]
 
 ## Key Takeaways
+
 - Agreement on cloud migration timeline
 - Budget approved for new hires
 
 ## Action Items
+
 - [ ] John: Prepare technical roadmap
 - [ ] Jane: Review vendor proposals
 ```
 
 ### Tags File (JSON)
+
 ```json
 {
   "profile_tags": ["cto", "technology", "startup", "cloud-expert"],
@@ -328,36 +402,47 @@ Attendees: [[Smith, John]], [[Doe, Jane]]
 ## Requirements
 
 - **Operating System**: macOS (primary), Linux (partial support)
-- **Dependencies**: 
+- **Dependencies**:
   - bash 4.0+
   - jq (for JSON processing)
   - Claude CLI (for AI features)
+  - Swift (the Xcode command line tools, for `pplr sync`)
 - **Optional**: Dropbox for sync
 
 ## Troubleshooting
 
 ### Search returns no results
+
 - Run `pplr reindex` to rebuild indexes
 - Ensure tags exist: `pplr tag "Name" -s`
 - Generate tags if needed: `pplr tag --all`
 - Check if `.index/tags_index.json` exists and is recent
 
 ### Claude/AI features not working
+
 - Ensure Claude CLI is installed and in PATH
 - Check Claude is accessible: `which claude` and `echo "test" | claude`
 - If using a mock for testing, ensure `PPLR_TEST_DATA` is not set in production
 
+### `pplr sync` says it has no access to Contacts
+
+- Allow the terminal app in System Settings > Privacy & Security > Contacts, then run it again
+
 ### Permission errors
+
 - Check file permissions in PPLR_DIR
 - Ensure scripts are executable: `chmod +x $PPLR_BIN_DIR/pplr_*`
 
 ## Recent Changes (July 2025)
 
 ### Directory Structure Update
+
 Individual tag files are now stored in `.index/tags.json` for better organization:
+
 - Location: `People/S/Smith, John/.index/tags.json`
 
 ### Enhanced Features
+
 - **Natural Language Search**: Now powered by Claude AI by default (no --tags flag needed)
 - **Smart Tag Regeneration**: `pplr reindex --tags --stale-only` only updates old/missing tags
 - **Improved Performance**: Optimized search context reduces API calls

@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# USAGE: Compare pplr with Apple Contacts (read-only for now)
+# USAGE: --check          report linked, matched, missing and differing people
+# USAGE: [--json]         the report as JSON
+# USAGE: [-v|--verbose]   also list everyone only in pplr
+# USAGE: [--group NAME]   the Contacts group that marks pplr people (default PPLR)
+
+# Set up environment variables
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+
+src="$PPLR_ROOT/src/pplr-contacts/main.swift"
+engine="$PPLR_ROOT/.build/pplr-contacts"
+
+usage() {
+  echo "Usage: pplr sync --check [--json] [-v|--verbose] [--group NAME]"
+  echo "  --check         Compare pplr with Apple Contacts; changes nothing"
+  echo "  --json          Print the report as JSON"
+  echo "  -v, --verbose   Also list everyone who is only in pplr"
+  echo "  --group NAME    The Contacts group that marks pplr people (default: PPLR)"
+}
+
+# Build the Swift engine on first use, and again whenever its source changes
+build_engine() {
+  if [ ! -x "$engine" ] || [ "$src" -nt "$engine" ]; then
+    command -v swiftc >/dev/null 2>&1 || { echo "Error: swiftc not found. Install the Xcode command line tools: xcode-select --install"; exit 1; }
+    mkdir -p "$(dirname "$engine")"
+    echo "Building the Contacts engine..." >&2
+    swiftc -O -swift-version 5 -o "$engine" "$src" -framework Contacts >&2 || { echo "Error: could not build $src"; exit 1; }
+  fi
+}
+
+mode=""
+pass=()
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --check) mode="check"; shift ;;
+    --json) pass+=(--json); shift ;;
+    -v|--verbose) pass+=(--verbose); shift ;;
+    --group) pass+=(--group "$2"); shift 2 ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "Error: unknown option '$1'"; usage; exit 1 ;;
+  esac
+done
+
+if [ -z "$mode" ]; then
+  usage
+  exit 1
+fi
+
+# Tests point the engine at a fixture instead of the live Contacts store
+if [ -n "$PPLR_CONTACTS_JSON" ]; then
+  pass+=(--contacts-json "$PPLR_CONTACTS_JSON")
+fi
+
+build_engine
+"$engine" "$mode" --people-dir "$PPLR_DIR" "${pass[@]}"

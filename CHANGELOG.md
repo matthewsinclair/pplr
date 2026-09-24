@@ -7,24 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `pplr sync --check`: a read-only comparison of pplr with Apple Contacts (linked, matched by email or LinkedIn, name-only, ambiguous, only in pplr, group orphans, and differing fields), with `--json`, `--verbose` and `--group`. The Contacts side is a Swift engine in `src/pplr-contacts/`, built on first use.
+
 ## [1.0.1] - 2025-07-19
 
 ### Added
+
 - `pplr version` command to display current version
 - `-v` and `--version` flags to main pplr command for quick version checking
 - `-t|--tag` option to `pplr grep` for searching within tag files
 
 ### Changed
+
 - Updated `pplr grep` output format to match `pplr search` format with person links and role/company info
 - Improved markdown URL formatting in `pplr search` and `pplr grep` to use angle brackets and escape parentheses
 
 ### Fixed
+
 - Markdown links now properly render in all markdown viewers by escaping special characters
 - Test suite updated to dynamically read version from VERSION.md instead of hardcoding
 
 ## [1.0.0] - 2025-07-19
 
 ### Added
+
 - Initial release of pplr (Personal Relationship Manager)
 - Core commands: new, search, open, meetings, edit, tag, reindex, count, cp, linkedin, about, index
 - AI-powered tagging system using Claude
@@ -39,12 +47,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Search results with clickable markdown links to About files
 
 ### Architecture
+
 - Individual tag files stored in `.index/tags.json` for better organization
 - Optimized search context file (`tags_index.json`) ~116KB for efficient Claude queries
 - Test infrastructure uses absolute paths for better reliability
 - Improved mock Claude detection to prevent false positives in production
 
 ### Fixed
+
 - All parameters now use consistent firstname-surname order
 - Mock Claude detection bug that prevented tag generation
 - Test helper path resolution issues
@@ -52,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Spinner termination message ("Terminated: 15") in search output
 
 ### Performance
+
 - Smart tag regeneration reduces unnecessary API calls
 - Improved search response times with better fallback handling
 - Optimized directory structure for faster file access

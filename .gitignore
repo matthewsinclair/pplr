@@ -27,3 +27,6 @@ lotto-*.tar
 
 # No need to check in .obsidian files
 .obsidian
+
+# The compiled Contacts engine (built by pplr sync)
+/.build/
