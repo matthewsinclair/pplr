@@ -45,6 +45,7 @@ struct Card: Codable {
     var urls: [LabelledValue]
     var linkedin: [String]
     var groups: [String]
+    var account: String?       // "home" (iCloud, where the group lives), "other", or "none"; absent means home
 }
 
 struct LabelledValue: Codable {
@@ -194,6 +195,15 @@ func loadCards(fixture: String?) throws -> [Card] {
                                    CNContactOrganizationNameKey, CNContactJobTitleKey, CNContactEmailAddressesKey,
                                    CNContactPhoneNumbersKey, CNContactUrlAddressesKey, CNContactSocialProfilesKey]
         .map { $0 as CNKeyDescriptor }
+    // The PPLR group lives in the default account (iCloud) only; cards in
+    // other accounts are marked by the pplr URL alone
+    let home = store.defaultContainerIdentifier()
+    var account: [String: String] = [:]
+    for container in try store.containers(matching: nil) {
+        let ids = try store.unifiedContacts(matching: CNContact.predicateForContactsInContainer(withIdentifier: container.identifier),
+                                            keysToFetch: [CNContactIdentifierKey as CNKeyDescriptor])
+        for c in ids where account[c.identifier] != "home" { account[c.identifier] = container.identifier == home ? "home" : "other" }
+    }
     var cards: [Card] = []
     try store.enumerateContacts(with: CNContactFetchRequest(keysToFetch: keys)) { c, _ in
         let urls = c.urlAddresses.map { LabelledValue(label: $0.label.map { CNLabeledValue<NSString>.localizedString(forLabel: $0) } ?? "", value: $0.value as String) }
@@ -207,7 +217,8 @@ func loadCards(fixture: String?) throws -> [Card] {
                           organization: c.organizationName, jobTitle: c.jobTitle,
                           emails: c.emailAddresses.map { ($0.value as String).lowercased() },
                           phones: c.phoneNumbers.map { normalisePhone($0.value.stringValue) },
-                          urls: urls, linkedin: Array(Set(li)).sorted(), groups: membership[c.identifier] ?? []))
+                          urls: urls, linkedin: Array(Set(li)).sorted(), groups: membership[c.identifier] ?? [],
+                          account: account[c.identifier] ?? "none"))
     }
     return cards
 }
@@ -226,6 +237,8 @@ struct Pair: Codable {
     var contactName: String
     var how: String            // linked | email | linkedin | name
     var inGroup: Bool
+    var needsGroup: Bool       // an iCloud card not yet in the group
+    var noAccount: Bool        // a directory or Other Known card: nothing can be written
     var hasMarker: Bool        // the card's pplr URL is in the current form
     var markerStale: Bool      // the card has a pplr URL in an older form, to replace
     var webloc: String         // About/<First Surname> (Contacts).webloc
@@ -329,6 +342,8 @@ func check(people: [Person], cards: [Card], group: String) -> Report {
         claimed.insert(c.id)
         let w = weblocPath(p)
         return Pair(person: p.key, contact: c.id, contactName: displayName(c), how: how, inGroup: c.groups.contains(group),
+                    needsGroup: (c.account ?? "home") == "home" && !c.groups.contains(group),
+                    noAccount: c.account == "none",
                     hasMarker: pplrMarker(c) == markerPath(p.key),
                     markerStale: pplrMarker(c) != nil && pplrMarker(c) != markerPath(p.key), webloc: w, hasWebloc: weblocOpens(w, c.id), diffs: diffs(p, c))
     }
@@ -365,6 +380,7 @@ struct LinkPlan: Codable {
     var namesSkipped: [String]  // name-only matches not confirmed
     var unknownNames: [String]  // --name values that are not a name-only match
     var ambiguous: [String]
+    var noAccount: [String]     // matched, but the card cannot be written
 }
 
 func planLink(_ r: Report, names: [String], allNames: Bool) -> LinkPlan {
@@ -372,12 +388,13 @@ func planLink(_ r: Report, names: [String], allNames: Bool) -> LinkPlan {
     let nameKeys = Set(r.nameOnly.map(\.person))
     let confirmed = r.nameOnly.filter { allNames || wanted.contains($0.person) }
     let all = r.linked + r.matched + confirmed
-    let done = { (p: Pair) in p.hasMarker && p.inGroup && p.hasWebloc }
-    return LinkPlan(toLink: all.filter { !done($0) },
+    let done = { (p: Pair) in p.hasMarker && !p.needsGroup && p.hasWebloc }
+    return LinkPlan(toLink: all.filter { !done($0) && !$0.noAccount },
                     alreadyDone: all.filter(done).count,
                     namesSkipped: r.nameOnly.filter { !(allNames || wanted.contains($0.person)) }.map(\.person),
                     unknownNames: wanted.subtracting(nameKeys).subtracting((r.linked + r.matched).map(\.person)).sorted(),
-                    ambiguous: r.ambiguous.keys.sorted())
+                    ambiguous: r.ambiguous.keys.sorted(),
+                    noAccount: all.filter(\.noAccount).map(\.person))
 }
 
 func stamp() -> String {
@@ -410,7 +427,7 @@ func applyFixture(_ plan: LinkPlan, group: String, fixture: String, limit: Int?)
         if p.markerStale, let u = cards[i].urls.firstIndex(where: { $0.label.lowercased() == "pplr" || $0.value.hasPrefix("pplr://") }) {
             cards[i].urls[u].value = markerURL(p.person)
         } else if !p.hasMarker { cards[i].urls.append(LabelledValue(label: "pplr", value: markerURL(p.person))) }
-        if !cards[i].groups.contains(group) { cards[i].groups.append(group) }
+        if p.needsGroup { cards[i].groups.append(group) }
         if !p.hasWebloc { try writeWebloc(p.webloc, p.contact) }
         out.append((p.person, nil))
     }
@@ -478,16 +495,8 @@ func applyLive(_ plan: LinkPlan, group: String, limit: Int?) throws -> Outcome {
     for p in plan.toLink.prefix(limit ?? Int.max) {
         var error: String? = nil
         do {
-            var gid = ""
-            if !p.inGroup {
-                guard let container = try store.containers(matching: CNContainer.predicateForContainerOfContact(withIdentifier: p.contact)).first else {
-                    // A directory or "Other Known" card: nothing to write to
-                    out.append((p.person, skipped + "no account for the card (a directory or Other Known card?); link it by hand"))
-                    continue
-                }
-                gid = try groupIn(container.identifier).identifier
-            }
-            if !p.hasMarker || !p.inGroup {
+            let gid = p.needsGroup ? try groupIn(store.defaultContainerIdentifier()).identifier : ""
+            if !p.hasMarker || p.needsGroup {
                 error = osascript([p.contact, p.hasMarker ? "" : markerURL(p.person), gid, p.markerStale ? "yes" : "no"])
             }
             if error == nil && !p.hasWebloc { try writeWebloc(p.webloc, p.contact) }
@@ -498,36 +507,27 @@ func applyLive(_ plan: LinkPlan, group: String, limit: Int?) throws -> Outcome {
     return out
 }
 
-let skipped = "skipped: "
-func isSkip(_ e: String?) -> Bool { e?.hasPrefix(skipped) == true }
 
 func printPlan(_ plan: LinkPlan, group: String, outcome: Outcome?, backupPath: String?) {
     func what(_ p: Pair) -> String {
         var w: [String] = []
         if p.markerStale { w.append("pplr URL updated") } else if !p.hasMarker { w.append("pplr URL") }
-        if !p.inGroup { w.append("group") }
+        if p.needsGroup { w.append("group") }
         if !p.hasWebloc { w.append(".webloc") }
         return "[\(p.how); \(w.joined(separator: " + "))]"
     }
     let byPerson = Dictionary(uniqueKeysWithValues: plan.toLink.map { ($0.person, $0) })
     if let outcome {
-        let ok = outcome.filter { $0.error == nil }
-        let skip = outcome.filter { isSkip($0.error) }
-        let bad = outcome.filter { $0.error != nil && !isSkip($0.error) }
+        let ok = outcome.filter { $0.error == nil }, bad = outcome.filter { $0.error != nil }
         print("pplr sync --link --apply")
         print("")
         print("  linked now              \(ok.count)")
-        print("  skipped                 \(skip.count)")
         print("  failed                  \(bad.count)")
         print("  still to link           \(plan.toLink.count - ok.count)")
         print("  already linked          \(plan.alreadyDone)")
         if !ok.isEmpty {
-            print("\nLinked (the pplr URL and the \"\(group)\" group on the card; a (Contacts).webloc in About):")
+            print("\nLinked (the pplr URL on the card, the \"\(group)\" group for iCloud cards; a (Contacts).webloc in About):")
             ok.forEach { o in print("  \(o.person)  <->  \(byPerson[o.person]!.contactName)  \(what(byPerson[o.person]!))") }
-        }
-        if !skip.isEmpty {
-            print("\nSkipped:")
-            skip.forEach { print("  \($0.person): \($0.error!.dropFirst(skipped.count))") }
         }
         if !bad.isEmpty {
             print("\nFailed:")
@@ -542,9 +542,13 @@ func printPlan(_ plan: LinkPlan, group: String, outcome: Outcome?, backupPath: S
         print("  name only, not linked   \(plan.namesSkipped.count)")
         print("  ambiguous, not linked   \(plan.ambiguous.count)")
         if !plan.toLink.isEmpty {
-            print("\nWould link (the pplr URL and the \"\(group)\" group on the card, nothing else; a (Contacts).webloc in About):")
+            print("\nWould link (the pplr URL on the card, the \"\(group)\" group for iCloud cards, nothing else; a (Contacts).webloc in About):")
             plan.toLink.forEach { print("  \($0.person)  <->  \($0.contactName)  \(what($0))") }
         }
+    }
+    if !plan.noAccount.isEmpty {
+        print("\nMatched, but the card is in no account (a directory or Other Known card?), so cannot be linked:")
+        plan.noAccount.forEach { print("  \($0)") }
     }
     if !plan.unknownNames.isEmpty {
         print("\nNot a name-only match, so ignored:")
@@ -658,7 +662,7 @@ do {
             }
         }
         printPlan(plan, group: group, outcome: outcome, backupPath: backupPath)
-        if outcome?.contains(where: { $0.error != nil && !isSkip($0.error) }) == true { exit(1) }
+        if outcome?.contains(where: { $0.error != nil }) == true { exit(1) }
     default:
         FileHandle.standardError.write(Data("usage: pplr-contacts check --people-dir DIR [--group NAME] [--json] [--verbose] [--contacts-json FILE]\n       pplr-contacts link --people-dir DIR [--group NAME] [--apply] [--name NAME]... [--all-names] [--backup-dir DIR]\n       pplr-contacts dump [--group NAME] [--only-group]\n".utf8))
         exit(2)

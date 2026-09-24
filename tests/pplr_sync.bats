@@ -142,3 +142,21 @@ EOF
     urls=$(jq -r '.[] | select(.id == "c3") | [.urls[] | select(.label == "pplr") | .value] | join(",")' "$PPLR_CONTACTS_JSON")
     [ "$urls" = "pplr://t/turing-alan" ]
 }
+
+@test "pplr sync --link groups iCloud cards only, and never writes a card with no account" {
+    setup_contacts
+    export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
+    jq '(.[] | select(.id == "c1")).account = "other" | (.[] | select(.id == "c3")).account = "none"' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json"
+    mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
+    jq '(.[] | select(.id == "c1")).groups = []' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json"
+    mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
+    run "$PPLR_BIN_DIR/pplr" sync --link --apply
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "cannot be linked"
+    ada=$(jq -r '.[] | select(.id == "c1") | "\(.groups | length) \([.urls[] | select(.label == "pplr")] | length)"' "$PPLR_CONTACTS_JSON")
+    [ "$ada" = "0 1" ]
+    turing=$(jq -r '.[] | select(.id == "c3") | [.urls[] | select(.label == "pplr") | .value] | join(",")' "$PPLR_CONTACTS_JSON")
+    [ "$turing" = "pplr://T/Turing, Alan" ]
+    run "$PPLR_BIN_DIR/pplr" sync --link
+    assert_contains "$output" "to link                 0"
+}
