@@ -198,11 +198,34 @@ func loadCards(fixture: String?) throws -> [Card] {
     // The PPLR group lives in the default account (iCloud) only; cards in
     // other accounts are marked by the pplr URL alone
     let home = store.defaultContainerIdentifier()
-    var account: [String: String] = [:]
+    // The real cards, account by account. A person whose cards are linked
+    // across accounts comes back from the unified fetch with a merged id
+    // (no ":ABPerson"), which Contacts.app cannot address; such a card is
+    // resolved below to a real one, iCloud first.
+    struct Real { var id: String; var account: String; var emails: Set<String>; var name: String }
+    var reals: [Real] = []
     for container in try store.containers(matching: nil) {
-        let ids = try store.unifiedContacts(matching: CNContact.predicateForContactsInContainer(withIdentifier: container.identifier),
-                                            keysToFetch: [CNContactIdentifierKey as CNKeyDescriptor])
-        for c in ids where account[c.identifier] != "home" { account[c.identifier] = container.identifier == home ? "home" : "other" }
+        let req = CNContactFetchRequest(keysToFetch: [CNContactIdentifierKey, CNContactEmailAddressesKey,
+                                                      CNContactGivenNameKey, CNContactFamilyNameKey].map { $0 as CNKeyDescriptor })
+        req.unifyResults = false
+        req.predicate = CNContact.predicateForContactsInContainer(withIdentifier: container.identifier)
+        try store.enumerateContacts(with: req) { c, _ in
+            reals.append(Real(id: c.identifier, account: container.identifier == home ? "home" : "other",
+                              emails: Set(c.emailAddresses.map { ($0.value as String).lowercased() }),
+                              name: fold("\(c.givenName) \(c.familyName)")))
+        }
+    }
+    let account = Dictionary(reals.map { ($0.id, $0.account) }, uniquingKeysWith: { a, _ in a })
+    func resolve(_ id: String, _ emails: [String], _ name: String) -> (String, String) {
+        if let a = account[id] { return (id, a) }
+        let wanted = Set(emails)
+        // Same name first (a shared or office email can belong to someone
+        // else's card), then a shared email
+        let sameName = reals.filter { $0.name == fold(name) }
+        let both = sameName.filter { !$0.emails.isDisjoint(with: wanted) }
+        let candidates = !both.isEmpty ? both : !sameName.isEmpty ? sameName : reals.filter { !$0.emails.isDisjoint(with: wanted) }
+        guard let pick = candidates.first(where: { $0.account == "home" }) ?? candidates.first else { return (id, "none") }
+        return (pick.id, pick.account)
     }
     var cards: [Card] = []
     try store.enumerateContacts(with: CNContactFetchRequest(keysToFetch: keys)) { c, _ in
@@ -213,12 +236,14 @@ func loadCards(fixture: String?) throws -> [Card] {
             if let s = linkedinSlug(v.urlString) { li.append(s) }
             else if v.service.lowercased() == "linkedin", !v.username.isEmpty { li.append(v.username.lowercased()) }
         }
-        cards.append(Card(id: c.identifier, given: c.givenName, family: c.familyName,
+        let emails = c.emailAddresses.map { ($0.value as String).lowercased() }
+        let (realId, acct) = resolve(c.identifier, emails, "\(c.givenName) \(c.familyName)")
+        cards.append(Card(id: realId, given: c.givenName, family: c.familyName,
                           organization: c.organizationName, jobTitle: c.jobTitle,
                           emails: c.emailAddresses.map { ($0.value as String).lowercased() },
                           phones: c.phoneNumbers.map { normalisePhone($0.value.stringValue) },
                           urls: urls, linkedin: Array(Set(li)).sorted(), groups: membership[c.identifier] ?? [],
-                          account: account[c.identifier] ?? "none"))
+                          account: acct))
     }
     return cards
 }
@@ -322,7 +347,6 @@ func diffs(_ p: Person, _ c: Card) -> [FieldDiff] {
 }
 
 func check(people: [Person], cards: [Card], group: String) -> Report {
-    let byId = Dictionary(uniqueKeysWithValues: cards.map { ($0.id, $0) })
     // Current form ("b/bray-martin") and the first form ("B/Bray,%20Martin")
     var markerKeys: [String: String] = [:]
     for p in people { markerKeys[markerPath(p.key)] = p.key; markerKeys[p.key] = p.key }
@@ -360,7 +384,6 @@ func check(people: [Person], cards: [Card], group: String) -> Report {
         else { r.pplrOnly.append(p.key) }
     }
     r.groupOrphans = cards.filter { $0.groups.contains(group) && !claimed.contains($0.id) }.map { displayName($0) }.sorted()
-    _ = byId
     return r
 }
 
