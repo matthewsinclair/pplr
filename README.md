@@ -260,13 +260,13 @@ pplr sync --check --json       # The whole report as JSON
 pplr sync --check --group NAME # The Contacts group that marks pplr people (default: PPLR)
 ```
 
-Only the About header fields take part: the name (from the folder), Role, Company, Email, Phone and LinkedIn. Bios, notes and meetings never leave pplr. People are matched in this order: a `pplr` URL on the card (`pplr://<Letter>/<Surname, First>`), then a shared email, then a shared LinkedIn profile, then the name alone, which is reported for you to confirm. Phones are compared as digits (UK numbers without a country code count as +44), and LinkedIn by profile slug.
+Only the About header fields take part: the name (from the folder), Role, Company, Email, Phone and LinkedIn. Bios, notes and meetings never leave pplr. People are matched in this order: a `pplr` URL on the card (`pplr://<letter>/<surname-first>`, eg `pplr://b/bray-martin`; the first form, `pplr://B/Bray,%20Martin`, is still recognised), then a shared email, then a shared LinkedIn profile, then the name alone, which is reported for you to confirm. Phones are compared as digits (UK numbers without a country code count as +44), and LinkedIn by profile slug.
 
 The Contacts side is a small Swift program, `src/pplr-contacts/main.swift`, built into `.build/` on first use. The first run asks for access to Contacts for the app running pplr (eg iTerm or Terminal).
 
 #### `pplr sync --link [options]`
 
-Mark the cards that match pplr people as pplr's: a URL labelled `pplr` (`pplr://<Letter>/<Surname,%20First>`) and membership of the `PPLR` group. Nothing else on the card changes. On the pplr side it writes `About/<First Surname> (Contacts).webloc`, which opens the card in Contacts (`addressbook://<card id>`; the id is this Mac's). It is a dry run unless `--apply` is given.
+Mark the cards that match pplr people as pplr's: a URL labelled `pplr` (`pplr://<letter>/<surname-first>`: lowercase, accents dropped, other characters hyphens; an older form is replaced) and membership of the `PPLR` group. Nothing else on the card changes. On the pplr side it writes `About/<First Surname> (Contacts).webloc`, which opens the card in Contacts (`addressbook://<card id>`; the id is this Mac's). It is a dry run unless `--apply` is given.
 
 ```bash
 pplr sync --link                               # Dry run: who would be linked

@@ -88,7 +88,7 @@ EOF
     [ "$status" -eq 0 ]
     [ "$(ls "$PPLR_BACKUP_DIR" | wc -l | tr -d ' ')" -eq 1 ]
     marker=$(jq -r '.[] | select(.id == "c1") | .urls[] | select(.label == "pplr") | .value' "$PPLR_CONTACTS_JSON")
-    [ "$marker" = "pplr://L/Lovelace,%20Ada" ]
+    [ "$marker" = "pplr://l/lovelace-ada" ]
     turing_groups=$(jq -r '.[] | select(.id == "c3") | .groups | join(",")' "$PPLR_CONTACTS_JSON")
     [ "$turing_groups" = "PPLR" ]
     hopper_groups=$(jq -r '.[] | select(.id == "c2") | .groups | length' "$PPLR_CONTACTS_JSON")
@@ -132,4 +132,13 @@ EOF
     [ "$status" -eq 0 ]
     assert_contains "$output" "linked now              1"
     assert_contains "$output" "still to link           1"
+}
+
+@test "pplr sync --link --apply replaces a pplr URL in the old form, rather than adding one" {
+    setup_contacts
+    export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
+    run "$PPLR_BIN_DIR/pplr" sync --link --apply
+    [ "$status" -eq 0 ]
+    urls=$(jq -r '.[] | select(.id == "c3") | [.urls[] | select(.label == "pplr") | .value] | join(",")' "$PPLR_CONTACTS_JSON")
+    [ "$urls" = "pplr://t/turing-alan" ]
 }

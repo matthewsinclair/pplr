@@ -7,7 +7,7 @@
 // Email, Phone and LinkedIn. Notes, bios and meetings never leave pplr.
 //
 // Provenance in Contacts: membership of the "PPLR" group, plus a URL labelled
-// "pplr" whose value is pplr://<Letter>/<Surname,%20First>, which is also the
+// "pplr" whose value is pplr://<letter>/<surname-first>, which is also the
 // stable link back to the person's folder. `link` adds both, and writes
 // About/<First Surname> (Contacts).webloc opening addressbook://<card id>.
 //
@@ -226,7 +226,8 @@ struct Pair: Codable {
     var contactName: String
     var how: String            // linked | email | linkedin | name
     var inGroup: Bool
-    var hasMarker: Bool
+    var hasMarker: Bool        // the card's pplr URL is in the current form
+    var markerStale: Bool      // the card has a pplr URL in an older form, to replace
     var webloc: String         // About/<First Surname> (Contacts).webloc
     var hasWebloc: Bool        // exists and opens this card
     var diffs: [FieldDiff]
@@ -267,9 +268,21 @@ func writeWebloc(_ path: String, _ id: String) throws {
     try d.write(to: URL(fileURLWithPath: path))
 }
 
+/// The path of the card's pplr URL, as written: "b/bray-martin"
 func pplrMarker(_ c: Card) -> String? {
     c.urls.first(where: { $0.label.lowercased() == "pplr" || $0.value.hasPrefix("pplr://") })
-        .map { ($0.value.replacingOccurrences(of: "pplr://", with: "").removingPercentEncoding ?? $0.value) }
+        .map { $0.value.replacingOccurrences(of: "pplr://", with: "") }
+}
+
+/// "B/Bray, Martin" -> "b/bray-martin": lowercase, accents dropped, and
+/// every run of other characters a single hyphen, so it is easy to type
+func markerPath(_ key: String) -> String {
+    let parts = key.split(separator: "/", maxSplits: 1).map(String.init)
+    let name = parts.count > 1 ? parts[1] : key
+    let folded = name.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil).lowercased()
+    let slug = folded.unicodeScalars.map { CharacterSet.alphanumerics.contains($0) && $0.isASCII ? String($0) : "-" }.joined()
+        .split(separator: "-").joined(separator: "-")
+    return "\(parts.count > 1 ? parts[0].lowercased() : String(slug.prefix(1)))/\(slug)"
 }
 
 func displayName(_ c: Card) -> String {
@@ -297,9 +310,12 @@ func diffs(_ p: Person, _ c: Card) -> [FieldDiff] {
 
 func check(people: [Person], cards: [Card], group: String) -> Report {
     let byId = Dictionary(uniqueKeysWithValues: cards.map { ($0.id, $0) })
+    // Current form ("b/bray-martin") and the first form ("B/Bray,%20Martin")
+    var markerKeys: [String: String] = [:]
+    for p in people { markerKeys[markerPath(p.key)] = p.key; markerKeys[p.key] = p.key }
     var byMarker: [String: Card] = [:], byEmail: [String: [Card]] = [:], bySlug: [String: [Card]] = [:], byName: [String: [Card]] = [:]
     for c in cards {
-        if let m = pplrMarker(c) { byMarker[m] = c }
+        if let m = pplrMarker(c), let key = markerKeys[m] ?? markerKeys[m.removingPercentEncoding ?? m] { byMarker[key] = c }
         for e in c.emails { byEmail[e, default: []].append(c) }
         for s in c.linkedin { bySlug[s, default: []].append(c) }
         byName[fold("\(c.given) \(c.family)"), default: []].append(c)
@@ -313,7 +329,8 @@ func check(people: [Person], cards: [Card], group: String) -> Report {
         claimed.insert(c.id)
         let w = weblocPath(p)
         return Pair(person: p.key, contact: c.id, contactName: displayName(c), how: how, inGroup: c.groups.contains(group),
-                    hasMarker: pplrMarker(c) == p.key, webloc: w, hasWebloc: weblocOpens(w, c.id), diffs: diffs(p, c))
+                    hasMarker: pplrMarker(c) == markerPath(p.key),
+                    markerStale: pplrMarker(c) != nil && pplrMarker(c) != markerPath(p.key), webloc: w, hasWebloc: weblocOpens(w, c.id), diffs: diffs(p, c))
     }
     for p in people {
         if let c = byMarker[p.key] { r.linked.append(pair(p, c, "linked")); continue }
@@ -334,10 +351,8 @@ func check(people: [Person], cards: [Card], group: String) -> Report {
 
 // MARK: - Link
 
-/// pplr://K/Kemp,%20Jon
-func markerURL(_ key: String) -> String {
-    "pplr://" + (key.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? key)
-}
+/// pplr://k/kemp-jon
+func markerURL(_ key: String) -> String { "pplr://" + markerPath(key) }
 
 /// "Kemp, Jon" or "K/Kemp, Jon" -> "K/Kemp, Jon"
 func personKey(_ name: String) -> String {
@@ -392,7 +407,9 @@ func applyFixture(_ plan: LinkPlan, group: String, fixture: String, limit: Int?)
     var out: Outcome = []
     for p in plan.toLink.prefix(limit ?? Int.max) {
         guard let i = cards.firstIndex(where: { $0.id == p.contact }) else { continue }
-        if !p.hasMarker { cards[i].urls.append(LabelledValue(label: "pplr", value: markerURL(p.person))) }
+        if p.markerStale, let u = cards[i].urls.firstIndex(where: { $0.label.lowercased() == "pplr" || $0.value.hasPrefix("pplr://") }) {
+            cards[i].urls[u].value = markerURL(p.person)
+        } else if !p.hasMarker { cards[i].urls.append(LabelledValue(label: "pplr", value: markerURL(p.person))) }
         if !cards[i].groups.contains(group) { cards[i].groups.append(group) }
         if !p.hasWebloc { try writeWebloc(p.webloc, p.contact) }
         out.append((p.person, nil))
@@ -410,9 +427,16 @@ on run argv
     set pid to item 1 of argv
     set marker to item 2 of argv
     set gid to item 3 of argv
+    set replacing to item 4 of argv
     tell application "Contacts"
         set p to person id pid
-        if marker is not "" then make new url at end of urls of p with properties {label:"pplr", value:marker}
+        if marker is not "" then
+            if replacing is "yes" then
+                set value of (first url of p whose label is "pplr") to marker
+            else
+                make new url at end of urls of p with properties {label:"pplr", value:marker}
+            end if
+        end if
         if gid is not "" then add p to group id gid
         save
     end tell
@@ -457,12 +481,14 @@ func applyLive(_ plan: LinkPlan, group: String, limit: Int?) throws -> Outcome {
             var gid = ""
             if !p.inGroup {
                 guard let container = try store.containers(matching: CNContainer.predicateForContainerOfContact(withIdentifier: p.contact)).first else {
-                    throw NSError(domain: "pplr", code: 4, userInfo: [NSLocalizedDescriptionKey: "no account found for the card"])
+                    // A directory or "Other Known" card: nothing to write to
+                    out.append((p.person, skipped + "no account for the card (a directory or Other Known card?); link it by hand"))
+                    continue
                 }
                 gid = try groupIn(container.identifier).identifier
             }
             if !p.hasMarker || !p.inGroup {
-                error = osascript([p.contact, p.hasMarker ? "" : markerURL(p.person), gid])
+                error = osascript([p.contact, p.hasMarker ? "" : markerURL(p.person), gid, p.markerStale ? "yes" : "no"])
             }
             if error == nil && !p.hasWebloc { try writeWebloc(p.webloc, p.contact) }
         } catch let e { error = e.localizedDescription }
@@ -472,26 +498,36 @@ func applyLive(_ plan: LinkPlan, group: String, limit: Int?) throws -> Outcome {
     return out
 }
 
+let skipped = "skipped: "
+func isSkip(_ e: String?) -> Bool { e?.hasPrefix(skipped) == true }
+
 func printPlan(_ plan: LinkPlan, group: String, outcome: Outcome?, backupPath: String?) {
     func what(_ p: Pair) -> String {
         var w: [String] = []
-        if !p.hasMarker { w.append("pplr URL") }
+        if p.markerStale { w.append("pplr URL updated") } else if !p.hasMarker { w.append("pplr URL") }
         if !p.inGroup { w.append("group") }
         if !p.hasWebloc { w.append(".webloc") }
         return "[\(p.how); \(w.joined(separator: " + "))]"
     }
     let byPerson = Dictionary(uniqueKeysWithValues: plan.toLink.map { ($0.person, $0) })
     if let outcome {
-        let ok = outcome.filter { $0.error == nil }, bad = outcome.filter { $0.error != nil }
+        let ok = outcome.filter { $0.error == nil }
+        let skip = outcome.filter { isSkip($0.error) }
+        let bad = outcome.filter { $0.error != nil && !isSkip($0.error) }
         print("pplr sync --link --apply")
         print("")
         print("  linked now              \(ok.count)")
+        print("  skipped                 \(skip.count)")
         print("  failed                  \(bad.count)")
         print("  still to link           \(plan.toLink.count - ok.count)")
         print("  already linked          \(plan.alreadyDone)")
         if !ok.isEmpty {
             print("\nLinked (the pplr URL and the \"\(group)\" group on the card; a (Contacts).webloc in About):")
             ok.forEach { o in print("  \(o.person)  <->  \(byPerson[o.person]!.contactName)  \(what(byPerson[o.person]!))") }
+        }
+        if !skip.isEmpty {
+            print("\nSkipped:")
+            skip.forEach { print("  \($0.person): \($0.error!.dropFirst(skipped.count))") }
         }
         if !bad.isEmpty {
             print("\nFailed:")
@@ -622,7 +658,7 @@ do {
             }
         }
         printPlan(plan, group: group, outcome: outcome, backupPath: backupPath)
-        if outcome?.contains(where: { $0.error != nil }) == true { exit(1) }
+        if outcome?.contains(where: { $0.error != nil && !isSkip($0.error) }) == true { exit(1) }
     default:
         FileHandle.standardError.write(Data("usage: pplr-contacts check --people-dir DIR [--group NAME] [--json] [--verbose] [--contacts-json FILE]\n       pplr-contacts link --people-dir DIR [--group NAME] [--apply] [--name NAME]... [--all-names] [--backup-dir DIR]\n       pplr-contacts dump [--group NAME] [--only-group]\n".utf8))
         exit(2)
