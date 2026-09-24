@@ -8,7 +8,8 @@
 //
 // Provenance in Contacts: membership of the "PPLR" group, plus a URL labelled
 // "pplr" whose value is pplr://<Letter>/<Surname,%20First>, which is also the
-// stable link back to the person's folder. `link` adds both.
+// stable link back to the person's folder. `link` adds both, and writes
+// About/<First Surname> (Contacts).webloc opening addressbook://<card id>.
 //
 // Usage:
 //   pplr-contacts check --people-dir DIR [--group NAME] [--json] [--verbose]
@@ -61,6 +62,7 @@ struct Person {
     var phones: [String]
     var linkedin: String
     var aboutPath: String
+    var personDir: String
 }
 
 // MARK: - Normalisation
@@ -119,7 +121,7 @@ func loadPeople(_ root: String) -> [Person] {
             let pdir = (ldir as NSString).appendingPathComponent(name)
             let parts = name.components(separatedBy: ", ")
             var p = Person(key: "\(letter)/\(name)", given: parts.dropFirst().joined(separator: ", "),
-                           family: parts[0], role: "", company: "", emails: [], phones: [], linkedin: "", aboutPath: "")
+                           family: parts[0], role: "", company: "", emails: [], phones: [], linkedin: "", aboutPath: "", personDir: pdir)
             let adir = (pdir as NSString).appendingPathComponent("About")
             if let about = ((try? fm.contentsOfDirectory(atPath: adir)) ?? []).sorted().first(where: { $0.hasSuffix("(About).md") }) {
                 p.aboutPath = (adir as NSString).appendingPathComponent(about)
@@ -225,6 +227,8 @@ struct Pair: Codable {
     var how: String            // linked | email | linkedin | name
     var inGroup: Bool
     var hasMarker: Bool
+    var webloc: String         // About/<First Surname> (Contacts).webloc
+    var hasWebloc: Bool        // exists and opens this card
     var diffs: [FieldDiff]
 }
 
@@ -239,6 +243,28 @@ struct Report: Codable {
     var ambiguous: [String: [String]]
     var pplrOnly: [String]
     var groupOrphans: [String]
+}
+
+/// Opens Contacts.app on the card (macOS; the card id is this Mac's)
+func contactsURL(_ id: String) -> String { "addressbook://\(id)" }
+
+func weblocPath(_ p: Person) -> String {
+    let about = p.aboutPath.isEmpty
+        ? ((p.personDir as NSString).appendingPathComponent("About"))
+        : (p.aboutPath as NSString).deletingLastPathComponent
+    return (about as NSString).appendingPathComponent("\(p.given) \(p.family) (Contacts).webloc")
+}
+
+func weblocOpens(_ path: String, _ id: String) -> Bool {
+    guard let d = FileManager.default.contents(atPath: path),
+          let plist = try? PropertyListSerialization.propertyList(from: d, format: nil) as? [String: Any] else { return false }
+    return plist["URL"] as? String == contactsURL(id)
+}
+
+func writeWebloc(_ path: String, _ id: String) throws {
+    try FileManager.default.createDirectory(atPath: (path as NSString).deletingLastPathComponent, withIntermediateDirectories: true)
+    let d = try PropertyListSerialization.data(fromPropertyList: ["URL": contactsURL(id)], format: .xml, options: 0)
+    try d.write(to: URL(fileURLWithPath: path))
 }
 
 func pplrMarker(_ c: Card) -> String? {
@@ -285,8 +311,9 @@ func check(people: [Person], cards: [Card], group: String) -> Report {
     func uniq(_ cs: [Card]) -> [Card] { var seen = Set<String>(); return cs.filter { seen.insert($0.id).inserted } }
     func pair(_ p: Person, _ c: Card, _ how: String) -> Pair {
         claimed.insert(c.id)
+        let w = weblocPath(p)
         return Pair(person: p.key, contact: c.id, contactName: displayName(c), how: how, inGroup: c.groups.contains(group),
-                    hasMarker: pplrMarker(c) == p.key, diffs: diffs(p, c))
+                    hasMarker: pplrMarker(c) == p.key, webloc: w, hasWebloc: weblocOpens(w, c.id), diffs: diffs(p, c))
     }
     for p in people {
         if let c = byMarker[p.key] { r.linked.append(pair(p, c, "linked")); continue }
@@ -330,8 +357,9 @@ func planLink(_ r: Report, names: [String], allNames: Bool) -> LinkPlan {
     let nameKeys = Set(r.nameOnly.map(\.person))
     let confirmed = r.nameOnly.filter { allNames || wanted.contains($0.person) }
     let all = r.linked + r.matched + confirmed
-    return LinkPlan(toLink: all.filter { !$0.hasMarker || !$0.inGroup },
-                    alreadyDone: all.filter { $0.hasMarker && $0.inGroup }.count,
+    let done = { (p: Pair) in p.hasMarker && p.inGroup && p.hasWebloc }
+    return LinkPlan(toLink: all.filter { !done($0) },
+                    alreadyDone: all.filter(done).count,
                     namesSkipped: r.nameOnly.filter { !(allNames || wanted.contains($0.person)) }.map(\.person),
                     unknownNames: wanted.subtracting(nameKeys).subtracting((r.linked + r.matched).map(\.person)).sorted(),
                     ambiguous: r.ambiguous.keys.sorted())
@@ -365,6 +393,7 @@ func applyFixture(_ plan: LinkPlan, group: String, fixture: String) throws {
         guard let i = cards.firstIndex(where: { $0.id == p.contact }) else { continue }
         if !p.hasMarker { cards[i].urls.append(LabelledValue(label: "pplr", value: markerURL(p.person))) }
         if !cards[i].groups.contains(group) { cards[i].groups.append(group) }
+        if !p.hasWebloc { try writeWebloc(p.webloc, p.contact) }
     }
     let enc = JSONEncoder(); enc.outputFormatting = [.prettyPrinted, .sortedKeys]
     try enc.encode(cards).write(to: URL(fileURLWithPath: fixture))
@@ -398,7 +427,8 @@ func applyLive(_ plan: LinkPlan, group: String) throws {
             req.update(m)
         }
         if !p.inGroup { req.addMember(c, to: try groupIn(container.identifier)) }
-        try store.execute(req)
+        if !p.hasMarker || !p.inGroup { try store.execute(req) }
+        if !p.hasWebloc { try writeWebloc(p.webloc, p.contact) }
     }
 }
 
@@ -410,11 +440,12 @@ func printPlan(_ plan: LinkPlan, group: String, applied: Bool, backupPath: Strin
     print("  name only, not linked   \(plan.namesSkipped.count)")
     print("  ambiguous, not linked   \(plan.ambiguous.count)")
     if !plan.toLink.isEmpty {
-        print("\n\(applied ? "Linked" : "Would link") (adds the pplr URL and the \"\(group)\" group, nothing else):")
+        print("\n\(applied ? "Linked" : "Would link") (the pplr URL and the \"\(group)\" group on the card, nothing else; a (Contacts).webloc in About):")
         for p in plan.toLink {
             var what: [String] = []
             if !p.hasMarker { what.append("pplr URL") }
             if !p.inGroup { what.append("group") }
+            if !p.hasWebloc { what.append(".webloc") }
             print("  \(p.person)  <->  \(p.contactName)  [\(p.how); \(what.joined(separator: " + "))]")
         }
     }

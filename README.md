@@ -266,7 +266,7 @@ The Contacts side is a small Swift program, `src/pplr-contacts/main.swift`, buil
 
 #### `pplr sync --link [options]`
 
-Mark the cards that match pplr people as pplr's: a URL labelled `pplr` (`pplr://<Letter>/<Surname,%20First>`) and membership of the `PPLR` group. Nothing else on the card changes. It is a dry run unless `--apply` is given.
+Mark the cards that match pplr people as pplr's: a URL labelled `pplr` (`pplr://<Letter>/<Surname,%20First>`) and membership of the `PPLR` group. Nothing else on the card changes. On the pplr side it writes `About/<First Surname> (Contacts).webloc`, which opens the card in Contacts (`addressbook://<card id>`; the id is this Mac's). It is a dry run unless `--apply` is given.
 
 ```bash
 pplr sync --link                               # Dry run: who would be linked

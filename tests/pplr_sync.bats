@@ -114,3 +114,13 @@ EOF
     urls=$(jq -r '.[] | select(.id == "c1") | .urls | length' "$PPLR_CONTACTS_JSON")
     [ "$urls" -eq 1 ]
 }
+
+@test "pplr sync --link --apply writes a Contacts webloc in About" {
+    setup_contacts
+    export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
+    run "$PPLR_BIN_DIR/pplr" sync --link --apply
+    [ "$status" -eq 0 ]
+    w="$PPLR_TEST_DATA/L/Lovelace, Ada/About/Ada Lovelace (Contacts).webloc"
+    [ -f "$w" ]
+    [ "$(plutil -extract URL raw -o - "$w")" = "addressbook://c1" ]
+}
