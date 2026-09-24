@@ -110,7 +110,7 @@ EOF
     "$PPLR_BIN_DIR/pplr" sync --link --apply
     run "$PPLR_BIN_DIR/pplr" sync --link --apply
     [ "$status" -eq 0 ]
-    assert_contains "$output" "to link                 0"
+    assert_contains "$output" "linked now              0"
     urls=$(jq -r '.[] | select(.id == "c1") | .urls | length' "$PPLR_CONTACTS_JSON")
     [ "$urls" -eq 1 ]
 }
@@ -123,4 +123,13 @@ EOF
     w="$PPLR_TEST_DATA/L/Lovelace, Ada/About/Ada Lovelace (Contacts).webloc"
     [ -f "$w" ]
     [ "$(plutil -extract URL raw -o - "$w")" = "addressbook://c1" ]
+}
+
+@test "pplr sync --link --apply --limit 1 writes one and reports the rest as still to link" {
+    setup_contacts
+    export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
+    run "$PPLR_BIN_DIR/pplr" sync --link --apply --limit 1
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "linked now              1"
+    assert_contains "$output" "still to link           1"
 }

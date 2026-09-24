@@ -387,19 +387,54 @@ func backup(to dir: String, fixture: String?) throws -> String {
     return path
 }
 
-func applyFixture(_ plan: LinkPlan, group: String, fixture: String, limit: Int?) throws {
+func applyFixture(_ plan: LinkPlan, group: String, fixture: String, limit: Int?) throws -> Outcome {
     var cards = try JSONDecoder().decode([Card].self, from: Data(contentsOf: URL(fileURLWithPath: fixture)))
+    var out: Outcome = []
     for p in plan.toLink.prefix(limit ?? Int.max) {
         guard let i = cards.firstIndex(where: { $0.id == p.contact }) else { continue }
         if !p.hasMarker { cards[i].urls.append(LabelledValue(label: "pplr", value: markerURL(p.person))) }
         if !cards[i].groups.contains(group) { cards[i].groups.append(group) }
         if !p.hasWebloc { try writeWebloc(p.webloc, p.contact) }
+        out.append((p.person, nil))
     }
     let enc = JSONEncoder(); enc.outputFormatting = [.prettyPrinted, .sortedKeys]
     try enc.encode(cards).write(to: URL(fileURLWithPath: fixture))
+    return out
 }
 
-func applyLive(_ plan: LinkPlan, group: String, limit: Int?) throws {
+/// Contacts.app makes the card changes. The Contacts framework refused to
+/// update a card from this tool (CoreData, Cocoa error 134092) although it
+/// could create a group; the app has full access and takes the same ids.
+let linkScript = """
+on run argv
+    set pid to item 1 of argv
+    set marker to item 2 of argv
+    set gid to item 3 of argv
+    tell application "Contacts"
+        set p to person id pid
+        if marker is not "" then make new url at end of urls of p with properties {label:"pplr", value:marker}
+        if gid is not "" then add p to group id gid
+        save
+    end tell
+end run
+"""
+
+func osascript(_ args: [String]) -> String? {
+    let proc = Process()
+    proc.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
+    proc.arguments = ["-e", linkScript] + args
+    let err = Pipe(); proc.standardError = err; proc.standardOutput = Pipe()
+    do { try proc.run() } catch { return error.localizedDescription }
+    proc.waitUntilExit()
+    if proc.terminationStatus == 0 { return nil }
+    let msg = String(data: err.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+    return msg.trimmingCharacters(in: .whitespacesAndNewlines)
+}
+
+/// person -> nil when linked, or the error
+typealias Outcome = [(person: String, error: String?)]
+
+func applyLive(_ plan: LinkPlan, group: String, limit: Int?) throws -> Outcome {
     let store = openStore()
     var groups: [String: CNGroup] = [:]   // container id -> the group in it
     func groupIn(_ container: String) throws -> CNGroup {
@@ -414,59 +449,72 @@ func applyLive(_ plan: LinkPlan, group: String, limit: Int?) throws {
         groups[container] = made
         return made
     }
-    var linked = 0, failed = 0
-    defer { print("  written \(linked), failed \(failed)") }
+    var out: Outcome = []
+    var failures = 0
     for p in plan.toLink.prefix(limit ?? Int.max) {
-        guard let container = try store.containers(matching: CNContainer.predicateForContainerOfContact(withIdentifier: p.contact)).first else {
-            print("  skipped \(p.person): no container for its card"); continue
-        }
-        // One change per save request: an update and a group membership in the
-        // same request failed in CoreData (Cocoa error 134092) on the first card.
-        let keys = [CNContactIdentifierKey, CNContactUrlAddressesKey].map { $0 as CNKeyDescriptor }
+        var error: String? = nil
         do {
-            if !p.hasMarker {
-                let m = try store.unifiedContact(withIdentifier: p.contact, keysToFetch: keys).mutableCopy() as! CNMutableContact
-                m.urlAddresses.append(CNLabeledValue(label: "pplr", value: markerURL(p.person) as NSString))
-                let req = CNSaveRequest(); req.update(m)
-                try store.execute(req)
-            }
+            var gid = ""
             if !p.inGroup {
-                let c = try store.unifiedContact(withIdentifier: p.contact, keysToFetch: keys)
-                let req = CNSaveRequest(); req.addMember(c, to: try groupIn(container.identifier))
-                try store.execute(req)
+                guard let container = try store.containers(matching: CNContainer.predicateForContainerOfContact(withIdentifier: p.contact)).first else {
+                    throw NSError(domain: "pplr", code: 4, userInfo: [NSLocalizedDescriptionKey: "no account found for the card"])
+                }
+                gid = try groupIn(container.identifier).identifier
             }
-            if !p.hasWebloc { try writeWebloc(p.webloc, p.contact) }
-            linked += 1
-        } catch {
-            print("  FAILED \(p.person): \(error.localizedDescription)")
-            failed += 1
-            if failed >= 3 { print("  stopping after three failures"); break }
-        }
+            if !p.hasMarker || !p.inGroup {
+                error = osascript([p.contact, p.hasMarker ? "" : markerURL(p.person), gid])
+            }
+            if error == nil && !p.hasWebloc { try writeWebloc(p.webloc, p.contact) }
+        } catch let e { error = e.localizedDescription }
+        out.append((p.person, error))
+        if error != nil { failures += 1; if failures >= 3 { break } }
     }
+    return out
 }
 
-func printPlan(_ plan: LinkPlan, group: String, applied: Bool, backupPath: String?) {
-    print(applied ? "pplr sync --link (applied)" : "pplr sync --link (dry run: nothing written; --apply to write)")
-    print("")
-    print("  to link                 \(plan.toLink.count)")
-    print("  already linked          \(plan.alreadyDone)")
-    print("  name only, not linked   \(plan.namesSkipped.count)")
-    print("  ambiguous, not linked   \(plan.ambiguous.count)")
-    if !plan.toLink.isEmpty {
-        print("\n\(applied ? "Linked" : "Would link") (the pplr URL and the \"\(group)\" group on the card, nothing else; a (Contacts).webloc in About):")
-        for p in plan.toLink {
-            var what: [String] = []
-            if !p.hasMarker { what.append("pplr URL") }
-            if !p.inGroup { what.append("group") }
-            if !p.hasWebloc { what.append(".webloc") }
-            print("  \(p.person)  <->  \(p.contactName)  [\(p.how); \(what.joined(separator: " + "))]")
+func printPlan(_ plan: LinkPlan, group: String, outcome: Outcome?, backupPath: String?) {
+    func what(_ p: Pair) -> String {
+        var w: [String] = []
+        if !p.hasMarker { w.append("pplr URL") }
+        if !p.inGroup { w.append("group") }
+        if !p.hasWebloc { w.append(".webloc") }
+        return "[\(p.how); \(w.joined(separator: " + "))]"
+    }
+    let byPerson = Dictionary(uniqueKeysWithValues: plan.toLink.map { ($0.person, $0) })
+    if let outcome {
+        let ok = outcome.filter { $0.error == nil }, bad = outcome.filter { $0.error != nil }
+        print("pplr sync --link --apply")
+        print("")
+        print("  linked now              \(ok.count)")
+        print("  failed                  \(bad.count)")
+        print("  still to link           \(plan.toLink.count - ok.count)")
+        print("  already linked          \(plan.alreadyDone)")
+        if !ok.isEmpty {
+            print("\nLinked (the pplr URL and the \"\(group)\" group on the card; a (Contacts).webloc in About):")
+            ok.forEach { o in print("  \(o.person)  <->  \(byPerson[o.person]!.contactName)  \(what(byPerson[o.person]!))") }
+        }
+        if !bad.isEmpty {
+            print("\nFailed:")
+            bad.forEach { print("  \($0.person): \($0.error!)") }
+            if bad.count >= 3 { print("  (stopped after three failures)") }
+        }
+    } else {
+        print("pplr sync --link (dry run: nothing written; --apply to write)")
+        print("")
+        print("  to link                 \(plan.toLink.count)")
+        print("  already linked          \(plan.alreadyDone)")
+        print("  name only, not linked   \(plan.namesSkipped.count)")
+        print("  ambiguous, not linked   \(plan.ambiguous.count)")
+        if !plan.toLink.isEmpty {
+            print("\nWould link (the pplr URL and the \"\(group)\" group on the card, nothing else; a (Contacts).webloc in About):")
+            plan.toLink.forEach { print("  \($0.person)  <->  \($0.contactName)  \(what($0))") }
         }
     }
     if !plan.unknownNames.isEmpty {
         print("\nNot a name-only match, so ignored:")
         plan.unknownNames.forEach { print("  \($0)") }
     }
-    if !plan.namesSkipped.isEmpty {
+    if outcome == nil && !plan.namesSkipped.isEmpty {
         print("\nName-only matches left alone (confirm with --name \"Surname, First\", or --all-names):")
         plan.namesSkipped.forEach { print("  \($0)") }
     }
@@ -562,12 +610,19 @@ do {
         let report = check(people: loadPeople(peopleDir), cards: try loadCards(fixture: fixture), group: group)
         let plan = planLink(report, names: names, allNames: allNames)
         var backupPath: String? = nil
-        if apply && !plan.toLink.isEmpty {
-            guard let backupDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "--apply needs --backup-dir"]) }
-            backupPath = try backup(to: backupDir, fixture: fixture)
-            if let fixture { try applyFixture(plan, group: group, fixture: fixture, limit: limit) } else { try applyLive(plan, group: group, limit: limit) }
+        var outcome: Outcome? = nil
+        if apply {
+            outcome = []
+            if !plan.toLink.isEmpty {
+                guard let backupDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "--apply needs --backup-dir"]) }
+                backupPath = try backup(to: backupDir, fixture: fixture)
+                outcome = fixture != nil
+                    ? try applyFixture(plan, group: group, fixture: fixture!, limit: limit)
+                    : try applyLive(plan, group: group, limit: limit)
+            }
         }
-        printPlan(plan, group: group, applied: apply, backupPath: backupPath)
+        printPlan(plan, group: group, outcome: outcome, backupPath: backupPath)
+        if outcome?.contains(where: { $0.error != nil }) == true { exit(1) }
     default:
         FileHandle.standardError.write(Data("usage: pplr-contacts check --people-dir DIR [--group NAME] [--json] [--verbose] [--contacts-json FILE]\n       pplr-contacts link --people-dir DIR [--group NAME] [--apply] [--name NAME]... [--all-names] [--backup-dir DIR]\n       pplr-contacts dump [--group NAME] [--only-group]\n".utf8))
         exit(2)
