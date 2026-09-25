@@ -1,9 +1,33 @@
 #!/bin/bash
 
-# USAGE: Open the location of a person's file
+# USAGE: Open the location of a person's file, or a pplr:// URL
+# USAGE: [pplr://...]   a pplr:// URL instead of a name (--print to show where it goes)
 # USAGE: <first>        firstname of person to edit
 # USAGE: <surname>      surname of person to edit
 # USAGE: [--type | -t]  type of file (about | a, linkedin | l, profile | p)
+
+# A pplr:// URL (from a note, a Contacts card or a browser): the CMS page when the
+# CMS is up, else the file itself. --print says where it would go instead.
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_CMS_URL=http://localhost:4360/people}"  # set it empty to open files, never the CMS
+if [ "$1" = "--print" ] || [[ "$1" == pplr://* ]]; then
+  print_only=0
+  [ "$1" = "--print" ] && { print_only=1; shift; }
+  source "$PPLR_ROOT/lib/engine.sh"
+  build_engine
+  path=$("$engine" resolve --people-dir "$PPLR_DIR" "$1") || exit 1
+  target="$path"
+  if [ -n "$PPLR_CMS_URL" ] && curl -s -m 1 -o /dev/null "${PPLR_CMS_URL%/*}/_status"; then
+    people_real=$(cd "$PPLR_DIR" && pwd -P)
+    rel="${path#$people_real/}"
+    [ "$rel" = "$path" ] && rel="${path#$PPLR_DIR/}"
+    target="$PPLR_CMS_URL/$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$rel")"
+  fi
+  if [ $print_only -eq 1 ]; then echo "$target"; else open "$target"; fi
+  exit $?
+fi
 
 # Function to print usage and exit
 usage() {

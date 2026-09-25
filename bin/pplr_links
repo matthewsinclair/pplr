@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# USAGE: rewrite Markdown links into the people tree as pplr:// URLs
+# USAGE: <file or dir>...  the Markdown to convert (directories are searched for .md)
+# USAGE: [--apply]         write the changes (a dry run otherwise)
+# USAGE: [--json]          every link found, converted or not, as JSON
+
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+
+source "$PPLR_ROOT/lib/engine.sh"
+
+usage() {
+  echo "Usage: pplr links <file or dir>... [--apply] [--json]"
+  echo "  Finds links into the people tree, as paths (../../Career/People/K/Kemp, Jon/...)"
+  echo "  or CMS URLs (http://localhost:4360/people/...), and rewrites them as pplr:// URLs:"
+  echo "  a link to a person's About becomes pplr://k/kemp-jon, anything else keeps its"
+  echo "  path, eg pplr://k/kemp-jon/Meetings/20260924 Intro/Summary.md. A link whose"
+  echo "  person or file cannot be found is left as it is and listed. A dry run unless --apply."
+}
+
+pass=()
+paths=()
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --apply|--json) pass+=("$1"); shift ;;
+    -h|--help) usage; exit 0 ;;
+    *) p="$1"; [[ "$p" = /* ]] || p="${PPLR_CALLER_DIR:-$PWD}/$p"
+       paths+=("$(cd "$(dirname "$p")" 2>/dev/null && pwd -P)/$(basename "$p")"); shift ;;
+  esac
+done
+[ ${#paths[@]} -gt 0 ] || { usage; exit 1; }
+build_engine
+"$engine" links --people-dir "$PPLR_DIR" "${pass[@]}" "${paths[@]}"

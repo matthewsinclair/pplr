@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# USAGE: print the file or folder a pplr:// URL names
+# USAGE: <pplr://l/surname-first[/path]>   a person (their About file), or a path in their folder
+
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+
+source "$PPLR_ROOT/lib/engine.sh"
+
+[ $# -eq 1 ] || { echo "Usage: pplr resolve pplr://<letter>/<surname-first>[/<path>]"; exit 1; }
+build_engine
+"$engine" resolve --people-dir "$PPLR_DIR" "$1"

@@ -717,6 +717,121 @@ func plan(people: [Person], cards rawCards: [Card], group: String) -> Plan {
                 })
 }
 
+// MARK: - pplr:// URLs
+
+/// pplr://<letter>/<surname-first>[/<path inside the person's folder>]. The
+/// person part is their marker (or a former one, from their aliases); a bare
+/// URL means the person, and opens their About file.
+struct PplrTarget {
+    var person: Person
+    var rest: String            // "" for the person, else eg "Meetings/20260828 Catch-up/Notes.md"
+    var path: String            // the file or folder it names
+}
+
+func peopleByMarker(_ people: [Person]) -> [String: Person] {
+    var out: [String: Person] = [:]
+    for p in people { for k in [p.key] + p.aliases { out[markerPath(k)] = p } }
+    return out
+}
+
+func peopleByKey(_ people: [Person]) -> [String: Person] {
+    var out: [String: Person] = [:]
+    for p in people { for k in [p.key] + p.aliases { out[k] = p } }
+    return out
+}
+
+func personPage(_ p: Person) -> String { p.aboutPath.isEmpty ? p.personDir : p.aboutPath }
+
+func resolvePplr(_ url: String, _ byMarker: [String: Person]) -> PplrTarget? {
+    guard url.lowercased().hasPrefix("pplr://") else { return nil }
+    let body = String(url.dropFirst("pplr://".count))
+    let parts = body.split(separator: "/", maxSplits: 2, omittingEmptySubsequences: false).map(String.init)
+    guard parts.count >= 2, let p = byMarker["\(parts[0].lowercased())/\(parts[1].lowercased())"] else { return nil }
+    let rest = parts.count > 2 ? (parts[2].removingPercentEncoding ?? parts[2]) : ""
+    let path = rest.isEmpty ? personPage(p) : (p.personDir as NSString).appendingPathComponent(rest)
+    return PplrTarget(person: p, rest: rest, path: path)
+}
+
+/// A link into the people tree, as a file path ("../../Career/People/K/Kemp, Jon/About/...")
+/// or a CMS URL ("http://localhost:4360/people/K/Kemp%2C%20Jon/..."): the key and the rest
+func peopleLinkParts(_ target: String) -> (key: String, rest: String)? {
+    var sub: String
+    if let r = target.range(of: "Career/People/") { sub = String(target[r.upperBound...]) }
+    else if let r = target.range(of: "localhost:4360/people/") { sub = String(target[r.upperBound...]) }
+    else { return nil }
+    if let q = sub.firstIndex(where: { $0 == "?" || $0 == "#" }) { sub = String(sub[..<q]) }
+    sub = sub.removingPercentEncoding ?? sub
+    let parts = sub.split(separator: "/", maxSplits: 2, omittingEmptySubsequences: false).map(String.init)
+    guard parts.count >= 2, parts[0].count == 1, parts[1].contains(", ") else { return nil }
+    return ("\(parts[0])/\(parts[1])", parts.count > 2 ? parts[2] : "")
+}
+
+struct LinkChange: Codable {
+    var file: String
+    var line: Int
+    var from: String
+    var to: String?             // nil: left as it was
+    var problem: String?        // why it was left: no such person, or no such file
+}
+
+/// Rewrites Markdown links into the people tree as pplr:// URLs. A link to a
+/// person's About file (or folder) becomes the bare person URL; a link to
+/// anything else keeps its path inside the folder. Links whose person or file
+/// cannot be found are left as they are and reported.
+func convertLinks(in text: String, file: String, _ byKey: [String: Person]) -> (String, [LinkChange]) {
+    // ](<target>) and ](target)
+    let re = try! NSRegularExpression(pattern: #"\]\(\s*(?:<([^>\n]+)>|([^)\s]+))\s*\)"#)
+    let ns = text as NSString
+    var out = text as NSString, changes: [LinkChange] = []
+    for m in re.matches(in: text, range: NSRange(location: 0, length: ns.length)).reversed() {
+        let g = m.range(at: 1).location != NSNotFound ? m.range(at: 1) : m.range(at: 2)
+        let target = ns.substring(with: g)
+        guard let (key, rawRest) = peopleLinkParts(target) else { continue }
+        let line = ns.substring(to: m.range.location).components(separatedBy: "\n").count
+        guard let p = byKey[key] else {
+            changes.append(LinkChange(file: file, line: line, from: target, to: nil, problem: "no such person: \(key)"))
+            continue
+        }
+        var rest = rawRest.hasSuffix("/") ? String(rawRest.dropLast()) : rawRest
+        // The About file is the person: its name follows a rename, the person URL does not
+        if (rest.hasPrefix("About/") && rest.hasSuffix("(About).md")) || rest == "About" { rest = "" }
+        if !rest.isEmpty && !FileManager.default.fileExists(atPath: (p.personDir as NSString).appendingPathComponent(rest)) {
+            changes.append(LinkChange(file: file, line: line, from: target, to: nil, problem: "no such file in \(p.key): \(rest)"))
+            continue
+        }
+        let url = markerURL(p.key) + (rest.isEmpty ? "" : "/" + rest)
+        let link = url.contains(where: { " ()<>".contains($0) }) ? "](<\(url)>)" : "](\(url))"
+        out = out.replacingCharacters(in: m.range, with: link) as NSString
+        changes.append(LinkChange(file: file, line: line, from: target, to: url, problem: nil))
+    }
+    return (out as String, changes.reversed())
+}
+
+/// Each real file once: a symlinked note (eg day_notes.md -> this month's) is
+/// followed to its target, so it is neither counted twice nor replaced by a
+/// plain file when written
+func markdownFiles(_ roots: [String]) -> [String] {
+    var seen = Set<String>()
+    return rawMarkdownFiles(roots).map { URL(fileURLWithPath: $0).resolvingSymlinksInPath().path }
+        .filter { seen.insert($0).inserted }.sorted()
+}
+
+func rawMarkdownFiles(_ roots: [String]) -> [String] {
+    var out: [String] = []
+    let fm = FileManager.default
+    for r in roots {
+        var isDir: ObjCBool = false
+        guard fm.fileExists(atPath: r, isDirectory: &isDir) else { continue }
+        if !isDir.boolValue { out.append(r); continue }
+        let base = URL(fileURLWithPath: r).resolvingSymlinksInPath()
+        let e = fm.enumerator(at: base, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+        while let u = e?.nextObject() as? URL {
+            if u.pathExtension == "md" { out.append(u.path) }
+        }
+    }
+    return out.sorted()
+}
+
 // MARK: - Link
 
 /// pplr://k/kemp-jon
@@ -1001,6 +1116,37 @@ do {
         let result = plan(people: loadPeople(peopleDir), cards: try loadCards(fixture: fixture), group: group)
         let enc = JSONEncoder(); enc.outputFormatting = [.prettyPrinted, .sortedKeys]
         print(String(data: try enc.encode(result), encoding: .utf8)!)
+    case "resolve":
+        guard let peopleDir, let url = args.first else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "resolve needs --people-dir and a pplr:// URL"]) }
+        guard let t = resolvePplr(url, peopleByMarker(loadPeople(peopleDir))) else {
+            FileHandle.standardError.write(Data("pplr: no one answers to \(url)\n".utf8)); exit(4)
+        }
+        print(t.path)
+    case "links":
+        guard let peopleDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "links needs --people-dir"]) }
+        let byKey = peopleByKey(loadPeople(peopleDir))
+        var all: [LinkChange] = []
+        for f in markdownFiles(args) {
+            guard let text = try? String(contentsOfFile: f, encoding: .utf8) else { continue }
+            let (out, changes) = convertLinks(in: text, file: f, byKey)
+            all += changes
+            if apply && out != text { try out.write(toFile: f, atomically: true, encoding: .utf8) }
+        }
+        if asJSON {
+            let enc = JSONEncoder(); enc.outputFormatting = [.prettyPrinted, .sortedKeys]
+            print(String(data: try enc.encode(all), encoding: .utf8)!)
+        } else {
+            let done = all.filter { $0.to != nil }, left = all.filter { $0.to == nil }
+            print("pplr links\(apply ? "" : " (dry run: nothing written; --apply to write)")\n")
+            print("  links into the people tree  \(all.count)")
+            print("  \((apply ? "converted" : "to convert").padding(toLength: 28, withPad: " ", startingAt: 0))\(done.count)")
+            print("  left as they are            \(left.count)")
+            print("  files                       \(Set(done.map(\.file)).count)")
+            if !left.isEmpty {
+                print("\nLeft as they are:")
+                for c in left { print("  \(c.file):\(c.line)  \(c.problem!)") }
+            }
+        }
     case "backup":
         guard let backupDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "backup needs --backup-dir"]) }
         print("Backup: \(try backup(to: backupDir, fixture: fixture))")

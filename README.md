@@ -249,6 +249,21 @@ Options:
 - `--stale-only`: Only regenerate tags that are missing or older than max-age
 - `--max-age=N`: Set maximum age for stale detection (e.g., 30d, 7days, 2weeks)
 
+#### `pplr://` links: `pplr resolve`, `pplr open`, `pplr links`, `pplr handler`
+
+A `pplr://` URL names a person, not a place: `pplr://k/kemp-jon` is Jon Kemp (lowercase, accents dropped, other characters hyphens), and a path after it names something in his folder, eg `pplr://k/kemp-jon/Meetings/20260924 Intro/Summary.md`. It survives a note being filed into another folder, and, through `.index/aliases`, the person being renamed. Contacts cards carry the same URL.
+
+```bash
+pplr resolve pplr://k/kemp-jon            # The file it names: his About
+pplr open pplr://k/kemp-jon               # His CMS page if the CMS is up, else the file
+pplr open --print pplr://k/kemp-jon       # Where it would go
+pplr links ~/Dropbox/Writing/Journal       # Dry run: which links into People would become pplr://
+pplr links ~/Dropbox/Writing/Journal --apply
+pplr handler --install                     # ~/Applications/Pplr Links.app, registered for pplr://
+```
+
+`pplr links` rewrites Markdown links into the people tree, whether paths (`../../Career/People/K/Kemp, Jon/...`) or CMS URLs (`http://localhost:4360/people/...`). A link to a person's About becomes the bare person URL; anything else keeps its path. A link whose person or file cannot be found is left as it is and listed. A symlinked note is followed to its file, so it is converted once and stays a symlink. `pplr open` uses `$PPLR_CMS_URL` (default `http://localhost:4360/people`; set it empty to always open the file). The handler lets `pplr://` links open from Obsidian, Contacts, Mail and the browser; a browser asks once before handing a link to it.
+
 #### `pplr rename "Old, First" "New, First" [options]`
 
 Rename a person: moves the folder (to a new letter if the surname's initial changes), renames the files named after them (`First Surname (About).md`, `(Picture).jpg` and the rest), and updates their name in the About file and in their own meeting notes' links. The old name is recorded in `.index/aliases`, so a Contacts card still carrying the old `pplr://` URL is found and the URL replaced on the next `pplr sync --link`. Path-style links elsewhere are repointed: the folder name, its URL-encoded forms, and the `First Surname (` file names. The old name in running text is listed, never changed. It then reindexes.

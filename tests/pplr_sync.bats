@@ -285,3 +285,68 @@ setup_plan() {
     [ "$(cat "$PPLR_TEST_DATA/refs/n.md")" = '[H](<V/Varley, Hannah/About/Hannah Varley (About).md>) `V/Varley, Hannah`' ]
     ! grep -q "Hannahh" "$PPLR_TEST_DATA/V/Varley, Hannah/About/Hannah Varley (About).md"
 }
+
+@test "pplr resolve finds a person, a path in their folder, and a former name" {
+    make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
+    mkdir -p "$PPLR_TEST_DATA/K/Kemp, Jon/Meetings/20260924 Intro"; touch "$PPLR_TEST_DATA/K/Kemp, Jon/Meetings/20260924 Intro/Summary.md"
+    run "$PPLR_BIN_DIR/pplr" resolve "pplr://k/kemp-jon"
+    [ "$status" -eq 0 ]; [ "$output" = "$PPLR_TEST_DATA/K/Kemp, Jon/About/Jon Kemp (About).md" ]
+    run "$PPLR_BIN_DIR/pplr" resolve "pplr://k/kemp-jon/Meetings/20260924%20Intro/Summary.md"
+    [ "$output" = "$PPLR_TEST_DATA/K/Kemp, Jon/Meetings/20260924 Intro/Summary.md" ]
+    echo "K/Kraf, Jon" > "$PPLR_TEST_DATA/K/Kemp, Jon/.index/aliases" 2>/dev/null || { mkdir -p "$PPLR_TEST_DATA/K/Kemp, Jon/.index"; echo "K/Kraf, Jon" > "$PPLR_TEST_DATA/K/Kemp, Jon/.index/aliases"; }
+    run "$PPLR_BIN_DIR/pplr" resolve "pplr://k/kraf-jon"
+    [ "$output" = "$PPLR_TEST_DATA/K/Kemp, Jon/About/Jon Kemp (About).md" ]
+    run "$PPLR_BIN_DIR/pplr" resolve "pplr://x/nobody"
+    [ "$status" -ne 0 ]
+}
+
+@test "pplr links rewrites path and CMS links as pplr:// URLs, and leaves the unknown alone" {
+    make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
+    mkdir -p "$PPLR_TEST_DATA/K/Kemp, Jon/Meetings/20260924 Intro"; touch "$PPLR_TEST_DATA/K/Kemp, Jon/Meetings/20260924 Intro/Summary.md"
+    notes="$PPLR_TEST_DATA/journal/2026/notes.md"; mkdir -p "$(dirname "$notes")"
+    printf '%s\n' \
+      '[Jon](<../../Career/People/K/Kemp, Jon/About/Jon Kemp (About).md>)' \
+      '[Summary](<../../Career/People/K/Kemp, Jon/Meetings/20260924 Intro/Summary.md>)' \
+      '[Jon](http://localhost:4360/people/K/Kemp%2C%20Jon/About/Jon%20Kemp%20%28About%29.md)' \
+      '[Gone](<../../Career/People/G/Gone, Person/About/Person Gone (About).md>)' \
+      '[Elsewhere](https://example.com/x)' > "$notes"
+    run "$PPLR_BIN_DIR/pplr" links "$PPLR_TEST_DATA/journal"
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "to convert                  3"
+    assert_contains "$output" "no such person: G/Gone, Person"
+    grep -qF 'Career/People/K/Kemp' "$notes"
+    run "$PPLR_BIN_DIR/pplr" links "$PPLR_TEST_DATA/journal" --apply
+    [ "$(sed -n 1p "$notes")" = '[Jon](pplr://k/kemp-jon)' ]
+    [ "$(sed -n 2p "$notes")" = '[Summary](<pplr://k/kemp-jon/Meetings/20260924 Intro/Summary.md>)' ]
+    [ "$(sed -n 3p "$notes")" = '[Jon](pplr://k/kemp-jon)' ]
+    [ "$(sed -n 4p "$notes")" = '[Gone](<../../Career/People/G/Gone, Person/About/Person Gone (About).md>)' ]
+    [ "$(sed -n 5p "$notes")" = '[Elsewhere](https://example.com/x)' ]
+}
+
+@test "pplr open --print names the file when no CMS answers" {
+    make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
+    PPLR_CMS_URL="" run "$PPLR_BIN_DIR/pplr" open --print "pplr://k/kemp-jon"
+    [ "$status" -eq 0 ]
+    [ "$output" = "$PPLR_TEST_DATA/K/Kemp, Jon/About/Jon Kemp (About).md" ]
+}
+
+@test "pplr links follows a symlinked note to its file, once, and keeps the symlink" {
+    make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
+    j="$PPLR_TEST_DATA/journal"; mkdir -p "$j"
+    echo '[Jon](<../../Career/People/K/Kemp, Jon/About/Jon Kemp (About).md>)' > "$j/20260901 Day Notes.md"
+    ln -s "20260901 Day Notes.md" "$j/aa_day_notes.md"
+    run "$PPLR_BIN_DIR/pplr" links "$j" --apply
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "converted                   1"
+    [ -L "$j/aa_day_notes.md" ]
+    [ "$(cat "$j/20260901 Day Notes.md")" = '[Jon](pplr://k/kemp-jon)' ]
+}
+
+@test "pplr links takes a path relative to where it was run" {
+    make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
+    mkdir -p "$PPLR_TEST_DATA/elsewhere"
+    echo '[Jon](<../../Career/People/K/Kemp, Jon/About/Jon Kemp (About).md>)' > "$PPLR_TEST_DATA/elsewhere/n.md"
+    cd "$PPLR_TEST_DATA/elsewhere"
+    run "$PPLR_BIN_DIR/pplr" links n.md
+    assert_contains "$output" "to convert                  1"
+}

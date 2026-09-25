@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `pplr sync --plan`: a review workbook (Merged, pplr, Contacts, How to review) proposing Add, Update, Link only, No change or Skip for every pplr person, with near-miss name scoring (short forms, double-barrelled surnames, one-letter slips, reversed names, shared company or email domain); `--out`, `--json`. The workbook step runs under `uv` with openpyxl.
 - `pplr sync --check` also matches on a shared phone.
 - `pplr rename`: moves a person's folder and files, updates their About, records the old name in `.index/aliases`, repoints path-style links under `--refs` (default `$PPLR_REFS_DIR` or `~/Dropbox`), lists the old name in running text, and reindexes; `--dry-run`.
+- `pplr resolve`, `pplr open pplr://...` (the CMS page, or the file; `--print`), `pplr links` (rewrites Markdown links into People as `pplr://` URLs; dry run unless `--apply`) and `pplr handler` (a macOS app registered for `pplr://`). The engine build moved to `lib/engine.sh`.
+- Commands take paths relative to where `pplr` was run (`PPLR_CALLER_DIR`), although they run from `$PPLR_DATA`.
 - `pplr sync` resolves a card's old `pplr://` URL through a renamed person's aliases, and `--link` replaces it.
 - `pplr sync --backup`: every Contacts card to a dated `.vcf` in `$PPLR_BACKUP_DIR`; `--link --apply` runs it first.
 

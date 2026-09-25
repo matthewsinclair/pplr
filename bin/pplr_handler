@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# USAGE: install (or remove) the macOS handler that opens pplr:// links
+# USAGE: [--install]     build ~/Applications/Pplr Links.app and register it for pplr://
+# USAGE: [--uninstall]   remove it
+# USAGE: [--status]      say whether it is installed, and which app macOS uses for pplr://
+
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_HANDLER_APP:=$HOME/Applications/Pplr Links.app}"
+
+lsregister=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+
+usage() {
+  echo "Usage: pplr handler --install | --uninstall | --status"
+  echo "  A small app, registered for pplr:// URLs, that runs 'pplr open <url>': the"
+  echo "  person's CMS page when the CMS is up, else their file. Links then open from"
+  echo "  Obsidian, Contacts, Mail and the browser."
+}
+
+case "$1" in
+  --install)
+    command -v osacompile >/dev/null || { echo "Error: osacompile not found (macOS only)"; exit 1; }
+    src=$(mktemp -t pplr-handler).applescript
+    # PATH: the app does not inherit a shell's, and pplr needs swiftc, curl and python3
+    cat > "$src" <<APPLESCRIPT
+on open location theURL
+  do shell script "export PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:\$PATH; " & quoted form of "$PPLR_ROOT/bin/pplr" & " open " & quoted form of theURL
+end open location
+
+on run
+  display dialog "Pplr Links opens pplr:// links. There is nothing to do here." buttons {"OK"} default button 1
+end run
+APPLESCRIPT
+    rm -rf "$PPLR_HANDLER_APP"
+    mkdir -p "$(dirname "$PPLR_HANDLER_APP")"
+    osacompile -o "$PPLR_HANDLER_APP" "$src" || exit 1
+    rm -f "$src"
+    plist="$PPLR_HANDLER_APP/Contents/Info.plist"
+    /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier io.pplr.links" "$plist" 2>/dev/null \
+      || /usr/libexec/PlistBuddy -c "Add :CFBundleIdentifier string io.pplr.links" "$plist"
+    /usr/libexec/PlistBuddy -c "Add :LSUIElement bool true" "$plist"
+    /usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes array" \
+      -c "Add :CFBundleURLTypes:0 dict" \
+      -c "Add :CFBundleURLTypes:0:CFBundleURLName string pplr link" \
+      -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes array" \
+      -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string pplr" "$plist"
+    codesign --force --sign - "$PPLR_HANDLER_APP" 2>/dev/null
+    "$lsregister" -f "$PPLR_HANDLER_APP"
+    echo "Installed: $PPLR_HANDLER_APP (opens pplr:// with $PPLR_ROOT/bin/pplr)"
+    ;;
+  --uninstall)
+    [ -d "$PPLR_HANDLER_APP" ] && "$lsregister" -u "$PPLR_HANDLER_APP" && rm -rf "$PPLR_HANDLER_APP"
+    echo "Removed: $PPLR_HANDLER_APP"
+    ;;
+  --status)
+    [ -d "$PPLR_HANDLER_APP" ] && echo "Installed: $PPLR_HANDLER_APP" || echo "Not installed"
+    "$lsregister" -dump URLSchemeBinding 2>/dev/null | grep -i -A1 "pplr:" | head -4
+    ;;
+  -h|--help|"") usage; [ -n "$1" ] ;;
+  *) usage; exit 1 ;;
+esac

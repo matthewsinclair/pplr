@@ -20,8 +20,8 @@
 : "${PPLR_BACKUP_DIR:=$HOME/Library/Application Support/pplr/contacts-backups}"
 : "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
 
-src="$PPLR_ROOT/src/pplr-contacts/main.swift"
-engine="$PPLR_ROOT/.build/pplr-contacts"
+# shellcheck source=../lib/engine.sh
+source "$PPLR_ROOT/lib/engine.sh"
 
 usage() {
   echo "Usage: pplr sync --check [--json] [-v|--verbose] [--group NAME]"
@@ -40,16 +40,6 @@ usage() {
   echo "  --json          Print the report (or with --plan, the plan) as JSON"
   echo "  -v, --verbose   Also list everyone who is only in pplr"
   echo "  --group NAME    The Contacts group that marks pplr people (default: PPLR)"
-}
-
-# Build the Swift engine on first use, and again whenever its source changes
-build_engine() {
-  if [ ! -x "$engine" ] || [ "$src" -nt "$engine" ]; then
-    command -v swiftc >/dev/null 2>&1 || { echo "Error: swiftc not found. Install the Xcode command line tools: xcode-select --install"; exit 1; }
-    mkdir -p "$(dirname "$engine")"
-    echo "Building the Contacts engine..." >&2
-    swiftc -O -swift-version 5 -o "$engine" "$src" -framework Contacts >&2 || { echo "Error: could not build $src"; exit 1; }
-  fi
 }
 
 mode=""

@@ -47,6 +47,8 @@ fi
 
 # Save the current directory
 current_dir=$(pwd)
+# Commands run from $PPLR_DATA; paths the caller gave are relative to here
+export PPLR_CALLER_DIR="$current_dir"
 
 # Change to the PPLR_DATA directory
 cd "$PPLR_DATA" || {

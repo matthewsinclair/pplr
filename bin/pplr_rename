@@ -27,7 +27,7 @@ names=()
 while [[ $# -gt 0 ]]; do
   case $1 in
     --dry-run) dry=1; shift ;;
-    --refs) refs+=("$2"); shift 2 ;;
+    --refs) r="$2"; [[ "$r" = /* ]] || r="${PPLR_CALLER_DIR:-$PWD}/$r"; refs+=("$r"); shift 2 ;;
     -h|--help) usage; exit 0 ;;
     *) names+=("$1"); shift ;;
   esac
