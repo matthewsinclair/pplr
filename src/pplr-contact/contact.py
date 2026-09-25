@@ -21,13 +21,19 @@ in contact.yaml overrides both. Off the roster: last is kept, and no next is set
 
 A Meetings folder dated after today is a booked meeting: that person is not due.
 
+About/contact.md is a read-only view of contact.yaml, written whenever pplr
+writes contact.yaml, and by render for everyone (idempotent). Edit the yaml.
+
 Usage (via bin/pplr_contact):
     contact.py scan [--dry-run]     last from each person's newest meeting, and next from the cadence
     contact.py due [DAYS] [--all]   who to get in touch with: next on or before today (plus DAYS);
                                     --all lists everyone with a next date
     contact.py show PERSON          a person's contact.yaml, with their cadence
-    contact.py log PERSON [DATE] [--via email|call|message|meeting] [--link URL] [--note TEXT]
-                                    record a contact (DATE defaults to today); next moves on
+    contact.py log PERSON [DATE] [--via email|call|message|meeting] [--email MESSAGE-ID]
+                   [--link URL] [--note TEXT]
+                                    record a contact (DATE defaults to today); next moves on;
+                                    --email links the message (pplr email shows the ids)
+    contact.py render               About/contact.md from contact.yaml, for everyone
     contact.py next PERSON WHEN     set next: a date (2026-11-01) or from today (+2w, +10d, +3m)
     contact.py context PERSON       what to write from: role, latest update, last contact and its notes
 """
@@ -40,6 +46,7 @@ import re
 import sys
 
 import yaml
+from urllib.parse import quote
 
 PEOPLE = os.environ.get("PPLR_DIR") or os.environ.get("PPLR_DATA") or os.path.expanduser("~/Dropbox/Career/People")
 CADENCE = os.path.join(PEOPLE, "_pplr", "cadence.yaml")
@@ -108,6 +115,52 @@ def write_contact(d, c):
     if c["cadence"]:
         lines.append(f"cadence: {c['cadence']}")
     open(contact_file(d), "w").write("\n".join(lines) + "\n")
+    render_one(d, c)
+
+
+def md_link(label, target):
+    return f"[{label}](<{target}>)" if re.search(r"[ ()<>]", target) else f"[{label}]({target})"
+
+
+def nice(date):
+    return f"{date.day} {date:%b %Y}"
+
+
+def render_one(d, c, defaults=None):
+    """About/contact.md: contact.yaml to read (the CMS shows it); True if it changed"""
+    days, why = cadence_of(d, c, defaults if defaults is not None else default_cadences())
+    lines = ["<!-- Generated from contact.yaml by pplr contact: edit contact.yaml, not this file. -->",
+             f"# Contact: {display_name(d)}", ""]
+    last = c["last"]
+    if last:
+        target = last.get("link") or ""
+        m = re.match(r"pplr://[a-z]/[^/]+/(Meetings/.+)$", target)
+        if m:
+            target = "../" + m.group(1).rstrip("/") + "/"
+        what = f"{nice(last['date'])}, {last.get('via', 'meeting')}"
+        lines.append(f"- Last contact: {what}" + (f": {md_link(target.rstrip('/').rsplit('/', 1)[-1] if m else ('the email' if target.startswith('message:') else 'link'), target)}" if target else ""))
+        if last.get("note"):
+            lines.append(f"- Note: {last['note']}")
+    else:
+        lines.append("- Last contact: none recorded")
+    lines.append(f"- Next: {nice(c['next'])}" if c["next"] else "- Next: none")
+    b = booked(d)
+    if b:
+        lines.append(f"- Booked: {nice(b[0])}, {md_link(b[1], '../Meetings/' + b[1] + '/')}")
+    lines.append(f"- Cadence: every {days} days (from {why})" if days else "- Cadence: not on the contact roster")
+    text = "\n".join(lines) + "\n"
+    f = os.path.join(d, "About", "contact.md")
+    if os.path.exists(f) and open(f).read() == text:
+        return False
+    open(f, "w").write(text)
+    return True
+
+
+def render():
+    defaults = default_cadences()
+    n = sum(render_one(d, read_contact(d), defaults) for d in person_dirs() if os.path.exists(contact_file(d)))
+    print(f"pplr contact render: {n} contact.md written")
+    return 0
 
 
 def tags_of(d):
@@ -233,6 +286,9 @@ def log(name, args):
             via = next(it, "email")
         elif a == "--link":
             link = next(it, None)
+        elif a == "--email":
+            mid = next(it, "").strip().strip("<>")
+            via, link = "email", f"message://%3C{quote(mid, safe='@.-_=')}%3E"
         elif a == "--note":
             note = next(it, None)
         else:
@@ -319,6 +375,8 @@ def main(argv):
         return set_next(rest[0], rest[1])
     if cmd == "context" and rest:
         return context(rest[0])
+    if cmd == "render":
+        return render()
     print(f"pplr contact: unknown command {cmd!r}"); return 2
 
 

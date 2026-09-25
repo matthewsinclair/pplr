@@ -289,8 +289,14 @@ pplr contact due                         # who is due a note today; due 14 looks
 pplr contact show "Kemp, Jon"           # last contact, next date and cadence
 pplr contact log "Kemp, Jon" --via email --note "Sent the deck"   # an email today; next moves on
 pplr contact next "Kemp, Jon" +2w       # snooze: a date, or +10d, +2w, +3m
+pplr contact log pplr://k/kemp-jon --email "<CAL…@mail.gmail.com>"  # an email, linked (ids from pplr email)
+pplr contact render                      # About/contact.md, a read-only view of contact.yaml, for everyone
 pplr contact context "Kemp, Jon"        # role, latest update, last meeting's notes: to write from
 ```
+
+#### `pplr email [recent|inbox] [--account TEXT] [--hours N] [--sent]`
+
+Recent mail (the last 24 hours) or what is in the inbox now, one message per block with its `Message-ID` to copy into `pplr contact log --email`. A sender who is in pplr is marked with their `pplr://` marker. `--account work` keeps the accounts whose address contains that text. It reads Mail's index through `mail-recent` (read-only; `PPLR_MAIL_RECENT` sets its path).
 
 #### `pplr refresh`: `next`, `stamp`, `status`
 

@@ -90,3 +90,24 @@ meeting() { mkdir -p "$PPLR_TEST_DATA/$1/Meetings/$2"; echo "# $2" > "$PPLR_TEST
     run "$PPLR_BIN_DIR/pplr" contact show pplr://z/nobody-here
     [ "$status" -ne 0 ]
 }
+
+@test "pplr contact writes contact.md beside contact.yaml, and log --email links the message" {
+    create_test_person "Adams" "Amy" >/dev/null
+    meeting "A/Adams, Amy" "20260301 Catch-up"
+    export PPLR_TODAY=2026-09-25
+    "$PPLR_BIN_DIR/pplr" contact scan >/dev/null
+    run cat "$PPLR_TEST_DATA/A/Adams, Amy/About/contact.md"
+    assert_contains "$output" "# Contact: Amy Adams"
+    assert_contains "$output" "- Last contact: 1 Mar 2026, meeting: [20260301 Catch-up](<../Meetings/20260301 Catch-up/>)"
+    assert_contains "$output" "- Cadence: not on the contact roster"
+    run "$PPLR_BIN_DIR/pplr" contact render
+    assert_contains "$output" "0 contact.md written"
+    rm "$PPLR_TEST_DATA/A/Adams, Amy/About/contact.md"
+    run "$PPLR_BIN_DIR/pplr" contact render
+    assert_contains "$output" "1 contact.md written"
+    "$PPLR_BIN_DIR/pplr" contact log "Adams, Amy" --email "<CAL=x@mail.gmail.com>" >/dev/null
+    run cat "$PPLR_TEST_DATA/A/Adams, Amy/About/contact.yaml"
+    assert_contains "$output" 'via: email, link: "message://%3CCAL=x@mail.gmail.com%3E"'
+    run cat "$PPLR_TEST_DATA/A/Adams, Amy/About/contact.md"
+    assert_contains "$output" "- Last contact: 25 Sep 2026, email: [the email](message://%3CCAL=x@mail.gmail.com%3E)"
+}

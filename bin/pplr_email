@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# USAGE: recent mail, or what is in the inbox, with each Message-ID to copy (senders in pplr marked)
+# USAGE: recent [--hours N]        what arrived in the last 24 hours (the default)
+# USAGE: inbox                     what is in the inbox now, whatever its age
+# USAGE: --account TEXT            only accounts whose address contains TEXT (eg work)
+# USAGE: --sent                    include sent mail
+
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+
+# mail-recent is the one read-only door to Mail's store; pplr only formats what it returns
+mail_recent="${PPLR_MAIL_RECENT:-$(command -v mail-recent)}"
+[ -x "$mail_recent" ] || { echo "Error: mail-recent not found (set PPLR_MAIL_RECENT to its path)"; exit 1; }
+
+mode=recent; args=()
+while [ $# -gt 0 ]; do
+  case "$1" in
+    recent) mode=recent ;;
+    inbox) mode=inbox ;;
+    --account|--hours|--limit) args+=("$1" "$2"); shift ;;
+    --sent) args+=("$1") ;;
+    -h|--help) grep '^# USAGE: ' "$0" | sed 's/^# USAGE: //'; exit 0 ;;
+    *) echo "Usage: pplr email [recent|inbox] [--account TEXT] [--hours N] [--sent]"; exit 1 ;;
+  esac
+  shift
+done
+[ "$mode" = inbox ] && args+=(--inbox)
+
+source "$PPLR_ROOT/lib/engine.sh"
+build_engine
+people_json=$(mktemp -t pplr-people)
+trap 'rm -f "$people_json"' EXIT
+"$engine" people --people-dir "$PPLR_DIR" > "$people_json" || exit 1
+export PPLR_PEOPLE_JSON="$people_json"
+
+"$mail_recent" index --json "${args[@]}" | python3 "$PPLR_ROOT/src/pplr-email/email_list.py"

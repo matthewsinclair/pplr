@@ -4,9 +4,10 @@
 # USAGE: scan [--dry-run]          last contact from each person's newest meeting; next from the cadence
 # USAGE: due [DAYS] [--all]        who is due for a note (next on or before today, plus DAYS)
 # USAGE: show "Surname, First"     a person's last contact, next date and cadence
-# USAGE: log "Surname, First" [DATE] [--via email|call|message|meeting] [--link URL] [--note TEXT]
+# USAGE: log "Surname, First" [DATE] [--via email|call|message|meeting] [--email MESSAGE-ID] [--link URL] [--note TEXT]
 # USAGE: next "Surname, First" WHEN  set the next contact: a date, or +2w, +10d, +3m
 # USAGE: context "Surname, First"  what to write a note from: role, latest update, last meeting's notes
+# USAGE: render                   About/contact.md, a read-only view of contact.yaml, for everyone
 
 : "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
 : "${PPLR_DIR:=$PPLR_DATA}"
