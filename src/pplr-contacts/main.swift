@@ -55,6 +55,7 @@ struct Card: Codable {
     var linkedin: [String]
     var groups: [String]
     var account: String?       // "home" (iCloud, where the group lives), "other", or "none"; absent means home
+    var hasImage: Bool?        // a photo or thumbnail; absent means unknown (treated as none)
 }
 
 struct LabelledValue: Codable {
@@ -223,7 +224,8 @@ func loadCards(fixture: String?) throws -> [Card] {
     }
     let keys: [CNKeyDescriptor] = [CNContactIdentifierKey, CNContactGivenNameKey, CNContactFamilyNameKey,
                                    CNContactOrganizationNameKey, CNContactJobTitleKey, CNContactEmailAddressesKey,
-                                   CNContactPhoneNumbersKey, CNContactUrlAddressesKey, CNContactSocialProfilesKey]
+                                   CNContactPhoneNumbersKey, CNContactUrlAddressesKey, CNContactSocialProfilesKey,
+                                   CNContactImageDataAvailableKey, CNContactThumbnailImageDataKey]
         .map { $0 as CNKeyDescriptor }
     // The PPLR group lives in the default account (iCloud) only; cards in
     // other accounts are marked by the pplr URL alone
@@ -273,7 +275,7 @@ func loadCards(fixture: String?) throws -> [Card] {
                           emails: c.emailAddresses.map { ($0.value as String).lowercased() },
                           phones: c.phoneNumbers.map { normalisePhone($0.value.stringValue) },
                           urls: urls, linkedin: Array(Set(li)).sorted(), groups: membership[c.identifier] ?? [],
-                          account: acct))
+                          account: acct, hasImage: c.imageDataAvailable || (c.thumbnailImageData?.isEmpty == false)))
     }
     return cards
 }
@@ -1277,6 +1279,49 @@ func printWork(_ work: [CardWork], problems: [String], outcome: Outcome?, backup
     if let backupPath { print("\nBackup: \(backupPath)") }
 }
 
+// MARK: - Photos
+
+/// Linked cards with no photo at all, and the pplr picture each could take.
+/// A card that has a photo is never touched.
+func photoWork(people: [Person], cards: [Card]) -> [(person: Person, card: Card, picture: String)] {
+    var keys: [String: Person] = [:]
+    for p in people { for k in [p.key] + p.aliases { keys[markerPath(k)] = p } }
+    var out: [(Person, Card, String)] = []
+    for c in cards where c.hasImage != true && c.account != "none" {
+        guard let m = pplrMarker(c), let p = keys[m], let pic = picturePath(p) else { continue }
+        out.append((p, c, pic))
+    }
+    return out.sorted { $0.0.key < $1.0.key }
+}
+
+func applyPhotos(_ work: [(person: Person, card: Card, picture: String)], fixture: String?, limit: Int?) throws -> Outcome {
+    var out: Outcome = [], failures = 0
+    if let fixture {
+        var cards = try JSONDecoder().decode([Card].self, from: Data(contentsOf: URL(fileURLWithPath: fixture)))
+        for w in work.prefix(limit ?? Int.max) {
+            if let i = cards.firstIndex(where: { $0.id == w.card.id }) { cards[i].hasImage = true }
+            out.append((w.person.key, nil))
+        }
+        let enc = JSONEncoder(); enc.outputFormatting = [.prettyPrinted, .sortedKeys]
+        try enc.encode(cards).write(to: URL(fileURLWithPath: fixture))
+        return out
+    }
+    for w in work.prefix(limit ?? Int.max) {
+        guard let tiff = tiffCopy(w.picture) else { out.append((w.person.key, "could not convert \(w.picture)")); failures += 1; continue }
+        let (_, error) = runScript("""
+        tell application "Contacts"
+        set p to person id \(asText(w.card.id))
+        set image of p to (read (POSIX file \(asText(tiff))) as TIFF picture)
+        save
+        end tell
+        """)
+        try? FileManager.default.removeItem(atPath: tiff)
+        out.append((w.person.key, error))
+        if error != nil { failures += 1; if failures >= 3 { break } }
+    }
+    return out
+}
+
 // MARK: - Output
 
 func printReport(_ r: Report, verbose: Bool) {
@@ -1391,6 +1436,22 @@ do {
         }
         printWork(work, problems: problems, outcome: outcome, backupPath: backupPath, limit: apply ? nil : limit)
         if outcome?.contains(where: { $0.error != nil }) == true { exit(1) }
+    case "photos":
+        guard let peopleDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "photos needs --people-dir"]) }
+        let work = photoWork(people: loadPeople(peopleDir), cards: try loadCards(fixture: fixture))
+        if apply && !work.isEmpty {
+            guard let backupDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "--apply needs --backup-dir"]) }
+            let b = try backup(to: backupDir, fixture: fixture)
+            let outcome = try applyPhotos(work, fixture: fixture, limit: limit)
+            let bad = outcome.filter { $0.error != nil }
+            print("pplr sync --photos --apply\n\n  photos set              \(outcome.count - bad.count)\n  failed                  \(bad.count)")
+            bad.forEach { print("  \($0.person): \($0.error!)") }
+            print("\nBackup: \(b)")
+            if !bad.isEmpty { exit(1) }
+        } else {
+            print("pplr sync --photos (dry run: nothing written; --apply to write)\n\n  linked cards with no photo, where pplr has one  \(work.count)")
+            work.forEach { print("  \($0.person.key)  <->  \(displayName($0.card))") }
+        }
     case "resolve":
         guard let peopleDir, let url = args.first else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "resolve needs --people-dir and a pplr:// URL"]) }
         // pplr://tag/<tag> (or tags/): the tag's page; pplr://tag alone: the index of tags

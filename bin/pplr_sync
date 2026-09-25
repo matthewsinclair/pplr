@@ -5,6 +5,7 @@
 # USAGE: --link           mark matched cards as pplr's (a dry run without --apply)
 # USAGE: --plan           write a review workbook: pplr, Contacts, and a proposed merge
 # USAGE: --apply-plan FILE  write the reviewed plan workbook to Contacts (a dry run without --apply)
+# USAGE: --photos         give linked cards with no photo their pplr picture (a dry run without --apply)
 # USAGE: --backup         save every Contacts card to a dated .vcf in $PPLR_BACKUP_DIR
 # USAGE: [--apply]        with --link: write, after a .vcf backup of every card
 # USAGE: [--name NAME]    with --link: also link this name-only match ("Surname, First"; repeatable)
@@ -28,12 +29,14 @@ usage() {
   echo "Usage: pplr sync --check [--json] [-v|--verbose] [--group NAME]"
   echo "       pplr sync --plan [--out FILE] [--json] [--group NAME]"
   echo "       pplr sync --apply-plan WORKBOOK [--apply] [--limit N] [--name \"Surname, First\"]..."
+  echo "       pplr sync --photos [--apply] [--limit N]"
   echo "       pplr sync --backup"
   echo "       pplr sync --link [--apply] [--name \"Surname, First\"]... [--all-names] [--group NAME]"
   echo "  --check         Compare pplr with Apple Contacts; changes nothing"
   echo "  --link          Mark matched cards as pplr's: the pplr URL and the group, nothing else"
   echo "  --plan          Write a workbook for review: pplr, Contacts, and a proposed merge; changes nothing"
   echo "  --apply-plan F  Carry out a reviewed --plan workbook: Add, Update, Link only (a dry run without --apply)"
+  echo "  --photos        Give linked cards with no photo the pplr picture (a dry run without --apply)"
   echo "  --backup        Save every Contacts card to a dated .vcf in \$PPLR_BACKUP_DIR"
   echo "  --apply         With --link, write (a dry run otherwise); every card is saved to a .vcf first"
   echo "  --name NAME     With --link, also link this name-only match (repeatable)"
@@ -55,6 +58,7 @@ while [[ $# -gt 0 ]]; do
     --link) mode="link"; shift ;;
     --backup) mode="backup"; shift ;;
     --plan) mode="plan"; shift ;;
+    --photos) mode="photos"; shift ;;
     --apply-plan) mode="applyplan"; workbook="$2"; shift 2 ;;
     --out) out="$2"; shift 2 ;;
     --apply) pass+=(--apply); shift ;;
@@ -79,7 +83,7 @@ if [ -n "$PPLR_CONTACTS_JSON" ]; then
   pass+=(--contacts-json "$PPLR_CONTACTS_JSON")
 fi
 
-if [ "$mode" = "link" ] || [ "$mode" = "backup" ] || [ "$mode" = "applyplan" ]; then
+if [ "$mode" = "link" ] || [ "$mode" = "backup" ] || [ "$mode" = "applyplan" ] || [ "$mode" = "photos" ]; then
   pass+=(--backup-dir "$PPLR_BACKUP_DIR")
 fi
 

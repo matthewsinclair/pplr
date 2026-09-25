@@ -317,6 +317,10 @@ pplr sync --apply-plan _out/contacts-plan-20260925-1025.xlsx --apply       # The
 
 Every card is saved to a dated `.vcf` first. It works from the current pplr data, so a change since the workbook was made is written as it is now. Applying the same workbook again writes nothing new, and never adds a card twice: a person whose `pplr` URL is already on a card is done. Each written card gets `About/<First Surname> (Contacts).webloc`.
 
+#### `pplr sync --photos [--apply] [--limit N]`
+
+Give each linked card that has no photo at all the person's pplr picture (`About/<First Surname> (Picture).jpg`). A card that already has a photo is never touched. A dry run unless `--apply`, with a `.vcf` backup first. Photos set by script are stored as the card's thumbnail, which is what Contacts shows.
+
 #### `pplr sync --link [options]`
 
 Mark the cards that match pplr people as pplr's: a URL labelled `pplr` (`pplr://<letter>/<surname-first>`: lowercase, accents dropped, other characters hyphens; an older form is replaced) and, for cards in the default account (iCloud), membership of the `PPLR` group. Cards in other accounts, eg Gmail, carry the URL alone, so there is one `PPLR` group. A matched card in no account (a directory or Other Known card) cannot be written and is listed instead. Nothing else on the card changes. On the pplr side it writes `About/<First Surname> (Contacts).webloc`, which opens the card in Contacts (`addressbook://<card id>`; the id is this Mac's). It is a dry run unless `--apply` is given.

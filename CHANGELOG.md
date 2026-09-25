@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `pplr sync --link`: marks matched Contacts cards as pplr's with a `pplr` URL and the `PPLR` group, and writes `About/<First Surname> (Contacts).webloc` opening the card in Contacts; a dry run unless `--apply`, with `--name` and `--all-names` for name-only matches.
 - `pplr sync --plan`: a review workbook (Merged, pplr, Contacts, How to review) proposing Add, Update, Link only, No change or Skip for every pplr person, with near-miss name scoring (short forms, double-barrelled surnames, one-letter slips, reversed names, shared company or email domain); `--out`, `--json`. The workbook step runs under `uv` with openpyxl.
 - `pplr sync --apply-plan WORKBOOK`: carries out a reviewed plan workbook (Add as new iCloud cards with photo, Update without removing anything, Link only); a dry run unless `--apply`, with `--limit`, a `.vcf` backup first, and never a card added twice.
+- `pplr sync --photos`: the pplr picture on linked cards that have no photo, never replacing one.
 - `pplr sync --check` also matches on a shared phone.
 - Gmail addresses match with or without dots and `+suffix` (Gmail ignores both), so an update never adds the same address twice.
 - `pplr rename`: moves a person's folder and files, updates their About, records the old name in `.index/aliases`, repoints path-style links under `--refs` (default `$PPLR_REFS_DIR` or `~/Dropbox`), lists the old name in running text, and reindexes; `--dry-run`.

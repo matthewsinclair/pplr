@@ -420,3 +420,16 @@ setup_plan() {
     [ "$(echo "$output" | jq -r '.matched[] | select(.person == "H/Hopper, Grace") | .how')" = "email" ]
     [ "$(echo "$output" | jq '[.matched[] | select(.person == "H/Hopper, Grace") | .diffs[] | select(.field == "email")] | length')" -eq 0 ]
 }
+
+@test "pplr sync --photos only picks linked cards that have no photo" {
+    setup_contacts
+    export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
+    jq '(.[] | select(.id == "c1")).urls = [{"label": "pplr", "value": "pplr://l/lovelace-ada"}] | (.[] | select(.id == "c3")).hasImage = true' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
+    touch "$PPLR_TEST_DATA/L/Lovelace, Ada/About/Ada Lovelace (Picture).jpg" "$PPLR_TEST_DATA/T/Turing, Alan/About/Alan Turing (Picture).jpg"
+    run "$PPLR_BIN_DIR/pplr" sync --photos
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "L/Lovelace, Ada"
+    [[ "$output" != *"Turing"* ]]
+    run "$PPLR_BIN_DIR/pplr" sync --photos --apply
+    [ "$(jq -r '.[] | select(.id == "c1") | .hasImage' "$PPLR_CONTACTS_JSON")" = "true" ]
+}
