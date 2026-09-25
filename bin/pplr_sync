@@ -27,7 +27,7 @@ source "$PPLR_ROOT/lib/engine.sh"
 usage() {
   echo "Usage: pplr sync --check [--json] [-v|--verbose] [--group NAME]"
   echo "       pplr sync --plan [--out FILE] [--json] [--group NAME]"
-  echo "       pplr sync --apply-plan WORKBOOK [--apply] [--limit N]"
+  echo "       pplr sync --apply-plan WORKBOOK [--apply] [--limit N] [--name \"Surname, First\"]..."
   echo "       pplr sync --backup"
   echo "       pplr sync --link [--apply] [--name \"Surname, First\"]... [--all-names] [--group NAME]"
   echo "  --check         Compare pplr with Apple Contacts; changes nothing"

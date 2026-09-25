@@ -98,6 +98,17 @@ func normalisePhone(_ raw: String) -> String {
     return s
 }
 
+/// The address as the mail server sees it: Gmail ignores dots and anything
+/// after + in the local part, so a.b+x@gmail.com and ab@gmail.com are one
+func emailKey(_ e: String) -> String {
+    let lower = e.lowercased()
+    guard let at = lower.lastIndex(of: "@") else { return lower }
+    var local = String(lower[..<at]); let domain = String(lower[lower.index(after: at)...])
+    guard domain == "gmail.com" || domain == "googlemail.com" else { return lower }
+    if let plus = local.firstIndex(of: "+") { local = String(local[..<plus]) }
+    return local.replacingOccurrences(of: ".", with: "") + "@gmail.com"
+}
+
 /// "https://www.linkedin.com/in/JonTolley/?x" -> "jontolley"
 func linkedinSlug(_ raw: String) -> String? {
     let lower = raw.lowercased()
@@ -359,7 +370,7 @@ func diffs(_ p: Person, _ c: Card) -> [FieldDiff] {
     scalar("name", "\(p.given) \(p.family)", "\(c.given) \(c.family)")
     scalar("company", p.company, c.organization)
     scalar("role", p.role, c.jobTitle)
-    set("email", p.emails, c.emails)
+    set("email", p.emails.map(emailKey), c.emails.map(emailKey))
     set("phone", p.phones, c.phones)
     set("linkedin", p.linkedin.isEmpty ? [] : [p.linkedin], c.linkedin)
     return out
@@ -376,7 +387,7 @@ func check(people: [Person], cards: [Card], group: String) -> Report {
         byPhone: [String: [Card]] = [:], byName: [String: [Card]] = [:]
     for c in cards {
         if let m = pplrMarker(c), let key = markerKeys[m] ?? markerKeys[m.removingPercentEncoding ?? m] { byMarker[key] = c }
-        for e in c.emails { byEmail[e, default: []].append(c) }
+        for e in c.emails { byEmail[emailKey(e), default: []].append(c) }
         for s in c.linkedin { bySlug[s, default: []].append(c) }
         for ph in Set(c.phones) where ph.count > 7 { byPhone[ph, default: []].append(c) }
         byName[fold("\(c.given) \(c.family)"), default: []].append(c)
@@ -397,7 +408,7 @@ func check(people: [Person], cards: [Card], group: String) -> Report {
     }
     for p in people {
         if let c = byMarker[p.key] { r.linked.append(pair(p, c, "linked")); continue }
-        let viaEmail = uniq(p.emails.flatMap { byEmail[$0] ?? [] })
+        let viaEmail = uniq(p.emails.flatMap { byEmail[emailKey($0)] ?? [] })
         let viaSlug = p.linkedin.isEmpty ? [] : uniq(bySlug[p.linkedin] ?? [])
         let viaPhone = uniq(p.phones.flatMap { byPhone[$0] ?? [] })
         let viaName = byName[fold("\(p.given) \(p.family)")] ?? []
@@ -592,7 +603,8 @@ func fieldChanges(_ p: Person, _ c: Card) -> [String] {
     if !p.role.isEmpty && fold(p.role) != fold(c.jobTitle) {
         out.append("role: \(p.role) (was \(c.jobTitle.isEmpty ? "empty" : c.jobTitle))")
     }
-    for e in p.emails where !c.emails.contains(e) { out.append("+ email \(e)") }
+    let cardEmails = Set(c.emails.map(emailKey))
+    for e in p.emails where !cardEmails.contains(emailKey(e)) { out.append("+ email \(e)") }
     for ph in p.phones where !c.phones.contains(ph) { out.append("+ phone \(ph)") }
     if !p.linkedin.isEmpty && !c.linkedin.contains(p.linkedin) { out.append("+ LinkedIn \(p.linkedin)") }
     return out
@@ -656,9 +668,9 @@ func plan(people: [Person], cards rawCards: [Card], group: String) -> Plan {
     let free = cards.filter { !strong.contains($0.id) }
     typealias Scored = (card: Card, score: Int, why: String)
     for p in people where !done.contains(p.key) {
-        let mine = Set(p.emails)
+        let mine = Set(p.emails.map(emailKey))
         var cands: [Scored] = free.compactMap { c in
-            let shares = c.emails.contains(where: mine.contains)
+            let shares = c.emails.contains { mine.contains(emailKey($0)) }
             if let (s, why) = score(p, c) { return (c, s + (shares ? 40 : 0), why + (shares ? ", same email" : "")) }
             return shares ? (c, 40, "same email, different name") : nil
         }
@@ -1113,7 +1125,7 @@ func planWork(_ decisions: [PlanDecision], people: [Person], cards: [Card], grou
                 setName: full && fold("\(p.given) \(p.family)") != fold("\(c.given) \(c.family)"),
                 setCompany: full && !p.company.isEmpty && fold(p.company) != fold(c.organization),
                 setRole: full && !p.role.isEmpty && fold(p.role) != fold(c.jobTitle),
-                addEmails: full ? p.emails.filter { !c.emails.contains($0) } : [],
+                addEmails: full ? p.emails.filter { e in !c.emails.contains { emailKey($0) == emailKey(e) } } : [],
                 addPhones: full ? p.phones.filter { !c.phones.contains($0) } : [],
                 addLinkedIn: full && !p.linkedin.isEmpty && !c.linkedin.contains(p.linkedin),
                 marker: m == nil ? "add" : (m != markerPath(p.key) ? "replace" : ""),
@@ -1366,7 +1378,10 @@ do {
             throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "applyplan needs --people-dir and --decisions FILE"])
         }
         let decisions = try JSONDecoder().decode([PlanDecision].self, from: Data(contentsOf: URL(fileURLWithPath: file)))
-        let (work, problems) = planWork(decisions, people: loadPeople(peopleDir), cards: try loadCards(fixture: fixture), group: group)
+        // --name: only these people (eg to try one card first)
+        let only = Set(names.map(personKey))
+        let chosen = only.isEmpty ? decisions : decisions.filter { only.contains($0.person) }
+        let (work, problems) = planWork(chosen, people: loadPeople(peopleDir), cards: try loadCards(fixture: fixture), group: group)
         var outcome: Outcome? = nil, backupPath: String? = nil
         if apply && work.contains(where: { !$0.isEmpty }) {
             guard let backupDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "--apply needs --backup-dir"]) }

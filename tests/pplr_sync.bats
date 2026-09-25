@@ -400,3 +400,23 @@ setup_plan() {
     assert_contains "$output" "add (new iCloud cards)  0"
     assert_contains "$output" "update                  0"
 }
+
+@test "pplr sync --apply-plan --name writes only the named people" {
+    command -v uv >/dev/null 2>&1 || skip "uv not installed"
+    setup_contacts
+    export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
+    "$PPLR_BIN_DIR/pplr" sync --plan --out "$PPLR_TEST_DATA/plan.xlsx" >/dev/null
+    run "$PPLR_BIN_DIR/pplr" sync --apply-plan "$PPLR_TEST_DATA/plan.xlsx" --apply --name "Hopper, Grace"
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "written now             1"
+    [ "$(jq '[.[] | select(.family == "Nobody")] | length' "$PPLR_CONTACTS_JSON")" -eq 0 ]
+}
+
+@test "pplr sync treats Gmail addresses with and without dots as one address" {
+    setup_contacts
+    jq '(.[] | select(.id == "c2")).emails = ["grace.hopper@gmail.com"]' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
+    make_about Hopper Grace "$(printf '%s\n' '- Role:     Rear Admiral' '- Company:  Navy' '- LinkedIn:' '- Email:    [gracehopper+navy@gmail.com](mailto:gracehopper+navy@gmail.com)' '- Phone:')"
+    run "$PPLR_BIN_DIR/pplr" sync --check --json
+    [ "$(echo "$output" | jq -r '.matched[] | select(.person == "H/Hopper, Grace") | .how')" = "email" ]
+    [ "$(echo "$output" | jq '[.matched[] | select(.person == "H/Hopper, Grace") | .diffs[] | select(.field == "email")] | length')" -eq 0 ]
+}
