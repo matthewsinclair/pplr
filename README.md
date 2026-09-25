@@ -266,6 +266,17 @@ The rendered line links each tag to its page, and ends with an HTML comment mark
 
 Show each person's photo at the top of their About page: an `<img>` line under the title, floated right, pointing at `About/<First Surname> (Picture).jpg` (or `.png`). It is idempotent: run it again after adding people or pictures. People with no picture get no line. `PPLR_PICTURE_WIDTH` sets the width (default 160).
 
+#### `pplr refresh`: `next`, `stamp`, `status`
+
+When each person was last checked against their public profile, in `<person>/.index/refreshed` (`2026-09-25 linkedin`), which moves with them on a rename.
+
+```bash
+pplr refresh next 20                   # The next 20 to check: never checked first, then the oldest
+pplr refresh next 20 --older-than 180  # Only those not checked for 180 days
+pplr refresh stamp "Kemp, Jon"        # Record a check today (source: linkedin)
+pplr refresh status                    # How many are checked, and how recently
+```
+
 #### `pplr rename "Old, First" "New, First" [options]`
 
 Rename a person: moves the folder (to a new letter if the surname's initial changes), renames the files named after them (`First Surname (About).md`, `(Picture).jpg` and the rest), and updates their name in the About file and in their own meeting notes' links. The old name is recorded in `.index/aliases`, so a Contacts card still carrying the old `pplr://` URL is found and the URL replaced on the next `pplr sync --link`. Path-style links elsewhere are repointed: the folder name, its URL-encoded forms, and the `First Surname (` file names. The old name in running text is listed, never changed. It then reindexes.

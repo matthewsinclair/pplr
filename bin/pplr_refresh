@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# USAGE: track when each person was last checked against their public profile
+# USAGE: next [N] [--older-than DAYS]   the next N people to check (never checked first, then oldest)
+# USAGE: stamp "Surname, First" [SOURCE] record a check today (SOURCE eg linkedin; default linkedin)
+# USAGE: status                          how many are checked, and how recently
+
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+
+# One line per person, in <person>/.index/refreshed: "2026-09-25 linkedin".
+# It sits in the person's folder, so it moves with them on a rename.
+
+people() { find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d -name '*, *' ! -path "*/_*" ! -path "*/.*" | sort; }
+stamp_of() { head -1 "$1/.index/refreshed" 2>/dev/null | cut -d' ' -f1; }
+
+case "$1" in
+  next)
+    n="${2:-20}"; [[ "$n" =~ ^[0-9]+$ ]] || n=20
+    cutoff=""
+    if [ "$3" = "--older-than" ] || [ "$2" = "--older-than" ]; then
+      days="${4:-$3}"; cutoff=$(date -v-"${days}"d +%Y-%m-%d 2>/dev/null || date -d "-${days} days" +%Y-%m-%d)
+    fi
+    people | while IFS= read -r d; do
+      s=$(stamp_of "$d"); [ -n "$s" ] || s="0000-00-00"
+      [ -n "$cutoff" ] && [[ "$s" > "$cutoff" ]] && continue
+      echo "$s ${d#$PPLR_DIR/}"
+    done | sort | head -n "$n" | cut -d' ' -f2-
+    ;;
+  stamp)
+    [ -n "$2" ] || { echo "Usage: pplr refresh stamp \"Surname, First\" [SOURCE]"; exit 1; }
+    name="${2#*/}"; d="$PPLR_DIR/$(printf '%s' "$name" | cut -c1 | tr '[:lower:]' '[:upper:]')/$name"
+    [ -d "$d" ] || { echo "Error: no such person: $name"; exit 1; }
+    mkdir -p "$d/.index"
+    echo "$(date +%Y-%m-%d) ${3:-linkedin}" > "$d/.index/refreshed"
+    echo "Checked: ${d#$PPLR_DIR/} ($(date +%Y-%m-%d), ${3:-linkedin})"
+    ;;
+  status)
+    total=0; never=0; recent=0; cutoff=$(date -v-90d +%Y-%m-%d 2>/dev/null || date -d "-90 days" +%Y-%m-%d)
+    while IFS= read -r d; do
+      total=$((total + 1)); s=$(stamp_of "$d")
+      if [ -z "$s" ]; then never=$((never + 1)); elif [[ "$s" > "$cutoff" ]]; then recent=$((recent + 1)); fi
+    done < <(people)
+    echo "pplr refresh: $total people, $recent checked in the last 90 days, $((total - never - recent)) older, $never never"
+    ;;
+  *)
+    echo "Usage: pplr refresh next [N] [--older-than DAYS] | stamp \"Surname, First\" [SOURCE] | status"
+    [ "$1" = "-h" ] || [ "$1" = "--help" ]; exit $? ;;
+esac
