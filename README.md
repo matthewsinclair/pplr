@@ -264,6 +264,10 @@ pplr handler --install                     # ~/Applications/Pplr Links.app, regi
 
 `pplr links` rewrites Markdown links into the people tree, whether paths (`../../Career/People/K/Kemp, Jon/...`) or CMS URLs (`http://localhost:4360/people/...`). A link to a person's About becomes the bare person URL; anything else keeps its path. A link whose person or file cannot be found is left as it is and listed. A symlinked note is followed to its file, so it is converted once and stays a symlink. `pplr open` uses `$PPLR_CMS_URL` (default `http://localhost:4360/people`; set it empty to always open the file). The handler lets `pplr://` links open from Obsidian, Contacts, Mail and the browser; a browser asks once before handing a link to it.
 
+#### `pplr pictures [--dry-run] ["Surname, First"]...`
+
+Show each person's photo at the top of their About page: an `<img>` line under the title, floated right, pointing at `About/<First Surname> (Picture).jpg` (or `.png`). It is idempotent: run it again after adding people or pictures. People with no picture get no line. `PPLR_PICTURE_WIDTH` sets the width (default 160).
+
 #### `pplr rename "Old, First" "New, First" [options]`
 
 Rename a person: moves the folder (to a new letter if the surname's initial changes), renames the files named after them (`First Surname (About).md`, `(Picture).jpg` and the rest), and updates their name in the About file and in their own meeting notes' links. The old name is recorded in `.index/aliases`, so a Contacts card still carrying the old `pplr://` URL is found and the URL replaced on the next `pplr sync --link`. Path-style links elsewhere are repointed: the folder name, its URL-encoded forms, and the `First Surname (` file names. The old name in running text is listed, never changed. It then reindexes.

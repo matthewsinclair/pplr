@@ -350,3 +350,19 @@ setup_plan() {
     run "$PPLR_BIN_DIR/pplr" links n.md
     assert_contains "$output" "to convert                  1"
 }
+
+@test "pplr pictures puts the photo under the About title once, and skips people with none" {
+    make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
+    make_about Nobody Nemo "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
+    touch "$PPLR_TEST_DATA/K/Kemp, Jon/About/Jon Kemp (Picture).jpg"
+    run "$PPLR_BIN_DIR/pplr" pictures
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "1 added"
+    a="$PPLR_TEST_DATA/K/Kemp, Jon/About/Jon Kemp (About).md"
+    [ "$(sed -n 1p "$a")" = "# Jon Kemp (About)" ]
+    [ "$(sed -n 3p "$a")" = '<img src="Jon Kemp (Picture).jpg" alt="Jon Kemp" width="160" align="right">' ]
+    ! grep -q "<img" "$PPLR_TEST_DATA/N/Nobody, Nemo/About/Nemo Nobody (About).md"
+    run "$PPLR_BIN_DIR/pplr" pictures
+    assert_contains "$output" "0 added, 0 updated, 1 already there"
+    [ "$(grep -c "<img" "$a")" -eq 1 ]
+}

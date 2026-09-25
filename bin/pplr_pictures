@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# USAGE: show each person's photo at the top of their About page
+# USAGE: [--dry-run]         list what would change
+# USAGE: ["Surname, First"]  just these people (default everyone)
+
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_PICTURE_WIDTH:=160}"
+
+usage() {
+  echo "Usage: pplr pictures [--dry-run] [\"Surname, First\"]..."
+  echo "  Puts <img src=\"First Surname (Picture).jpg\"> under the About file's title, floated"
+  echo "  right, for everyone with a picture in About/. Re-running changes nothing, or"
+  echo "  updates the line if the picture changed (eg .png to .jpg). No picture, no line."
+}
+
+dry=0
+names=()
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --dry-run) dry=1; shift ;;
+    -h|--help) usage; exit 0 ;;
+    *) names+=("$1"); shift ;;
+  esac
+done
+
+dirs=()
+if [ ${#names[@]} -gt 0 ]; then
+  for n in "${names[@]}"; do n="${n#*/}"; dirs+=("$PPLR_DIR/$(printf '%s' "$n" | cut -c1 | tr '[:lower:]' '[:upper:]')/$n"); done
+else
+  while IFS= read -r d; do dirs+=("$d"); done < <(find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d -name '*, *' | sort)
+fi
+
+added=0; updated=0; same=0; none=0
+for d in "${dirs[@]}"; do
+  [ -d "$d" ] || { echo "No such person: ${d#$PPLR_DIR/}"; continue; }
+  about=$(ls "$d/About/"*"(About).md" 2>/dev/null | head -1)
+  [ -n "$about" ] || continue
+  pic=""
+  for ext in jpg jpeg png; do
+    f=$(ls "$d/About/"*"(Picture).$ext" 2>/dev/null | head -1)
+    [ -n "$f" ] && { pic=$(basename "$f"); break; }
+  done
+  [ -n "$pic" ] || { none=$((none + 1)); continue; }
+  name="${pic% (Picture).*}"
+  line="<img src=\"$pic\" alt=\"$name\" width=\"$PPLR_PICTURE_WIDTH\" align=\"right\">"
+  if grep -qxF "$line" "$about"; then same=$((same + 1)); continue; fi
+  if grep -q '^<img src="[^"]*(Picture)\.[a-z]*"' "$about"; then what="update"; updated=$((updated + 1))
+  else what="add"; added=$((added + 1)); fi
+  [ $dry -eq 1 ] && { echo "would $what: ${about#$PPLR_DIR/}"; continue; }
+  LINE="$line" perl -0pi -e '
+    if (/^<img src="[^"]*\(Picture\)\.[a-z]+"[^\n]*$/m) { s/^<img src="[^"]*\(Picture\)\.[a-z]+"[^\n]*$/$ENV{LINE}/m }
+    else { s/^(# [^\n]*\n)/$1\n$ENV{LINE}\n/m }
+  ' "$about"
+done
+echo "pplr pictures$([ $dry -eq 1 ] && echo " (dry run)"): $added added, $updated updated, $same already there, $none with no picture"
