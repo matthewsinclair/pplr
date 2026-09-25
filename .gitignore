@@ -30,3 +30,5 @@ lotto-*.tar
 
 # The compiled Contacts engine (built by pplr sync)
 /.build/
+__pycache__/
+*.pyc
