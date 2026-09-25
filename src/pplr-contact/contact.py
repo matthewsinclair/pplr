@@ -8,9 +8,16 @@ About/contact.yaml holds it, one per person:
 
 last is the latest contact: a meeting (found by scan, from the dated Meetings
 folders) or an email, call or message you log. next is when to get in touch:
-last plus the cadence, unless you set it. cadence is in days; with none in the
-file it comes from the person's tags and $PPLR_DATA/_pplr/cadence.yaml (eg
-vip: 90). No cadence: last is kept, and no next is set.
+last plus the cadence, unless you set it. cadence is in days.
+
+Who is on the contact roster, and how often, comes from the person's tags and
+$PPLR_DATA/_pplr/cadence.yaml:
+
+    roster: {contact: 180, vip: 90, career: 180}   # on the roster, with a default
+    every: {3month: 90, 6month: 182, 12month: 365} # a cadence tag overrides it
+
+So contact + 12month is once a year, and vip alone is once a quarter. A cadence
+in contact.yaml overrides both. Off the roster: last is kept, and no next is set.
 
 A Meetings folder dated after today is a booked meeting: that person is not due.
 
@@ -111,15 +118,21 @@ def tags_of(d):
 
 
 def default_cadences():
-    return {str(k): int(v) for k, v in ((yaml.safe_load(open(CADENCE)) or {}) if os.path.exists(CADENCE) else {}).items()}
+    """{roster: {tag: days}, every: {tag: days}}"""
+    v = (yaml.safe_load(open(CADENCE)) or {}) if os.path.exists(CADENCE) else {}
+    return {k: {str(t): int(n) for t, n in (v.get(k) or {}).items()} for k in ("roster", "every")}
 
 
 def cadence_of(d, c, defaults):
-    """(days, why): the file's own cadence, else the shortest from the person's tags"""
+    """(days, why): the file's own cadence, else a cadence tag, else the shortest roster tag's"""
     if c["cadence"]:
         return int(c["cadence"]), "contact.yaml"
-    hits = sorted((defaults[t], t) for t in tags_of(d) if t in defaults)
-    return (hits[0][0], f"#{hits[0][1]}") if hits else (None, "")
+    tags = tags_of(d)
+    for kind in ("every", "roster"):
+        hits = sorted((defaults[kind][t], t) for t in tags if t in defaults[kind])
+        if hits:
+            return hits[0][0], f"#{hits[0][1]}"
+    return None, ""
 
 
 def meetings(d):

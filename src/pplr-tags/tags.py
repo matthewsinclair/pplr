@@ -37,7 +37,7 @@ import yaml
 
 PEOPLE = os.environ.get("PPLR_DIR") or os.environ.get("PPLR_DATA") or os.path.expanduser("~/Dropbox/Career/People")
 VOCAB = os.path.join(PEOPLE, "_pplr", "vocabulary.yaml")
-FACETS = ["role", "function", "sector", "org", "relationship", "place"]
+FACETS = ["role", "function", "sector", "org", "relationship", "place", "cadence"]
 RENDER_NOTE = "<!-- from tags.yaml: pplr tags render -->"
 TAGS_DIR = "_tags"          # generated tag pages, under the people root
 TAG_RE = re.compile(r"^[a-z0-9]+$")

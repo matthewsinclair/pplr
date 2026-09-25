@@ -7,7 +7,7 @@ meeting() { mkdir -p "$PPLR_TEST_DATA/$1/Meetings/$2"; echo "# $2" > "$PPLR_TEST
 @test "pplr contact scan takes last from the newest meeting, and next from a tag's cadence" {
     create_test_person "Adams" "Amy" >/dev/null
     create_test_person "Brown" "Bob" >/dev/null
-    mkdir -p "$PPLR_TEST_DATA/_pplr"; echo "vip: 90" > "$PPLR_TEST_DATA/_pplr/cadence.yaml"
+    mkdir -p "$PPLR_TEST_DATA/_pplr"; printf "roster:\n  contact: 180\n  vip: 90\nevery:\n  12month: 365\n" > "$PPLR_TEST_DATA/_pplr/cadence.yaml"
     printf 'tags:\n  - vip\n' > "$PPLR_TEST_DATA/A/Adams, Amy/About/tags.yaml"
     meeting "A/Adams, Amy" "20260101 Intro"
     meeting "A/Adams, Amy" "20260301 Catch-up with Amy"
@@ -32,7 +32,7 @@ meeting() { mkdir -p "$PPLR_TEST_DATA/$1/Meetings/$2"; echo "# $2" > "$PPLR_TEST
 
 @test "pplr contact log moves next on, next snoozes, and a booked meeting is not due" {
     create_test_person "Adams" "Amy" >/dev/null
-    mkdir -p "$PPLR_TEST_DATA/_pplr"; echo "vip: 90" > "$PPLR_TEST_DATA/_pplr/cadence.yaml"
+    mkdir -p "$PPLR_TEST_DATA/_pplr"; printf "roster:\n  contact: 180\n  vip: 90\nevery:\n  12month: 365\n" > "$PPLR_TEST_DATA/_pplr/cadence.yaml"
     printf 'tags:\n  - vip\n' > "$PPLR_TEST_DATA/A/Adams, Amy/About/tags.yaml"
     export PPLR_TODAY=2026-09-25
     "$PPLR_BIN_DIR/pplr" contact scan >/dev/null
@@ -66,4 +66,16 @@ meeting() { mkdir -p "$PPLR_TEST_DATA/$1/Meetings/$2"; echo "# $2" > "$PPLR_TEST
     assert_contains "$output" "Last contact: 2026-03-01 meeting"
     assert_contains "$output" "## Last meeting: 20260301 Catch-up"
     assert_contains "$output" "Talked about the Series A."
+}
+
+@test "pplr contact: a cadence tag overrides the roster tag's default" {
+    create_test_person "Adams" "Amy" >/dev/null
+    create_test_person "Brown" "Bob" >/dev/null
+    mkdir -p "$PPLR_TEST_DATA/_pplr"; printf "roster:\n  contact: 180\n  vip: 90\nevery:\n  12month: 365\n" > "$PPLR_TEST_DATA/_pplr/cadence.yaml"
+    printf 'tags:\n  - contact\n  - 12month\n' > "$PPLR_TEST_DATA/A/Adams, Amy/About/tags.yaml"
+    printf 'tags:\n  - contact\n' > "$PPLR_TEST_DATA/B/Brown, Bob/About/tags.yaml"
+    run "$PPLR_BIN_DIR/pplr" contact show "Adams, Amy"
+    assert_contains "$output" "cadence: 365 days, from #12month"
+    run "$PPLR_BIN_DIR/pplr" contact show "Brown, Bob"
+    assert_contains "$output" "cadence: 180 days, from #contact"
 }
