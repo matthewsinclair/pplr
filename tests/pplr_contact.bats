@@ -79,3 +79,14 @@ meeting() { mkdir -p "$PPLR_TEST_DATA/$1/Meetings/$2"; echo "# $2" > "$PPLR_TEST
     run "$PPLR_BIN_DIR/pplr" contact show "Brown, Bob"
     assert_contains "$output" "cadence: 180 days, from #contact"
 }
+
+@test "a person's pplr:// marker stands for \"Surname, First\"" {
+    create_test_person "Adams" "Amy" >/dev/null
+    run "$PPLR_BIN_DIR/pplr" contact show pplr://a/adams-amy
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "Amy Adams"
+    run "$PPLR_BIN_DIR/pplr" refresh stamp pplr://a/adams-amy
+    assert_contains "$output" "Checked: A/Adams, Amy"
+    run "$PPLR_BIN_DIR/pplr" contact show pplr://z/nobody-here
+    [ "$status" -ne 0 ]
+}

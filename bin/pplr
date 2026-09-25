@@ -56,8 +56,22 @@ cd "$PPLR_DATA" || {
   exit 1
 }
 
+# A person's pplr:// marker (pplr://k/kemp-jon) stands for "Surname, First" in any
+# command that takes a person; the ones that take URLs get it as it is
+args=("${@:2}")
+case "$cmd" in
+  open|resolve|links|handler) ;;
+  *)
+    for i in "${!args[@]}"; do
+      if [[ "${args[$i]}" =~ ^pplr://[a-z]/[^/]+/?$ ]]; then
+        about=$("$PPLR_BIN_DIR/pplr_resolve" "${args[$i]}") || exit 1
+        args[$i]=$(basename "$(dirname "$(dirname "$about")")")
+      fi
+    done ;;
+esac
+
 # Run the command
-"$cmd_script" "${@:2}"
+"$cmd_script" "${args[@]}"
 
 # Save the exit status of the command
 exit_status=$?
