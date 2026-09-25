@@ -90,7 +90,7 @@ find_refs() {
   for ((i = 0; i < ${#pairs[@]}; i += 2)); do args+=(-e "${pairs[i]}"); done
   grep -rlIF --exclude-dir=.git --exclude-dir=.index --exclude-dir=node_modules --exclude-dir=_build \
     --exclude-dir=deps --exclude-dir=.build --include='*.md' --include='*.csv' --include='*.txt' \
-    --include='*.yaml' --include='*.yml' --include='*.json' --include='*.fileloc' --include='*.webloc' \
+    --include='*.yaml' --include='*.yml' --include='*.json' --include='*.fileloc' --include='*.webloc' --include='*.inetloc' \
     --include='*.html' "${args[@]}" "${refs[@]}" 2>/dev/null | grep -vF "$(cd "$old_dir" && pwd -P)/" | sort -u
 }
 

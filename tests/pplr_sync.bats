@@ -115,12 +115,12 @@ EOF
     [ "$urls" -eq 1 ]
 }
 
-@test "pplr sync --link --apply writes a Contacts webloc in About" {
+@test "pplr sync --link --apply writes a Contacts .inetloc in About" {
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     run "$PPLR_BIN_DIR/pplr" sync --link --apply
     [ "$status" -eq 0 ]
-    w="$PPLR_TEST_DATA/L/Lovelace, Ada/About/Ada Lovelace (Contacts).webloc"
+    w="$PPLR_TEST_DATA/L/Lovelace, Ada/About/Ada Lovelace (Contacts).inetloc"
     [ -f "$w" ]
     [ "$(plutil -extract URL raw -o - "$w")" = "addressbook://c1" ]
 }
@@ -394,7 +394,7 @@ setup_plan() {
     # Grace Hopper (same name): her role filled in, her own email kept, the pplr URL added
     grace=$(jq -r '.[] | select(.id == "c2") | "\(.jobTitle)|\(.emails | join(","))|\([.urls[] | select(.label == "pplr") | .value] | join(","))"' "$PPLR_CONTACTS_JSON")
     [ "$grace" = "Rear Admiral|grace@work.example|pplr://h/hopper-grace" ]
-    [ -f "$PPLR_TEST_DATA/N/Nobody, Nemo/About/Nemo Nobody (Contacts).webloc" ]
+    [ -f "$PPLR_TEST_DATA/N/Nobody, Nemo/About/Nemo Nobody (Contacts).inetloc" ]
     # Applying again finds nothing left to do, and never adds a card twice
     run "$PPLR_BIN_DIR/pplr" sync --apply-plan "$PPLR_TEST_DATA/plan.xlsx"
     assert_contains "$output" "add (new iCloud cards)  0"

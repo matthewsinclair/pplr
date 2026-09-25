@@ -359,7 +359,7 @@ pplr sync --apply-plan _out/contacts-plan-20260925-1025.xlsx --apply --limit 1  
 pplr sync --apply-plan _out/contacts-plan-20260925-1025.xlsx --apply       # The rest
 ```
 
-Every card is saved to a dated `.vcf` first. It works from the current pplr data, so a change since the workbook was made is written as it is now. Applying the same workbook again writes nothing new, and never adds a card twice: a person whose `pplr` URL is already on a card is done. Each written card gets `About/<First Surname> (Contacts).webloc`.
+Every card is saved to a dated `.vcf` first. It works from the current pplr data, so a change since the workbook was made is written as it is now. Applying the same workbook again writes nothing new, and never adds a card twice: a person whose `pplr` URL is already on a card is done. Each written card gets `About/<First Surname> (Contacts).inetloc`.
 
 #### `pplr sync --photos [--apply] [--limit N]`
 
@@ -367,7 +367,7 @@ Give each linked card that has no photo at all the person's pplr picture (`About
 
 #### `pplr sync --link [options]`
 
-Mark the cards that match pplr people as pplr's: a URL labelled `pplr` (`pplr://<letter>/<surname-first>`: lowercase, accents dropped, other characters hyphens; an older form is replaced) and, for cards in the default account (iCloud), membership of the `PPLR` group. Cards in other accounts, eg Gmail, carry the URL alone, so there is one `PPLR` group. A matched card in no account (a directory or Other Known card) cannot be written and is listed instead. Nothing else on the card changes. On the pplr side it writes `About/<First Surname> (Contacts).webloc`, which opens the card in Contacts (`addressbook://<card id>`; the id is this Mac's). It is a dry run unless `--apply` is given.
+Mark the cards that match pplr people as pplr's: a URL labelled `pplr` (`pplr://<letter>/<surname-first>`: lowercase, accents dropped, other characters hyphens; an older form is replaced) and, for cards in the default account (iCloud), membership of the `PPLR` group. Cards in other accounts, eg Gmail, carry the URL alone, so there is one `PPLR` group. A matched card in no account (a directory or Other Known card) cannot be written and is listed instead. Nothing else on the card changes. On the pplr side it writes `About/<First Surname> (Contacts).inetloc`, which opens the card in Contacts (`addressbook://<card id>`; the id is this Mac's). It is an `.inetloc` because macOS opens a `.webloc` only for web addresses. It is a dry run unless `--apply` is given.
 
 ```bash
 pplr sync --link                               # Dry run: who would be linked

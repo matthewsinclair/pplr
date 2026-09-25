@@ -9,7 +9,7 @@
 // Provenance in Contacts: membership of the "PPLR" group, plus a URL labelled
 // "pplr" whose value is pplr://<letter>/<surname-first>, which is also the
 // stable link back to the person's folder. `link` adds both, and writes
-// About/<First Surname> (Contacts).webloc opening addressbook://<card id>.
+// About/<First Surname> (Contacts).inetloc opening addressbook://<card id>.
 //
 // Usage:
 //   pplr-contacts check --people-dir DIR [--group NAME] [--json] [--verbose]
@@ -298,8 +298,8 @@ struct Pair: Codable {
     var noAccount: Bool        // a directory or Other Known card: nothing can be written
     var hasMarker: Bool        // the card's pplr URL is in the current form
     var markerStale: Bool      // the card has a pplr URL in an older form, to replace
-    var webloc: String         // About/<First Surname> (Contacts).webloc
-    var hasWebloc: Bool        // exists and opens this card
+    var inetloc: String         // About/<First Surname> (Contacts).inetloc
+    var hasInetloc: Bool        // exists and opens this card
     var diffs: [FieldDiff]
 }
 
@@ -319,23 +319,26 @@ struct Report: Codable {
 /// Opens Contacts.app on the card (macOS; the card id is this Mac's)
 func contactsURL(_ id: String) -> String { "addressbook://\(id)" }
 
-func weblocPath(_ p: Person) -> String {
+func inetlocPath(_ p: Person) -> String {
     let about = p.aboutPath.isEmpty
         ? ((p.personDir as NSString).appendingPathComponent("About"))
         : (p.aboutPath as NSString).deletingLastPathComponent
-    return (about as NSString).appendingPathComponent("\(p.given) \(p.family) (Contacts).webloc")
+    return (about as NSString).appendingPathComponent("\(p.given) \(p.family) (Contacts).inetloc")
 }
 
-func weblocOpens(_ path: String, _ id: String) -> Bool {
+func inetlocOpens(_ path: String, _ id: String) -> Bool {
     guard let d = FileManager.default.contents(atPath: path),
           let plist = try? PropertyListSerialization.propertyList(from: d, format: nil) as? [String: Any] else { return false }
     return plist["URL"] as? String == contactsURL(id)
 }
 
-func writeWebloc(_ path: String, _ id: String) throws {
+/// An .inetloc, not a .webloc: macOS opens a .webloc only for web addresses
+/// (addressbook:// fails with -10400), and an .inetloc for any scheme
+func writeInetloc(_ path: String, _ id: String) throws {
     try FileManager.default.createDirectory(atPath: (path as NSString).deletingLastPathComponent, withIntermediateDirectories: true)
     let d = try PropertyListSerialization.data(fromPropertyList: ["URL": contactsURL(id)], format: .xml, options: 0)
     try d.write(to: URL(fileURLWithPath: path))
+    try? FileManager.default.removeItem(atPath: (path as NSString).deletingPathExtension + ".webloc")
 }
 
 /// The path of the card's pplr URL, as written: "b/bray-martin"
@@ -401,12 +404,12 @@ func check(people: [Person], cards: [Card], group: String) -> Report {
     func uniq(_ cs: [Card]) -> [Card] { var seen = Set<String>(); return cs.filter { seen.insert($0.id).inserted } }
     func pair(_ p: Person, _ c: Card, _ how: String) -> Pair {
         claimed.insert(c.id)
-        let w = weblocPath(p)
+        let w = inetlocPath(p)
         return Pair(person: p.key, contact: c.id, contactName: displayName(c), how: how, inGroup: c.groups.contains(group),
                     needsGroup: (c.account ?? "home") == "home" && !c.groups.contains(group),
                     noAccount: c.account == "none",
                     hasMarker: pplrMarker(c) == markerPath(p.key),
-                    markerStale: pplrMarker(c) != nil && pplrMarker(c) != markerPath(p.key), webloc: w, hasWebloc: weblocOpens(w, c.id), diffs: diffs(p, c))
+                    markerStale: pplrMarker(c) != nil && pplrMarker(c) != markerPath(p.key), inetloc: w, hasInetloc: inetlocOpens(w, c.id), diffs: diffs(p, c))
     }
     for p in people {
         if let c = byMarker[p.key] { r.linked.append(pair(p, c, "linked")); continue }
@@ -882,7 +885,7 @@ func planLink(_ r: Report, names: [String], allNames: Bool) -> LinkPlan {
     let nameKeys = Set(r.nameOnly.map(\.person))
     let confirmed = r.nameOnly.filter { allNames || wanted.contains($0.person) }
     let all = r.linked + r.matched + confirmed
-    let done = { (p: Pair) in p.hasMarker && !p.needsGroup && p.hasWebloc }
+    let done = { (p: Pair) in p.hasMarker && !p.needsGroup && p.hasInetloc }
     return LinkPlan(toLink: all.filter { !done($0) && !$0.noAccount },
                     alreadyDone: all.filter(done).count,
                     namesSkipped: r.nameOnly.filter { !(allNames || wanted.contains($0.person)) }.map(\.person),
@@ -922,7 +925,7 @@ func applyFixture(_ plan: LinkPlan, group: String, fixture: String, limit: Int?)
             cards[i].urls[u].value = markerURL(p.person)
         } else if !p.hasMarker { cards[i].urls.append(LabelledValue(label: "pplr", value: markerURL(p.person))) }
         if p.needsGroup { cards[i].groups.append(group) }
-        if !p.hasWebloc { try writeWebloc(p.webloc, p.contact) }
+        if !p.hasInetloc { try writeInetloc(p.inetloc, p.contact) }
         out.append((p.person, nil))
     }
     let enc = JSONEncoder(); enc.outputFormatting = [.prettyPrinted, .sortedKeys]
@@ -993,7 +996,7 @@ func applyLive(_ plan: LinkPlan, group: String, limit: Int?) throws -> Outcome {
             if !p.hasMarker || p.needsGroup {
                 error = osascript([p.contact, p.hasMarker ? "" : markerURL(p.person), gid, p.markerStale ? "yes" : "no"])
             }
-            if error == nil && !p.hasWebloc { try writeWebloc(p.webloc, p.contact) }
+            if error == nil && !p.hasInetloc { try writeInetloc(p.inetloc, p.contact) }
         } catch let e { error = e.localizedDescription }
         out.append((p.person, error))
         if error != nil { failures += 1; if failures >= 3 { break } }
@@ -1007,7 +1010,7 @@ func printPlan(_ plan: LinkPlan, group: String, outcome: Outcome?, backupPath: S
         var w: [String] = []
         if p.markerStale { w.append("pplr URL updated") } else if !p.hasMarker { w.append("pplr URL") }
         if p.needsGroup { w.append("group") }
-        if !p.hasWebloc { w.append(".webloc") }
+        if !p.hasInetloc { w.append(".inetloc") }
         return "[\(p.how); \(w.joined(separator: " + "))]"
     }
     let byPerson = Dictionary(uniqueKeysWithValues: plan.toLink.map { ($0.person, $0) })
@@ -1020,7 +1023,7 @@ func printPlan(_ plan: LinkPlan, group: String, outcome: Outcome?, backupPath: S
         print("  still to link           \(plan.toLink.count - ok.count)")
         print("  already linked          \(plan.alreadyDone)")
         if !ok.isEmpty {
-            print("\nLinked (the pplr URL on the card, the \"\(group)\" group for iCloud cards; a (Contacts).webloc in About):")
+            print("\nLinked (the pplr URL on the card, the \"\(group)\" group for iCloud cards; a (Contacts).inetloc in About):")
             ok.forEach { o in print("  \(o.person)  <->  \(byPerson[o.person]!.contactName)  \(what(byPerson[o.person]!))") }
         }
         if !bad.isEmpty {
@@ -1036,7 +1039,7 @@ func printPlan(_ plan: LinkPlan, group: String, outcome: Outcome?, backupPath: S
         print("  name only, not linked   \(plan.namesSkipped.count)")
         print("  ambiguous, not linked   \(plan.ambiguous.count)")
         if !plan.toLink.isEmpty {
-            print("\nWould link (the pplr URL on the card, the \"\(group)\" group for iCloud cards, nothing else; a (Contacts).webloc in About):")
+            print("\nWould link (the pplr URL on the card, the \"\(group)\" group for iCloud cards, nothing else; a (Contacts).inetloc in About):")
             plan.toLink.forEach { print("  \($0.person)  <->  \($0.contactName)  \(what($0))") }
         }
     }
@@ -1209,7 +1212,7 @@ func applyWorkLive(_ work: [CardWork], group: String, limit: Int?) throws -> Out
         let tiff = w.picture.flatMap(tiffCopy)
         let (id, error) = runScript(cardScript(w, groupID: gid, tiff: tiff))
         if let tiff { try? FileManager.default.removeItem(atPath: tiff) }
-        if error == nil, !id.isEmpty { try? writeWebloc(weblocPath(w.person), id) }
+        if error == nil, !id.isEmpty { try? writeInetloc(inetlocPath(w.person), id) }
         out.append((w.person.key, error))
         if error != nil { failures += 1; if failures >= 3 { break } }
     }
@@ -1229,7 +1232,7 @@ func applyWorkFixture(_ work: [CardWork], group: String, fixture: String, limit:
             cards.append(Card(id: id, given: p.given, family: p.family, organization: p.company, jobTitle: p.role,
                               emails: p.emails, phones: p.phones, urls: urls, linkedin: p.linkedin.isEmpty ? [] : [p.linkedin],
                               groups: [group], account: "home"))
-            try writeWebloc(weblocPath(p), id)
+            try writeInetloc(inetlocPath(p), id)
         } else if let i = cards.firstIndex(where: { $0.id == w.card!.id }) {
             if w.setName { cards[i].given = p.given; cards[i].family = p.family }
             if w.setCompany { cards[i].organization = p.company }
@@ -1240,7 +1243,7 @@ func applyWorkFixture(_ work: [CardWork], group: String, fixture: String, limit:
             if w.marker == "add" { cards[i].urls.append(LabelledValue(label: "pplr", value: markerURL(p.key))) }
             if w.marker == "replace", let u = cards[i].urls.firstIndex(where: { $0.label == "pplr" }) { cards[i].urls[u].value = markerURL(p.key) }
             if w.addGroup { cards[i].groups.append(group) }
-            try writeWebloc(weblocPath(p), cards[i].id)
+            try writeInetloc(inetlocPath(p), cards[i].id)
         }
         out.append((p.key, nil))
     }
