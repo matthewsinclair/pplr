@@ -281,7 +281,7 @@ next: 2026-04-28
 cadence: 90
 ```
 
-`scan` takes `last` from the newest dated `Meetings` folder. `next` is `last` plus the cadence: the file's own `cadence`, or the shortest one for the person's tags in `_pplr/cadence.yaml` (eg `vip: 90`). With no cadence, `last` is kept and no `next` is set. A `Meetings` folder dated after today counts as booked, so that person is not due.
+`scan` takes `last` from the newest dated `Meetings` folder. `next` is `last` plus the cadence. Who is on the contact roster, and how often, comes from the person's tags and `_pplr/cadence.yaml`: a roster tag (`contact`, `vip`, `career`) puts someone on it with a default cadence, and a cadence tag (`3month`, `6month`, `12month`) overrides it, so `contact` + `12month` is once a year. A `cadence` in `contact.yaml` overrides both. Off the roster, `last` is kept and no `next` is set. A `Meetings` folder dated after today counts as booked, so that person is not due.
 
 ```bash
 pplr contact scan                        # last from meetings, next from the cadence (--dry-run)
