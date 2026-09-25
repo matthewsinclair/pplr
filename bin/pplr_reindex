@@ -71,12 +71,12 @@ generate_tags_index() {
   echo '{'
   echo "  \"generated_at\": \"$current_date\","
   echo -n "  \"people_count\": "
-  find . -mindepth 2 -maxdepth 2 -type d ! -path "*/_Templates*" ! -path "*/.git*" ! -path "*/.index*" | wc -l | tr -d ' '
+  find . -mindepth 2 -maxdepth 2 -type d ! -path "*/_*" ! -path "*/.*" ! -path "*/.git*" ! -path "*/.index*" | wc -l | tr -d ' '
   echo ','
   echo '  "people": ['
   
   local first_person=true
-  find . -mindepth 2 -maxdepth 2 -type d ! -path "*/_Templates*" ! -path "*/.git*" ! -path "*/.index*" | sort | while read -r person_dir; do
+  find . -mindepth 2 -maxdepth 2 -type d ! -path "*/_*" ! -path "*/.*" ! -path "*/.git*" ! -path "*/.index*" | sort | while read -r person_dir; do
     if [ "$first_person" != true ]; then
       echo ','
     fi

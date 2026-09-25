@@ -1,7 +1,7 @@
 #!/bin/bash
 # USAGE: pplr_applyicons <firstname> <surname>
 # Locates the directory for the person and applies icons to the About/ and Meetings/ directories
-# and files based on the templates in $PPLR_DIR/_Templates/_Icons
+# and files based on the templates in $PPLR_DIR/_pplr/templates/_Icons
 
 # Default location of PPLR_DIR if not already set
 : "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
@@ -9,7 +9,7 @@
 : "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
 : "${PPLR_BIN_DIR:=$PPLR_ROOT/bin}"
 : "${PPLR_TEMPLATE_DIR:=$PPLR_ROOT/templates}"
-icon_dir="$PPLR_DIR/_Templates/_Icons"
+icon_dir="$PPLR_DIR/_pplr/templates/_Icons"
 
 # Check if fileicon is installed
 if ! command -v fileicon >/dev/null 2>&1; then
@@ -43,7 +43,7 @@ echo "Applying icons to $person_dir..."
 about_dir="$person_dir/About"
 meetings_dir="$person_dir/Meetings"
 
-# Verify if the icon files exist in _Templates/_Icons
+# Verify if the icon files exist in _pplr/templates/_Icons
 if [ ! -f "$icon_dir/About.pdf" ] || [ ! -f "$icon_dir/Meeting.pdf" ] || [ ! -f "$icon_dir/Calendar.pdf" ]; then
   echo "Error: Required icon files not found in $icon_dir."
   exit 1

@@ -21,7 +21,7 @@ BASE_DIR="."
 current_date=$(date +%Y-%m-%d)
 
 # Regular expression for directories to ignore
-IGNORE_DIRS="^_Templates$|^bin$|^index(.*)\.md$|^index(.*)\.json$|^.DS_Store$|^Icon$"
+IGNORE_DIRS="^_|^\.|^bin$"  # pplr config (_pplr), output (_out) and hidden folders are not letters
 
 
 # Print header for markdown file

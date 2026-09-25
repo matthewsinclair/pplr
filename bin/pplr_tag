@@ -223,7 +223,7 @@ if [ "$1" = "--all" ]; then
   force=0
   [ "$2" = "-f" ] || [ "$2" = "--force" ] && force=1
 
-  find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d ! -path "*/_Templates*" | while read -r person_dir; do
+  find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d ! -path "*/_*" ! -path "*/.*" | while read -r person_dir; do
     if [ -d "$person_dir/About" ]; then
       person_name=$(basename "$person_dir")
       if [ -f "$person_dir/.index/tags.json" ] && [ "$force" -eq 0 ]; then
@@ -244,7 +244,7 @@ elif [ "$#" -eq 2 ] && { [ "$2" = "-g" ] || [ "$2" = "--generate" ]; }; then
   echo "Searching for people matching: $search_term"
   
   count=0
-  find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d ! -path "*/_Templates*" | while read -r person_dir; do
+  find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d ! -path "*/_*" ! -path "*/.*" | while read -r person_dir; do
     person_name=$(basename "$person_dir")
     if echo "$person_name" | grep -qi "$search_term"; then
       if [ -d "$person_dir/About" ]; then
@@ -261,7 +261,7 @@ elif [ "$#" -eq 3 ] && [ "$3" = "-s" ]; then
   # Show existing tags
   firstname="$1"
   surname="$2"
-  person_dir=$(find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d -name "${surname}, ${firstname}" ! -path "*/_Templates*" | head -1)
+  person_dir=$(find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d -name "${surname}, ${firstname}" ! -path "*/_*" ! -path "*/.*" | head -1)
   
   if [ -n "$person_dir" ] && [ -d "$person_dir" ]; then
     show_tags "$person_dir" "${surname}, ${firstname}"
@@ -274,7 +274,7 @@ elif [ "$#" -eq 2 ]; then
   # Generate tags for one person
   firstname="$1"
   surname="$2"
-  person_dir=$(find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d -name "${surname}, ${firstname}" ! -path "*/_Templates*" | head -1)
+  person_dir=$(find "$PPLR_DIR" -mindepth 2 -maxdepth 2 -type d -name "${surname}, ${firstname}" ! -path "*/_*" ! -path "*/.*" | head -1)
   
   if [ -n "$person_dir" ] && [ -d "$person_dir" ]; then
     generate_tags "$person_dir" "${surname}, ${firstname}"

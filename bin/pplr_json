@@ -18,7 +18,7 @@
 BASE_DIR="."
 
 # Regular expression for directories and files to ignore
-IGNORE_DIRS="^_Templates$|^bin$|^\.index$"
+IGNORE_DIRS="^_|^\.|^bin$"
 
 echo '{ "people": {'
 
