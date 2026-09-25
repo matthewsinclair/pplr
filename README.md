@@ -249,6 +249,16 @@ Options:
 - `--stale-only`: Only regenerate tags that are missing or older than max-age
 - `--max-age=N`: Set maximum age for stale detection (e.g., 30d, 7days, 2weeks)
 
+#### `pplr rename "Old, First" "New, First" [options]`
+
+Rename a person: moves the folder (to a new letter if the surname's initial changes), renames the files named after them (`First Surname (About).md`, `(Picture).jpg` and the rest), and updates their name in the About file and in their own meeting notes' links. The old name is recorded in `.index/aliases`, so a Contacts card still carrying the old `pplr://` URL is found and the URL replaced on the next `pplr sync --link`. Path-style links elsewhere are repointed: the folder name, its URL-encoded forms, and the `First Surname (` file names. The old name in running text is listed, never changed. It then reindexes.
+
+```bash
+pplr rename "Grifiths, Glen" "Griffiths, Glen" --dry-run        # What would change
+pplr rename "Grifiths, Glen" "Griffiths, Glen"                  # Links under $PPLR_REFS_DIR (default ~/Dropbox)
+pplr rename "Grifiths, Glen" "Griffiths, Glen" --refs ~/Dropbox/Writing/Journal
+```
+
 #### `pplr sync --check [options]`
 
 Compare pplr with Apple Contacts. Read-only: it changes nothing on either side.

@@ -1,0 +1,159 @@
+#!/bin/bash
+
+# USAGE: rename a person: the folder, their files, and every path-style link to them
+# USAGE: <"Old, First">   the current folder name ("Surname, First", or "L/Surname, First")
+# USAGE: <"New, First">   the new folder name
+# USAGE: [--dry-run]      list what would change, and change nothing
+# USAGE: [--refs DIR]     where to repoint links (repeatable; default $PPLR_REFS_DIR, or ~/Dropbox)
+
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+: "${PPLR_BIN_DIR:=$PPLR_ROOT/bin}"
+: "${PPLR_REFS_DIR:=$HOME/Dropbox}"
+
+usage() {
+  echo "Usage: pplr rename \"Old, First\" \"New, First\" [--dry-run] [--refs DIR]..."
+  echo "  Moves the folder (to a new letter if the surname's initial changes), renames"
+  echo "  files named \"First Surname (...)\", updates the name in the About file, records"
+  echo "  the old name in .index/aliases so an old pplr:// URL still resolves, and repoints"
+  echo "  path-style links under the refs directories. Names in running prose elsewhere are"
+  echo "  listed, not changed."
+}
+
+dry=0
+refs=()
+names=()
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --dry-run) dry=1; shift ;;
+    --refs) refs+=("$2"); shift 2 ;;
+    -h|--help) usage; exit 0 ;;
+    *) names+=("$1"); shift ;;
+  esac
+done
+[ ${#names[@]} -eq 2 ] || { usage; exit 1; }
+[ ${#refs[@]} -gt 0 ] || refs=("$PPLR_REFS_DIR")
+# Resolved, with a trailing slash: BSD grep -r will not descend into a
+# symlinked directory named without one (eg ~/Dropbox)
+for i in "${!refs[@]}"; do
+  r=$(cd "${refs[i]}" 2>/dev/null && pwd -P) || { echo "Error: no such directory: ${refs[i]}"; exit 1; }
+  refs[i]="$r/"
+done
+
+# "H/Horely, Steve" or "Horely, Steve" -> letter, surname, first
+split() {
+  local n="${1#*/}"
+  [[ "$n" == *", "* ]] || { echo "Error: '$1' is not \"Surname, First\"" >&2; exit 1; }
+  echo "${n%%, *}"
+  echo "${n#*, }"
+}
+old_family=$(split "${names[0]}" | sed -n 1p) || exit 1
+old_first=$(split "${names[0]}" | sed -n 2p)
+new_family=$(split "${names[1]}" | sed -n 1p) || exit 1
+new_first=$(split "${names[1]}" | sed -n 2p)
+old_letter=$(printf '%s' "$old_family" | cut -c1 | tr '[:lower:]' '[:upper:]')
+new_letter=$(printf '%s' "$new_family" | cut -c1 | tr '[:lower:]' '[:upper:]')
+old_key="$old_letter/$old_family, $old_first"
+new_key="$new_letter/$new_family, $new_first"
+old_dir="$PPLR_DIR/$old_key"
+new_dir="$PPLR_DIR/$new_key"
+old_full="$old_first $old_family"
+new_full="$new_first $new_family"
+
+[ -d "$old_dir" ] || { echo "Error: no such person: $old_key"; exit 1; }
+[ "$old_key" != "$new_key" ] || { echo "Error: the names are the same"; exit 1; }
+[ ! -e "$new_dir" ] || { echo "Error: $new_key already exists"; exit 1; }
+
+enc() { printf '%s' "$1" | sed -e 's/,/%2C/g' -e 's/ /%20/g' -e 's/(/%28/g' -e 's/)/%29/g'; }
+enc_space() { printf '%s' "$1" | sed -e 's/ /%20/g'; }
+
+# Path-style forms of the old name, and what each becomes. Longest first, so
+# the letter-qualified key is replaced before the bare folder name.
+pairs=(
+  "$old_key" "$new_key"
+  "$old_letter/$(enc "$old_family, $old_first")" "$new_letter/$(enc "$new_family, $new_first")"
+  "$old_letter/$(enc_space "$old_family, $old_first")" "$new_letter/$(enc_space "$new_family, $new_first")"
+  "$old_family, $old_first" "$new_family, $new_first"
+  "$(enc "$old_family, $old_first")" "$(enc "$new_family, $new_first")"
+  "$old_full (" "$new_full ("
+  "$(enc_space "$old_full") (" "$(enc_space "$new_full") ("
+  "$(enc "$old_full (")" "$(enc "$new_full (")"
+)
+
+echo "pplr rename: $old_key -> $new_key$([ $dry -eq 1 ] && echo " (dry run)")"
+
+# Files that mention a path-style form, outside the person's own folder
+# (handled below) and outside generated indexes
+find_refs() {
+  local args=()
+  for ((i = 0; i < ${#pairs[@]}; i += 2)); do args+=(-e "${pairs[i]}"); done
+  grep -rlIF --exclude-dir=.git --exclude-dir=.index --exclude-dir=node_modules --exclude-dir=_build \
+    --exclude-dir=deps --exclude-dir=.build --include='*.md' --include='*.csv' --include='*.txt' \
+    --include='*.yaml' --include='*.yml' --include='*.json' --include='*.fileloc' --include='*.webloc' \
+    --include='*.html' "${args[@]}" "${refs[@]}" 2>/dev/null | grep -vF "$(cd "$old_dir" && pwd -P)/" | sort -u
+}
+
+# Every form in one pass, longest first: sequential passes would rewrite a new
+# name that contains the old one (Hanna -> Hannah -> Hannahh)
+replace_in() {
+  local f="$1" spec=""
+  for ((i = 0; i < ${#pairs[@]}; i += 2)); do spec+="${pairs[i]}"$'\t'"${pairs[i+1]}"$'\n'; done
+  SPEC="$spec" perl -pi -e '
+    BEGIN {
+      for (split /\n/, $ENV{SPEC}) { my ($a, $b) = split /\t/; $map{$a} = $b }
+      my $alt = join "|", map { quotemeta } sort { length($b) <=> length($a) } keys %map;
+      $re = qr/($alt)/;
+    }
+    s/$re/$map{$1}/g;
+  ' "$f"
+}
+
+ref_files=()
+while IFS= read -r f; do [ -n "$f" ] && ref_files+=("$f"); done < <(find_refs)
+
+# Files inside the person's folder named after them
+own_files=()
+while IFS= read -r f; do own_files+=("$f"); done < <(find "$old_dir" -name "$old_full (*" 2>/dev/null)
+
+if [ $dry -eq 1 ]; then
+  echo ""
+  echo "Would move the folder, and rename ${#own_files[@]} file(s) in it:"
+  for f in "${own_files[@]}"; do echo "  ${f#$old_dir/}"; done
+  echo ""
+  echo "Would repoint links in ${#ref_files[@]} file(s):"
+  for f in "${ref_files[@]}"; do echo "  $f"; done
+else
+  mkdir -p "$PPLR_DIR/$new_letter"
+  mv "$old_dir" "$new_dir"
+  for f in "${own_files[@]}"; do
+    f="$new_dir/${f#$old_dir/}"
+    b=$(basename "$f")
+    mv "$f" "$(dirname "$f")/$new_full${b#$old_full}"
+  done
+  # The About file: its title, header and running text name the person
+  about=$(ls "$new_dir/About/"*"(About).md" 2>/dev/null | head -1)
+  if [ -n "$about" ]; then
+    A="$old_full" B="$new_full" perl -pi -e 's/\Q$ENV{A}\E/$ENV{B}/g' "$about"
+  fi
+  # The person's own notes and meetings link to their About by file name
+  while IFS= read -r f; do replace_in "$f"; done < <(grep -rlIF -e "$old_full (" -e "$(enc_space "$old_full") (" "$new_dir" --include='*.md' 2>/dev/null)
+  # An old pplr:// URL on a card still finds this person
+  mkdir -p "$new_dir/.index"
+  grep -qxF "$old_key" "$new_dir/.index/aliases" 2>/dev/null || echo "$old_key" >> "$new_dir/.index/aliases"
+  for f in "${ref_files[@]}"; do replace_in "$f"; done
+  echo ""
+  echo "Moved the folder, renamed ${#own_files[@]} file(s), recorded the alias $old_key."
+  echo "Repointed links in ${#ref_files[@]} file(s):"
+  for f in "${ref_files[@]}"; do echo "  $f"; done
+  "$PPLR_BIN_DIR/pplr_reindex" >/dev/null 2>&1 && echo "Reindexed."
+fi
+
+# Running prose is a person's call: list it, never change it
+prose=$(grep -rnIF --exclude-dir=.git --exclude-dir=.index --include='*.md' --include='*.csv' --include='*.txt' \
+  -e "$old_full" -e "$old_family, $old_first" "${refs[@]}" 2>/dev/null | grep -vF -e "$old_full (" -e "$old_family, $old_first/" | head -40)
+if [ -n "$prose" ]; then
+  echo ""
+  echo "The old name still appears in running text (not changed):"
+  echo "$prose" | cut -c1-200 | sed 's/^/  /'
+fi

@@ -72,6 +72,7 @@ struct Person {
     var linkedin: String
     var aboutPath: String
     var personDir: String
+    var aliases: [String] = []  // former keys ("H/Horely, Steve"), from .index/aliases, written by pplr rename
 }
 
 // MARK: - Normalisation
@@ -135,6 +136,9 @@ func loadPeople(_ root: String) -> [Person] {
             let parts = name.components(separatedBy: ", ")
             var p = Person(key: "\(letter)/\(name)", given: parts.dropFirst().joined(separator: ", "),
                            family: parts[0], role: "", company: "", emails: [], phones: [], linkedin: "", aboutPath: "", personDir: pdir)
+            let aliasFile = (pdir as NSString).appendingPathComponent(".index/aliases")
+            p.aliases = ((try? String(contentsOfFile: aliasFile, encoding: .utf8)) ?? "")
+                .components(separatedBy: .newlines).map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
             let adir = (pdir as NSString).appendingPathComponent("About")
             if let about = ((try? fm.contentsOfDirectory(atPath: adir)) ?? []).sorted().first(where: { $0.hasSuffix("(About).md") }) {
                 p.aboutPath = (adir as NSString).appendingPathComponent(about)
@@ -363,7 +367,10 @@ func diffs(_ p: Person, _ c: Card) -> [FieldDiff] {
 func check(people: [Person], cards: [Card], group: String) -> Report {
     // Current form ("b/bray-martin") and the first form ("B/Bray,%20Martin")
     var markerKeys: [String: String] = [:]
-    for p in people { markerKeys[markerPath(p.key)] = p.key; markerKeys[p.key] = p.key }
+    // A renamed person answers to their former names too, so an old URL is found and then replaced
+    for p in people {
+        for k in [p.key] + p.aliases { markerKeys[markerPath(k)] = p.key; markerKeys[k] = p.key }
+    }
     var byMarker: [String: Card] = [:], byEmail: [String: [Card]] = [:], bySlug: [String: [Card]] = [:],
         byPhone: [String: [Card]] = [:], byName: [String: [Card]] = [:]
     for c in cards {

@@ -226,3 +226,62 @@ setup_plan() {
     [ "$status" -eq 0 ]
     [ "$(echo "$output" | jq -r '.people[] | select(.key == "C/Carron, Elise") | .phones | join(",")')" = "+262262900000,+262692900001" ]
 }
+
+@test "pplr rename moves the person, renames their files, and repoints links" {
+    make_about Grifiths Glen "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
+    touch "$PPLR_TEST_DATA/G/Grifiths, Glen/About/Glen Grifiths (Picture).jpg"
+    refs="$PPLR_TEST_DATA/refs"; mkdir -p "$refs"
+    printf '%s\n' '[Glen](<../G/Grifiths, Glen/About/Glen Grifiths (About).md>)' 'http://x/people/G/Grifiths%2C%20Glen/About/Glen%20Grifiths%20%28About%29.md' 'Met Glen Grifiths today' > "$refs/notes.md"
+    run "$PPLR_BIN_DIR/pplr" rename "Grifiths, Glen" "Griffiths, Glen" --refs "$refs"
+    [ "$status" -eq 0 ]
+    [ -f "$PPLR_TEST_DATA/G/Griffiths, Glen/About/Glen Griffiths (About).md" ]
+    [ -f "$PPLR_TEST_DATA/G/Griffiths, Glen/About/Glen Griffiths (Picture).jpg" ]
+    [ ! -e "$PPLR_TEST_DATA/G/Grifiths, Glen" ]
+    grep -q "^_Glen Griffiths_" "$PPLR_TEST_DATA/G/Griffiths, Glen/About/Glen Griffiths (About).md"
+    [ "$(cat "$PPLR_TEST_DATA/G/Griffiths, Glen/.index/aliases")" = "G/Grifiths, Glen" ]
+    grep -qF '../G/Griffiths, Glen/About/Glen Griffiths (About).md' "$refs/notes.md"
+    grep -qF 'G/Griffiths%2C%20Glen/About/Glen%20Griffiths%20%28About%29.md' "$refs/notes.md"
+    # running text is listed, not changed
+    grep -qF 'Met Glen Grifiths today' "$refs/notes.md"
+    assert_contains "$output" "Met Glen Grifiths today"
+}
+
+@test "pplr rename --dry-run changes nothing" {
+    make_about Grifiths Glen "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
+    run "$PPLR_BIN_DIR/pplr" rename "Grifiths, Glen" "Griffiths, Glen" --dry-run --refs "$PPLR_TEST_DATA"
+    [ "$status" -eq 0 ]
+    [ -d "$PPLR_TEST_DATA/G/Grifiths, Glen" ]
+    [ ! -e "$PPLR_TEST_DATA/G/Griffiths, Glen" ]
+}
+
+@test "pplr sync finds a renamed person by their old pplr URL, and replaces it" {
+    setup_contacts
+    export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
+    jq '(.[] | select(.id == "c3")).urls = [{"label": "pplr", "value": "pplr://t/turing-alan"}]' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json"
+    mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
+    mkdir -p "$PPLR_TEST_DATA/none"
+    "$PPLR_BIN_DIR/pplr" rename "Turing, Alan" "Turing, Alan Mathison" --refs "$PPLR_TEST_DATA/none" >/dev/null
+    run "$PPLR_BIN_DIR/pplr" sync --check --json
+    [ "$(echo "$output" | jq -r '.linked[] | select(.contact == "c3") | "\(.person) \(.markerStale)"')" = "T/Turing, Alan Mathison true" ]
+    "$PPLR_BIN_DIR/pplr" sync --link --apply >/dev/null
+    [ "$(jq -r '.[] | select(.id == "c3") | [.urls[] | select(.label == "pplr") | .value] | join(",")' "$PPLR_CONTACTS_JSON")" = "pplr://t/turing-alan-mathison" ]
+}
+
+@test "pplr rename finds links under a refs directory reached through a symlink" {
+    make_about Grifiths Glen "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
+    mkdir -p "$PPLR_TEST_DATA/real"; ln -s "$PPLR_TEST_DATA/real" "$PPLR_TEST_DATA/link"
+    echo '[G](<G/Grifiths, Glen/About/Glen Grifiths (About).md>)' > "$PPLR_TEST_DATA/real/n.md"
+    run "$PPLR_BIN_DIR/pplr" rename "Grifiths, Glen" "Griffiths, Glen" --refs "$PPLR_TEST_DATA/link"
+    [ "$status" -eq 0 ]
+    grep -qF 'G/Griffiths, Glen/About/Glen Griffiths (About).md' "$PPLR_TEST_DATA/real/n.md"
+}
+
+@test "pplr rename to a name that contains the old one rewrites each link once" {
+    make_about Varley Hanna "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
+    mkdir -p "$PPLR_TEST_DATA/refs"
+    echo '[H](<V/Varley, Hanna/About/Hanna Varley (About).md>) `V/Varley, Hanna`' > "$PPLR_TEST_DATA/refs/n.md"
+    run "$PPLR_BIN_DIR/pplr" rename "Varley, Hanna" "Varley, Hannah" --refs "$PPLR_TEST_DATA/refs"
+    [ "$status" -eq 0 ]
+    [ "$(cat "$PPLR_TEST_DATA/refs/n.md")" = '[H](<V/Varley, Hannah/About/Hannah Varley (About).md>) `V/Varley, Hannah`' ]
+    ! grep -q "Hannahh" "$PPLR_TEST_DATA/V/Varley, Hannah/About/Hannah Varley (About).md"
+}
