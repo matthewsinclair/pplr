@@ -68,7 +68,8 @@ if [ ! -d "$target_dir" ]; then
 fi
 
 # Search for the picture file in the About directory
-picture_file=$(find "$about_dir" -iname "$firstname $surname (Picture).*" \( -iname "*.jpg" -o -iname "*.png" \) | head -n 1)
+# by suffix, not name: find compares bytes, and an accented name typed as é need not match the é on disk
+picture_file=$(find "$about_dir" -maxdepth 1 \( -iname "* (Picture).jpg" -o -iname "* (Picture).png" \) | head -n 1)
 
 # Check if a picture file was found
 if [ -z "$picture_file" ]; then
