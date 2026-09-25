@@ -264,6 +264,28 @@ pplr handler --install                     # ~/Applications/Pplr Links.app, regi
 
 `pplr links` rewrites Markdown links into the people tree, whether paths (`../../Career/People/K/Kemp, Jon/...`) or CMS URLs (`http://localhost:4360/people/...`). A link to a person's About becomes the bare person URL; anything else keeps its path. A link whose person or file cannot be found is left as it is and listed. A symlinked note is followed to its file, so it is converted once and stays a symlink. `pplr open` uses `$PPLR_CMS_URL` (default `http://localhost:4360/people`; set it empty to always open the file). The handler lets `pplr://` links open from Obsidian, Contacts, Mail and the browser; a browser asks once before handing a link to it.
 
+#### `pplr tags`: `check`, `show`, `render`, `apply`
+
+A person's tags live in one place, `About/tags.yaml`, and every tag must be in the vocabulary, `$PPLR_DATA/_pplr/vocabulary.yaml`. Tags are single lowercase words, grouped by facet (role, function, sector, org, relationship, place); the vocabulary folds old spellings into its tags (`also`) and splits old compound tags (`split`).
+
+```yaml
+tags:
+  - fintech # a bare word is your own tag
+  - { tag: cto, source: auto, at: 2026-09-25 } # from their profile
+  - { tag: bcg, source: inferred, evidence: "BCG DV 2017-2020, Profile.pdf" }
+```
+
+`hand` tags are never overwritten; `auto` and `inferred` tags are replaced when tags are applied again. Relationship tags (how you know someone) are never generated from a profile: they are hand tags, or inferred from evidence and reviewed.
+
+```bash
+pplr tags check                   # Every tags.yaml against the vocabulary
+pplr tags show "Kemp, Jon"       # One person's tags, by facet
+pplr tags render                  # The "- Tags: #cto #london" line in each About, from tags.yaml
+pplr tags apply reviewed.json     # Write tags.yaml from a reviewed list; hand tags kept
+```
+
+The rendered line ends with an HTML comment marking it as generated: change `tags.yaml`, then render again.
+
 #### `pplr pictures [--dry-run] ["Surname, First"]...`
 
 Show each person's photo at the top of their About page: an `<img>` line under the title, floated right, pointing at `About/<First Surname> (Picture).jpg` (or `.png`). It is idempotent: run it again after adding people or pictures. People with no picture get no line. `PPLR_PICTURE_WIDTH` sets the width (default 160).

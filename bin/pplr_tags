@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# USAGE: each person's tags, from About/tags.yaml, against _pplr/vocabulary.yaml
+# USAGE: check                 every tags.yaml against the vocabulary
+# USAGE: show "Surname, First" a person's tags, by facet
+# USAGE: render [--dry-run]    the generated "- Tags:" line in each About
+# USAGE: apply FILE [--dry-run] write tags.yaml from a reviewed JSON list (hand tags kept)
+
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+export PPLR_DIR
+
+command -v uv >/dev/null 2>&1 || { echo "Error: uv not found (it runs pplr tags with PyYAML). Install it: brew install uv"; exit 1; }
+args=()
+for a in "$@"; do
+  # a file argument is relative to where pplr was run
+  if [ -f "${PPLR_CALLER_DIR:-$PWD}/$a" ] && [[ "$a" != /* ]]; then a="${PPLR_CALLER_DIR:-$PWD}/$a"; fi
+  args+=("$a")
+done
+exec uv run --quiet --with pyyaml python3 "$PPLR_ROOT/src/pplr-tags/tags.py" "${args[@]}"
