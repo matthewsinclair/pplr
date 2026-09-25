@@ -160,3 +160,61 @@ EOF
     run "$PPLR_BIN_DIR/pplr" sync --link
     assert_contains "$output" "to link                 0"
 }
+
+# Near misses for the plan: a nickname, a phone written as a link, a rename
+setup_plan() {
+    setup_contacts
+    jq '. + [
+      {"id": "c5", "given": "William", "family": "Mayhew", "organization": "Acme", "jobTitle": "",
+       "emails": [], "phones": [], "urls": [], "linkedin": [], "groups": []},
+      {"id": "c6", "given": "Glen", "family": "Griffiths", "organization": "", "jobTitle": "",
+       "emails": [], "phones": ["+491700000001"], "urls": [], "linkedin": [], "groups": []}
+    ]' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json"
+    mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
+    make_about Mayhew Bill "$(printf '%s\n' '- Role:' '- Company:  Acme Ltd' '- LinkedIn: [in/bill/](https://www.linkedin.com/in/bill-mayhew)' '- Email:' '- Phone:')"
+    make_about Grifiths Glen "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:    [+49 170 0000001](tel:+491700000001)')"
+}
+
+@test "pplr sync --plan --json proposes a decision for every pplr person" {
+    setup_plan
+    run "$PPLR_BIN_DIR/pplr" sync --plan --json
+    [ "$status" -eq 0 ]
+    [ "$(echo "$output" | jq '.rows | length')" -eq 6 ]
+    [ "$(echo "$output" | jq -r '.rows[] | select(.person == "N/Nobody, Nemo") | .decision')" = "Add" ]
+    [ "$(echo "$output" | jq -r '.rows[] | select(.person == "L/Lovelace, Ada") | .confidence')" = "High" ]
+}
+
+@test "pplr sync --plan matches a nickname with the same surname and company" {
+    setup_plan
+    run "$PPLR_BIN_DIR/pplr" sync --plan --json
+    [ "$status" -eq 0 ]
+    row=$(echo "$output" | jq -r '.rows[] | select(.person == "M/Mayhew, Bill") | "\(.decision) \(.why)"')
+    assert_contains "$row" "Update same surname, William for Bill, same company"
+    card=$(echo "$output" | jq -r '.rows[] | select(.person == "M/Mayhew, Bill") | .card')
+    [ "$(echo "$output" | jq -r --arg r "$card" '.cards[] | select(.ref == $r) | .id')" = "c5" ]
+}
+
+@test "pplr sync --plan reads a phone written as a link, and never marks a rename High" {
+    setup_plan
+    run "$PPLR_BIN_DIR/pplr" sync --plan --json
+    [ "$status" -eq 0 ]
+    row=$(echo "$output" | jq -r '.rows[] | select(.person == "G/Grifiths, Glen") | "\(.confidence) \(.why)"')
+    [ "$row" = "Medium same phone, names differ" ]
+}
+
+@test "pplr sync --plan reads a LinkedIn link without its closing bracket" {
+    setup_plan
+    run "$PPLR_BIN_DIR/pplr" sync --plan --json
+    [ "$(echo "$output" | jq -r '.people[] | select(.key == "M/Mayhew, Bill") | .linkedin')" = "bill-mayhew" ]
+}
+
+@test "pplr sync --plan writes a workbook with the four sheets" {
+    command -v uv >/dev/null 2>&1 || skip "uv not installed"
+    setup_plan
+    out="$PPLR_TEST_DATA/plan.xlsx"
+    run "$PPLR_BIN_DIR/pplr" sync --plan --out "$out"
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "Workbook: $out"
+    sheets=$(uv run --quiet --with openpyxl python3 -c "import openpyxl,sys; print(','.join(openpyxl.load_workbook(sys.argv[1]).sheetnames))" "$out")
+    [ "$sheets" = "Merged,pplr,Contacts,How to review" ]
+}

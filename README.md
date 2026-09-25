@@ -260,9 +260,23 @@ pplr sync --check --json       # The whole report as JSON
 pplr sync --check --group NAME # The Contacts group that marks pplr people (default: PPLR)
 ```
 
-Only the About header fields take part: the name (from the folder), Role, Company, Email, Phone and LinkedIn. Bios, notes and meetings never leave pplr. People are matched in this order: a `pplr` URL on the card (`pplr://<letter>/<surname-first>`, eg `pplr://b/bray-martin`; the first form, `pplr://B/Bray,%20Martin`, is still recognised), then a shared email, then a shared LinkedIn profile, then the name alone, which is reported for you to confirm. Phones are compared as digits (UK numbers without a country code count as +44), and LinkedIn by profile slug.
+Only the About header fields take part: the name (from the folder), Role, Company, Email, Phone and LinkedIn. Bios, notes and meetings never leave pplr. People are matched in this order: a `pplr` URL on the card (`pplr://<letter>/<surname-first>`, eg `pplr://b/bray-martin`; the first form, `pplr://B/Bray,%20Martin`, is still recognised), then a shared email, then a shared LinkedIn profile, then a shared phone, then the name alone, which is reported for you to confirm. Phones are compared as digits (UK numbers without a country code count as +44, and a trunk 0 after a country code is dropped), and LinkedIn by profile slug.
 
 The Contacts side is a small Swift program, `src/pplr-contacts/main.swift`, built into `.build/` on first use. The first run asks for access to Contacts for the app running pplr (eg iTerm or Terminal).
+
+#### `pplr sync --plan [options]`
+
+Write a workbook for reviewing every pplr person against Contacts before anything changes. It is read-only. Beyond the matches `--check` makes, it scores near misses: a short form of the given name (Bill for William), part of a double-barrelled surname, a one-letter slip, a reversed name, plus a shared company or email domain.
+
+```bash
+pplr sync --plan                  # Workbook in $PPLR_DATA/_out/contacts-plan-<stamp>.xlsx
+pplr sync --plan --out FILE.xlsx  # Somewhere else
+pplr sync --plan --json           # The plan as JSON, no workbook
+```
+
+The workbook has four sheets. **Merged** has one row per pplr person, least certain first. Each row holds the proposed Decision (Add, Update, Link only, No change or Skip), the card it would change (a ref such as `C0123`), any duplicate cards, a confidence, the reason, and each field side by side. **pplr** and **Contacts** hold the two lists; the Contacts sheet says which person each card is proposed for. **How to review** explains the columns. Review by changing only the shaded columns on Merged: Decision, Card, Dupes and Notes.
+
+An Update never removes anything from a card: pplr wins on name, company and role, and its emails, phones and LinkedIn are added beside the card's own. A rename is never proposed with High confidence, since pplr's spelling can be the wrong one. The workbook step runs with `uv` (`uv run --with openpyxl`), so nothing is installed globally. The workbook holds everyone's contact details: keep it out of git.
 
 #### `pplr sync --link [options]`
 
