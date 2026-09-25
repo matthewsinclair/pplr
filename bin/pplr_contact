@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# USAGE: when you last spoke to each person (About/contact.yaml), and who to get in touch with next
+# USAGE: scan [--dry-run]          last contact from each person's newest meeting; next from the cadence
+# USAGE: due [DAYS] [--all]        who is due for a note (next on or before today, plus DAYS)
+# USAGE: show "Surname, First"     a person's last contact, next date and cadence
+# USAGE: log "Surname, First" [DATE] [--via email|call|message|meeting] [--link URL] [--note TEXT]
+# USAGE: next "Surname, First" WHEN  set the next contact: a date, or +2w, +10d, +3m
+# USAGE: context "Surname, First"  what to write a note from: role, latest update, last meeting's notes
+
+: "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
+: "${PPLR_DIR:=$PPLR_DATA}"
+: "${PPLR_ROOT:=$(dirname "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")")}"
+export PPLR_DIR
+
+command -v uv >/dev/null 2>&1 || { echo "Error: uv not found (it runs pplr contact with PyYAML). Install it: brew install uv"; exit 1; }
+# scan links each last meeting by its pplr:// marker, from the engine (one rule for markers)
+if [ "$1" = "scan" ]; then
+  source "$PPLR_ROOT/lib/engine.sh"
+  build_engine
+  people_json=$(mktemp -t pplr-people)
+  trap 'rm -f "$people_json"' EXIT
+  "$engine" people --people-dir "$PPLR_DIR" > "$people_json" || exit 1
+  export PPLR_PEOPLE_JSON="$people_json"
+fi
+uv run --quiet --with pyyaml python3 "$PPLR_ROOT/src/pplr-contact/contact.py" "$@"
