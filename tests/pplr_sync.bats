@@ -218,3 +218,11 @@ setup_plan() {
     sheets=$(uv run --quiet --with openpyxl python3 -c "import openpyxl,sys; print(','.join(openpyxl.load_workbook(sys.argv[1]).sheetnames))" "$out")
     [ "$sheets" = "Merged,pplr,Contacts,How to review" ]
 }
+
+@test "pplr sync reads several phones apart by a middle dot" {
+    setup_contacts
+    make_about Carron Elise "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:    +262 262 90 00 00 — switchboard · +262 692 90 00 01 — mobile')"
+    run "$PPLR_BIN_DIR/pplr" sync --plan --json
+    [ "$status" -eq 0 ]
+    [ "$(echo "$output" | jq -r '.people[] | select(.key == "C/Carron, Elise") | .phones | join(",")')" = "+262262900000,+262692900001" ]
+}

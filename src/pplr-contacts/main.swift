@@ -151,8 +151,9 @@ func loadPeople(_ root: String) -> [Person] {
                     case "Email":
                         p.emails = Array(Set(matches("[A-Za-z0-9._%+'-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}", in: value).map { $0.lowercased() })).sorted()
                     case "Phone":
-                        // "[+49 170 0000001](tel:+491700000001)": the link text, not text and URL together
-                        p.phones = value.components(separatedBy: CharacterSet(charactersIn: ",;"))
+                        // "[+49 170 0000001](tel:+491700000001)": the link text, not text and URL together;
+                        // numbers apart by comma, semicolon, middle dot or slash
+                        p.phones = value.components(separatedBy: CharacterSet(charactersIn: ",;·/"))
                             .map { normalisePhone(linkText($0)) }.filter { $0.count > 6 }
                     case "LinkedIn": p.linkedin = linkedinSlug(value) ?? ""
                     default: continue

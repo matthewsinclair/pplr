@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Phones written as a Markdown link (`[+49 …](tel:…)`) are read from the link text, and a trunk 0 after a country code (`+44 07…`) is dropped.
+- Phones written as a Markdown link (`[+49 …](tel:…)`) are read from the link text, a trunk 0 after a country code (`+44 07…`) is dropped, and numbers apart by a middle dot or slash are read as separate numbers.
 - A LinkedIn URL inside a Markdown link no longer keeps the closing bracket in its slug.
 
 ## [1.0.1] - 2025-07-19
