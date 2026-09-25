@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `pplr sync --check`: a read-only comparison of pplr with Apple Contacts (linked, matched by email or LinkedIn, name-only, ambiguous, only in pplr, group orphans, and differing fields), with `--json`, `--verbose` and `--group`. The Contacts side is a Swift engine in `src/pplr-contacts/`, built on first use.
 - `pplr sync --link`: marks matched Contacts cards as pplr's with a `pplr` URL and the `PPLR` group, and writes `About/<First Surname> (Contacts).webloc` opening the card in Contacts; a dry run unless `--apply`, with `--name` and `--all-names` for name-only matches.
 - `pplr sync --plan`: a review workbook (Merged, pplr, Contacts, How to review) proposing Add, Update, Link only, No change or Skip for every pplr person, with near-miss name scoring (short forms, double-barrelled surnames, one-letter slips, reversed names, shared company or email domain); `--out`, `--json`. The workbook step runs under `uv` with openpyxl.
+- `pplr sync --apply-plan WORKBOOK`: carries out a reviewed plan workbook (Add as new iCloud cards with photo, Update without removing anything, Link only); a dry run unless `--apply`, with `--limit`, a `.vcf` backup first, and never a card added twice.
 - `pplr sync --check` also matches on a shared phone.
 - `pplr rename`: moves a person's folder and files, updates their About, records the old name in `.index/aliases`, repoints path-style links under `--refs` (default `$PPLR_REFS_DIR` or `~/Dropbox`), lists the old name in running text, and reindexes; `--dry-run`.
 - `pplr resolve`, `pplr open pplr://...` (the CMS page, or the file; `--print`), `pplr links` (rewrites Markdown links into People as `pplr://` URLs; dry run unless `--apply`) and `pplr handler` (a macOS app registered for `pplr://`). The engine build moved to `lib/engine.sh`.
@@ -27,6 +28,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Phones written as a Markdown link (`[+49 …](tel:…)`) are read from the link text, a trunk 0 after a country code (`+44 07…`) is dropped, and numbers apart by a middle dot or slash are read as separate numbers.
 - A LinkedIn URL inside a Markdown link no longer keeps the closing bracket in its slug.
+
+### Fixed
+
+- Tests: teardown clears `.index`, so an index one test writes no longer leaks into the next (the intermittent `pplr count` failures).
 
 ### Removed
 

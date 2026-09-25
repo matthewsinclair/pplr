@@ -136,5 +136,30 @@ def main(plan_path, out_path):
     wb.save(out_path)
 
 
+def decisions(xlsx_path, out_path):
+    """The reviewed Merged sheet as [{person, decision, card_id}], card refs
+    resolved through the same workbook's Contacts sheet"""
+    from openpyxl import load_workbook
+    wb = load_workbook(xlsx_path, read_only=True)
+    ids = {}
+    for row in wb["Contacts"].iter_rows(min_row=2, values_only=True):
+        if row and row[0]:
+            ids[row[0]] = row[11]
+    out = []
+    for row in wb["Merged"].iter_rows(min_row=2, values_only=True):
+        if not row or not row[0]:
+            continue
+        person, decision, card = row[0], (row[1] or "").strip(), (row[2] or "").strip()
+        if decision not in DECISIONS:
+            sys.exit(f"{person}: Decision must be one of {', '.join(DECISIONS)}, not {decision!r}")
+        if decision in ("Update", "Link only") and card not in ids:
+            sys.exit(f"{person}: {decision} needs a Card ref from the Contacts sheet, not {card!r}")
+        out.append({"person": person, "decision": decision, "card": ids.get(card) if card else None})
+    json.dump(out, open(out_path, "w"), indent=1)
+
+
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+    if sys.argv[1] == "--decisions":
+        decisions(sys.argv[2], sys.argv[3])
+    else:
+        main(sys.argv[1], sys.argv[2])

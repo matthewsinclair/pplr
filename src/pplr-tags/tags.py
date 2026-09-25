@@ -44,7 +44,8 @@ TAG_RE = re.compile(r"^[a-z0-9]+$")
 
 
 def vocabulary():
-    v = yaml.safe_load(open(VOCAB))
+    # No vocabulary yet (a new pplr, or a test): no tag is known, and indexes still build
+    v = yaml.safe_load(open(VOCAB)) if os.path.exists(VOCAB) else {}
     facet_of, fold = {}, {}
     for f in FACETS:
         for tag, d in (v.get(f) or {}).items():
@@ -222,7 +223,7 @@ def pages(facet_of):
     in full each time, and files for tags no longer used are removed."""
     out = os.path.join(PEOPLE, TAGS_DIR)
     os.makedirs(out, exist_ok=True)
-    v = yaml.safe_load(open(VOCAB))
+    v = (yaml.safe_load(open(VOCAB)) if os.path.exists(VOCAB) else {}) or {}
     people = {}                                 # key -> {name, line, tags}
     for d in person_dirs():
         tags = [t["tag"] for t in read_tags(d) if t["tag"] in facet_of]

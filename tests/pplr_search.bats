@@ -42,7 +42,9 @@ load test_helper
 exit 1
 EOF
     chmod +x "$PPLR_TEST_DATA/.mock_bin/claude"
-    
+    command -v uv >/dev/null 2>&1 || skip "uv not installed"
+    "$PPLR_BIN_DIR/pplr" reindex >/dev/null
+
     run "$PPLR_BIN_DIR/pplr" search "test"
     [ "$status" -eq 0 ]  # Should succeed with fallback search
     assert_contains "$output" "Falling back to basic tag search"

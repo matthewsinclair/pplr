@@ -43,8 +43,10 @@ setup() {
 # Teardown function - runs after each test
 teardown() {
     # Clean up test data
+    # "*" skips dotfiles: clear .index too, or an index one test writes (eg
+    # .index/index.md, which pplr count reads) leaks into the next
     if [ -d "$PPLR_TEST_DATA" ]; then
-        rm -rf "$PPLR_TEST_DATA"/*
+        rm -rf "$PPLR_TEST_DATA"/* "$PPLR_TEST_DATA/.index"
     fi
 }
 

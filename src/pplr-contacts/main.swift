@@ -955,27 +955,27 @@ func osascript(_ args: [String]) -> String? {
 /// person -> nil when linked, or the error
 typealias Outcome = [(person: String, error: String?)]
 
+/// The pplr group in the default account (iCloud), made if it is missing
+func homeGroupID(_ store: CNContactStore, _ group: String) throws -> String {
+    let home = store.defaultContainerIdentifier()
+    let inHome = { try store.groups(matching: CNGroup.predicateForGroupsInContainer(withIdentifier: home)) }
+    if let g = try inHome().first(where: { $0.name == group }) { return g.identifier }
+    let g = CNMutableGroup(); g.name = group
+    let req = CNSaveRequest(); req.add(g, toContainerWithIdentifier: home)
+    try store.execute(req)
+    return try inHome().first(where: { $0.name == group })!.identifier
+}
+
 func applyLive(_ plan: LinkPlan, group: String, limit: Int?) throws -> Outcome {
     let store = openStore()
-    var groups: [String: CNGroup] = [:]   // container id -> the group in it
-    func groupIn(_ container: String) throws -> CNGroup {
-        if let g = groups[container] { return g }
-        let existing = try store.groups(matching: CNGroup.predicateForGroupsInContainer(withIdentifier: container))
-        if let g = existing.first(where: { $0.name == group }) { groups[container] = g; return g }
-        let g = CNMutableGroup(); g.name = group
-        let req = CNSaveRequest(); req.add(g, toContainerWithIdentifier: container)
-        try store.execute(req)
-        let made = try store.groups(matching: CNGroup.predicateForGroupsInContainer(withIdentifier: container))
-            .first(where: { $0.name == group })!
-        groups[container] = made
-        return made
-    }
+    var gidCache: String? = nil
+    func groupID() throws -> String { if let g = gidCache { return g }; gidCache = try homeGroupID(store, group); return gidCache! }
     var out: Outcome = []
     var failures = 0
     for p in plan.toLink.prefix(limit ?? Int.max) {
         var error: String? = nil
         do {
-            let gid = p.needsGroup ? try groupIn(store.defaultContainerIdentifier()).identifier : ""
+            let gid = p.needsGroup ? try groupID() : ""
             if !p.hasMarker || p.needsGroup {
                 error = osascript([p.contact, p.hasMarker ? "" : markerURL(p.person), gid, p.markerStale ? "yes" : "no"])
             }
@@ -1038,6 +1038,230 @@ func printPlan(_ plan: LinkPlan, group: String, outcome: Outcome?, backupPath: S
         print("\nName-only matches left alone (confirm with --name \"Surname, First\", or --all-names):")
         plan.namesSkipped.forEach { print("  \($0)") }
     }
+    if let backupPath { print("\nBackup: \(backupPath)") }
+}
+
+// MARK: - Apply a reviewed plan
+
+struct PlanDecision: Codable {
+    var person: String
+    var decision: String        // Add | Update | Link only | No change | Skip
+    var card: String?           // the card id, for Update and Link only
+}
+
+/// What one decision will do to Contacts: a new card, or these changes to one
+struct CardWork {
+    var person: Person
+    var decision: String
+    var card: Card?             // nil for Add
+    var setName: Bool
+    var setCompany: Bool
+    var setRole: Bool
+    var addEmails: [String]
+    var addPhones: [String]
+    var addLinkedIn: Bool
+    var marker: String          // "add", "replace" or ""
+    var addGroup: Bool
+    var picture: String?        // Add only
+
+    var summary: String {
+        if decision == "Add" {
+            var w = ["new iCloud card"]
+            if !person.emails.isEmpty { w.append("\(person.emails.count) email") }
+            if !person.phones.isEmpty { w.append("\(person.phones.count) phone") }
+            if !person.linkedin.isEmpty { w.append("LinkedIn") }
+            if picture != nil { w.append("photo") }
+            return w.joined(separator: ", ")
+        }
+        var w: [String] = []
+        if setName { w.append("name") }
+        if setCompany { w.append("company") }
+        if setRole { w.append("role") }
+        if !addEmails.isEmpty { w.append("+\(addEmails.count) email") }
+        if !addPhones.isEmpty { w.append("+\(addPhones.count) phone") }
+        if addLinkedIn { w.append("+LinkedIn") }
+        if !marker.isEmpty { w.append(marker == "add" ? "+pplr URL" : "pplr URL updated") }
+        if addGroup { w.append("+group") }
+        return w.isEmpty ? "nothing to change" : w.joined(separator: ", ")
+    }
+    var isEmpty: Bool { decision != "Add" && summary == "nothing to change" }
+}
+
+func linkedinURL(_ slug: String) -> String { "https://www.linkedin.com/in/\(slug)/" }
+
+func planWork(_ decisions: [PlanDecision], people: [Person], cards: [Card], group: String) -> (work: [CardWork], problems: [String]) {
+    let byKey = Dictionary(uniqueKeysWithValues: people.map { ($0.key, $0) })
+    let byID = Dictionary(cards.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+    // A card that already carries the person's pplr URL (or a former one): an
+    // Add has been done, so doing it again would make a duplicate
+    let markedFor = Set(cards.compactMap(pplrMarker))
+    var work: [CardWork] = [], problems: [String] = []
+    for d in decisions {
+        guard let p = byKey[d.person] else { problems.append("\(d.person): no such person in pplr"); continue }
+        switch d.decision {
+        case "Add":
+            if ([p.key] + p.aliases).contains(where: { markedFor.contains(markerPath($0)) }) { continue }
+            work.append(CardWork(person: p, decision: "Add", card: nil, setName: false, setCompany: false, setRole: false,
+                                 addEmails: [], addPhones: [], addLinkedIn: false, marker: "", addGroup: false, picture: picturePath(p)))
+        case "Update", "Link only":
+            guard let id = d.card, let c = byID[id] else { problems.append("\(d.person): the card is no longer in Contacts"); continue }
+            if c.account == "none" { problems.append("\(d.person): \(displayName(c)) is in no account (Other Known or a directory), so cannot be written"); continue }
+            let full = d.decision == "Update"
+            let m = pplrMarker(c)
+            work.append(CardWork(
+                person: p, decision: d.decision, card: c,
+                setName: full && fold("\(p.given) \(p.family)") != fold("\(c.given) \(c.family)"),
+                setCompany: full && !p.company.isEmpty && fold(p.company) != fold(c.organization),
+                setRole: full && !p.role.isEmpty && fold(p.role) != fold(c.jobTitle),
+                addEmails: full ? p.emails.filter { !c.emails.contains($0) } : [],
+                addPhones: full ? p.phones.filter { !c.phones.contains($0) } : [],
+                addLinkedIn: full && !p.linkedin.isEmpty && !c.linkedin.contains(p.linkedin),
+                marker: m == nil ? "add" : (m != markerPath(p.key) ? "replace" : ""),
+                addGroup: (c.account ?? "home") == "home" && !c.groups.contains(group),
+                picture: nil))
+        default:
+            continue            // No change, Skip
+        }
+    }
+    return (work, problems)
+}
+
+/// An AppleScript string literal
+func asText(_ s: String) -> String {
+    "\"" + s.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"") + "\""
+}
+
+/// One card's changes as a Contacts.app script, which returns the card's id
+func cardScript(_ w: CardWork, groupID: String, tiff: String?) -> String {
+    let p = w.person
+    var lines = ["tell application \"Contacts\""]
+    if w.decision == "Add" {
+        var props = ["first name:\(asText(p.given))", "last name:\(asText(p.family))"]
+        if !p.company.isEmpty { props.append("organization:\(asText(p.company))") }
+        if !p.role.isEmpty { props.append("job title:\(asText(p.role))") }
+        lines.append("set p to make new person with properties {\(props.joined(separator: ", "))}")
+        for e in p.emails { lines.append("make new email at end of emails of p with properties {label:\"work\", value:\(asText(e))}") }
+        for ph in p.phones { lines.append("make new phone at end of phones of p with properties {label:\"mobile\", value:\(asText(ph))}") }
+        if !p.linkedin.isEmpty { lines.append("make new url at end of urls of p with properties {label:\"LinkedIn\", value:\(asText(linkedinURL(p.linkedin)))}") }
+        lines.append("make new url at end of urls of p with properties {label:\"pplr\", value:\(asText(markerURL(p.key)))}")
+        if let tiff { lines.append("set image of p to (read (POSIX file \(asText(tiff))) as TIFF picture)") }
+        lines.append("save")
+        lines.append("add p to group id \(asText(groupID))")
+    } else {
+        lines.append("set p to person id \(asText(w.card!.id))")
+        if w.setName { lines.append("set first name of p to \(asText(p.given))"); lines.append("set last name of p to \(asText(p.family))") }
+        if w.setCompany { lines.append("set organization of p to \(asText(p.company))") }
+        if w.setRole { lines.append("set job title of p to \(asText(p.role))") }
+        for e in w.addEmails { lines.append("make new email at end of emails of p with properties {label:\"work\", value:\(asText(e))}") }
+        for ph in w.addPhones { lines.append("make new phone at end of phones of p with properties {label:\"mobile\", value:\(asText(ph))}") }
+        if w.addLinkedIn { lines.append("make new url at end of urls of p with properties {label:\"LinkedIn\", value:\(asText(linkedinURL(p.linkedin)))}") }
+        if w.marker == "add" { lines.append("make new url at end of urls of p with properties {label:\"pplr\", value:\(asText(markerURL(p.key)))}") }
+        if w.marker == "replace" { lines.append("set value of (first url of p whose label is \"pplr\") to \(asText(markerURL(p.key)))") }
+        if w.addGroup { lines.append("add p to group id \(asText(groupID))") }
+    }
+    lines += ["save", "return id of p", "end tell"]
+    return lines.joined(separator: "\n")
+}
+
+func runScript(_ source: String) -> (out: String, error: String?) {
+    let proc = Process()
+    proc.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
+    proc.arguments = ["-e", source]
+    let out = Pipe(), err = Pipe(); proc.standardOutput = out; proc.standardError = err
+    do { try proc.run() } catch { return ("", error.localizedDescription) }
+    proc.waitUntilExit()
+    let o = (String(data: out.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+    if proc.terminationStatus == 0 { return (o, nil) }
+    return (o, (String(data: err.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "").trimmingCharacters(in: .whitespacesAndNewlines))
+}
+
+/// The photo as TIFF, which is what Contacts.app takes from a script
+func tiffCopy(_ picture: String) -> String? {
+    let out = (NSTemporaryDirectory() as NSString).appendingPathComponent("pplr-\(UUID().uuidString).tiff")
+    let proc = Process()
+    proc.executableURL = URL(fileURLWithPath: "/usr/bin/sips")
+    proc.arguments = ["-s", "format", "tiff", "-Z", "512", picture, "--out", out]
+    proc.standardOutput = Pipe(); proc.standardError = Pipe()
+    do { try proc.run() } catch { return nil }
+    proc.waitUntilExit()
+    return proc.terminationStatus == 0 ? out : nil
+}
+
+func applyWorkLive(_ work: [CardWork], group: String, limit: Int?) throws -> Outcome {
+    let store = openStore()
+    let gid = try homeGroupID(store, group)
+    var out: Outcome = [], failures = 0
+    for w in work.filter({ !$0.isEmpty }).prefix(limit ?? Int.max) {
+        let tiff = w.picture.flatMap(tiffCopy)
+        let (id, error) = runScript(cardScript(w, groupID: gid, tiff: tiff))
+        if let tiff { try? FileManager.default.removeItem(atPath: tiff) }
+        if error == nil, !id.isEmpty { try? writeWebloc(weblocPath(w.person), id) }
+        out.append((w.person.key, error))
+        if error != nil { failures += 1; if failures >= 3 { break } }
+    }
+    return out
+}
+
+/// The same changes, made to a contacts.json fixture (for the tests)
+func applyWorkFixture(_ work: [CardWork], group: String, fixture: String, limit: Int?) throws -> Outcome {
+    var cards = try JSONDecoder().decode([Card].self, from: Data(contentsOf: URL(fileURLWithPath: fixture)))
+    var out: Outcome = []
+    for w in work.filter({ !$0.isEmpty }).prefix(limit ?? Int.max) {
+        let p = w.person
+        if w.decision == "Add" {
+            var urls = [LabelledValue(label: "pplr", value: markerURL(p.key))]
+            if !p.linkedin.isEmpty { urls.insert(LabelledValue(label: "LinkedIn", value: linkedinURL(p.linkedin)), at: 0) }
+            let id = "new-\(cards.count + 1)"
+            cards.append(Card(id: id, given: p.given, family: p.family, organization: p.company, jobTitle: p.role,
+                              emails: p.emails, phones: p.phones, urls: urls, linkedin: p.linkedin.isEmpty ? [] : [p.linkedin],
+                              groups: [group], account: "home"))
+            try writeWebloc(weblocPath(p), id)
+        } else if let i = cards.firstIndex(where: { $0.id == w.card!.id }) {
+            if w.setName { cards[i].given = p.given; cards[i].family = p.family }
+            if w.setCompany { cards[i].organization = p.company }
+            if w.setRole { cards[i].jobTitle = p.role }
+            cards[i].emails += w.addEmails
+            cards[i].phones += w.addPhones
+            if w.addLinkedIn { cards[i].urls.append(LabelledValue(label: "LinkedIn", value: linkedinURL(p.linkedin))); cards[i].linkedin.append(p.linkedin) }
+            if w.marker == "add" { cards[i].urls.append(LabelledValue(label: "pplr", value: markerURL(p.key))) }
+            if w.marker == "replace", let u = cards[i].urls.firstIndex(where: { $0.label == "pplr" }) { cards[i].urls[u].value = markerURL(p.key) }
+            if w.addGroup { cards[i].groups.append(group) }
+            try writeWebloc(weblocPath(p), cards[i].id)
+        }
+        out.append((p.key, nil))
+    }
+    let enc = JSONEncoder(); enc.outputFormatting = [.prettyPrinted, .sortedKeys]
+    try enc.encode(cards).write(to: URL(fileURLWithPath: fixture))
+    return out
+}
+
+func printWork(_ work: [CardWork], problems: [String], outcome: Outcome?, backupPath: String?, limit: Int?) {
+    let todo = work.filter { !$0.isEmpty }
+    let count = { (d: String) in todo.filter { $0.decision == d }.count }
+    print(outcome == nil ? "pplr sync --apply-plan (dry run: nothing written; --apply to write)" : "pplr sync --apply-plan --apply")
+    print("")
+    print("  add (new iCloud cards)  \(count("Add"))")
+    print("  update                  \(count("Update"))")
+    print("  link only               \(count("Link only"))")
+    print("  nothing to change       \(work.count - todo.count)")
+    if !problems.isEmpty { print("  cannot be done          \(problems.count)") }
+    if let outcome {
+        let ok = outcome.filter { $0.error == nil }, bad = outcome.filter { $0.error != nil }
+        print("  written now             \(ok.count)")
+        print("  failed                  \(bad.count)")
+        print("  still to write          \(todo.count - ok.count)")
+        if !bad.isEmpty {
+            print("\nFailed:")
+            bad.forEach { print("  \($0.person): \($0.error!)") }
+            if bad.count >= 3 { print("  (stopped after three failures)") }
+        }
+    } else {
+        print("\nWould write\(limit != nil ? " (the first \(limit!))" : ""):")
+        for w in todo.prefix(limit ?? Int.max) {
+            print("  \(w.decision.padding(toLength: 10, withPad: " ", startingAt: 0)) \(w.person.key)\(w.card != nil ? "  <->  \(displayName(w.card!))" : "")  [\(w.summary)]")
+        }
+    }
+    if !problems.isEmpty { print("\nCannot be done:"); problems.forEach { print("  \($0)") } }
     if let backupPath { print("\nBackup: \(backupPath)") }
 }
 
@@ -1137,6 +1361,21 @@ do {
         }
         let enc = JSONEncoder(); enc.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
         print(String(data: try enc.encode(list), encoding: .utf8)!)
+    case "applyplan":
+        guard let peopleDir, let file = take("--decisions") ?? args.first else {
+            throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "applyplan needs --people-dir and --decisions FILE"])
+        }
+        let decisions = try JSONDecoder().decode([PlanDecision].self, from: Data(contentsOf: URL(fileURLWithPath: file)))
+        let (work, problems) = planWork(decisions, people: loadPeople(peopleDir), cards: try loadCards(fixture: fixture), group: group)
+        var outcome: Outcome? = nil, backupPath: String? = nil
+        if apply && work.contains(where: { !$0.isEmpty }) {
+            guard let backupDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "--apply needs --backup-dir"]) }
+            backupPath = try backup(to: backupDir, fixture: fixture)
+            outcome = fixture != nil ? try applyWorkFixture(work, group: group, fixture: fixture!, limit: limit)
+                                     : try applyWorkLive(work, group: group, limit: limit)
+        }
+        printWork(work, problems: problems, outcome: outcome, backupPath: backupPath, limit: apply ? nil : limit)
+        if outcome?.contains(where: { $0.error != nil }) == true { exit(1) }
     case "resolve":
         guard let peopleDir, let url = args.first else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "resolve needs --people-dir and a pplr:// URL"]) }
         // pplr://tag/<tag> (or tags/): the tag's page; pplr://tag alone: the index of tags

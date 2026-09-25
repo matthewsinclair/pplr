@@ -366,3 +366,37 @@ setup_plan() {
     assert_contains "$output" "0 added, 0 updated, 1 already there"
     [ "$(grep -c "<img" "$a")" -eq 1 ]
 }
+
+@test "pplr sync --apply-plan is a dry run by default, and changes nothing" {
+    command -v uv >/dev/null 2>&1 || skip "uv not installed"
+    setup_contacts
+    "$PPLR_BIN_DIR/pplr" sync --plan --out "$PPLR_TEST_DATA/plan.xlsx" >/dev/null
+    before=$(cat "$PPLR_CONTACTS_JSON")
+    run "$PPLR_BIN_DIR/pplr" sync --apply-plan "$PPLR_TEST_DATA/plan.xlsx"
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "dry run"
+    assert_contains "$output" "add (new iCloud cards)  1"
+    assert_contains "$output" "N/Nobody, Nemo"
+    [ "$(cat "$PPLR_CONTACTS_JSON")" = "$before" ]
+}
+
+@test "pplr sync --apply-plan --apply adds new cards and updates matched ones, removing nothing" {
+    command -v uv >/dev/null 2>&1 || skip "uv not installed"
+    setup_contacts
+    export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
+    "$PPLR_BIN_DIR/pplr" sync --plan --out "$PPLR_TEST_DATA/plan.xlsx" >/dev/null
+    run "$PPLR_BIN_DIR/pplr" sync --apply-plan "$PPLR_TEST_DATA/plan.xlsx" --apply
+    [ "$status" -eq 0 ]
+    [ "$(ls "$PPLR_BACKUP_DIR" | wc -l | tr -d ' ')" -eq 1 ]
+    # Nemo Nobody had no card: now one, in the group, with the pplr URL
+    nemo=$(jq -r '.[] | select(.family == "Nobody") | "\(.groups | join(",")) \([.urls[] | select(.label == "pplr") | .value] | join(","))"' "$PPLR_CONTACTS_JSON")
+    [ "$nemo" = "PPLR pplr://n/nobody-nemo" ]
+    # Grace Hopper (same name): her role filled in, her own email kept, the pplr URL added
+    grace=$(jq -r '.[] | select(.id == "c2") | "\(.jobTitle)|\(.emails | join(","))|\([.urls[] | select(.label == "pplr") | .value] | join(","))"' "$PPLR_CONTACTS_JSON")
+    [ "$grace" = "Rear Admiral|grace@work.example|pplr://h/hopper-grace" ]
+    [ -f "$PPLR_TEST_DATA/N/Nobody, Nemo/About/Nemo Nobody (Contacts).webloc" ]
+    # Applying again finds nothing left to do, and never adds a card twice
+    run "$PPLR_BIN_DIR/pplr" sync --apply-plan "$PPLR_TEST_DATA/plan.xlsx"
+    assert_contains "$output" "add (new iCloud cards)  0"
+    assert_contains "$output" "update                  0"
+}

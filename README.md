@@ -305,6 +305,18 @@ The workbook has four sheets. **Merged** has one row per pplr person, least cert
 
 An Update never removes anything from a card: pplr wins on name, company and role, and its emails, phones and LinkedIn are added beside the card's own. A rename is never proposed with High confidence, since pplr's spelling can be the wrong one. The workbook step runs with `uv` (`uv run --with openpyxl`), so nothing is installed globally. The workbook holds everyone's contact details: keep it out of git.
 
+#### `pplr sync --apply-plan WORKBOOK [--apply] [--limit N]`
+
+Carry out a reviewed `--plan` workbook: each row's Decision on the Merged sheet, with the card its Card ref names. Add makes a new card in the default account (iCloud) with the name, company, role, emails, phones, LinkedIn, the `pplr` URL, the photo, and the `PPLR` group. Update brings the card up to date from pplr (name, company, role) and adds what it lacks (emails, phones, LinkedIn); it never removes anything. Link only adds the `pplr` URL and the group. No change and Skip do nothing, and duplicate cards (Dupes) are listed, never touched.
+
+```bash
+pplr sync --apply-plan _out/contacts-plan-20260925-1025.xlsx               # Dry run: what would be written
+pplr sync --apply-plan _out/contacts-plan-20260925-1025.xlsx --apply --limit 1   # Try one card
+pplr sync --apply-plan _out/contacts-plan-20260925-1025.xlsx --apply       # The rest
+```
+
+Every card is saved to a dated `.vcf` first. It works from the current pplr data, so a change since the workbook was made is written as it is now. Applying the same workbook again writes nothing new, and never adds a card twice: a person whose `pplr` URL is already on a card is done. Each written card gets `About/<First Surname> (Contacts).webloc`.
+
 #### `pplr sync --link [options]`
 
 Mark the cards that match pplr people as pplr's: a URL labelled `pplr` (`pplr://<letter>/<surname-first>`: lowercase, accents dropped, other characters hyphens; an older form is replaced) and, for cards in the default account (iCloud), membership of the `PPLR` group. Cards in other accounts, eg Gmail, carry the URL alone, so there is one `PPLR` group. A matched card in no account (a directory or Other Known card) cannot be written and is listed instead. Nothing else on the card changes. On the pplr side it writes `About/<First Surname> (Contacts).webloc`, which opens the card in Contacts (`addressbook://<card id>`; the id is this Mac's). It is a dry run unless `--apply` is given.
