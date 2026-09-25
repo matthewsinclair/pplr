@@ -65,11 +65,11 @@ verblock(1.0.0)
 
 # $firstname $surname (About)
 
-Role: Test Role
-Company: Test Company
-LinkedIn: https://linkedin.com/in/test
-Email: test@example.com
-Phone: +1-555-0123
+- Role:     Test Role
+- Company:  Test Company
+- LinkedIn: https://linkedin.com/in/test
+- Email:    test@example.com
+- Phone:    +1-555-0123
 
 ## Bio
 This is a test bio for $firstname $surname.

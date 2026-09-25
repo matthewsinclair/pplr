@@ -52,7 +52,7 @@ claude_search() {
   # Create prompt for Claude
   local prompt_file=$(mktemp)
   cat > "$prompt_file" << 'EOF'
-You are helping search through a professional network database. Below is a JSON index containing information about people, including their roles, companies, and AI-generated tags.
+You are helping search through a professional network database. Below is a JSON index containing information about people, including their roles, companies and tags.
 
 SEARCH QUERY: "QUERY_PLACEHOLDER"
 
@@ -62,8 +62,7 @@ DATA_PLACEHOLDER
 Your task:
 1. Analyze the search query to understand what the user is looking for
 2. Find the most relevant people based on:
-   - Profile tags (skills, roles, industries)
-   - Meeting tags (discussion topics, interactions)
+   - Tags (single words, grouped by facet: role, function, sector, org, relationship, place)
    - Role and company information
    - Semantic similarity to the query
 
@@ -189,62 +188,28 @@ fallback_search() {
   # Search using tags index if available
   local tags_index="$PPLR_DIR/.index/tags_index.json"
   if [ -f "$tags_index" ]; then
-    # Use jq to find matching people and deduplicate
+    # One entry per person in the index built from each About/tags.yaml
     local matches=$(jq -r --arg query "$search_lower" --arg pplr_dir "$PPLR_DIR" '
-      [.people[] | 
+      [.people[] |
        select(
-         any(.profile_tags[]?; . | ascii_downcase | contains($query)) or
-         any(.meeting_tags[]?; . | ascii_downcase | contains($query)) or
-         (.role | ascii_downcase | contains($query)) or
-         (.company | ascii_downcase | contains($query)) or
-         (.name | ascii_downcase | contains($query))
-       )] | 
-       unique_by(.name) |
+         any(.tags[]?; . == $query or contains($query)) or
+         ((.role // "") | ascii_downcase | contains($query)) or
+         ((.company // "") | ascii_downcase | contains($query)) or
+         (.display | ascii_downcase | contains($query))
+       )] |
        .[] |
-       "👤 [" + .name + "](<" + $pplr_dir + "/" + .path + "/About/" + (.name | gsub(" "; " ")) + " \\(About\\).md>)" +
-       (if .role != "" then "\n   " + .role else "" end) +
-       (if .company != "" then "\n   at " + .company else "" end) +
+       "👤 [" + .display + "](<" + $pplr_dir + "/" + .about + ">)" +
+       (if (.role // "") != "" then "\n   " + .role else "" end) +
+       (if (.company // "") != "" then "\n   at " + .company else "" end) +
+       (if (.tags | length) > 0 then "\n   #" + (.tags | join(" #")) else "" end) +
        "\n"
     ' "$tags_index")
-    
+
     if [ -n "$matches" ]; then
       echo "$matches"
       found_any=1
     fi
-  else
-    # Fall back to searching individual tag files
-    find "$PPLR_DIR" -path "*/_Templates" -prune -o -path "*/.index/tags.json" -type f -print | while read -r tag_file; do
-      person_dir=$(dirname "$(dirname "$tag_file")")
-      person_name=$(basename "$person_dir")
-      
-      # Get matching tags
-      profile_matches=$(cat "$tag_file" | jq -r '.profile_tags[]' 2>/dev/null | grep -i "$search_lower" || true)
-      meeting_matches=$(cat "$tag_file" | jq -r '.meeting_tags[]' 2>/dev/null | grep -i "$search_lower" || true)
-      
-      if [ -n "$profile_matches" ] || [ -n "$meeting_matches" ]; then
-        found_any=1
-        
-        # Get role and company from About file
-        about_file=$(find "$person_dir/About" -name "*About*.md" -type f 2>/dev/null | head -1)
-        if [ -f "$about_file" ]; then
-          role=$(grep -E "^- *Role:" "$about_file" 2>/dev/null | sed 's/^- *Role: *//' | head -1)
-          company=$(grep -E "^- *Company:" "$about_file" 2>/dev/null | sed 's/^- *Company: *//' | head -1)
-        fi
-        
-        echo "👤 [$person_name]($PPLR_DIR/${person_dir#./}/About/$person_name (About).md)"
-        [ -n "$role" ] && echo "   $role"
-        [ -n "$company" ] && echo "   at $company"
-        
-        # Show matching tags
-        if [ -n "$profile_matches" ]; then
-          echo "   → Profile tags: $(echo $profile_matches | tr '\n' ', ' | sed 's/, $//')"
-        fi
-        if [ -n "$meeting_matches" ]; then
-          echo "   → Meeting tags: $(echo $meeting_matches | tr '\n' ', ' | sed 's/, $//')"
-        fi
-        echo ""
-      fi
-    done
+
   fi
   
   if [ $found_any -eq 0 ]; then

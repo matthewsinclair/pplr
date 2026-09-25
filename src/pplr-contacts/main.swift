@@ -18,6 +18,7 @@
 //                       [--name "Surname, First"]... [--all-names]
 //                       [--backup-dir DIR] [--contacts-json FILE]
 //   pplr-contacts plan  --people-dir DIR [--group NAME] [--contacts-json FILE]
+//   pplr-contacts people --people-dir DIR      (everyone: key, marker, aliases, About, picture; no Contacts)
 //   pplr-contacts backup --backup-dir DIR [--contacts-json FILE]
 //   pplr-contacts dump [--group NAME]
 //
@@ -752,6 +753,17 @@ func resolvePplr(_ url: String, _ byMarker: [String: Person]) -> PplrTarget? {
     return PplrTarget(person: p, rest: rest, path: path)
 }
 
+/// pplr://tag/vc -> <people>/_tags/vc.md; pplr://tag -> <people>/_tags/index.md.
+/// Person URLs start with a single letter, so "tag" and "tags" cannot clash.
+func tagPage(_ url: String, _ peopleDir: String) -> String? {
+    guard url.lowercased().hasPrefix("pplr://") else { return nil }
+    let parts = url.dropFirst("pplr://".count).split(separator: "/", omittingEmptySubsequences: true).map(String.init)
+    guard let head = parts.first?.lowercased(), head == "tag" || head == "tags" else { return nil }
+    let dir = (peopleDir as NSString).appendingPathComponent("_tags")
+    let name = parts.count > 1 ? parts[1].lowercased().replacingOccurrences(of: "#", with: "") : "index"
+    return (dir as NSString).appendingPathComponent("\(name).md")
+}
+
 /// A link into the people tree, as a file path ("../../Career/People/K/Kemp, Jon/About/...")
 /// or a CMS URL ("http://localhost:4360/people/K/Kemp%2C%20Jon/..."): the key and the rest
 func peopleLinkParts(_ target: String) -> (key: String, rest: String)? {
@@ -1116,8 +1128,19 @@ do {
         let result = plan(people: loadPeople(peopleDir), cards: try loadCards(fixture: fixture), group: group)
         let enc = JSONEncoder(); enc.outputFormatting = [.prettyPrinted, .sortedKeys]
         print(String(data: try enc.encode(result), encoding: .utf8)!)
+    case "people":
+        // Everyone, without Contacts: key, marker, former keys, About and picture
+        guard let peopleDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "people needs --people-dir"]) }
+        struct Entry: Codable { var key: String; var marker: String; var aliases: [String]; var about: String; var picture: String? }
+        let list = loadPeople(peopleDir).map {
+            Entry(key: $0.key, marker: markerURL($0.key), aliases: $0.aliases, about: personPage($0), picture: picturePath($0))
+        }
+        let enc = JSONEncoder(); enc.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        print(String(data: try enc.encode(list), encoding: .utf8)!)
     case "resolve":
         guard let peopleDir, let url = args.first else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "resolve needs --people-dir and a pplr:// URL"]) }
+        // pplr://tag/<tag> (or tags/): the tag's page; pplr://tag alone: the index of tags
+        if let page = tagPage(url, peopleDir) { print(page); break }
         guard let t = resolvePplr(url, peopleByMarker(loadPeople(peopleDir))) else {
             FileHandle.standardError.write(Data("pplr: no one answers to \(url)\n".utf8)); exit(4)
         }

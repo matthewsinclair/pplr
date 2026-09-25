@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `pplr rename`: moves a person's folder and files, updates their About, records the old name in `.index/aliases`, repoints path-style links under `--refs` (default `$PPLR_REFS_DIR` or `~/Dropbox`), lists the old name in running text, and reindexes; `--dry-run`.
 - `pplr resolve`, `pplr open pplr://...` (the CMS page, or the file; `--print`), `pplr links` (rewrites Markdown links into People as `pplr://` URLs; dry run unless `--apply`) and `pplr handler` (a macOS app registered for `pplr://`). The engine build moved to `lib/engine.sh`.
 - `pplr tags` (`check`, `show`, `render`, `apply`): tags in one `About/tags.yaml` per person, against `_pplr/vocabulary.yaml`, with hand, auto and inferred sources; `render` links each tag to a generated page in `_tags/` (everyone with the tag, and the tags seen with it) and writes an index; runs under `uv` with PyYAML.
+- `pplr tags index`: `.index/tags_index.json` from each `tags.yaml` and the engine's people list (marker, role, company, picture, tags by facet); `render` rebuilds it. The engine gains `people` (everyone without Contacts) and resolves `pplr://tag/<tag>` (or `tags/`) to the tag's page.
 - `pplr pictures`: the person's photo at the top of their About page, idempotent, `--dry-run`.
 - pplr config and templates live in `$PPLR_DATA/_pplr/` (`_pplr/templates` was `_Templates`); every walk of the people tree skips folders starting with `_` or `.`.
 - Commands take paths relative to where `pplr` was run (`PPLR_CALLER_DIR`), although they run from `$PPLR_DATA`.
@@ -26,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Phones written as a Markdown link (`[+49 …](tel:…)`) are read from the link text, a trunk 0 after a country code (`+44 07…`) is dropped, and numbers apart by a middle dot or slash are read as separate numbers.
 - A LinkedIn URL inside a Markdown link no longer keeps the closing bracket in its slug.
+
+### Removed
+
+- The Claude tagger: `pplr reindex --tags` (and `--stale-only`, `--max-age`) now explains where tags live, and `pplr tag` shows or edits one person's `tags.yaml` (`+tag -tag`) instead of generating tags. `search` and `grep -t` read `tags.yaml` and the index, not `.index/tags.json`.
 
 ## [1.0.1] - 2025-07-19
 

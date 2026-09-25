@@ -51,34 +51,14 @@ format_output() {
   # Get the relative path from PPLR_DIR
   local rel_path="${person_dir#$PPLR_DIR/}"
   
-  # Output formatted result
-  echo "👤 [$person_name](<$PPLR_DIR/$rel_path/About/$person_name \\(About\\).md>)"
-  
-  # If searching tags, try to get role/company from the tags.json
-  if [ "$search_tags" = true ] && [ -f "$person_dir/.index/tags.json" ]; then
-    local role=$(jq -r '.role // ""' "$person_dir/.index/tags.json" 2>/dev/null)
-    local company=$(jq -r '.company // ""' "$person_dir/.index/tags.json" 2>/dev/null)
-    
-    if [ -n "$role" ]; then
-      echo "   $role"
-    fi
-    if [ -n "$company" ]; then
-      echo "   at $company"
-    fi
-  else
-    # For markdown files, try to extract role/company from About file
-    local about_file="$person_dir/About/$person_name (About).md"
-    if [ -f "$about_file" ]; then
-      local role=$(grep "^Role:" "$about_file" | sed 's/^Role:[[:space:]]*//' | head -1)
-      local company=$(grep "^Company:" "$about_file" | sed 's/^Company:[[:space:]]*//' | head -1)
-      
-      if [ -n "$role" ]; then
-        echo "   $role"
-      fi
-      if [ -n "$company" ]; then
-        echo "   at $company"
-      fi
-    fi
+  # The About file, its role and company (the header's link text, not the link)
+  local about_file=$(ls "$person_dir/About/"*"(About).md" 2>/dev/null | head -1)
+  echo "👤 [$person_name](<${about_file:-$person_dir}>)"
+  if [ -f "$about_file" ]; then
+    local role=$(grep -m1 "^- Role:" "$about_file" | sed -E 's/^- Role:[[:space:]]*//; s/^\[([^]]*)\].*/\1/')
+    local company=$(grep -m1 "^- Company:" "$about_file" | sed -E 's/^- Company:[[:space:]]*//; s/^\[([^]]*)\].*/\1/')
+    [ -n "$role" ] && echo "   $role"
+    [ -n "$company" ] && echo "   at $company"
   fi
   
   # Show the matching context
@@ -88,11 +68,11 @@ format_output() {
 
 # Perform the search
 if [ "$search_tags" = true ]; then
-  # Search in tags.json files
+  # Search each person's About/tags.yaml
   echo "Searching in tag files for: $search_text"
   echo ""
   
-  # Find all tags.json files and search within them
+  # Find every tags.yaml and search within it
   found_any=false
   while IFS= read -r -d '' tags_file; do
     # Search in the JSON content
@@ -102,7 +82,7 @@ if [ "$search_tags" = true ]; then
       format_output "$tags_file" "$(echo "$matches" | tr '\n' ' ' | sed 's/[[:space:]]*$//')"
       found_any=true
     fi
-  done < <(find "$PPLR_DIR" -name "tags.json" -path "*/.index/*" -print0 2>/dev/null)
+  done < <(find "$PPLR_DIR" -mindepth 4 -maxdepth 4 -name "tags.yaml" -path "*/About/*" ! -path "*/_*" -print0 2>/dev/null)
   
   if [ "$found_any" = false ]; then
     echo "No matches found in tag files."

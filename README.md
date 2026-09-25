@@ -12,7 +12,8 @@ pplr (pronounced "peopler") is a CLI tool that helps you manage your professiona
 
 - **Contact Management**: Store detailed information about professional contacts
 - **Meeting Tracking**: Record and search meeting notes with attendees
-- **AI-Powered Search**: Use natural language queries with Claude AI integration
+- **Tags**: one `tags.yaml` per person against a shared vocabulary, with a generated page per tag
+- **AI-Powered Search**: natural language queries over the index, with Claude AI
 - **Smart Tagging**: Automatically generate searchable tags from profiles and meetings
 - **LinkedIn Integration**: Store and quick-access LinkedIn profiles
 - **Cross-Platform**: Works on macOS with Dropbox sync support
@@ -80,9 +81,9 @@ People/
 │       │   ├── [Name] (About).md
 │       │   ├── [Name] (LinkedIn).webloc
 │       │   ├── [Name] (Picture).[jpg|png]
-│       │   └── [Name] (Profile).pdf
-│       ├── .index/               # Generated data
-│       │   └── tags.json         # AI-generated tags
+│       │   ├── [Name] (Profile).pdf
+│       │   └── tags.yaml         # Their tags (the only place they live)
+│       ├── .index/               # Per-person data (eg aliases: former names)
 │       ├── Meetings/             # Meeting records
 │       │   └── YYYYMMDD Meeting Name/
 │       │       └── YYYYMMDD Meeting Name.md
@@ -90,8 +91,10 @@ People/
 ├── .index/                       # Global search and indexing files
 │   ├── index.json                # JSON index of all contacts
 │   ├── index.md                  # Markdown index of all contacts
-│   └── tags_index.json           # Optimized search context for Claude
-└── [other data files]
+│   └── tags_index.json           # Everyone: marker, role, company, picture, tags by facet
+├── _pplr/                        # pplr config: vocabulary.yaml, templates/
+├── _tags/                        # Generated tag pages: index.md and <tag>.md
+└── _out/                         # Generated workbooks
 ```
 
 ## Commands
@@ -108,7 +111,7 @@ pplr new "John" "Smith" "https://linkedin.com/in/johnsmith"
 
 #### `pplr search <query>`
 
-Search for people using natural language queries powered by Claude AI.
+Search for people using natural language queries powered by Claude AI, over `.index/tags_index.json` (built by `pplr reindex`). Without the Claude CLI it falls back to matching tags, role, company and name.
 
 ```bash
 pplr search "people in fintech"              # Natural language search
@@ -142,36 +145,14 @@ pplr meetings                           # Recent meetings
 
 ### Tag Management
 
-#### `pplr tag <firstname> <surname>`
+#### `pplr tag "Surname, First" [+tag] [-tag]...`
 
-Generate AI-powered tags for a specific person.
-
-```bash
-pplr tag "John" "Smith"
-```
-
-#### `pplr tag <partial-name> -g|--generate`
-
-Generate tags for all people matching the partial name.
+Show one person's tags by facet, or add and remove them. An added tag is yours (`hand`): later automated passes never overwrite it. Tags must be in the vocabulary; an old spelling is refused with the tag it folds into.
 
 ```bash
-pplr tag "Smith" -g    # Tag all Smiths
-```
-
-#### `pplr tag --all`
-
-Generate tags for everyone in the database (takes time).
-
-```bash
-pplr tag --all
-```
-
-#### `pplr tag <firstname> <surname> -s`
-
-Show existing tags for a person.
-
-```bash
-pplr tag "John" "Smith" -s
+pplr tag "Kemp, Jon"                 # Their tags, by facet
+pplr tag "Kemp, Jon" +vc -london     # Add vc, remove london
+pplr reindex                          # Refresh the tag pages afterwards
 ```
 
 ### Utility Commands
@@ -232,22 +213,15 @@ pplr -v          # Short form
 pplr --version   # Long form
 ```
 
-#### `pplr reindex [options]`
+#### `pplr reindex`
 
-Regenerate index files and optionally tags with intelligent regeneration.
+Rebuild `.index/index.json`, `.index/index.md` and `.index/tags_index.json`, the tag pages in `_tags/`, and the Tags line in each About, from each person's `About/tags.yaml`.
 
 ```bash
-pplr reindex                              # Just indexes
-pplr reindex --tags                       # Indexes and regenerate all tags
-pplr reindex --tags --stale-only          # Only regenerate missing/old tags
-pplr reindex --tags --stale-only --max-age=7d   # Custom staleness threshold
+pplr reindex
 ```
 
-Options:
-
-- `--tags`: Generate tags using Claude AI
-- `--stale-only`: Only regenerate tags that are missing or older than max-age
-- `--max-age=N`: Set maximum age for stale detection (e.g., 30d, 7days, 2weeks)
+The Claude tagger that `--tags` ran is retired; see `pplr tag` and `pplr tags`.
 
 #### `pplr://` links: `pplr resolve`, `pplr open`, `pplr links`, `pplr handler`
 
@@ -392,25 +366,9 @@ Set pictures as folder icons for all people directories.
 pplr setpicsfordirs
 ```
 
-## AI-Powered Features
+## Tags and Search
 
-### Tag System
-
-pplr uses Claude AI to analyse person profiles and meeting content to generate searchable tags:
-
-**Profile Tags** (from About files):
-
-- Professional roles: `cto`, `founder`, `engineer`
-- Industries: `fintech`, `healthcare`, `ai`
-- Skills: `machine-learning`, `product-management`
-- Company types: `startup`, `enterprise`
-
-**Meeting Tags** (from Meeting files):
-
-- Topics: `partnerships`, `funding`, `product-development`
-- Meeting types: `intro-meeting`, `follow-up`
-- Technologies: `kubernetes`, `blockchain`
-- Outcomes: `investment`, `collaboration`
+Every tag is a single lowercase word from `_pplr/vocabulary.yaml`, in one of six facets: role (`cto`, `founder`), function (`product`, `ai`), sector (`fintech`, `climate`), org (`startup`, `studio`), relationship (how you know them: `bcg`, `client`, `podcast`, `mba`) and place (`uk`, `london`). Each tag records its source: `hand` (yours), `auto` (from the profile) or `inferred` (a relationship, with its evidence). See `pplr tags` above.
 
 ### Smart Search
 
@@ -429,11 +387,11 @@ verblock(<version>)
 
 # John Smith (About)
 
-Role: Chief Technology Officer
-Company: Tech Innovations Ltd
-LinkedIn: https://linkedin.com/in/johnsmith
-Email: john.smith@example.com
-Phone: +1-555-0123
+- Role: Chief Technology Officer
+- Company: Tech Innovations Ltd
+- LinkedIn: https://linkedin.com/in/johnsmith
+- Email: john.smith@example.com
+- Phone: +1-555-0123
 
 ## Bio
 
@@ -464,15 +422,15 @@ Attendees: [[Smith, John]], [[Doe, Jane]]
 - [ ] Jane: Review vendor proposals
 ```
 
-### Tags File (JSON)
+### Tags File (YAML)
 
-```json
-{
-  "profile_tags": ["cto", "technology", "startup", "cloud-expert"],
-  "meeting_tags": ["strategy", "cloud-migration", "hiring"],
-  "generated_at": "2024-03-15T10:30:00Z",
-  "version": "1.0"
-}
+`About/tags.yaml`: a bare word is your own tag.
+
+```yaml
+tags:
+  - vc
+  - { tag: cto, source: auto, at: 2026-09-25 }
+  - { tag: bcg, source: inferred, evidence: "BCG DV 2017-2020, Profile.pdf" }
 ```
 
 ## Best Practices
@@ -480,7 +438,7 @@ Attendees: [[Smith, John]], [[Doe, Jane]]
 1. **Consistent Naming**: Always use "Surname, Firstname" format
 2. **Regular Updates**: Keep About files current with role changes
 3. **Meeting Notes**: Include attendees, topics, and action items
-4. **Tag Generation**: Run `pplr tag --all` periodically for best search results
+4. **Tags**: Tag people as you meet them (`pplr tag "Surname, First" +tag`), then `pplr reindex`
 5. **Backups**: Use Dropbox or similar for automatic backups
 
 ## Requirements
@@ -498,8 +456,7 @@ Attendees: [[Smith, John]], [[Doe, Jane]]
 ### Search returns no results
 
 - Run `pplr reindex` to rebuild indexes
-- Ensure tags exist: `pplr tag "Name" -s`
-- Generate tags if needed: `pplr tag --all`
+- Check their tags: `pplr tag "Surname, First"`, and `pplr tags check`
 - Check if `.index/tags_index.json` exists and is recent
 
 ### Claude/AI features not working
@@ -516,21 +473,6 @@ Attendees: [[Smith, John]], [[Doe, Jane]]
 
 - Check file permissions in PPLR_DIR
 - Ensure scripts are executable: `chmod +x $PPLR_BIN_DIR/pplr_*`
-
-## Recent Changes (July 2025)
-
-### Directory Structure Update
-
-Individual tag files are now stored in `.index/tags.json` for better organization:
-
-- Location: `People/S/Smith, John/.index/tags.json`
-
-### Enhanced Features
-
-- **Natural Language Search**: Now powered by Claude AI by default (no --tags flag needed)
-- **Smart Tag Regeneration**: `pplr reindex --tags --stale-only` only updates old/missing tags
-- **Improved Performance**: Optimized search context reduces API calls
-- **Better Error Handling**: Graceful fallback when Claude is unavailable
 
 ## Contributing
 

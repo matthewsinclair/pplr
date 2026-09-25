@@ -17,6 +17,9 @@ Usage (via bin/pplr_tags):
     tags.py show PERSON           a person's tags, by facet
     tags.py render [--dry-run]    the "- Tags:" line in each About, linking each tag to
                                   its page, and the tag pages in $PPLR_DATA/_tags/
+    tags.py index                 .index/tags_index.json: everyone with name, marker,
+                                  role, company, picture and tags by facet
+    tags.py edit PERSON +tag -tag add or remove hand tags, checked against the vocabulary
     tags.py apply FILE [--dry-run]
                                   write tags.yaml from a JSON list of
                                   {person, auto: [tag], inferred: [{tag, evidence}], hand: [tag]};
@@ -196,6 +199,7 @@ def render(dry):
     print(f"pplr tags render{' (dry run)' if dry else ''}: {changed} About file(s) {'to change' if dry else 'changed'}, {same} already right")
     if not dry:
         pages(facet_of)
+        index()
     return 0
 
 
@@ -298,6 +302,55 @@ def apply(path, dry):
     return 0
 
 
+def index():
+    """One JSON index of everyone, for pplr search and the CMS: the engine's
+    people list (key, marker, About, picture) joined with each tags.yaml"""
+    facet_of, _ = vocabulary()
+    listing = os.environ.get("PPLR_PEOPLE_JSON")
+    people = json.load(open(listing)) if listing else [{"key": key_of(d), "marker": "", "about": "", "picture": None}
+                                                       for d in person_dirs()]
+    out = []
+    for p in people:
+        d = os.path.join(PEOPLE, p["key"])
+        about = p.get("about") or ""
+        s = open(about, encoding="utf-8").read() if about.endswith(".md") and os.path.exists(about) else ""
+        tags = [t["tag"] for t in read_tags(d) if t["tag"] in facet_of]
+        out.append({
+            "name": os.path.basename(d), "display": display_name(d), "path": p["key"],
+            "about": os.path.relpath(about, PEOPLE) if about else "", "marker": p.get("marker", ""),
+            "role": header_field(s, "Role"), "company": header_field(s, "Company"),
+            "picture": os.path.relpath(p["picture"], PEOPLE) if p.get("picture") else None,
+            "tags": tags,
+            "facets": {f: [t for t in tags if facet_of[t] == f] for f in FACETS if any(facet_of[t] == f for t in tags)},
+        })
+    os.makedirs(os.path.join(PEOPLE, ".index"), exist_ok=True)
+    doc = {"generated_at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+           "people_count": len(out), "people": out}
+    json.dump(doc, open(os.path.join(PEOPLE, ".index", "tags_index.json"), "w"), indent=1, ensure_ascii=False)
+    print(f"pplr tags index: {len(out)} people in .index/tags_index.json")
+    return 0
+
+
+def edit(name, changes):
+    """+tag adds a hand tag (or makes an auto or inferred one yours); -tag removes it"""
+    facet_of, fold = vocabulary()
+    d = find_person(name)
+    tags = read_tags(d)
+    for c in changes:
+        op, tag = c[0], c[1:].lower()
+        if op not in "+-" or not tag:
+            sys.exit(f"pplr tag: say +tag or -tag, not {c!r}")
+        if op == "+":
+            if tag not in facet_of:
+                hint = f"; the vocabulary folds it into {', '.join(fold[tag])}" if tag in fold else ""
+                sys.exit(f"pplr tag: {tag} is not in the vocabulary{hint}")
+            tags = [t for t in tags if t["tag"] != tag] + [{"tag": tag, "source": "hand"}]
+        else:
+            tags = [t for t in tags if t["tag"] != tag]
+    write_tags(d, tags, display_name(d))
+    return show(name)
+
+
 def main(argv):
     if not argv or argv[0] in ("-h", "--help"):
         print(__doc__.split("Usage (via bin/pplr_tags):")[1]); return 0
@@ -310,6 +363,10 @@ def main(argv):
         return show(rest[0])
     if cmd == "render":
         return render(dry)
+    if cmd == "index":
+        return index()
+    if cmd == "edit" and len(rest) >= 2:
+        return edit(rest[0], rest[1:])
     if cmd == "apply" and rest:
         return apply(rest[0], dry)
     print(f"pplr tags: unknown command {cmd!r}"); return 2

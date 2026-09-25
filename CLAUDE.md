@@ -57,11 +57,11 @@ pplr cp "John" "Smith"
 # Regenerate index files (.index/index.md, .index/index.json, and .index/tags_index.json)
 pplr reindex
 
-# Regenerate indexes and all tags
-pplr reindex --tags
+# Show or edit one person's tags (About/tags.yaml, against _pplr/vocabulary.yaml)
+pplr tag "Kemp, Jon" +vc -london
 
-# Only regenerate stale tags (missing or older than 30 days)
-pplr reindex --tags --stale-only
+# Check everyone's tags against the vocabulary
+pplr tags check
 
 # Generate JSON index
 pplr json
@@ -91,17 +91,18 @@ People/
 │       │   ├── [Name] (About).md
 │       │   ├── [Name] (LinkedIn).webloc
 │       │   ├── [Name] (Picture).[jpg|png|etc]
-│       │   └── [Name] (Profile).pdf
+│       │   ├── [Name] (Profile).pdf
+│       │   └── tags.yaml    # This person's tags: the only place they live
 │       ├── .index/
-│       │   └── tags.json    # AI-generated tags for this person
+│       │   └── aliases      # Former names (pplr rename), so old pplr:// URLs resolve
 │       ├── Meetings/
 │       └── Client/
-├── _Templates/
-├── bin/                    # All pplr scripts
+├── _pplr/                  # pplr config: vocabulary.yaml, templates/
+├── _tags/                  # Generated tag pages (pplr reindex)
 ├── .index/                   # Search and indexing files
 │   ├── index.json           # JSON index of all contacts
 │   ├── index.md             # Markdown index of all contacts
-│   └── tags_index.json      # Optimized search context for Claude
+│   └── tags_index.json      # Everyone: marker, role, company, picture, tags by facet
 └── [other files]
 ```
 
@@ -119,9 +120,6 @@ People/
 
 When modifying the codebase, maintain consistency with the existing bash script style and ensure all person entries follow the established directory structure.
 
-## Recent Changes (July 2025)
+## Tags
 
-- Individual tag files moved from `Index/tags.json` to `.index/tags.json`
-- Natural language search is now the default (no `--tags` flag needed)
-- Added intelligent tag regeneration with `--stale-only` flag
-- Enhanced test infrastructure with proper mock Claude handling
+Tags are single lowercase words from `$PPLR_DATA/_pplr/vocabulary.yaml`, grouped into six facets. Each person's tags live only in `About/tags.yaml`, each with a source: `hand` (the owner's, never overwritten), `auto` (from the profile) or `inferred` (a relationship, with evidence). Relationship tags are never generated from a profile. The Claude tagger (`pplr reindex --tags`, the old `pplr tag`) is retired.

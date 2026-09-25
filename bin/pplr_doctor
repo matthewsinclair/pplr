@@ -210,12 +210,12 @@ fi
 if [ -f "$PPLR_DATA/.index/tags_index.json" ]; then
     if jq . "$PPLR_DATA/.index/tags_index.json" >/dev/null 2>&1; then
         tag_count=$(jq '.people | length' "$PPLR_DATA/.index/tags_index.json" 2>/dev/null || echo "0")
-        check_pass "tags_index.json is valid ($tag_count people with tags)"
+        check_pass "tags_index.json is valid ($tag_count people)"
     else
         check_fail "tags_index.json is invalid JSON"
     fi
 else
-    check_warn "tags_index.json not found (AI search will not work)"
+    check_warn "tags_index.json not found (run pplr reindex; search needs it)"
 fi
 echo
 

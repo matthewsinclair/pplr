@@ -2,90 +2,41 @@
 
 load test_helper
 
-setup() {
-    # Call parent setup
-    load test_helper
-    setup
-    
-    # Set up mock claude for tag tests
-    mock_claude
+setup_person() {
+    mkdir -p "$PPLR_TEST_DATA/_pplr" "$PPLR_TEST_DATA/K/Kemp, Jon/About"
+    printf '%s\n' 'version: 1' 'role:' '  cto: {}' 'sector:' '  fintech: {also: [payments]}' 'place:' '  london: {}' > "$PPLR_TEST_DATA/_pplr/vocabulary.yaml"
+    printf '%s\n' '# Jon Kemp (About)' '' '- Role:     CTO' '' '_About_' > "$PPLR_TEST_DATA/K/Kemp, Jon/About/Jon Kemp (About).md"
+    printf '%s\n' 'tags:' '  - {tag: cto, source: auto}' > "$PPLR_TEST_DATA/K/Kemp, Jon/About/tags.yaml"
 }
 
-teardown() {
-    # Remove mock claude
-    remove_mock_claude
-    
-    # Call parent teardown
-    load test_helper
-    teardown
-}
-
-@test "pplr tag generates tags for one person" {
-    create_test_person "Tagger" "Tim"
-    
-    run "$PPLR_BIN_DIR/pplr" tag "Tim" "Tagger"
+@test "pplr tag shows a person's tags by facet" {
+    command -v uv >/dev/null 2>&1 || skip "uv not installed"
+    setup_person
+    run "$PPLR_BIN_DIR/pplr" tag "Kemp, Jon"
     [ "$status" -eq 0 ]
-    
-    assert_file_exists "$PPLR_TEST_DATA/T/Tagger, Tim/.index/tags.json"
-    assert_contains "$output" "Tags saved"
+    assert_contains "$output" "cto (auto)"
 }
 
-@test "pplr tag shows existing tags" {
-    local person_dir=$(create_test_person "Tagged" "Teresa")
-    mkdir -p "$person_dir/.index"
-    
-    # Create existing tags
-    cat > "$person_dir/.index/tags.json" << EOF
-{
-  "profile_tags": ["existing", "tags"],
-  "meeting_tags": ["meeting-tag"],
-  "generated_at": "2024-01-01T00:00:00Z",
-  "version": "1.0"
-}
-EOF
-    
-    run "$PPLR_BIN_DIR/pplr" tag "Teresa" "Tagged" -s
+@test "pplr tag adds a hand tag and removes another" {
+    command -v uv >/dev/null 2>&1 || skip "uv not installed"
+    setup_person
+    run "$PPLR_BIN_DIR/pplr" tag "Kemp, Jon" +london -cto
     [ "$status" -eq 0 ]
-    assert_contains "$output" "existing"
-    assert_contains "$output" "meeting-tag"
+    f="$PPLR_TEST_DATA/K/Kemp, Jon/About/tags.yaml"
+    grep -q '^  - london$' "$f"
+    ! grep -q 'cto' "$f"
 }
 
-@test "pplr tag handles non-existent person" {
-    run "$PPLR_BIN_DIR/pplr" tag "Exists" "Nobody"
+@test "pplr tag refuses a tag outside the vocabulary, and names the one it folds into" {
+    command -v uv >/dev/null 2>&1 || skip "uv not installed"
+    setup_person
+    run "$PPLR_BIN_DIR/pplr" tag "Kemp, Jon" +payments
     [ "$status" -ne 0 ]
-    assert_contains "$output" "not found"
+    assert_contains "$output" "folds it into fintech"
 }
 
-@test "pplr tag -g generates for matching people" {
-    create_test_person "Smith" "John"
-    create_test_person "Smith" "Jane"
-    create_test_person "Jones" "Bob"
-    
-    run "$PPLR_BIN_DIR/pplr" tag "Smith" -g
-    [ "$status" -eq 0 ]
-    
-    assert_file_exists "$PPLR_TEST_DATA/S/Smith, John/.index/tags.json"
-    assert_file_exists "$PPLR_TEST_DATA/S/Smith, Jane/.index/tags.json"
-    # Jones should not have tags
-    [ ! -f "$PPLR_TEST_DATA/J/Jones, Bob/.index/tags.json" ]
-}
-
-@test "pplr tag creates valid JSON" {
-    create_test_person "Json" "Jerry"
-    
-    run "$PPLR_BIN_DIR/pplr" tag "Jerry" "Json"
-    [ "$status" -eq 0 ]
-    
-    local tags_file="$PPLR_TEST_DATA/J/Json, Jerry/.index/tags.json"
-    
-    # Verify it's valid JSON
-    run jq . "$tags_file"
-    [ "$status" -eq 0 ]
-    
-    # Verify structure
-    run jq -r '.profile_tags | type' "$tags_file"
-    [ "$output" = "array" ]
-    
-    run jq -r '.meeting_tags | type' "$tags_file"
-    [ "$output" = "array" ]
+@test "pplr reindex --tags says the Claude tagger is retired" {
+    run "$PPLR_BIN_DIR/pplr" reindex --tags
+    [ "$status" -eq 1 ]
+    assert_contains "$output" "retired"
 }
