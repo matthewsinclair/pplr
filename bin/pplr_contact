@@ -7,7 +7,7 @@
 # USAGE: log "Surname, First" [DATE] [--via email|call|message|meeting] [--email MESSAGE-ID] [--link URL] [--note TEXT]
 # USAGE: next "Surname, First" WHEN  set the next contact: a date, or +2w, +10d, +3m
 # USAGE: context "Surname, First"  what to write a note from: role, latest update, last meeting's notes
-# USAGE: render                   About/contact.md, a read-only view of contact.yaml, for everyone
+# USAGE: render                   About/<First Surname> (Contact).md, a read-only view of contact.yaml, for everyone
 
 : "${PPLR_DATA:=$HOME/Dropbox/Career/People}"
 : "${PPLR_DIR:=$PPLR_DATA}"

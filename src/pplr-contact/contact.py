@@ -21,7 +21,7 @@ in contact.yaml overrides both. Off the roster: last is kept, and no next is set
 
 A Meetings folder dated after today is a booked meeting: that person is not due.
 
-About/contact.md is a read-only view of contact.yaml, written whenever pplr
+About/<First Surname> (Contact).md is a read-only view of contact.yaml, written whenever pplr
 writes contact.yaml, and by render for everyone (idempotent). Edit the yaml.
 
 Usage (via bin/pplr_contact):
@@ -35,7 +35,7 @@ Usage (via bin/pplr_contact):
                                     --email links the message: N is its number in the last
                                     pplr email listing, which also gives the date, subject and
                                     person (the sender, or who you sent it to), so PERSON can go
-    contact.py render               About/contact.md from contact.yaml, for everyone
+    contact.py render               About/<First Surname> (Contact).md from contact.yaml, for everyone
     contact.py next PERSON WHEN     set next: a date (2026-11-01) or from today (+2w, +10d, +3m)
     contact.py context PERSON       what to write from: role, latest update, last contact and its notes
 """
@@ -129,7 +129,7 @@ def nice(date):
 
 
 def render_one(d, c, defaults=None):
-    """About/contact.md: contact.yaml to read (the CMS shows it); True if it changed"""
+    """About/<First Surname> (Contact).md: contact.yaml to read (the CMS shows it); True if it changed"""
     days, why = cadence_of(d, c, defaults if defaults is not None else default_cadences())
     lines = ["<!-- Generated from contact.yaml by pplr contact: edit contact.yaml, not this file. -->",
              f"# Contact: {display_name(d)}", ""]
@@ -151,7 +151,10 @@ def render_one(d, c, defaults=None):
         lines.append(f"- Booked: {nice(b[0])}, {md_link(b[1], '../Meetings/' + b[1] + '/')}")
     lines.append(f"- Cadence: every {days} days (from {why})" if days else "- Cadence: not on the contact roster")
     text = "\n".join(lines) + "\n"
-    f = os.path.join(d, "About", "contact.md")
+    old = os.path.join(d, "About", "contact.md")  # its first name, before it matched the other About files
+    if os.path.exists(old):
+        os.remove(old)
+    f = os.path.join(d, "About", f"{display_name(d)} (Contact).md")
     if os.path.exists(f) and open(f).read() == text:
         return False
     open(f, "w").write(text)
@@ -161,7 +164,7 @@ def render_one(d, c, defaults=None):
 def render():
     defaults = default_cadences()
     n = sum(render_one(d, read_contact(d), defaults) for d in person_dirs() if os.path.exists(contact_file(d)))
-    print(f"pplr contact render: {n} contact.md written")
+    print(f"pplr contact render: {n} (Contact).md written")
     return 0
 
 

@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `pplr sync --apply-plan WORKBOOK`: carries out a reviewed plan workbook (Add as new iCloud cards with photo, Update without removing anything, Link only); a dry run unless `--apply`, with `--limit`, a `.vcf` backup first, and never a card added twice.
 - `pplr refresh` (`next`, `stamp`, `status`): when each person was last checked against their profile, for batch and age-based refreshes.
 - `pplr contact` (`scan`, `due`, `show`, `log`, `next`, `context`): last contact and next due in `About/contact.yaml`, with cadences by tag from `_pplr/cadence.yaml`.
-- `pplr email` (`recent`, `inbox`, `--account`): mail with each Message-ID, senders in pplr marked, via `mail-recent`. `pplr contact log --email ID` links the message; `pplr contact render` writes `About/contact.md`, a read-only view of `contact.yaml`, also written whenever `contact.yaml` is.
+- `pplr email` (`recent`, `inbox`, `--account`): mail with each Message-ID, senders in pplr marked, via `mail-recent`. `pplr contact log --email ID` links the message; `pplr contact render` writes `About/<First Surname> (Contact).md`, a read-only view of `contact.yaml`, also written whenever `contact.yaml` is.
 - A person's `pplr://` marker (eg `pplr://k/kemp-jon`, or an old one kept as an alias) works wherever a command takes "Surname, First".
 - `pplr sync --photos`: the pplr picture on linked cards that have no photo, never replacing one.
 - `pplr sync --check` also matches on a shared phone.

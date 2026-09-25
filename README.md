@@ -291,7 +291,7 @@ pplr contact log "Kemp, Jon" --via email --note "Sent the deck"   # an email tod
 pplr contact next "Kemp, Jon" +2w       # snooze: a date, or +10d, +2w, +3m
 pplr contact log --email 3                # message 3 of the last pplr email listing: its date, subject and person
 pplr contact log pplr://k/kemp-jon --email "<CAL…@mail.gmail.com>"  # or any email by its Message-ID
-pplr contact render                      # About/contact.md, a read-only view of contact.yaml, for everyone
+pplr contact render                      # About/<First Surname> (Contact).md, a read-only view of contact.yaml, for everyone
 pplr contact context "Kemp, Jon"        # role, latest update, last meeting's notes: to write from
 ```
 
