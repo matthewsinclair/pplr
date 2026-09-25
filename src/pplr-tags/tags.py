@@ -370,6 +370,9 @@ def main(argv):
         return edit(rest[0], rest[1:])
     if cmd == "apply" and rest:
         return apply(rest[0], dry)
+    needs = {"show": "show PERSON", "edit": "edit PERSON +tag -tag", "apply": "apply FILE [--dry-run]"}
+    if cmd in needs:
+        print(f"pplr tags: {cmd} needs more: pplr tags {needs[cmd]}"); return 2
     print(f"pplr tags: unknown command {cmd!r}"); return 2
 
 
