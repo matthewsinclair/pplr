@@ -40,3 +40,16 @@ setup_person() {
     [ "$status" -eq 1 ]
     assert_contains "$output" "retired"
 }
+
+@test "pplr tag re-renders (Contact).md, so a new cadence tag shows at once" {
+    command -v uv >/dev/null 2>&1 || skip "uv not installed"
+    setup_person
+    printf '%s\n' 'relationship:' '  contact: {}' 'cadence:' '  3month: {}' >> "$PPLR_TEST_DATA/_pplr/vocabulary.yaml"
+    printf '%s\n' 'roster: {contact: 182}' 'every: {3month: 91}' > "$PPLR_TEST_DATA/_pplr/cadence.yaml"
+    printf '%s\n' 'last: {date: 2026-09-25, via: email}' > "$PPLR_TEST_DATA/K/Kemp, Jon/About/contact.yaml"
+    "$PPLR_BIN_DIR/pplr" contact render >/dev/null
+    grep -q 'Cadence: not on the contact roster' "$PPLR_TEST_DATA/K/Kemp, Jon/About/Jon Kemp (Contact).md"
+    run "$PPLR_BIN_DIR/pplr" tag "Kemp, Jon" +contact +3month
+    [ "$status" -eq 0 ]
+    grep -q 'Cadence: every 91 days (from #3month)' "$PPLR_TEST_DATA/K/Kemp, Jon/About/Jon Kemp (Contact).md"
+}

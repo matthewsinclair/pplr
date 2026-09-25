@@ -14,4 +14,6 @@ if [ $# -lt 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 fi
 person="$1"; shift
 if [ $# -eq 0 ]; then exec "$PPLR_ROOT/bin/pplr_tags" show "$person"; fi
-exec "$PPLR_ROOT/bin/pplr_tags" edit "$person" "$@"
+"$PPLR_ROOT/bin/pplr_tags" edit "$person" "$@" || exit $?
+# a roster or cadence tag changes the cadence (Contact).md shows, so re-render them
+"$PPLR_ROOT/bin/pplr_contact" render >/dev/null
