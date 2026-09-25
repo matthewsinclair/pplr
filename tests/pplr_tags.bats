@@ -60,9 +60,29 @@ YAML
     run "$PPLR_BIN_DIR/pplr" tags render
     [ "$status" -eq 0 ]
     a="$PPLR_TEST_DATA/K/Kemp, Jon/About/Jon Kemp (About).md"
-    [ "$(sed -n 7p "$a")" = '- Tags:     #cto #london <!-- from tags.yaml: pplr tags render -->' ]
+    [ "$(sed -n 7p "$a")" = '- Tags:     [#cto](../../../_tags/cto.md) [#london](../../../_tags/london.md) <!-- from tags.yaml: pplr tags render -->' ]
     printf '%s\n' 'tags:' '  - founder' > "$PPLR_TEST_DATA/K/Kemp, Jon/About/tags.yaml"
     "$PPLR_BIN_DIR/pplr" tags render
     [ "$(grep -c '^- Tags:' "$a")" -eq 1 ]
-    grep -q '^- Tags:     #founder <!--' "$a"
+    grep -q '^- Tags:     \[#founder\](../../../_tags/founder.md) <!--' "$a"
+}
+
+@test "pplr tags render writes a page per tag, and an index, linking to each About" {
+    command -v uv >/dev/null 2>&1 || skip "uv not installed"
+    setup_vocab
+    printf '%s\n' 'tags:' '  - london' '  - {tag: cto, source: auto}' > "$PPLR_TEST_DATA/K/Kemp, Jon/About/tags.yaml"
+    mkdir -p "$PPLR_TEST_DATA/S/Tolley, Jon/About"
+    printf '%s\n' '# Jon Tolley (About)' '' '- Role:     Founder' '' '_About_' > "$PPLR_TEST_DATA/S/Tolley, Jon/About/Jon Tolley (About).md"
+    printf '%s\n' 'tags:' '  - cto' > "$PPLR_TEST_DATA/S/Tolley, Jon/About/tags.yaml"
+    run "$PPLR_BIN_DIR/pplr" tags render
+    [ "$status" -eq 0 ]
+    t="$PPLR_TEST_DATA/_tags"
+    grep -qF '[Jon Kemp](<../K/Kemp, Jon/About/Jon Kemp (About).md>): CTO at Acme · #london' "$t/cto.md"
+    grep -qF '[Jon Tolley](<../S/Tolley, Jon/About/Jon Tolley (About).md>): Founder' "$t/cto.md"
+    grep -qF '[#london](london.md) 1' "$t/cto.md"
+    grep -qF '[#cto](cto.md) 2' "$t/index.md"
+    [ -f "$t/london.md" ]
+    printf '%s\n' 'tags:' '  - cto' > "$PPLR_TEST_DATA/K/Kemp, Jon/About/tags.yaml"
+    "$PPLR_BIN_DIR/pplr" tags render >/dev/null
+    [ ! -f "$t/london.md" ]
 }

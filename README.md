@@ -284,7 +284,9 @@ pplr tags render                  # The "- Tags: #cto #london" line in each Abou
 pplr tags apply reviewed.json     # Write tags.yaml from a reviewed list; hand tags kept
 ```
 
-The rendered line ends with an HTML comment marking it as generated: change `tags.yaml`, then render again.
+The rendered line links each tag to its page, and ends with an HTML comment marking it as generated: change `tags.yaml`, then render again.
+
+`render` also writes the tag pages, `$PPLR_DATA/_tags/`: `index.md` lists every tag by facet with a count, and `<tag>.md` lists everyone with that tag (name linked to their About, role and company, place), then the tags most often seen with it, each linking on. The pages are rewritten in full each time and a page for a tag no longer used is removed, so keep `_tags/` out of git.
 
 #### `pplr pictures [--dry-run] ["Surname, First"]...`
 

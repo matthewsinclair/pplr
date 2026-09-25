@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `pplr sync --check` also matches on a shared phone.
 - `pplr rename`: moves a person's folder and files, updates their About, records the old name in `.index/aliases`, repoints path-style links under `--refs` (default `$PPLR_REFS_DIR` or `~/Dropbox`), lists the old name in running text, and reindexes; `--dry-run`.
 - `pplr resolve`, `pplr open pplr://...` (the CMS page, or the file; `--print`), `pplr links` (rewrites Markdown links into People as `pplr://` URLs; dry run unless `--apply`) and `pplr handler` (a macOS app registered for `pplr://`). The engine build moved to `lib/engine.sh`.
-- `pplr tags` (`check`, `show`, `render`, `apply`): tags in one `About/tags.yaml` per person, against `_pplr/vocabulary.yaml`, with hand, auto and inferred sources; runs under `uv` with PyYAML.
+- `pplr tags` (`check`, `show`, `render`, `apply`): tags in one `About/tags.yaml` per person, against `_pplr/vocabulary.yaml`, with hand, auto and inferred sources; `render` links each tag to a generated page in `_tags/` (everyone with the tag, and the tags seen with it) and writes an index; runs under `uv` with PyYAML.
 - `pplr pictures`: the person's photo at the top of their About page, idempotent, `--dry-run`.
 - pplr config and templates live in `$PPLR_DATA/_pplr/` (`_pplr/templates` was `_Templates`); every walk of the people tree skips folders starting with `_` or `.`.
 - Commands take paths relative to where `pplr` was run (`PPLR_CALLER_DIR`), although they run from `$PPLR_DATA`.
