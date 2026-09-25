@@ -266,6 +266,32 @@ The rendered line links each tag to its page, and ends with an HTML comment mark
 
 Show each person's photo at the top of their About page: an `<img>` line under the title, floated right, pointing at `About/<First Surname> (Picture).jpg` (or `.png`). It is idempotent: run it again after adding people or pictures. People with no picture get no line. `PPLR_PICTURE_WIDTH` sets the width (default 160).
 
+#### `pplr contact`: `scan`, `due`, `show`, `log`, `next`, `context`
+
+When you last spoke to each person and when to get in touch next, in `About/contact.yaml`:
+
+```yaml
+last:
+  {
+    date: 2026-01-28,
+    via: meeting,
+    link: "pplr://b/bray-martin/Meetings/20260128 Catch-up with Martin Bray",
+  }
+next: 2026-04-28
+cadence: 90
+```
+
+`scan` takes `last` from the newest dated `Meetings` folder. `next` is `last` plus the cadence: the file's own `cadence`, or the shortest one for the person's tags in `_pplr/cadence.yaml` (eg `vip: 90`). With no cadence, `last` is kept and no `next` is set. A `Meetings` folder dated after today counts as booked, so that person is not due.
+
+```bash
+pplr contact scan                        # last from meetings, next from the cadence (--dry-run)
+pplr contact due                         # who is due a note today; due 14 looks two weeks ahead
+pplr contact show "Kemp, Jon"           # last contact, next date and cadence
+pplr contact log "Kemp, Jon" --via email --note "Sent the deck"   # an email today; next moves on
+pplr contact next "Kemp, Jon" +2w       # snooze: a date, or +10d, +2w, +3m
+pplr contact context "Kemp, Jon"        # role, latest update, last meeting's notes: to write from
+```
+
 #### `pplr refresh`: `next`, `stamp`, `status`
 
 When each person was last checked against their public profile, in `<person>/.index/refreshed` (`2026-09-25 linkedin`), which moves with them on a rename.
