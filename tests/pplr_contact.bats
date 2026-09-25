@@ -111,3 +111,22 @@ meeting() { mkdir -p "$PPLR_TEST_DATA/$1/Meetings/$2"; echo "# $2" > "$PPLR_TEST
     run cat "$PPLR_TEST_DATA/A/Adams, Amy/About/contact.md"
     assert_contains "$output" "- Last contact: 25 Sep 2026, email: [the email](message://%3CCAL=x@mail.gmail.com%3E)"
 }
+
+@test "pplr contact log --email N takes the message, date, subject and person from the last pplr email listing" {
+    create_test_person "Adams" "Amy" >/dev/null
+    export PPLR_CACHE_DIR="$PPLR_TEST_DATA/.cache"; mkdir -p "$PPLR_CACHE_DIR"
+    cat > "$PPLR_CACHE_DIR/email-last.json" <<'JSON'
+[{"n": 1, "date": "2026-09-24T09:00:00+01:00", "message_id": "<a1@x>", "subject": "Hello", "direction": "in", "person": null},
+ {"n": 2, "date": "2026-09-25T14:03:54+01:00", "message_id": "<CAL=x@mail.gmail.com>", "subject": "Catch up?", "direction": "in", "person": "A/Adams, Amy"}]
+JSON
+    export PPLR_TODAY=2026-09-26
+    run "$PPLR_BIN_DIR/pplr" contact log --email 2
+    [ "$output" = 'Amy Adams: email on 2026-09-25 ("Catch up?")' ]
+    run cat "$PPLR_TEST_DATA/A/Adams, Amy/About/contact.yaml"
+    assert_contains "$output" 'last: {date: 2026-09-25, via: email, link: "message://%3CCAL=x@mail.gmail.com%3E", note: "Catch up?"}'
+    run "$PPLR_BIN_DIR/pplr" contact log --email 1
+    [ "$status" -ne 0 ]
+    assert_contains "$output" "no one in pplr: give the person"
+    run "$PPLR_BIN_DIR/pplr" contact log --email 9
+    assert_contains "$output" "has no message 9 (it has 1 to 2)"
+}

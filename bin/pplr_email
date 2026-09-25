@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# USAGE: recent mail, or what is in the inbox, with each Message-ID to copy (senders in pplr marked)
+# USAGE: recent mail, or what is in the inbox, numbered: pplr contact log --email N logs message N
 # USAGE: recent [--hours N]        what arrived in the last 24 hours (the default)
 # USAGE: inbox                     what is in the inbox now, whatever its age
 # USAGE: --account TEXT            only accounts whose address contains TEXT (eg work)

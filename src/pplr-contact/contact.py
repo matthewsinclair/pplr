@@ -29,10 +29,12 @@ Usage (via bin/pplr_contact):
     contact.py due [DAYS] [--all]   who to get in touch with: next on or before today (plus DAYS);
                                     --all lists everyone with a next date
     contact.py show PERSON          a person's contact.yaml, with their cadence
-    contact.py log PERSON [DATE] [--via email|call|message|meeting] [--email MESSAGE-ID]
+    contact.py log [PERSON] [DATE] [--via email|call|message|meeting] [--email N|MESSAGE-ID]
                    [--link URL] [--note TEXT]
                                     record a contact (DATE defaults to today); next moves on;
-                                    --email links the message (pplr email shows the ids)
+                                    --email links the message: N is its number in the last
+                                    pplr email listing, which also gives the date, subject and
+                                    person (the sender, or who you sent it to), so PERSON can go
     contact.py render               About/contact.md from contact.yaml, for everyone
     contact.py next PERSON WHEN     set next: a date (2026-11-01) or from today (+2w, +10d, +3m)
     contact.py context PERSON       what to write from: role, latest update, last contact and its notes
@@ -276,23 +278,55 @@ def show(name):
     return 0
 
 
+EMAIL_CACHE = os.path.join(os.environ.get("PPLR_CACHE_DIR") or os.path.expanduser("~/Library/Caches/pplr"),
+                           "email-last.json")
+
+
+def listed_email(n):
+    """message n of the last pplr email listing"""
+    try:
+        rows = json.load(open(EMAIL_CACHE))
+    except (OSError, ValueError):
+        sys.exit("Error: no pplr email listing yet: run pplr email first")
+    hit = next((r for r in rows if r["n"] == n), None)
+    if not hit:
+        sys.exit(f"Error: the last pplr email listing has no message {n} (it has 1 to {len(rows)})")
+    return hit
+
+
 def log(name, args):
-    d = find_person(name)
-    c = read_contact(d)
-    date, via, link, note = TODAY, "email", None, None
+    date, via, link, note = None, "email", None, None
     it = iter(args)
     for a in it:
-        if a == "--via":
+        if a == "--email":
+            ref = next(it, "").strip()
+            if ref.isdigit():
+                hit = listed_email(int(ref))
+                ref = hit["message_id"]
+                date = date or datetime.datetime.fromisoformat(hit["date"]).date()
+                note = note or hit["subject"]
+                if not name:
+                    if not hit.get("person"):
+                        sys.exit(f"Error: message {hit['n']} is with no one in pplr: give the person")
+                    name = hit["person"]
+            via, link = "email", f"message://%3C{quote(ref.strip('<>'), safe='@.-_=')}%3E"
+    if not name:
+        sys.exit("Error: who? Give the person, or --email N from a pplr email listing")
+    d = find_person(name)
+    c = read_contact(d)
+    it = iter(args)
+    for a in it:
+        if a == "--email":
+            next(it, None)
+        elif a == "--via":
             via = next(it, "email")
         elif a == "--link":
             link = next(it, None)
-        elif a == "--email":
-            mid = next(it, "").strip().strip("<>")
-            via, link = "email", f"message://%3C{quote(mid, safe='@.-_=')}%3E"
         elif a == "--note":
             note = next(it, None)
         else:
             date = datetime.date.fromisoformat(a)
+    date = date or TODAY
     if via not in VIAS:
         sys.exit(f"Error: --via is one of {', '.join(VIAS)}")
     if c["last"] and c["last"]["date"] > date:
@@ -301,7 +335,8 @@ def log(name, args):
     days, _ = cadence_of(d, c, default_cadences())
     c["next"] = moved_on(c, days) if days else None
     write_contact(d, c)
-    print(f"{display_name(d)}: {via} on {date}" + (f"; next {c['next']}" if c["next"] else ""))
+    print(f"{display_name(d)}: {via} on {date}" + (f' ("{note}")' if note and link else "")
+          + (f"; next {c['next']}" if c["next"] else ""))
     return 0
 
 
@@ -370,7 +405,7 @@ def main(argv):
     if cmd == "show" and rest:
         return show(rest[0])
     if cmd == "log" and rest:
-        return log(rest[0], rest[1:])
+        return log(None, rest) if rest[0].startswith("--") else log(rest[0], rest[1:])
     if cmd == "next" and len(rest) == 2:
         return set_next(rest[0], rest[1])
     if cmd == "context" and rest:
