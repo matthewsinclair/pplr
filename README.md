@@ -333,6 +333,8 @@ pplr sync --check --group NAME # The Contacts group that marks pplr people (defa
 
 Only the About header fields take part: the name (from the folder), Role, Company, Email, Phone and LinkedIn. Bios, notes and meetings never leave pplr. People are matched in this order: a `pplr` URL on the card (`pplr://<letter>/<surname-first>`, eg `pplr://b/bray-martin`; the first form, `pplr://B/Bray,%20Martin`, is still recognised), then a shared email, then a shared LinkedIn profile, then a shared phone, then the name alone, which is reported for you to confirm. Phones are compared as digits (UK numbers without a country code count as +44, and a trunk 0 after a country code is dropped), and LinkedIn by profile slug.
 
+A linked card in an account other than iCloud (eg Gmail) is counted on its own line, "in another account": it carries the `pplr` URL but cannot join the `PPLR` group, which lives in iCloud.
+
 The Contacts side is a small Swift program, `src/pplr-contacts/main.swift`, built into `.build/` on first use. The first run asks for access to Contacts for the app running pplr (eg iTerm or Terminal).
 
 #### `pplr sync --plan [options]`
@@ -360,6 +362,18 @@ pplr sync --apply-plan _out/contacts-plan-20260925-1025.xlsx --apply       # The
 ```
 
 Every card is saved to a dated `.vcf` first. It works from the current pplr data, so a change since the workbook was made is written as it is now. Applying the same workbook again writes nothing new, and never adds a card twice: a person whose `pplr` URL is already on a card is done. Each written card gets `About/<First Surname> (Contacts).inetloc`.
+
+#### `pplr sync --pull [--apply] [--name NAME]... [--skip NAME]... [--limit N]`
+
+The other direction: copy into pplr what a linked or matched card knows and pplr lacks. Emails, phones and a LinkedIn missing from the About header are added beside what is there; a company or role is filled in only where pplr has none. pplr wins wherever it has a value, and nothing in pplr is removed. Name-only matches are left out until they are linked. A card linked across accounts is read as one, every copy together.
+
+```bash
+pplr sync --pull                                  # Dry run: what each person would gain
+pplr sync --pull --apply --skip "Webb, Owen"       # Everyone but one (repeatable)
+pplr sync --pull --apply --name "Hopper, Grace"    # Only this person (repeatable)
+```
+
+A number saved in Contacts without its country code is read as UK, so an Australian `04…` number comes out as `+444…`. A `+44` number that is not a real UK number (ten digits after `+44`, never starting with 4) is left out and listed, to be put right in Contacts. Each About file is copied to `$PPLR_BACKUP_DIR/<stamp>-pull/` before it is written.
 
 #### `pplr sync --photos [--apply] [--limit N]`
 

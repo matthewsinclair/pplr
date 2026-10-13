@@ -433,3 +433,89 @@ setup_plan() {
     run "$PPLR_BIN_DIR/pplr" sync --photos --apply
     [ "$(jq -r '.[] | select(.id == "c1") | .hasImage' "$PPLR_CONTACTS_JSON")" = "true" ]
 }
+
+# A linked card that knows more than pplr: another email, a company, a phone
+setup_pull() {
+    setup_contacts
+    export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
+    jq '(.[] | select(.id == "c3")) |= (.emails = ["alan@example.com", "alan@bletchley.example"] | .organization = "Bletchley" | .phones = ["+447700900003"])' \
+        "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
+}
+
+@test "pplr sync --pull is a dry run by default, and lists what a linked card adds" {
+    setup_pull
+    about="$PPLR_TEST_DATA/T/Turing, Alan/About/Alan Turing (About).md"
+    before=$(cat "$about")
+    run "$PPLR_BIN_DIR/pplr" sync --pull
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "dry run"
+    assert_contains "$output" "T/Turing, Alan"
+    assert_contains "$output" "+ email alan@bletchley.example"
+    assert_contains "$output" "company: Bletchley"
+    [[ "$output" != *"Hopper"* ]]
+    [ "$(cat "$about")" = "$before" ]
+}
+
+@test "pplr sync --pull --apply fills blanks and appends, removes nothing, and backs up first" {
+    setup_pull
+    about="$PPLR_TEST_DATA/T/Turing, Alan/About/Alan Turing (About).md"
+    run "$PPLR_BIN_DIR/pplr" sync --pull --apply
+    [ "$status" -eq 0 ]
+    grep -qx -- '- Email:    \[alan@example.com\](mailto:alan@example.com), \[alan@bletchley.example\](mailto:alan@bletchley.example)' "$about"
+    grep -qx -- '- Company:  Bletchley' "$about"
+    grep -qx -- '- Phone:    +447700900003' "$about"
+    [ -n "$(ls -d "$PPLR_BACKUP_DIR"/*-pull)" ]
+    grep -q 'alan@example.com' "$PPLR_BACKUP_DIR"/*-pull/t_turing-alan.md
+    # Ada already has everything her card has; a second pull finds nothing
+    run "$PPLR_BIN_DIR/pplr" sync --pull
+    assert_contains "$output" "people to update in pplr  0"
+}
+
+@test "pplr sync --pull keeps pplr's company and role when it has them" {
+    setup_pull
+    jq '(.[] | select(.id == "c1")) |= (.organization = "Elsewhere" | .emails += ["ada@other.example"])' \
+        "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
+    "$PPLR_BIN_DIR/pplr" sync --pull --apply >/dev/null
+    about="$PPLR_TEST_DATA/L/Lovelace, Ada/About/Ada Lovelace (About).md"
+    grep -qx -- '- Company:  Analytical' "$about"
+    grep -q 'ada@other.example' "$about"
+}
+
+@test "pplr sync --pull --skip leaves that person alone" {
+    setup_pull
+    run "$PPLR_BIN_DIR/pplr" sync --pull --apply --skip "Turing, Alan"
+    [ "$status" -eq 0 ]
+    ! grep -q 'bletchley' "$PPLR_TEST_DATA/T/Turing, Alan/About/Alan Turing (About).md"
+}
+
+@test "pplr sync --check says when a linked card is in another account" {
+    setup_contacts
+    jq '(.[] | select(.id == "c1")) |= (.account = "other" | .groups = [])' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
+    run "$PPLR_BIN_DIR/pplr" sync --check
+    assert_contains "$output" "in another account    1"
+    run "$PPLR_BIN_DIR/pplr" sync --check --json
+    [ "$(echo "$output" | jq -r '[.linked[], .matched[]] | map(select(.otherAccount)) | .[0].person')" = "L/Lovelace, Ada" ]
+}
+
+@test "pplr sync --pull leaves out a number that is not a real UK number" {
+    setup_pull
+    jq '(.[] | select(.id == "c3")).phones = ["+44438901687", "+61438901687"]' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
+    run "$PPLR_BIN_DIR/pplr" sync --pull --apply
+    [ "$status" -eq 0 ]
+    assert_contains "$output" "left out +44438901687"
+    about="$PPLR_TEST_DATA/T/Turing, Alan/About/Alan Turing (About).md"
+    grep -qx -- '- Phone:    +61438901687' "$about"
+}
+
+@test "pplr sync --pull reads every copy of a card linked across accounts, so a second pull finds nothing" {
+    setup_pull
+    jq '. + [{"id": "c3", "given": "Alan", "family": "Turing", "organization": "", "jobTitle": "",
+              "emails": ["alan@work.example"], "phones": [], "urls": [], "linkedin": [], "groups": [], "account": "other"}]' \
+        "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
+    "$PPLR_BIN_DIR/pplr" sync --pull --apply >/dev/null
+    about="$PPLR_TEST_DATA/T/Turing, Alan/About/Alan Turing (About).md"
+    grep -q 'alan@bletchley.example' "$about"
+    grep -q 'alan@work.example' "$about"
+    run "$PPLR_BIN_DIR/pplr" sync --pull
+    assert_contains "$output" "people to update in pplr  0"
+}

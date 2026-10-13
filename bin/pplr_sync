@@ -6,9 +6,11 @@
 # USAGE: --plan           write a review workbook: pplr, Contacts, and a proposed merge
 # USAGE: --apply-plan FILE  write the reviewed plan workbook to Contacts (a dry run without --apply)
 # USAGE: --photos         give linked cards with no photo their pplr picture (a dry run without --apply)
+# USAGE: --pull           copy into pplr what linked cards know and pplr lacks (a dry run without --apply)
 # USAGE: --backup         save every Contacts card to a dated .vcf in $PPLR_BACKUP_DIR
 # USAGE: [--apply]        with --link: write, after a .vcf backup of every card
-# USAGE: [--name NAME]    with --link: also link this name-only match ("Surname, First"; repeatable)
+# USAGE: [--name NAME]    with --link: also link this name-only match ("Surname, First"; repeatable); with --pull or --apply-plan: only this person
+# USAGE: [--skip NAME]    with --pull: leave this person alone (repeatable)
 # USAGE: [--limit N]      with --link --apply: write only the first N (to try it on one card)
 # USAGE: [--all-names]    with --link: also link every name-only match
 # USAGE: [--json]         the report as JSON
@@ -30,6 +32,7 @@ usage() {
   echo "       pplr sync --plan [--out FILE] [--json] [--group NAME]"
   echo "       pplr sync --apply-plan WORKBOOK [--apply] [--limit N] [--name \"Surname, First\"]..."
   echo "       pplr sync --photos [--apply] [--limit N]"
+  echo "       pplr sync --pull [--apply] [--name \"Surname, First\"]... [--skip \"Surname, First\"]... [--limit N]"
   echo "       pplr sync --backup"
   echo "       pplr sync --link [--apply] [--name \"Surname, First\"]... [--all-names] [--group NAME]"
   echo "  --check         Compare pplr with Apple Contacts; changes nothing"
@@ -37,11 +40,14 @@ usage() {
   echo "  --plan          Write a workbook for review: pplr, Contacts, and a proposed merge; changes nothing"
   echo "  --apply-plan F  Carry out a reviewed --plan workbook: Add, Update, Link only (a dry run without --apply)"
   echo "  --photos        Give linked cards with no photo the pplr picture (a dry run without --apply)"
+  echo "  --pull          Copy into pplr the emails, phones and LinkedIn a linked card has and pplr lacks, and its"
+  echo "                  company or role where pplr has none; pplr wins, nothing is removed (a dry run without --apply)"
   echo "  --backup        Save every Contacts card to a dated .vcf in \$PPLR_BACKUP_DIR"
   echo "  --apply         With --link, write (a dry run otherwise); every card is saved to a .vcf first"
   echo "  --name NAME     With --link, also link this name-only match (repeatable)"
   echo "  --limit N       With --link --apply, write only the first N"
   echo "  --all-names     With --link, also link every name-only match"
+  echo "  --skip NAME     With --pull, leave this person alone (repeatable)"
   echo "  --out FILE      With --plan, the workbook to write (default: \$PPLR_DATA/_out/contacts-plan-<stamp>.xlsx)"
   echo "  --json          Print the report (or with --plan, the plan) as JSON"
   echo "  -v, --verbose   Also list everyone who is only in pplr"
@@ -59,10 +65,12 @@ while [[ $# -gt 0 ]]; do
     --backup) mode="backup"; shift ;;
     --plan) mode="plan"; shift ;;
     --photos) mode="photos"; shift ;;
+    --pull) mode="pull"; shift ;;
     --apply-plan) mode="applyplan"; workbook="$2"; shift 2 ;;
     --out) out="$2"; shift 2 ;;
     --apply) pass+=(--apply); shift ;;
     --name) pass+=(--name "$2"); shift 2 ;;
+    --skip) pass+=(--skip "$2"); shift 2 ;;
     --all-names) pass+=(--all-names); shift ;;
     --limit) pass+=(--limit "$2"); shift 2 ;;
     --json) pass+=(--json); shift ;;
@@ -83,7 +91,7 @@ if [ -n "$PPLR_CONTACTS_JSON" ]; then
   pass+=(--contacts-json "$PPLR_CONTACTS_JSON")
 fi
 
-if [ "$mode" = "link" ] || [ "$mode" = "backup" ] || [ "$mode" = "applyplan" ] || [ "$mode" = "photos" ]; then
+if [ "$mode" = "link" ] || [ "$mode" = "backup" ] || [ "$mode" = "applyplan" ] || [ "$mode" = "photos" ] || [ "$mode" = "pull" ]; then
   pass+=(--backup-dir "$PPLR_BACKUP_DIR")
 fi
 

@@ -20,6 +20,8 @@
 //   pplr-contacts plan  --people-dir DIR [--group NAME] [--contacts-json FILE]
 //   pplr-contacts people --people-dir DIR      (everyone: key, marker, aliases, About, picture; no Contacts)
 //   pplr-contacts backup --backup-dir DIR [--contacts-json FILE]
+//   pplr-contacts pull --people-dir DIR [--apply] [--name N]... [--skip N]... [--limit N]
+//                       [--backup-dir DIR] [--contacts-json FILE]
 //   pplr-contacts dump [--group NAME]
 //
 // `plan` proposes, for every pplr person, what should happen to their card:
@@ -34,6 +36,11 @@
 // them with --all-names); ambiguous people are never linked. Before writing it
 // saves every card to a dated .vcf in --backup-dir (notes excluded: macOS does
 // not give them to an unentitled tool).
+//
+// `pull` is the other direction: what a linked or matched card has and pplr
+// lacks (emails, phones, a LinkedIn, and a company or role where pplr has
+// none) is written into the About header. pplr wins wherever it has a value
+// and nothing is removed; each About file is copied to --backup-dir first.
 //
 // --contacts-json reads contacts from a file in the `dump` format instead of
 // the Contacts store, so the tests never need Contacts access.
@@ -296,6 +303,7 @@ struct Pair: Codable {
     var inGroup: Bool
     var needsGroup: Bool       // an iCloud card not yet in the group
     var noAccount: Bool        // a directory or Other Known card: nothing can be written
+    var otherAccount: Bool     // in an account other than iCloud (eg Google): the group cannot hold it
     var hasMarker: Bool        // the card's pplr URL is in the current form
     var markerStale: Bool      // the card has a pplr URL in an older form, to replace
     var inetloc: String         // About/<First Surname> (Contacts).inetloc
@@ -407,7 +415,7 @@ func check(people: [Person], cards: [Card], group: String) -> Report {
         let w = inetlocPath(p)
         return Pair(person: p.key, contact: c.id, contactName: displayName(c), how: how, inGroup: c.groups.contains(group),
                     needsGroup: (c.account ?? "home") == "home" && !c.groups.contains(group),
-                    noAccount: c.account == "none",
+                    noAccount: c.account == "none", otherAccount: c.account == "other",
                     hasMarker: pplrMarker(c) == markerPath(p.key),
                     markerStale: pplrMarker(c) != nil && pplrMarker(c) != markerPath(p.key), inetloc: w, hasInetloc: inetlocOpens(w, c.id), diffs: diffs(p, c))
     }
@@ -1325,6 +1333,142 @@ func applyPhotos(_ work: [(person: Person, card: Card, picture: String)], fixtur
     return out
 }
 
+// MARK: - Pull
+
+/// What a linked or matched card knows that pplr does not: emails, phones and
+/// a LinkedIn pplr lacks, and a company or role where pplr has none. pplr
+/// wins wherever it has a value, and nothing in pplr is ever removed.
+struct PullWork {
+    var person: Person
+    var cardName: String
+    var emails: [String]
+    var phones: [String]
+    var linkedin: String?
+    var company: String?
+    var role: String?
+    var doubtful: [String] = []   // numbers left out: probably a foreign number saved without its country code
+
+    var isEmpty: Bool { emails.isEmpty && phones.isEmpty && linkedin == nil && company == nil && role == nil }
+    var summary: [String] {
+        var w: [String] = []
+        if let company { w.append("company: \(company)") }
+        if let role { w.append("role: \(role)") }
+        w += emails.map { "+ email \($0)" }
+        w += phones.map { "+ phone \($0)" }
+        if let linkedin { w.append("+ LinkedIn \(linkedin)") }
+        w += doubtful.map { "left out \($0): not a UK number, so probably saved without its country code" }
+        return w
+    }
+}
+
+func pullWork(_ r: Report, people: [Person], cards: [Card]) -> [PullWork] {
+    let byKey = Dictionary(uniqueKeysWithValues: people.map { ($0.key, $0) })
+    // A person whose cards are linked across accounts comes back once per
+    // account under the one real id: what they know together, read in one go
+    let byID = Dictionary(cards.map { ($0.id, $0) }, uniquingKeysWith: { a, b in
+        var m = a
+        m.emails += b.emails; m.phones += b.phones; m.linkedin = Array(Set(a.linkedin + b.linkedin)).sorted()
+        if m.organization.isEmpty { m.organization = b.organization }
+        if m.jobTitle.isEmpty { m.jobTitle = b.jobTitle }
+        return m
+    })
+    var out: [PullWork] = []
+    // The strict tiers only: a name-only match is not yet known to be the same person
+    for pr in r.linked + r.matched {
+        guard let p = byKey[pr.person], let c = byID[pr.contact] else { continue }
+        let mine = Set(p.emails.map(emailKey))
+        var seenEmail = Set<String>()
+        let emails = c.emails.filter { !mine.contains(emailKey($0)) && seenEmail.insert(emailKey($0)).inserted }
+        var seenPhone = Set(p.phones)
+        let fresh = c.phones.filter { $0.count > 7 && seenPhone.insert($0).inserted }
+        let phones = fresh.filter { !doubtfulUK($0) }
+        var w = PullWork(person: p, cardName: displayName(c), emails: emails, phones: phones,
+                         linkedin: p.linkedin.isEmpty && c.linkedin.count == 1 ? c.linkedin[0] : nil,
+                         company: p.company.isEmpty && !c.organization.isEmpty ? c.organization : nil,
+                         role: p.role.isEmpty && !c.jobTitle.isEmpty ? c.jobTitle : nil)
+        w.doubtful = fresh.filter(doubtfulUK)
+        if !w.isEmpty { out.append(w) }
+    }
+    return out.sorted { $0.person.key < $1.person.key }
+}
+
+/// normalisePhone reads a number with no country code as UK, so an
+/// Australian 04xx or 02 number comes out as +444… or +442… with nine digits.
+/// A real UK number has ten digits after +44 and never starts with 4.
+func doubtfulUK(_ phone: String) -> Bool {
+    guard phone.hasPrefix("+44") else { return false }
+    let nsn = phone.dropFirst(3)
+    return nsn.count != 10 || nsn.hasPrefix("4")
+}
+
+/// An empty header value: nothing, or a link with no text ("[](mailto:)")
+func isBlank(_ v: String) -> Bool {
+    let t = v.trimmingCharacters(in: .whitespaces)
+    return t.isEmpty || t.hasPrefix("[](")
+}
+
+/// The About file with the pulled values in its header: appended to a field
+/// that has a value, set on one that is blank, and a missing field added
+/// before the Tags line (or after the last header line)
+func pulledAbout(_ text: String, _ w: PullWork) -> String {
+    var lines = text.components(separatedBy: "\n")
+    func put(_ field: String, _ values: [String], append: Bool) {
+        guard !values.isEmpty else { return }
+        let label = "- \(field):".padding(toLength: 12, withPad: " ", startingAt: 0)
+        if let i = lines.firstIndex(where: { $0.hasPrefix("- \(field):") }) {
+            let current = String(lines[i].dropFirst("- \(field):".count))
+            lines[i] = label + (isBlank(current) || !append ? values.joined(separator: ", ")
+                                : current.trimmingCharacters(in: .whitespaces) + ", " + values.joined(separator: ", "))
+        } else if let t = lines.firstIndex(where: { $0.hasPrefix("- Tags:") }) {
+            lines.insert(label + values.joined(separator: ", "), at: t)
+        } else if let last = lines.lastIndex(where: { $0.hasPrefix("- ") && $0.contains(":") }) {
+            lines.insert(label + values.joined(separator: ", "), at: last + 1)
+        }
+    }
+    if let c = w.company { put("Company", [c], append: false) }
+    if let r = w.role { put("Role", [r], append: false) }
+    if let s = w.linkedin { put("LinkedIn", ["[in/\(s)/](\(linkedinURL(s)))"], append: false) }
+    put("Email", w.emails.map { "[\($0)](mailto:\($0))" }, append: true)
+    put("Phone", w.phones, append: true)
+    return lines.joined(separator: "\n")
+}
+
+/// Write the pulled values into each About file, after copying it to the backup directory
+func applyPull(_ work: [PullWork], backupDir: String, limit: Int?) throws -> (Outcome, String) {
+    let dir = (backupDir as NSString).appendingPathComponent("\(stamp())-pull")
+    try FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
+    var out: Outcome = []
+    for w in work.prefix(limit ?? Int.max) {
+        let path = w.person.aboutPath
+        guard !path.isEmpty, let text = try? String(contentsOfFile: path, encoding: .utf8) else {
+            out.append((w.person.key, "no About file")); continue
+        }
+        let saved = (dir as NSString).appendingPathComponent(markerPath(w.person.key).replacingOccurrences(of: "/", with: "_") + ".md")
+        try text.write(toFile: saved, atomically: true, encoding: .utf8)
+        try pulledAbout(text, w).write(toFile: path, atomically: true, encoding: .utf8)
+        out.append((w.person.key, nil))
+    }
+    return (out, dir)
+}
+
+func printPull(_ work: [PullWork], outcome: Outcome?, backupPath: String?) {
+    if let outcome {
+        let bad = outcome.filter { $0.error != nil }
+        print("pplr sync --pull --apply\n")
+        print("  people updated in pplr  \(outcome.count - bad.count)")
+        print("  failed                  \(bad.count)")
+        bad.forEach { print("  \($0.person): \($0.error!)") }
+    } else {
+        print("pplr sync --pull (dry run: nothing written; --apply to write)\n")
+        print("  people to update in pplr  \(work.count)")
+    }
+    for w in work {
+        print("\n  \(w.person.key)  <-  \(w.cardName)")
+        w.summary.forEach { print("      \($0)") }
+    }
+    if let backupPath { print("\nBackup of each About file: \(backupPath)") }
+}
+
 // MARK: - Output
 
 func printReport(_ r: Report, verbose: Bool) {
@@ -1336,6 +1480,9 @@ func printReport(_ r: Report, verbose: Bool) {
     print("  in group \(r.group.padding(toLength: 15, withPad: " ", startingAt: 0))\(r.groupMembers)")
     print("")
     print("  linked (pplr marker)    \(r.linked.count)")
+    // The group lives in iCloud, so a card in another account is marked by its pplr URL alone
+    let elsewhere = (r.linked + r.matched).filter(\.otherAccount)
+    if !elsewhere.isEmpty { print("    in another account    \(elsewhere.count)  (marked by the pplr URL; the group is iCloud's only)") }
     print("  matched by email        \(r.matched.filter { $0.how == "email" }.count)")
     print("  matched by LinkedIn     \(r.matched.filter { $0.how == "linkedin" }.count)")
     print("  matched by phone        \(r.matched.filter { $0.how == "phone" }.count)")
@@ -1352,7 +1499,7 @@ func printReport(_ r: Report, verbose: Bool) {
     }
     func diffLines(_ ps: [Pair]) -> [String] {
         ps.flatMap { p -> [String] in
-            let head = "\(p.person)  <->  \(p.contactName)  [\(p.how)\(p.inGroup ? ", in group" : "")]"
+            let head = "\(p.person)  <->  \(p.contactName)  [\(p.how)\(p.inGroup ? ", in group" : "")\(p.otherAccount ? ", other account" : "")]"
             let body = p.diffs.map { d -> String in
                 let a = d.pplr.isEmpty ? "-" : d.pplr.joined(separator: ", ")
                 let b = d.contacts.isEmpty ? "-" : d.contacts.joined(separator: ", ")
@@ -1392,6 +1539,8 @@ let limit = take("--limit").flatMap(Int.init)
 let backupDir = take("--backup-dir")
 var names: [String] = []
 while let n = take("--name") { names.append(n) }
+var skips: [String] = []
+while let s = take("--skip") { skips.append(s) }
 
 do {
     switch cmd {
@@ -1455,6 +1604,19 @@ do {
             print("pplr sync --photos (dry run: nothing written; --apply to write)\n\n  linked cards with no photo, where pplr has one  \(work.count)")
             work.forEach { print("  \($0.person.key)  <->  \(displayName($0.card))") }
         }
+    case "pull":
+        guard let peopleDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "pull needs --people-dir"]) }
+        let people = loadPeople(peopleDir), cards = try loadCards(fixture: fixture)
+        var work = pullWork(check(people: people, cards: cards, group: group), people: people, cards: cards)
+        // --name: only these people; --skip: everyone but these
+        let only = Set(names.map(personKey)), skip = Set(skips.map(personKey))
+        work = work.filter { (only.isEmpty || only.contains($0.person.key)) && !skip.contains($0.person.key) }
+        if apply && !work.isEmpty {
+            guard let backupDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "--apply needs --backup-dir"]) }
+            let (outcome, dir) = try applyPull(work, backupDir: backupDir, limit: limit)
+            printPull(Array(work.prefix(limit ?? Int.max)), outcome: outcome, backupPath: dir)
+            if outcome.contains(where: { $0.error != nil }) { exit(1) }
+        } else { printPull(work, outcome: nil, backupPath: nil) }
     case "resolve":
         guard let peopleDir, let url = args.first else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "resolve needs --people-dir and a pplr:// URL"]) }
         // pplr://tag/<tag> (or tags/): the tag's page; pplr://tag alone: the index of tags
@@ -1510,7 +1672,7 @@ do {
         printPlan(plan, group: group, outcome: outcome, backupPath: backupPath)
         if outcome?.contains(where: { $0.error != nil }) == true { exit(1) }
     default:
-        FileHandle.standardError.write(Data("usage: pplr-contacts check --people-dir DIR [--group NAME] [--json] [--verbose] [--contacts-json FILE]\n       pplr-contacts plan --people-dir DIR [--group NAME] [--contacts-json FILE]\n       pplr-contacts link --people-dir DIR [--group NAME] [--apply] [--name NAME]... [--all-names] [--backup-dir DIR]\n       pplr-contacts dump [--group NAME] [--only-group]\n".utf8))
+        FileHandle.standardError.write(Data("usage: pplr-contacts check --people-dir DIR [--group NAME] [--json] [--verbose] [--contacts-json FILE]\n       pplr-contacts plan --people-dir DIR [--group NAME] [--contacts-json FILE]\n       pplr-contacts link --people-dir DIR [--group NAME] [--apply] [--name NAME]... [--all-names] [--backup-dir DIR]\n       pplr-contacts pull --people-dir DIR [--apply] [--name NAME]... [--skip NAME]... [--backup-dir DIR]\n       pplr-contacts dump [--group NAME] [--only-group]\n".utf8))
         exit(2)
     }
 } catch {

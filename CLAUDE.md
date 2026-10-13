@@ -71,6 +71,7 @@ pplr sync --check
 pplr sync --check --json
 pplr sync --link            # dry run; --apply writes, after a .vcf backup
 pplr sync --backup
+pplr sync --pull            # Contacts into pplr: adds what pplr lacks; dry run, --apply writes
 ```
 
 ## Codebase Architecture

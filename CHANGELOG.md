@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A person's `pplr://` marker (eg `pplr://k/kemp-jon`, or an old one kept as an alias) works wherever a command takes "Surname, First".
 - The Contacts shortcut is `About/<First Surname> (Contacts).inetloc`: macOS would not open a `.webloc` holding an `addressbook://` URL. Writing one removes the old `.webloc`.
 - `pplr sync --photos`: the pplr picture on linked cards that have no photo, never replacing one.
+- `pplr sync --pull`: copies into pplr the emails, phones and LinkedIn a linked card has and pplr lacks, and a company or role where pplr has none; pplr wins, nothing is removed, a card linked across accounts is read as one, a misread `+44` number is left out and listed; `--name`, `--skip`, `--limit`, a copy of each About file first.
+- `pplr sync --check` counts linked cards in an account other than iCloud on their own line, since the `PPLR` group cannot hold them; `otherAccount` in the JSON.
 - `pplr sync --check` also matches on a shared phone.
 - Gmail addresses match with or without dots and `+suffix` (Gmail ignores both), so an update never adds the same address twice.
 - `pplr rename`: moves a person's folder and files, updates their About, records the old name in `.index/aliases`, repoints path-style links under `--refs` (default `$PPLR_REFS_DIR` or `~/Dropbox`), lists the old name in running text, and reindexes; `--dry-run`.
