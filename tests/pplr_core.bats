@@ -54,31 +54,36 @@ load test_helper
     assert_contains "$output" "2"
 }
 
-# The version the implementation under test reports: the legacy dispatcher
-# prints VERSION.md, the Rust pplr the version in Cargo.toml (design D7).
-# The legacy branch goes with bin/ in ST0001 WP13.
-expected_version() {
+# The legacy pplr prints VERSION.md; the Rust pplr prints the version line,
+# `pplr <Cargo.toml's version> (<tree>, <sha12>[+dirty])` (devbin T4, ST0002
+# WP03). The legacy branch goes with bin/ in ST0001 WP13.
+assert_version_output() {
     if [ "$PPLR" = "$PPLR_ROOT/bin/pplr" ]; then
-        cat "$PPLR_ROOT/VERSION.md"
-    else
-        sed -n 's/^version = "\(.*\)"$/\1/p' "$PPLR_ROOT/Cargo.toml" | head -1
+        [ "$output" = "$(cat "$PPLR_ROOT/VERSION.md")" ]
+        return
     fi
+    local version
+    version=$(sed -n 's/^version = "\(.*\)"$/\1/p' "$PPLR_ROOT/Cargo.toml" | head -1)
+    [[ "$output" =~ ^pplr\ ${version//./\\.}\ \((dev|opt|brew),\ ([0-9a-f]{12}(\+dirty)?|unknown)\)$ ]] || {
+        echo "not a version line for $version: $output" >&2
+        return 1
+    }
 }
 
 @test "pplr version displays the implementation's version" {
     run "$PPLR" version
     [ "$status" -eq 0 ]
-    [ "$output" = "$(expected_version)" ]
+    assert_version_output
 }
 
 @test "pplr -v displays version" {
     run "$PPLR" -v
     [ "$status" -eq 0 ]
-    [ "$output" = "$(expected_version)" ]
+    assert_version_output
 }
 
 @test "pplr --version displays version" {
     run "$PPLR" --version
     [ "$status" -eq 0 ]
-    [ "$output" = "$(expected_version)" ]
+    assert_version_output
 }

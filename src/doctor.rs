@@ -67,6 +67,10 @@ pub fn check(config: &Config, fix: bool) -> Result<Vec<Section>> {
   let data = &config.data;
   Ok(vec![
     Section {
+      title: "Install",
+      rows: install_rows(),
+    },
+    Section {
       title: "Environment Variables",
       rows: settings(config),
     },
@@ -87,6 +91,80 @@ pub fn check(config: &Config, fix: bool) -> Result<Vec<Section>> {
       rows: common_issues(data, fix)?,
     },
   ])
+}
+
+/// The running tree and its version line (T4), its manifest against its files
+/// (T3), and the link switch's shadow check (T5).
+fn install_rows() -> Vec<Row> {
+  use crate::install::{self, Kind, Links};
+  let line = install::version_line();
+  let Ok(layout) = Layout::running() else {
+    return vec![row(
+      Status::Fail,
+      format!("{line}: cannot find the running pplr's tree"),
+    )];
+  };
+  let (kind, manifest) = install::kind(&layout.root);
+  let mut rows = Vec::new();
+  match (kind, &manifest) {
+    (Kind::Unknown, _) => rows.push(row(
+      Status::Fail,
+      format!("{line}: this pplr is in no tree pplr knows (no manifest, and not a checkout)"),
+    )),
+    (Kind::Opt | Kind::Brew, Some(m)) => {
+      rows.push(row(Status::Pass, line));
+      let drifted = install::drift(&layout.root, m);
+      if drifted.is_empty() {
+        rows.push(row(Status::Pass, "The manifest matches every runtime file"));
+      } else {
+        let fix = if kind == Kind::Brew {
+          "brew reinstall pplr"
+        } else {
+          "pplr install --force, from dev"
+        };
+        rows.push(row(
+          Status::Fail,
+          format!(
+            "Files differ from the manifest: {} ({fix})",
+            drifted.join(", ")
+          ),
+        ));
+      }
+    }
+    _ => {
+      rows.push(row(Status::Pass, line));
+      // In dev the line names the commit the binary was built from (T4)
+      let head = Command::new("git")
+        .arg("-C")
+        .arg(&layout.root)
+        .args(["rev-parse", "HEAD"])
+        .output()
+        .ok()
+        .filter(|o| o.status.success())
+        .map(|o| String::from_utf8_lossy(&o.stdout).trim().to_owned());
+      match head {
+        Some(head) if head != install::SOURCE_COMMIT => rows.push(row(
+          Status::Warn,
+          format!("HEAD has moved past this build ({head:.12}): rebuild with bin/devbin build"),
+        )),
+        Some(_) => {}
+        None => rows.push(row(
+          Status::Fail,
+          "git cannot read this checkout, so its version line names no commit",
+        )),
+      }
+    }
+  }
+  if let Some(home) = std::env::var_os("HOME") {
+    let report = Links::new(PathBuf::from(home).join(".local/bin")).report();
+    let status = if report.ok {
+      Status::Pass
+    } else {
+      Status::Fail
+    };
+    rows.push(row(status, report.text.replace('\n', "; ")));
+  }
+  rows
 }
 
 fn settings(config: &Config) -> Vec<Row> {

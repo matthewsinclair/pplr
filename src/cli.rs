@@ -4,7 +4,8 @@
 use crate::Result;
 use crate::config::Config;
 use crate::{
-  doctor, fallback, grep, icons, index, marker, meetings, new, open, pictures, refresh, search,
+  doctor, fallback, grep, icons, index, install, marker, meetings, new, open, pictures, refresh,
+  search,
 };
 use std::io::{IsTerminal, Write};
 use std::process::{Command as Process, ExitCode, Stdio};
@@ -64,6 +65,11 @@ pub const COMMANDS: &[Command] = &[
     name: "index",
     usage: "generate index.md based on contents of $PPLR_DIR",
     run: index::run_index,
+  },
+  Command {
+    name: "install",
+    usage: "publish this dev build as an opt tree (maintainer)\n[--prefix <dir>]  the opt tree, else $PPLR_OPT_PREFIX\n[--force]         replace an opt tree pplr wrote\n[--managed-by brew]  for the Homebrew formula",
+    run: install::install,
   },
   Command {
     name: "json",
@@ -126,6 +132,11 @@ pub const COMMANDS: &[Command] = &[
     run: icons::setpicsfordirs,
   },
   Command {
+    name: "use",
+    usage: "point ~/.local/bin/pplr at a tree, or report the one it serves\n[dev|opt|brew]  the tree; brew removes the link so Homebrew's pplr answers",
+    run: install::use_tree,
+  },
+  Command {
     name: "version",
     usage: "display the pplr version",
     run: run_version,
@@ -139,6 +150,10 @@ const README: &str = include_str!("../README.md");
 pub fn native(name: &str) -> Option<&'static Command> {
   COMMANDS.iter().find(|command| command.name == name)
 }
+
+/// The commands that work on pplr's own install trees (ST0002 WP03), not the
+/// People tree, so they run where there is none.
+const WITHOUT_DATA: &[&str] = &["install", "use"];
 
 /// Native commands that still run a legacy one through the fallback, and
 /// which: the port of the second takes its row out.
@@ -162,7 +177,9 @@ pub fn run(args: Vec<String>) -> Result<ExitCode> {
   let Some(command) = args.first().and_then(|name| native(name)) else {
     return fallback::run(&args, &config);
   };
-  if let Some(code) = data_missing(&config) {
+  if !WITHOUT_DATA.contains(&command.name)
+    && let Some(code) = data_missing(&config)
+  {
     return Ok(code);
   }
   let rest = marker::rewrite_args(command.name, &args[1..], &config)?;
@@ -180,9 +197,10 @@ pub fn data_missing(config: &Config) -> Option<ExitCode> {
   })
 }
 
-/// `pplr version`, `-v`, `--version`: the version in Cargo.toml, the one source (design D7).
+/// `pplr version`, `-v`, `--version`: `pplr <version> (<tree>, <sha12>[+dirty])`, the
+/// version from Cargo.toml, the one source (design D7), and the tree from its manifest (T4).
 fn run_version(_args: &[String], _config: &Config) -> Result<ExitCode> {
-  println!("{}", env!("CARGO_PKG_VERSION"));
+  println!("{}", install::version_line());
   Ok(ExitCode::SUCCESS)
 }
 

@@ -201,15 +201,21 @@ fn a_marker_that_does_not_resolve_stops_the_command() -> Result<()> {
 }
 
 #[test]
-fn version_and_its_flags_print_the_version_in_cargo_toml() -> Result<()> {
+fn version_and_its_flags_print_the_version_line() -> Result<()> {
+  use pplr::install::{Kind, SOURCE_COMMIT, SOURCE_DIRTY, line};
+  // The dev build names the version in Cargo.toml and the commit it was built from (T4)
+  let expected = line(
+    env!("CARGO_PKG_VERSION"),
+    Kind::Dev,
+    None,
+    SOURCE_COMMIT,
+    SOURCE_DIRTY,
+  );
   let sandbox = Sandbox::new()?;
   for args in [&["version"][..], &["-v"], &["--version"]] {
     let out = run(sandbox.pplr().args(args))?;
     assert!(out.status.success());
-    assert_eq!(
-      text(&out.stdout),
-      format!("{}\n", env!("CARGO_PKG_VERSION"))
-    );
+    assert_eq!(text(&out.stdout), format!("{expected}\n"));
   }
   Ok(())
 }
@@ -820,6 +826,223 @@ fn reindex_writes_index_json_as_jq_prints_it_and_index_md() -> Result<()> {
       "{file}"
     );
   }
+  Ok(())
+}
+
+// ST0002 WP03: the dev/opt/brew trees, the manifest, `install` and `use`.
+
+/// The running test binary's own pplr, laid out as a tree at `prefix`.
+fn publish_tree(prefix: &std::path::Path, managed_by: &str, force: bool) -> Result<()> {
+  let sources = [("bin/pplr", PathBuf::from(env!("CARGO_BIN_EXE_pplr")))];
+  pplr::install::publish(
+    &sources,
+    prefix,
+    "2.0.0",
+    "0123456789abcdef0123456789abcdef01234567",
+    managed_by,
+    force,
+  )
+  .map_err(|e| e.to_string().into())
+}
+
+#[test]
+fn publish_writes_the_runtime_set_and_its_manifest_and_names_the_tree_opt() -> Result<()> {
+  use pplr::install::{Kind, MANIFEST, Manifest, drift, kind};
+  let sandbox = Sandbox::new()?;
+  let prefix = sandbox.path("opt");
+  publish_tree(&prefix, "pplr", false)?;
+  let manifest =
+    Manifest::parse(&fs::read_to_string(prefix.join(MANIFEST))?).ok_or("no manifest")?;
+  assert_eq!(
+    (manifest.tool.as_str(), manifest.managed_by.as_str()),
+    ("pplr", "pplr")
+  );
+  assert_eq!(
+    manifest
+      .files
+      .iter()
+      .map(|(_, p)| p.as_str())
+      .collect::<Vec<_>>(),
+    ["bin/pplr"]
+  );
+  assert_eq!(kind(&prefix).0, Kind::Opt);
+  assert!(drift(&prefix, &manifest).is_empty());
+  fs::write(prefix.join("bin/pplr"), "tampered")?;
+  assert_eq!(drift(&prefix, &manifest), ["bin/pplr"]);
+  Ok(())
+}
+
+#[test]
+fn publish_replaces_only_its_own_prefix_and_only_with_force() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let prefix = sandbox.path("opt");
+  publish_tree(&prefix, "pplr", false)?;
+  let again = publish_tree(&prefix, "pplr", false)
+    .err()
+    .map(|e| e.to_string())
+    .unwrap_or_default();
+  assert!(again.contains("--force"), "{again}");
+  publish_tree(&prefix, "pplr", true)?;
+
+  let foreign = sandbox.path("foreign");
+  fs::create_dir_all(&foreign)?;
+  fs::write(foreign.join("notes.txt"), "not pplr's")?;
+  let refused = publish_tree(&foreign, "pplr", true)
+    .err()
+    .map(|e| e.to_string())
+    .unwrap_or_default();
+  assert!(refused.contains("did not install"), "{refused}");
+
+  let keg = sandbox.path("keg");
+  publish_tree(&keg, "brew", false)?;
+  let brews = publish_tree(&keg, "pplr", true)
+    .err()
+    .map(|e| e.to_string())
+    .unwrap_or_default();
+  assert!(brews.contains("brew upgrade"), "{brews}");
+  Ok(())
+}
+
+#[test]
+fn install_needs_a_prefix_and_runs_only_from_dev() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let out = run(sandbox.pplr().arg("install"))?;
+  assert!(!out.status.success());
+  assert!(
+    text(&out.stderr).contains("PPLR_OPT_PREFIX"),
+    "{}",
+    text(&out.stderr)
+  );
+
+  let opt = sandbox.path("opt");
+  publish_tree(&opt, "pplr", false)?;
+  let from_opt = run(
+    Command::new(opt.join("bin/pplr"))
+      .env_clear()
+      .env("PATH", std::env::var_os("PATH").unwrap_or_default())
+      .env("HOME", sandbox.path("home"))
+      .args(["install", "--prefix"])
+      .arg(sandbox.path("other")),
+  )?;
+  assert!(
+    text(&from_opt.stderr).contains("from a dev checkout only"),
+    "{}",
+    text(&from_opt.stderr)
+  );
+  Ok(())
+}
+
+/// A fake Homebrew prefix holding pplr's keg, linked as brew links it.
+fn fake_brew(sandbox: &Sandbox) -> Result<PathBuf> {
+  let brew = sandbox.path("brew");
+  let keg = brew.join("Cellar/pplr/2.0.0");
+  publish_tree(&keg.join("libexec"), "brew", false)?;
+  fs::create_dir_all(brew.join("opt"))?;
+  fs::create_dir_all(brew.join("bin"))?;
+  std::os::unix::fs::symlink(&keg, brew.join("opt/pplr"))?;
+  std::os::unix::fs::symlink(
+    brew.join("opt/pplr/libexec/bin/pplr"),
+    brew.join("bin/pplr"),
+  )?;
+  Ok(brew)
+}
+
+#[test]
+fn use_points_the_one_link_and_use_brew_hands_back_to_homebrew() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let opt = sandbox.path("opt");
+  publish_tree(&opt, "pplr", false)?;
+  let brew = fake_brew(&sandbox)?;
+  let links = sandbox.path("home/.local/bin");
+  let path = format!(
+    "{}:{}:/usr/bin:/bin",
+    links.display(),
+    brew.join("bin").display()
+  );
+  let pplr = || {
+    let mut c = sandbox.pplr();
+    c.env("PATH", &path)
+      .env("PPLR_OPT_PREFIX", &opt)
+      .env("HOMEBREW_PREFIX", &brew);
+    c
+  };
+
+  let to_opt = run(pplr().args(["use", "opt"]))?;
+  assert!(to_opt.status.success(), "{}", text(&to_opt.stderr));
+  assert!(
+    text(&to_opt.stdout).starts_with("pplr 2.0.0 (opt, 0123456789ab)"),
+    "{}",
+    text(&to_opt.stdout)
+  );
+  assert_eq!(fs::read_link(links.join("pplr"))?, opt.join("bin/pplr"));
+  let report = run(pplr().arg("use"))?;
+  assert!(
+    text(&report.stdout).starts_with("pplr -> opt"),
+    "{}",
+    text(&report.stdout)
+  );
+
+  let to_brew = run(pplr().args(["use", "brew"]))?;
+  assert!(to_brew.status.success(), "{}", text(&to_brew.stderr));
+  assert!(
+    text(&to_brew.stdout).starts_with("pplr 2.0.0 (brew, 0123456789ab)"),
+    "{}",
+    text(&to_brew.stdout)
+  );
+  assert!(links.join("pplr").symlink_metadata().is_err());
+  Ok(())
+}
+
+#[test]
+fn use_brew_keeps_the_link_when_no_brew_copy_would_answer_and_bare_use_finds_a_shadow() -> Result<()>
+{
+  let sandbox = Sandbox::new()?;
+  let opt = sandbox.path("opt");
+  publish_tree(&opt, "pplr", false)?;
+  let links = sandbox.path("home/.local/bin");
+  let empty_brew = sandbox.path("nobrew");
+  fs::create_dir_all(&empty_brew)?;
+  let shadow = sandbox.path("shadow");
+  fs::create_dir_all(&shadow)?;
+  fs::write(shadow.join("pplr"), "#!/bin/sh\n")?;
+  fs::set_permissions(shadow.join("pplr"), fs::Permissions::from_mode(0o755))?;
+  let pplr = |path: String| {
+    let mut c = sandbox.pplr();
+    c.env("PATH", path)
+      .env("PPLR_OPT_PREFIX", &opt)
+      .env("HOMEBREW_PREFIX", &empty_brew);
+    c
+  };
+  let ours = format!("{}:/usr/bin:/bin", links.display());
+  assert!(
+    run(pplr(ours.clone()).args(["use", "opt"]))?
+      .status
+      .success()
+  );
+
+  let refused = run(pplr(ours).args(["use", "brew"]))?;
+  assert!(!refused.status.success());
+  assert!(
+    text(&refused.stderr).contains("is kept"),
+    "{}",
+    text(&refused.stderr)
+  );
+  assert!(links.join("pplr").symlink_metadata().is_ok());
+
+  let shadowed = run(
+    pplr(format!(
+      "{}:{}:/usr/bin:/bin",
+      shadow.display(),
+      links.display()
+    ))
+    .arg("use"),
+  )?;
+  assert!(!shadowed.status.success());
+  assert!(
+    text(&shadowed.stdout).contains("shadowed"),
+    "{}",
+    text(&shadowed.stdout)
+  );
   Ok(())
 }
 

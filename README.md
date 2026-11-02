@@ -552,6 +552,16 @@ tags:
 
 pplr is a personal project, but suggestions and improvements are welcome. The codebase is simple bash scripts designed for maintainability and extensibility.
 
+## For the maintainer: dev, opt and brew
+
+Users install pplr through Homebrew alone. A maintainer working in a checkout also has two trees of their own, under devbin's dev/opt/brew contract:
+
+- **dev** is the checkout, built with `bin/devbin build`.
+- **opt** is a published working copy, written from dev by `pplr install [--prefix <dir>] [--force]`. It has no default place: `--prefix` names it, else `PPLR_OPT_PREFIX`. `install` refuses a build from uncommitted changes, and replaces an existing opt tree only with `--force`.
+- **brew** is the formula's tree, `$(brew --prefix)/opt/pplr/libexec`.
+
+`pplr use dev|opt|brew` moves the one link, `~/.local/bin/pplr`; `use brew` removes it, so Homebrew's `pplr` answers. `pplr use` with no argument says which tree the link serves, and `pplr version` names the running tree and its commit: `pplr 2.0.0 (dev, 1a2b3c4d5e6f)`.
+
 ## License
 
 This is a personal tool shared as-is for educational purposes.

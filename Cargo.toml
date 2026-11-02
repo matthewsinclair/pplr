@@ -13,6 +13,8 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 # Local time for backup names, as the engine stamps them (and, later, every date).
 jiff = "0.2"
+# The install manifest's sha256 lines (devbin T3), as `shasum -a 256` writes them.
+sha2 = "0.10"
 # The engine's email pattern in About headers, and pplr grep's basic regular expressions.
 regex = "1"
 

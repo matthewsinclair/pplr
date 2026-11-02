@@ -20,6 +20,8 @@ pub struct Config {
   pub contacts_json: Option<PathBuf>,
   /// PPLR_ICON_DIR: the Finder icons applyicons sets, over `_pplr/icons` and the embedded set.
   pub icon_dir: Option<PathBuf>,
+  /// PPLR_OPT_PREFIX: the opt tree, the one configured place (devbin T1; no default).
+  pub opt_prefix: Option<PathBuf>,
   /// PPLR_TODAY, which pins the day for every date-dependent command (design 3.5).
   pub today: Option<jiff::civil::Date>,
   /// PPLR_CMS_URL, default the local CMS; set empty, files only, never the CMS.
@@ -64,6 +66,7 @@ impl Config {
     };
     let contacts_json = get("PPLR_CONTACTS_JSON");
     let icon_dir = get("PPLR_ICON_DIR");
+    let opt_prefix = get("PPLR_OPT_PREFIX");
     let today = match get("PPLR_TODAY") {
       Some(day) => Some(
         day
@@ -89,6 +92,7 @@ impl Config {
       cache_dir,
       contacts_json,
       icon_dir,
+      opt_prefix,
       today,
       cms_url,
       picture_width,
