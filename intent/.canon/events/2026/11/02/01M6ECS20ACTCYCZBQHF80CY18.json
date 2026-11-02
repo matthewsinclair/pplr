@@ -1,0 +1,14 @@
+{
+  "id": "01M6ECS20ACTCYCZBQHF80CY18",
+  "ts": "2026-11-02T15:06:52.299Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.satisfy",
+  "subject": {
+    "type": "ac",
+    "id": "ST0002/AC-01.1"
+  },
+  "payload": {
+    "evidence": "install-release.md on ST0002 (settled; vc accepted amendments 1-5; hv's rulings 5574e38)"
+  }
+}

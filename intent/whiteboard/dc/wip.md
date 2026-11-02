@@ -3,10 +3,10 @@ node: dc
 name: dc
 role: dc
 session_id: 4237396b-82f9-4844-95a4-c3179b9179bc
-heartbeat_at: 2026-11-02 14:58Z
+heartbeat_at: 2026-11-02 15:06Z
 status: active
 focus: "holding for vc's instructions on ST0001 and ST0002 (hv, 2026-11-02)"
-claims: [ST0001/01, ST0002/01]
+claims: [ST0001/01, ST0001/02]
 ---
 
 # dc (dc)
