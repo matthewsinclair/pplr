@@ -17,7 +17,7 @@ Configure devbin's release core and formula tool for pplr, and make CI fire on r
   - `version_from: Cargo.toml`;
   - `commands.release.enabled` and `commands.formula.enabled`;
   - a `release:` block naming the repo, the remotes (local then upstream), the gates (`check all`, `test all`, `doctor`), the kovacs leg, `derived: [tools/lock-sync]` and `after: [bin/devbin formula publish]`;
-  - `formula: mode: source`.
+  - `formula: mode: assets` (E1, as ruled).
 - **`tools/lock-sync`**, in zsh after Gtools' model: rewrite `Cargo.lock` for the new version, then print `Cargo.lock`.
 - **CI**: `tests.yml` fires on `main` and on `candidate/**`.
 - **CHANGELOG**:

@@ -22,7 +22,7 @@ Make Homebrew the way Pplr reaches a machine. `brew install matthewsinclair/pplr
 
 - Cldr renders a source-build formula into its own tap.
 - Ccusage ships Developer ID signed tarballs, for Keychain access, through Python tooling.
-- devbin 0.1.19's release core and `formula: mode: source` cover what Pplr needs without either project's bespoke tools.
+- devbin 0.1.19's release core and `formula: mode: assets` cover what Pplr needs without either project's bespoke tools.
 - hv created `matthewsinclair/homebrew-pplr` on 2026-11-02. It is empty, and its description still names cldr.
 
 **Decisions** E1 to E8 are in the attached `design.md`, revised with hv's rulings of 2026-11-02:
