@@ -15,7 +15,7 @@ Port the index builders, person creation, the picture line and search.
 
 - `json`, byte-identical to `jq .`'s print, and `index`.
 - `reindex` runs the Rust index builders. Until WP06 lands it runs the legacy `tags render` through the fallback.
-- `new`: the embedded template, with `_pplr/templates/person` overriding it; the `.webloc` from its fixed template; the About regenerated when a URL is given.
+- `new`: the git author (`git config user.name`) in the verblock, pinned in the goldens by a sandboxed git config (D10); the embedded template, with `_pplr/templates/person` overriding it; the `.webloc` from its fixed template; the About regenerated when a URL is given.
 - `pictures`.
 - `search`:
   - runs the `claude` subprocess with the prompt and the index, and parses its reply as JSON;

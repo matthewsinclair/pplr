@@ -1,0 +1,14 @@
+{
+  "id": "01M6DQSFFVMB6VFK8GAEDN7KPM",
+  "ts": "2026-11-02T09:00:06.012Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.edit",
+  "subject": {
+    "type": "ac",
+    "id": "ST0001/AC-00.2"
+  },
+  "payload": {
+    "text": "One binary: every command the shell pplr offered (the 30 in recon section 4) is served by the Rust `pplr` with the same arguments and flags, except `email` and `contact log --email`, which are on hold by hv's ruling of 2026-11-02 until hv decides how pplr reads mail. No `bin/pplr*` script, `lib/engine.sh` or run-time build remains."
+  }
+}

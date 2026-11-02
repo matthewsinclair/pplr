@@ -15,7 +15,7 @@ title: Create a homebrew distro for the new Rust version of Pplr
 
 ### ST-level
 
-- AC-00.1 (non-test) From the tap on rhadamanth, `HOMEBREW_NO_AUTO_UPDATE=1 brew install matthewsinclair/pplr/pplr` succeeds, `brew test pplr` passes, and `pplr --version` reads `pplr 2.0.0 (brew, <sha12>)`, naming the release commit. -- satisfied: no
+- AC-00.1 (non-test) From the tap on rhadamanth, `HOMEBREW_NO_AUTO_UPDATE=1 brew install matthewsinclair/pplr/pplr` succeeds, `brew test pplr` passes (including the signature check), and `pplr --version` reads `pplr 2.0.0 (brew, <sha12>)`, naming the release commit. -- satisfied: no
 - AC-00.2 (non-test) T10 holds: on rhadamanth, `pplr use dev`, `use opt` and `use brew` each give the right version line, a clean doctor and a passing shadow check, and on a Linux machine brew alone does. -- satisfied: no
 - AC-00.3 (non-test) rhadamanth runs brew's pplr, with no link into the old checkout. The user docs name brew alone (T1), and docs/releasing.md covers dev and opt for the maintainer. -- satisfied: no
 
@@ -34,10 +34,10 @@ title: Create a homebrew distro for the new Rust version of Pplr
 - AC-03.2 The version line reads `pplr <version> (<tree>, <sha12>[+dirty])` in dev, opt and brew, built from stamps taken at build time, with the tree named by the one tree function. -- satisfied: no (computed)
 - AC-03.3 `pplr use dev|opt|brew` moves only the link set {pplr} in ~/.local/bin, and refuses a missing tree or a brew copy that would not answer. Doctor's shadow check fails on a link that is shadowed or split across trees. -- satisfied: no (computed)
 
-### WP-04 -- Formula template, tap and tap CI (status: Not Started)
+### WP-04 -- Assets formula, tap and tap CI (status: Not Started)
 
-- AC-04.1 packaging/homebrew/pplr.rb carries exactly one @@TAG@@ and one @@REVISION@@ and renders through `bin/devbin formula render`. The render passes `brew style` and `brew audit --strict`, and its test runs the version line. -- satisfied: no (computed)
-- AC-04.2 (non-test) The tap matthewsinclair/homebrew-pplr exists, and its CI runs style, audit, build from source and test on macOS and Ubuntu. -- satisfied: no
+- AC-04.1 packaging/homebrew/pplr.rb is a devbin `assets` template, rendered through `bin/devbin formula render` with nothing typed. The render passes `brew style` and `brew audit --strict`, its install verifies every macOS binary's signature against its designated requirement and writes the T3 manifest, and its test re-verifies the signatures and runs the version line. -- satisfied: no (computed)
+- AC-04.2 (non-test) The tap matthewsinclair/homebrew-pplr is described as "Homebrew tap for pplr", and its CI runs style, audit, install and test on macOS and Ubuntu. -- satisfied: no
 
 ### WP-05 -- Walking skeleton through a scratch tap (status: Not Started)
 
@@ -46,7 +46,12 @@ title: Create a homebrew distro for the new Rust version of Pplr
 ### WP-06 -- Release 2.0.0 and move rhadamanth to brew (status: Not Started)
 
 - AC-06.1 (non-test) 2.0.0 is cut by `bin/devbin release`. Its gates pass locally, on kovacs and in CI for candidate/v2.0.0, and the formula is published to the tap by `bin/devbin formula publish`. -- satisfied: no
-- AC-06.2 (non-test) The Contacts grant survives a brew reinstall or upgrade: `pplr sync --check` from the keg reads the live store with no new permission prompt (E2). -- satisfied: no
+- AC-06.2 (non-test) The Contacts grant holds across upgrades: after a `brew upgrade` or `brew reinstall`, `pplr sync --check` from the keg reads the live store with no new permission prompt, and any first-use prompt for the signed sidecar is recorded. -- satisfied: no
+
+### WP-07 -- Developer ID signing and notarisation (status: Not Started)
+
+- AC-07.1 Every macOS binary pplr ships (`pplr`, `pplr-contacts` and the `Pplr Links.app` from `pplr handler`) is signed with Developer ID Application: Geodica Pty Ltd (76BQL8L47U), with the hardened runtime and a secure timestamp, and passes `codesign --verify --strict -R <requirement>` and `spctl`. -- satisfied: no (computed)
+- AC-07.2 (non-test) The signer is project code in bash or zsh (`bin/.devbin/cmd/macos`, no Python). It runs on rhadamanth only, notarises every release build with `notarytool`, and the release cannot attach an unsigned macOS asset. -- satisfied: no
 
 ## Acceptance Tests
 
@@ -66,7 +71,7 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-04 -- Formula template, tap and tap CI (status: Not Started)
+### WP-04 -- Assets formula, tap and tap CI (status: Not Started)
 
 _(no tests in this group)_
 
@@ -75,6 +80,10 @@ _(no tests in this group)_
 _(no tests in this group)_
 
 ### WP-06 -- Release 2.0.0 and move rhadamanth to brew (status: Not Started)
+
+_(no tests in this group)_
+
+### WP-07 -- Developer ID signing and notarisation (status: Not Started)
 
 _(no tests in this group)_
 

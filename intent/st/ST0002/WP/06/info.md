@@ -13,23 +13,21 @@ Once ST0001 is done, cut 2.0.0 through devbin's release core, publish the formul
 
 **Scope**
 
-- **The cut**, after ST0001 WP13:
-  - `bin/devbin release v2.0.0`. hv runs it, or dc runs it with hv's approval (design question 2).
-  - The gates pass locally, on kovacs and in CI for `candidate/v2.0.0`.
-  - The formula is published to the tap by `bin/devbin formula publish`.
+- **The cut**, after ST0001 WP13, run by dc with hv's approval of each outward step (E8):
+  - `bin/devbin release v2.0.0`, with the gates green locally, on kovacs and in CI for `candidate/v2.0.0`;
+  - the assets built, the macOS ones signed and notarised (WP07), then attached with `SHA256SUMS`;
+  - the formula published to the tap by `bin/devbin formula publish`.
 - **On rhadamanth**:
-  - `brew install matthewsinclair/pplr/pplr` and `brew test pplr`;
+  - `brew install matthewsinclair/pplr/pplr` and `brew test pplr`, which includes the signature check;
   - `pplr use brew`, which removes the old `~/.local/bin/pplr` link into the checkout;
   - T10's proof.
 - **On kovacs**: the brew install alone.
-- **E2's check**: after `brew reinstall` or an upgrade to a rebuilt revision, `pplr sync --check` reads the live store without a new permission prompt. If it fails, signing comes back on the table.
-- **Docs**:
-  - the README's install section names brew alone (T1);
-  - `docs/releasing.md` covers dev and opt for the maintainer.
+- **The Contacts grant**:
+  - record whether macOS asks for it again for the signed sidecar on first use;
+  - confirm that after a `brew upgrade` or `brew reinstall`, `pplr sync --check` reads the live store with no new prompt.
+- **Docs**: the README's install section names brew alone (T1), and `docs/releasing.md` covers dev, opt and signing for the maintainer.
 
 **Criteria**: AC-06.1 and AC-06.2, then the thread's AC-00.1 to AC-00.3.
-
-**Tags, pushes and tap writes** happen here only, and are hv's (E8).
 
 ## Acceptance
 

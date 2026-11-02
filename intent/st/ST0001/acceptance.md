@@ -16,7 +16,7 @@ title: Port Pplr from shell scripts to Rust
 ### ST-level
 
 - AC-00.1 No Python: `git ls-files '*.py'` is empty, no committed file runs `python3` or `uv`, and the project's check gate fails on either. -- satisfied: no (computed)
-- AC-00.2 One binary: every command the shell pplr offered (the 30 in recon section 4) is served by the Rust `pplr` with the same arguments and flags. No `bin/pplr*` script, `lib/engine.sh` or run-time build remains. -- satisfied: no (computed)
+- AC-00.2 One binary: every command the shell pplr offered (the 30 in recon section 4) is served by the Rust `pplr` with the same arguments and flags, except `email` and `contact log --email`, which are on hold by hv's ruling of 2026-11-02 until hv decides how pplr reads mail. No `bin/pplr*` script, `lib/engine.sh` or run-time build remains. -- satisfied: no (computed)
 - AC-00.3 Parity: the bats suite passes against the Rust binary: every test on macOS, and on Linux every test that needs no macOS service. A test retired as shell-specific is withdrawn on the record, with its reason. -- satisfied: no (computed)
 - AC-00.4 Byte-identical data: over the synthetic fixture tree, every file the Rust binary writes under PPLR_DATA is byte-identical to the legacy golden, apart from the time-dependent fields listed beside the goldens (WP03). The plan workbook matches by content. -- satisfied: no (computed)
 - AC-00.5 (non-test) Live read-only parity: on rhadamanth, over the live People tree, the read-only commands print the same output under the legacy code (checked out from history into a scratch worktree) and under the Rust binary. Nothing writes to the live tree. -- satisfied: no
@@ -53,9 +53,9 @@ title: Port Pplr from shell scripts to Rust
 
 - AC-06.1 tag and tags run natively in Rust, pplr_tag, pplr_tags and tags.py are gone, and their goldens and bats tests pass. -- satisfied: no (computed)
 
-### WP-07 -- Contact cadence and email (status: Not Started)
+### WP-07 -- Contact cadence (email on hold) (status: Not Started)
 
-- AC-07.1 contact and email run natively in Rust, pplr_contact, pplr_email, contact.py and email_list.py are gone, and their goldens and bats tests pass. -- satisfied: no (computed)
+- AC-07.1 contact runs natively in Rust (apart from `log --email`, on hold with `email`), pplr_contact and contact.py are gone once hv has ruled on mail, and the contact goldens and bats tests pass. -- satisfied: no (computed)
 
 ### WP-08 -- Rename, links and the pplr:// handler (status: Not Started)
 
@@ -108,7 +108,7 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-07 -- Contact cadence and email (status: Not Started)
+### WP-07 -- Contact cadence (email on hold) (status: Not Started)
 
 _(no tests in this group)_
 

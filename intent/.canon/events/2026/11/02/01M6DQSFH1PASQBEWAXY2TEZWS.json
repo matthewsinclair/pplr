@@ -1,0 +1,14 @@
+{
+  "id": "01M6DQSFH1PASQBEWAXY2TEZWS",
+  "ts": "2026-11-02T09:00:06.049Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.edit",
+  "subject": {
+    "type": "ac",
+    "id": "ST0002/AC-00.1"
+  },
+  "payload": {
+    "text": "From the tap on rhadamanth, `HOMEBREW_NO_AUTO_UPDATE=1 brew install matthewsinclair/pplr/pplr` succeeds, `brew test pplr` passes (including the signature check), and `pplr --version` reads `pplr 2.0.0 (brew, <sha12>)`, naming the release commit."
+  }
+}

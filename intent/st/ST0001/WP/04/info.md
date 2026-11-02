@@ -24,6 +24,7 @@ Build the core every command shares (the tree, person references, the About head
   - The version tests are re-pointed at `Cargo.toml`.
 - **Deletion**: rewire any legacy caller first (eg `pplr_open` calls `pplr cp`), then delete these commands' bash.
 - **Errors** go to stderr (D10).
+- **`edit`** honours `$VISUAL`, then `$EDITOR`, running the editor in the foreground, and refuses naming both when neither is set (D10).
 
 **Criteria**: AC-04.1.
 

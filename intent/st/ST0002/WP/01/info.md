@@ -13,15 +13,19 @@ Settle how pplr is installed and released, item by item against devbin's dev/opt
 
 **Scope**
 
-- Confirm or amend this thread's design: the T1 to T10 table and decisions E1 to E8. Back each assumption that carries weight with evidence, eg that the Contacts grant lands on the terminal running pplr.
+- Confirm or amend this thread's design: the T1 to T10 table and decisions E1 to E8.
 - **Settle the layout** with ST0001 WP02:
   - the tree root, `bin/pplr`, `bin/pplr-contacts` and the manifest path;
-  - the runtime-set function and its inputs: cargo's dep-info plus the sidecar source.
-- Get hv's answers to the open questions (design section 6) and record them here.
+  - the runtime-set function and its inputs (cargo's dep-info plus the sidecar source).
+- **Settle the signing details**, with Intent's `bin/.devbin/cmd/macos` and its release as the worked example:
+  - each binary's identifier and designated requirement;
+  - where the notary credentials come from;
+  - the order of build, sign, notarise, attach and publish under devbin's release core.
+- **Confirm the asset targets** (E1), or bring evidence to drop one.
 
 **Criteria**: AC-01.1.
 
-**Not in scope**: building anything. This WP decides; WP02 to WP06 build.
+**Not in scope**: building anything. This WP decides; WP02 to WP07 build.
 
 ## Acceptance
 

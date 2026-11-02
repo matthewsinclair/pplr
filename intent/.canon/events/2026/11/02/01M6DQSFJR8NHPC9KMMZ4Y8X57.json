@@ -1,0 +1,14 @@
+{
+  "id": "01M6DQSFJR8NHPC9KMMZ4Y8X57",
+  "ts": "2026-11-02T09:00:06.104Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.edit",
+  "subject": {
+    "type": "ac",
+    "id": "ST0002/AC-06.2"
+  },
+  "payload": {
+    "text": "The Contacts grant holds across upgrades: after a `brew upgrade` or `brew reinstall`, `pplr sync --check` from the keg reads the live store with no new permission prompt, and any first-use prompt for the signed sidecar is recorded."
+  }
+}

@@ -1,30 +1,32 @@
 ---
 wp_id: WP-04
-title: Formula template, tap and tap CI
+title: Assets formula, tap and tap CI
 scope: M
 status: Not Started
 ---
 
-# WP-04: Formula template, tap and tap CI
+# WP-04: Assets formula, tap and tap CI
 
 ## Objective
 
-Write the formula template, and stand up the tap with its CI.
+Write the `assets` formula template, put the tap in shape, and add the tap's CI.
 
 **Scope**
 
-- **`packaging/homebrew/pplr.rb`**:
-  - one `@@TAG@@` and one `@@REVISION@@`, and no top-level `version`;
-  - `depends_on "rust" => :build`;
-  - on macOS, build the sidecar with `swiftc`;
-  - run `pplr install --prefix libexec --managed-by brew`, then link `pplr` into `bin`;
-  - caveats that name `pplr use`, the data root and the Contacts grant;
-  - `test do` runs the version line.
-- **The render**: `bin/devbin formula render <tag> <out>` produces it, and `brew style` and `brew audit --strict` pass on the result.
-- **The tap** `matthewsinclair/homebrew-pplr`, with a `test.yml` copied from homebrew-cldr: style, audit, build from source and test, on macOS and Ubuntu.
-  - Creating the repository is hv's, or done with hv's approval (design question 1).
+- **`packaging/homebrew/pplr.rb`**, in devbin's `assets` mode, after Intent's formula:
+  - `@@VERSION@@`, one `@@SHA256:<asset>@@` per target, and `@@INSTALL@@`/`@@FINISH@@`. No redundant top-level `version`.
+  - The macOS assets hold the signed `pplr` and `pplr-contacts`; the Linux assets hold `pplr`.
+  - `install` lays the binaries out in `libexec` with mode 0755, writes the T3 manifest with `managed_by: brew`, runs `codesign --verify --strict -R <requirement>` on each macOS binary, and links `pplr` into `bin`.
+  - The caveats name `pplr use`, the data root, and the Contacts grant.
+  - `test do` verifies the signatures again and runs the version line.
+- **Rendering**: `bin/devbin formula render <tag> <out>` renders the template, and the render passes `brew style` and `brew audit --strict`.
+- **The tap**, `matthewsinclair/homebrew-pplr`, which hv created:
+  - correct its description to "Homebrew tap for pplr" (`gh repo edit matthewsinclair/homebrew-pplr --description "Homebrew tap for pplr"`), with hv's approval;
+  - add a `test.yml` adapted from homebrew-ccusage's, running on macOS and Ubuntu.
 
 **Criteria**: AC-04.1 and AC-04.2.
+
+**Depends on**: WP02, WP03 and WP07.
 
 ## Acceptance
 

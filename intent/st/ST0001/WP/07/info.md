@@ -1,33 +1,30 @@
 ---
 wp_id: WP-07
-title: Contact cadence and email
+title: Contact cadence (email on hold)
 scope: M
 status: Not Started
 ---
 
-# WP-07: Contact cadence and email
+# WP-07: Contact cadence (email on hold)
 
 ## Objective
 
-Port contact cadence and the email listing to Rust, and retire `contact.py` and `email_list.py`.
+Port contact cadence to Rust and retire `contact.py`, leaving `pplr email` and `contact log --email` on hold until hv decides how pplr reads mail.
 
 **Scope**
 
 - **`contact`**:
-  - the subcommands `scan`, `due`, `show`, `log`, `next`, `context` and `render`; `log` takes `--email N` or a Message-ID;
+  - the subcommands `scan`, `due`, `show`, `log`, `next`, `context` and `render`;
   - `contact.yaml` and `(Contact).md` byte-identical, from a port of `contact.py`'s emitter;
   - `cadence.yaml`'s roster and every-tag defaults;
   - the booked-meeting rule;
   - `PPLR_TODAY`.
-- **`email recent|inbox`**, with `--account`, `--hours` and `--sent`:
-  - runs `mail-recent`, found through `PPLR_MAIL_RECENT`;
-  - numbers the messages and marks each one's person;
-  - caches the listing in `PPLR_CACHE_DIR`, whose default follows D5.
-- Delete `pplr_contact`, `pplr_email`, `contact.py` and `email_list.py`.
+- **On hold** (hv, 2026-11-02): `email`, and `contact log --email N` or a Message-ID, stay on the legacy code through the fallback. `mail-recent` is a private Geodica-estate tool, and pplr must not depend on it. Design section 7 records the open question.
+- Delete `pplr_contact` and `contact.py`, once `log --email` has a home or hv has ruled. `pplr_email` and `email_list.py` wait for hv's ruling.
 
 **Criteria**: AC-07.1.
 
-**Note**: `mail-recent` is not installed on rhadamanth (design open question 4). The goldens use a fake.
+**Note**: WP13 cannot remove the fallback while `email` is on it. hv's ruling on mail is due before WP13.
 
 ## Acceptance
 

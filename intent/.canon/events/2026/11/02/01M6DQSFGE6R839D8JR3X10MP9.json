@@ -1,0 +1,14 @@
+{
+  "id": "01M6DQSFGE6R839D8JR3X10MP9",
+  "ts": "2026-11-02T09:00:06.030Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.edit",
+  "subject": {
+    "type": "ac",
+    "id": "ST0001/AC-07.1"
+  },
+  "payload": {
+    "text": "contact runs natively in Rust (apart from `log --email`, on hold with `email`), pplr_contact and contact.py are gone once hv has ruled on mail, and the contact goldens and bats tests pass."
+  }
+}

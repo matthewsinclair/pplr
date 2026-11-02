@@ -23,16 +23,16 @@ Make Homebrew the way Pplr reaches a machine. `brew install matthewsinclair/pplr
 - Cldr renders a source-build formula into its own tap.
 - Ccusage ships Developer ID signed tarballs, for Keychain access, through Python tooling.
 - devbin 0.1.19's release core and `formula: mode: source` cover what Pplr needs without either project's bespoke tools.
-- `matthewsinclair/homebrew-pplr` does not exist yet. Pplr's GitHub repository is public.
+- hv created `matthewsinclair/homebrew-pplr` on 2026-11-02. It is empty, and its description still names cldr.
 
-**Decisions** E1 to E8 are in the attached `design.md`:
+**Decisions** E1 to E8 are in the attached `design.md`, revised with hv's rulings of 2026-11-02:
 
-- a source-build formula;
-- no Developer ID signing, with a check that the Contacts grant survives an upgrade;
+- an `assets` formula installing signed release builds, after Intent's;
+- every macOS binary signed and notarised with hv's Geodica Developer ID, by a bash or zsh signer ported from Intent's;
 - devbin's release core, with remotes local then upstream, the kovacs leg and CI on `candidate/<tag>`;
 - the version in `Cargo.toml`, and `Cargo.lock` kept by a zsh `derived:` step;
-- the tap with its own CI;
-- tags, pushes and tap writes are hv's.
+- the existing tap, `matthewsinclair/homebrew-pplr`, with its description corrected and its own CI;
+- dc runs the cut, with hv's approval of each outward step.
 
 **Depends on ST0001.** WP02 to WP05 here build on ST0001's scaffold (ST0001 WP02). The release (WP06) waits for ST0001's cutover (WP13).
 
@@ -43,9 +43,10 @@ Make Homebrew the way Pplr reaches a machine. `brew install matthewsinclair/pplr
 | WP-01 | Release and install design for pplr                    | S    | Not Started |
 | WP-02 | devbin release core and CI candidates                  | M    | Not Started |
 | WP-03 | Install, manifest, tree identity, version line and use | L    | Not Started |
-| WP-04 | Formula template, tap and tap CI                       | M    | Not Started |
+| WP-04 | Assets formula, tap and tap CI                         | M    | Not Started |
 | WP-05 | Walking skeleton through a scratch tap                 | M    | Not Started |
 | WP-06 | Release 2.0.0 and move rhadamanth to brew              | M    | Not Started |
+| WP-07 | Developer ID signing and notarisation                  | M    | Not Started |
 
 ## Acceptance
 

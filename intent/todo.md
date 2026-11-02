@@ -15,7 +15,7 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
   - [ ] 04: Core model and the read commands
   - [ ] 05: Indexes, new person, pictures and search
   - [ ] 06: Tags
-  - [ ] 07: Contact cadence and email
+  - [ ] 07: Contact cadence (email on hold)
   - [ ] 08: Rename, links and the pplr:// handler
   - [ ] 09: The Contacts store and the Swift I/O sidecar
   - [ ] 10: Sync: check, link, pull, photos and backup
@@ -26,9 +26,10 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
   - [ ] 01: Release and install design for pplr
   - [ ] 02: devbin release core and CI candidates
   - [ ] 03: Install, manifest, tree identity, version line and use
-  - [ ] 04: Formula template, tap and tap CI
+  - [ ] 04: Assets formula, tap and tap CI
   - [ ] 05: Walking skeleton through a scratch tap
   - [ ] 06: Release 2.0.0 and move rhadamanth to brew
+  - [ ] 07: Developer ID signing and notarisation
 
 ## TODO
 
