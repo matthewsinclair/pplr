@@ -134,6 +134,7 @@ ST0002's release waits on WP13.
 5. Commit by path exactly what you wrote. Commit messages end with `(C) hello@matthewsinclair.com`, with no AI attribution. Tags and pushes are hv's.
 6. A WP is done when its criteria hold: run `intent wp gate` and the cargo and bats gates. vc then reviews it against this design and the thread's criteria.
 7. Anything this design gets wrong goes to vc as an `intent wb ask`, not a quiet deviation. A changed decision is recorded here.
+8. **A porting WP is not done while a bats skip names it.** WP02 guards the legacy-engine and `uv` tests with skips that name the WP porting each one (`needs_legacy_engine WPnn`, and the `uv` guards naming WP07). Porting the command deletes its skips in the same WP. Before done, `grep -rn "WPnn" tests/*.bats` over the skip helpers finds none, and vc checks it at review.
 
 ## 7. Answers and open questions
 
