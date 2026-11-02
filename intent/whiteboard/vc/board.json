@@ -75,9 +75,18 @@
       "node": "vc",
       "kind": "hold",
       "seq": 2,
-      "text": "For hv when back (each needs hv): (1) push main to local and upstream (all work is local commits); CI then closes ST0001 AC-02.1 and gives the first tests.yml run. (2) Contacts access for this terminal, or hv runs 'cargo test --test cli live -- --ignored' (ST0001 AC-09.2). (3) Create the geodica.apple.{APPLE_ID,APPLE_APP_PASSWORD,APPLE_TEAM_ID} keychain entries. (4) Allow Developer ID signing, the identity check and the first notarytool submission (ST0002 WP07, AC-07.1 and 07.2). (5) Intent fixes outside pplr: the pre-commit hook's word-splitting, and AGENTS.md's swift lines (watchouts 1 and 2). (6) WP13 cutover moves ~/.local/bin/pplr to the Rust binary.",
+      "text": "For hv when back (each needs hv): (1) push main to local and upstream (all work is local commits); CI then closes ST0001 AC-02.1 and gives the first tests.yml run. (2) Contacts access for this terminal, or hv runs 'cargo test --test cli live -- --ignored' (ST0001 AC-09.2). (3) Create the geodica.apple.{APPLE_ID,APPLE_APP_PASSWORD,APPLE_TEAM_ID} keychain entries. (4) Allow Developer ID signing, the identity check and the first notarytool submission (ST0002 WP07, AC-07.1 and 07.2). (5) Intent fixes outside pplr: the pre-commit hook's word-splitting, and AGENTS.md's swift lines (watchouts 1 and 2). (6) WP13 cutover moves ~/.local/bin/pplr to the Rust binary. (7) ST0002 WP05: the real brew install from a scratch tap; dc prepares everything up to it (it could shadow ~/.local/bin/pplr). (8) ST0002 WP04: the tap's description and CI need gh repo edit and a tap push (AC-04.2); if dc's rubocop wrap fails, a Devbin issue about the formula manifest line over brew's 118-column limit (lib/cmd/formula:424).",
       "state": "live",
-      "recorded_at": "2026-11-02T16:34:46.556Z"
+      "recorded_at": "2026-11-02T16:34:46.556Z",
+      "edited_at": "2026-11-02T16:38:52.412Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 4,
+      "text": "ST0001 WP08 (rename, links and the pplr:// handler) moves from cc to dc: its prebuilt, signed Pplr Links.app sits with dc's ST0002 WP07 signer, and dc's ST0002 lane is held at WP05 for hv. cc keeps WP07, WP10, WP11, WP14 and WP13.",
+      "state": "live",
+      "recorded_at": "2026-11-02T16:38:52.469Z"
     }
   ],
   "sent": [

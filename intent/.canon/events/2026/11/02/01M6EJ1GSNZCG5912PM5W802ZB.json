@@ -1,0 +1,15 @@
+{
+  "id": "01M6EJ1GSNZCG5912PM5W802ZB",
+  "ts": "2026-11-02T16:38:52.469Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "ST0001 WP08 (rename, links and the pplr:// handler) moves from cc to dc: its prebuilt, signed Pplr Links.app sits with dc's ST0002 WP07 signer, and dc's ST0002 lane is held at WP05 for hv. cc keeps WP07, WP10, WP11, WP14 and WP13."
+  }
+}
