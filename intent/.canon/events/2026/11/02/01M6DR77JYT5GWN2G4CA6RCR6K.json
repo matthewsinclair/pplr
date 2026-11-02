@@ -1,0 +1,14 @@
+{
+  "id": "01M6DR77JYT5GWN2G4CA6RCR6K",
+  "ts": "2026-11-02T09:07:36.670Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.edit",
+  "subject": {
+    "type": "ac",
+    "id": "ST0001/AC-07.1"
+  },
+  "payload": {
+    "text": "contact runs natively in Rust, pplr_contact and contact.py are gone, and the contact goldens and bats tests pass; `log --email` is covered by AC-14.1."
+  }
+}

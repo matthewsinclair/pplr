@@ -109,18 +109,19 @@ macOS is the target. Linux builds, tests and runs everything except the macOS se
 | 04  | Core model and the read commands                  | cc    | M    | 02, 03     | AC-02, AC-04, AC-05        |
 | 05  | Indexes, new person, pictures and search          | cc    | M    | 04         | AC-02, AC-05               |
 | 06  | Tags                                              | cc    | M    | 04         | AC-01, AC-02, AC-05        |
-| 07  | Contact cadence and email                         | cc    | M    | 06         | AC-01, AC-02, AC-05        |
+| 07  | Contact cadence                                   | cc    | M    | 06         | AC-01, AC-02, AC-05        |
 | 08  | Rename, links and the `pplr://` handler           | cc    | M    | 05         | AC-02, AC-05, AC-08        |
 | 09  | The Contacts store and the Swift I/O sidecar      | dc    | M    | 02         | AC-07, AC-11               |
 | 10  | Sync: check, link, pull, photos and backup        | cc    | L    | 04, 09     | AC-02, AC-05, AC-07        |
 | 11  | The sync plan and its workbook                    | cc    | L    | 10         | AC-01, AC-02, AC-05        |
 | 12  | Doctor and Finder icons                           | dc    | S    | 04         | AC-02, AC-11               |
 | 13  | Cutover                                           | cc    | M    | 01 to 12   | AC-01, AC-02, AC-06, AC-12 |
+| 14  | pplr's own mail reader                            | cc    | M    | 04, 07     | AC-14.1, AC-14.2           |
 
 The two lanes run side by side:
 
 - **dc**: WP01, then WP02, then WP09 and WP12, interleaved with ST0002.
-- **cc**: WP03 now (it needs no Rust), then WP04 once WP02 lands, then WP05 to WP08 in any order the dependencies allow, then WP10 and WP11, then WP13.
+- **cc**: WP03 now (it needs no Rust), then WP04 once WP02 lands, then WP05 to WP08 in any order the dependencies allow, then WP10 and WP11, then WP14 once WP07 is done, then WP13.
 
 ST0002's release waits on WP13.
 
@@ -142,8 +143,6 @@ hv's answers, 2026-11-02:
 2. **XDG defaults** for backups and the cache (D5).
 3. **`edit` honours `$VISUAL` and `$EDITOR`; `new` uses the git author** (D10).
 4. **Live read-only parity** over the live People tree is agreed (section 4, step 5), recording verdicts only (D11).
-5. **`pplr email` is on hold.** `mail-recent` is a Geodica-estate utility (`~/Devel/cfg/Gtools-geodica/bin/mail-recent`, Python, private, not on `PATH`, reading Mail.app's private Envelope Index with no stable contract), so pplr cannot depend on it. `email` and `contact log --email N` stay out of the port until hv decides how pplr gets mail. Everything else in WP07 goes ahead, and AC-00.2 and AC-07.1 exclude them by name.
+5. **pplr reads mail itself** (WP14). `mail-recent` is private Geodica tooling (`~/Devel/cfg/Gtools-geodica/bin/mail-recent`, Python, not on `PATH`), so pplr must not depend on it. pplr gets its own read-only reader of Mail's Envelope Index in Rust, which reads SQLite as Cldr does; Swift has no public mail framework to offer. `pplr email --json` becomes a versioned contract that Gtools can call once it lands.
 
-Open:
-
-1. **How should pplr read mail, if at all?** One option, from geodica-estate's reading of `mail-recent`, is an optional external command found by config or `PATH`, of which pplr reads only date, from, address, to, account, subject and message_id, degrading to "no mail source" when it is missing or fails. hv has not ruled.
+No questions are open.

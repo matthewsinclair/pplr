@@ -1,0 +1,14 @@
+{
+  "id": "01M6DR77JCHG74FNHFZKMQ7AXR",
+  "ts": "2026-11-02T09:07:36.652Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.edit",
+  "subject": {
+    "type": "ac",
+    "id": "ST0001/AC-00.2"
+  },
+  "payload": {
+    "text": "One binary: every command the shell pplr offered (the 30 in recon section 4) is served by the Rust `pplr` with the same arguments and flags, and no `bin/pplr*` script, `lib/engine.sh` or run-time build remains."
+  }
+}

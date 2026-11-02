@@ -15,13 +15,14 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
   - [ ] 04: Core model and the read commands
   - [ ] 05: Indexes, new person, pictures and search
   - [ ] 06: Tags
-  - [ ] 07: Contact cadence (email on hold)
+  - [ ] 07: Contact cadence
   - [ ] 08: Rename, links and the pplr:// handler
   - [ ] 09: The Contacts store and the Swift I/O sidecar
   - [ ] 10: Sync: check, link, pull, photos and backup
   - [ ] 11: The sync plan and its workbook
   - [ ] 12: Doctor and Finder icons
   - [ ] 13: Cutover
+  - [ ] 14: pplr's own mail reader
 - [-] ST0002: Create a homebrew distro for the new Rust version of Pplr
   - [ ] 01: Release and install design for pplr
   - [ ] 02: devbin release core and CI candidates

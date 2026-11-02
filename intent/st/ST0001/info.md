@@ -49,13 +49,14 @@ Replace Pplr's bash scripts, Python helpers and run-time-compiled Swift engine w
 | WP-04 | Core model and the read commands                  | M    | Not Started |
 | WP-05 | Indexes, new person, pictures and search          | M    | Not Started |
 | WP-06 | Tags                                              | M    | Not Started |
-| WP-07 | Contact cadence (email on hold)                   | M    | Not Started |
+| WP-07 | Contact cadence                                   | M    | Not Started |
 | WP-08 | Rename, links and the pplr:// handler             | M    | Not Started |
 | WP-09 | The Contacts store and the Swift I/O sidecar      | M    | Not Started |
 | WP-10 | Sync: check, link, pull, photos and backup        | L    | Not Started |
 | WP-11 | The sync plan and its workbook                    | L    | Not Started |
 | WP-12 | Doctor and Finder icons                           | S    | Not Started |
 | WP-13 | Cutover                                           | M    | Not Started |
+| WP-14 | pplr's own mail reader                            | M    | Not Started |
 
 ## Acceptance
 
