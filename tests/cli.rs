@@ -609,6 +609,8 @@ fn same<T: PartialEq + std::fmt::Debug>(got: T, want: T, what: &str) -> Result<(
   }
 }
 
+/// AT-03.1 (ST0001 AC-03.1): every golden replays against the binary,
+/// skipping only the commands still on the fallback.
 #[test]
 fn every_golden_of_a_ported_command_replays() -> Result<()> {
   let cases =

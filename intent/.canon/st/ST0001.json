@@ -32,7 +32,7 @@
       "seq": 3,
       "title": "Golden capture from the legacy code",
       "scope": "M",
-      "status": "wip",
+      "status": "done",
       "objective": "Capture the exact output of every command that writes or reports, from the legacy implementation over a synthetic People tree, as goldens the Rust binary must reproduce byte for byte.",
       "body": "**Scope**\n\n- **A synthetic fixture tree** with no real person's data, built by a script or committed as data. It covers the edge cases in design section 4, step 2, and includes a Contacts dump JSON.\n- **A capture driver** in zsh (eg `tests/golden/`; nothing Python is committed). It runs each writing and reporting command under the legacy code with `PPLR_TODAY` pinned and the environment sandboxed, and records per scenario the stdout, stderr, exit code and resulting tree (every file's bytes).\n- **Scenarios** cover at least:\n  - `new`, `json`, `index`, `reindex`, `count`, `meetings`, `grep`, `refresh`, `pictures`;\n  - `tag` and every `tags` and `contact` subcommand;\n  - `email`, with a fake `mail-recent`;\n  - `rename`, including a refs directory reached through a symlink;\n  - `links`, covering paths, CMS URLs and a symlinked note;\n  - `resolve` and `open --print`;\n  - every `sync` mode against the JSON store, including `--plan --json` and the workbook's cell contents.\n- **Time-dependent fields** (eg `generated_at` in `tags_index.json`) are listed in the goldens' README, each with how the replay treats it. That list is the \"time-dependent fields\" exception named in AC-00.4.\n- **A replay test** in `tests/cli.rs` runs every golden against the Rust binary and fails on any byte difference. It skips only the commands still on the fallback, read from the command table, so each port WP turns its goldens on. It lands on WP02's scaffold; the capture itself needs no Rust.\n- The capture runs the legacy Python once, as an oracle.\n\n**Criteria**: AC-03.1.\n\n**Order**: before any WP deletes a legacy command (design section 6, rule 3).\n",
       "preamble": ""
@@ -86,7 +86,7 @@
       "seq": 9,
       "title": "The Contacts store and the Swift I/O sidecar",
       "scope": "M",
-      "status": "not-started",
+      "status": "wip",
       "objective": "Put every Contacts read and write behind one store interface: a JSON store for tests and Linux, and, for the live store, the existing Swift cut down to an I/O sidecar built ahead of time.",
       "body": "**Scope**\n\n- **`contacts/`**:\n  - the `Card` model, which is the dump format;\n  - the store trait: load the cards, back up, ensure the group, and apply link, card and photo writes;\n  - `JsonStore`, which reads and writes `PPLR_CONTACTS_JSON` as the engine's fixture path does today;\n  - `SidecarStore`.\n- **The sidecar**:\n  - move `main.swift` to `swift/pplr-contacts/main.swift`;\n  - keep `dump`, including the cross-account id resolution, and `backup`;\n  - add a `group` mode, which prints the PPLR group's id in the default container and makes the group if it is missing;\n  - keep the access refusal, exit 3;\n  - drop everything else as WP08, WP10 and WP11 port it.\n- **Writes from Rust**: the Contacts.app scripts (link, card create and update, photo) and the `sips` TIFF step.\n- **Build**:\n  - in dev, devbin's build compiles the sidecar beside the binary;\n  - ST0002's install puts it in the tree;\n  - a missing sidecar is an error naming the step that builds it;\n  - on Linux, the live store refuses by name.\n- The live check (AC-09.2) is read-only: no `--apply`.\n\n**Criteria**: AC-09.1 and AC-09.2.\n",
       "preamble": ""
@@ -391,6 +391,16 @@
         "AC-01.3"
       ],
       "status": "green"
+    },
+    {
+      "id": "AT-03.1",
+      "kind": "test",
+      "file": "tests/cli.rs",
+      "covers": [
+        "AC-03.1"
+      ],
+      "status": "green",
+      "note": "every_golden_of_a_ported_command_replays: 54 cases captured (tests/golden); proved green over all 54 through the fallback from a clean checkout of deebdee, and red on a mutated copy naming both changed cases"
     }
   ],
   "attachments": [

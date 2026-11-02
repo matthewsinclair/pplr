@@ -45,13 +45,13 @@ Replace Pplr's bash scripts, Python helpers and run-time-compiled Swift engine w
 | ----- | ------------------------------------------------- | ---- | ----------- |
 | WP-01 | Test safety, the parity seam and an honest runner | S    | Done        |
 | WP-02 | Rust scaffold under devbin, with the fallback     | M    | WIP         |
-| WP-03 | Golden capture from the legacy code               | M    | WIP         |
+| WP-03 | Golden capture from the legacy code               | M    | Done        |
 | WP-04 | Core model and the read commands                  | M    | Not Started |
 | WP-05 | Indexes, new person, pictures and search          | M    | Not Started |
 | WP-06 | Tags                                              | M    | Not Started |
 | WP-07 | Contact cadence                                   | M    | Not Started |
 | WP-08 | Rename, links and the pplr:// handler             | M    | Not Started |
-| WP-09 | The Contacts store and the Swift I/O sidecar      | M    | Not Started |
+| WP-09 | The Contacts store and the Swift I/O sidecar      | M    | WIP         |
 | WP-10 | Sync: check, link, pull, photos and backup        | L    | Not Started |
 | WP-11 | The sync plan and its workbook                    | L    | Not Started |
 | WP-12 | Doctor and Finder icons                           | S    | Not Started |

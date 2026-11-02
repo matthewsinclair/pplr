@@ -6,7 +6,7 @@ session_id: ae86b27f-47f4-447b-b2aa-713a050085b2
 heartbeat_at: 2026-11-02 15:09Z
 status: active
 focus: "ST0001 WP03 capture landed (65d5a8a); replay test and WP04 wait on dc's WP02 scaffold"
-claims: [ST0001/03]
+claims: []
 ---
 
 # cc (cc)

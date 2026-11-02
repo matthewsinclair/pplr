@@ -37,9 +37,9 @@ title: Port Pplr from shell scripts to Rust
 - AC-02.1 `bin/devbin check all` and `bin/devbin test all` run the cargo gates (fmt; clippy with unsafe forbidden and unwrap and expect denied; test) and the bats suite against the Rust binary, and both pass on macOS and on Linux CI. -- satisfied: no (computed)
 - AC-02.2 Every command not yet ported runs its legacy script through the Rust binary, with the environment bin/pplr sets, so the whole bats suite passes against the Rust binary. -- satisfied: no (computed)
 
-### WP-03 -- Golden capture from the legacy code (status: WIP)
+### WP-03 -- Golden capture from the legacy code (status: Done)
 
-- AC-03.1 Goldens exist for every writing and reporting command over the synthetic tree, captured from the legacy code, and a test in tests/cli.rs replays each against the Rust binary, skipping only commands still on the fallback. -- satisfied: no (computed)
+- AC-03.1 Goldens exist for every writing and reporting command over the synthetic tree, captured from the legacy code, and a test in tests/cli.rs replays each against the Rust binary, skipping only commands still on the fallback. -- satisfied: yes (computed)
 
 ### WP-04 -- Core model and the read commands (status: Not Started)
 
@@ -61,7 +61,7 @@ title: Port Pplr from shell scripts to Rust
 
 - AC-08.1 rename, links and handler run natively in Rust, and their bash is gone; their goldens and bats tests pass, and handler --install writes an app that runs the running tree's stable path, never a Cellar path. -- satisfied: no (computed)
 
-### WP-09 -- The Contacts store and the Swift I/O sidecar (status: Not Started)
+### WP-09 -- The Contacts store and the Swift I/O sidecar (status: WIP)
 
 - AC-09.1 Sync reaches Contacts only through the store interface. The JSON store reads and writes the dump format, and the Swift sidecar does only dump, backup and group, built ahead of time and never at run time. -- satisfied: no (computed)
 - AC-09.2 (non-test) On rhadamanth, the sidecar reads the live Contacts store, and the Rust `pplr sync --check --json` matches the legacy engine's report (read-only). -- satisfied: no
@@ -99,9 +99,9 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-03 -- Golden capture from the legacy code (status: WIP)
+### WP-03 -- Golden capture from the legacy code (status: Done)
 
-_(no tests in this group)_
+- AT-03.1 `tests/cli.rs` -- covers AC-03.1 -- status: green -- every_golden_of_a_ported_command_replays: 54 cases captured (tests/golden); proved green over all 54 through the fallback from a clean checkout of deebdee, and red on a mutated copy naming both changed cases
 
 ### WP-04 -- Core model and the read commands (status: Not Started)
 
@@ -123,7 +123,7 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-09 -- The Contacts store and the Swift I/O sidecar (status: Not Started)
+### WP-09 -- The Contacts store and the Swift I/O sidecar (status: WIP)
 
 _(no tests in this group)_
 

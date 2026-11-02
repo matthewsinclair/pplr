@@ -2,7 +2,7 @@
 wp_id: WP-03
 title: Golden capture from the legacy code
 scope: M
-status: WIP
+status: Done
 ---
 
 # WP-03: Golden capture from the legacy code

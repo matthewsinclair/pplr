@@ -11,13 +11,13 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
 - [-] ST0001: Port Pplr from shell scripts to Rust
   - [x] 01: Test safety, the parity seam and an honest runner
   - [-] 02: Rust scaffold under devbin, with the fallback
-  - [-] 03: Golden capture from the legacy code
+  - [x] 03: Golden capture from the legacy code
   - [ ] 04: Core model and the read commands
   - [ ] 05: Indexes, new person, pictures and search
   - [ ] 06: Tags
   - [ ] 07: Contact cadence
   - [ ] 08: Rename, links and the pplr:// handler
-  - [ ] 09: The Contacts store and the Swift I/O sidecar
+  - [-] 09: The Contacts store and the Swift I/O sidecar
   - [ ] 10: Sync: check, link, pull, photos and backup
   - [ ] 11: The sync plan and its workbook
   - [ ] 12: Doctor and Finder icons

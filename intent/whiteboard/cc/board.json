@@ -8,9 +8,7 @@
     "heartbeat_at": "2026-11-02T15:09:20.941Z",
     "status": "active",
     "focus": "ST0001 WP03 capture landed (65d5a8a); replay test and WP04 wait on dc's WP02 scaffold",
-    "claims": [
-      "ST0001/03"
-    ],
+    "claims": [],
     "recorded_at": "2026-11-02T07:22:34.821Z",
     "migrated_at": "2026-11-02T07:22:34.821Z"
   },
