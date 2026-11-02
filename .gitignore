@@ -1,6 +1,8 @@
 # Cargo's build tree, and devbin's logs and scratch
 /target/
 /tmp/
+# The macOS signer's staging and release assets (bin/.devbin/cmd/macos)
+/dist/
 
 # The legacy Swift engine, built by pplr on first use (gone at ST0001 WP09)
 /.build/

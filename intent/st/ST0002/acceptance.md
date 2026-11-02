@@ -48,7 +48,7 @@ title: Create a homebrew distro for the new Rust version of Pplr
 - AC-06.1 (non-test) 2.0.0 is cut by `bin/devbin release`. Its gates pass locally, on kovacs and in CI for candidate/v2.0.0, and the formula is published to the tap by `bin/devbin formula publish`. -- satisfied: no
 - AC-06.2 (non-test) The Contacts grant holds across upgrades: after a `brew upgrade` or `brew reinstall`, `pplr sync --check` from the keg reads the live store with no new permission prompt, and any first-use prompt for the signed sidecar is recorded. -- satisfied: no
 
-### WP-07 -- Developer ID signing and notarisation (status: Not Started)
+### WP-07 -- Developer ID signing and notarisation (status: WIP)
 
 - AC-07.1 Every macOS binary pplr ships (`pplr`, `pplr-contacts` and the `Pplr Links.app` from `pplr handler`) is signed with Developer ID Application: Geodica Pty Ltd (76BQL8L47U), with the hardened runtime and a secure timestamp, and passes `codesign --verify --strict -R <requirement>` and `spctl`. -- satisfied: no (computed)
 - AC-07.2 (non-test) The signer is project code in bash or zsh (`bin/.devbin/cmd/macos`, no Python). It runs on rhadamanth only, notarises every release build with `notarytool`, and the release cannot attach an unsigned macOS asset. -- satisfied: no
@@ -85,7 +85,7 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-07 -- Developer ID signing and notarisation (status: Not Started)
+### WP-07 -- Developer ID signing and notarisation (status: WIP)
 
 _(no tests in this group)_
 

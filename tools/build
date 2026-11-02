@@ -14,8 +14,11 @@ cargo build --quiet "$@"
 profile=debug
 (( ${@[(Ie)--release]} )) && profile=release
 src=swift/pplr-contacts/main.swift
+# Its Info.plist is linked in, so macOS can name it and show the Contacts prompt
+plist=swift/pplr-contacts/Info.plist
 out=target/$profile/pplr-contacts
-if [[ ! -x $out || $src -nt $out ]]; then
+if [[ ! -x $out || $src -nt $out || $plist -nt $out ]]; then
   print "build: compiling the Contacts sidecar into $out"
-  swiftc -O -swift-version 5 -o $out $src -framework Contacts
+  swiftc -O -swift-version 5 -o $out $src -framework Contacts \
+    -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __info_plist -Xlinker $plist
 fi

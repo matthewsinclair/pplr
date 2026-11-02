@@ -1,0 +1,205 @@
+#!/usr/bin/env zsh
+# devbin: summary = sign, notarise and pack pplr's macOS binaries (ST0002 WP07)
+#
+# `bin/devbin macos` for pplr, a project handler, cut down from Intent's
+# signer (itself ported from Lamplight's) to pplr's two binaries. It replaces
+# devbin's built-in macos, which signs a .app only.
+#
+#   bin/devbin macos stage                  copy target/release's pplr and pplr-contacts into dist/macos/stage
+#   bin/devbin macos sign [--adhoc]         sign each staged binary: hardened runtime, secure timestamp,
+#                                           its fixed identifier, and pplr-contacts' addressbook entitlement
+#   bin/devbin macos verify [--adhoc]       codesign --verify --strict -R <designated requirement>, the
+#                                           runtime flag read back, the entitlement read back, and spctl
+#   bin/devbin macos notarize [--dry-run]   submit the signed binaries to Apple's notary service
+#   bin/devbin macos pack [--adhoc]         the release asset, pplr-<version>-<triple>.tar.gz, from
+#                                           binaries that pass verify; it refuses any that do not
+#   bin/devbin macos prepare [--adhoc]      stage, sign, verify, notarise (a dry run with --adhoc), pack
+#
+# --adhoc signs with `codesign -s -`: no identity, no keychain, no timestamp,
+# and no spctl, which an ad-hoc signature cannot pass. It proves the steps on a
+# scratch build; a release is never ad-hoc. The facts every step signs and
+# checks against live once, in packaging/macos/signing.
+#
+# IT RUNS ON THE MAINTAINER'S MAC ONLY. It refuses on CI ($CI set), off macOS,
+# and, for a real signature, when the Developer ID identity is not in the
+# keychain. The notary credentials are read from the login keychain, under
+# packaging/macos/signing's `keychain` prefix, only by a real notarize.
+
+emulate -L zsh
+setopt err_exit no_unset pipe_fail
+
+root=${0:A:h:h:h:h}
+cd $root
+signing=packaging/macos/signing
+stage=dist/macos/stage
+binaries=(pplr pplr-contacts)
+entitlements=swift/pplr-contacts/pplr-contacts.entitlements
+addressbook=com.apple.security.personal-information.addressbook
+
+die() { print -u2 "macos: $*"; exit 1 }
+step() { print -r -- "-- $*" }
+
+# A fact from packaging/macos/signing, by key
+fact() {
+  local line=${(M)${(f)"$(<$signing)"}:#$1=*}
+  [[ -n $line ]] || die "$signing has no $1"
+  print -r -- ${line#$1=}
+}
+
+guard() {
+  [[ -z ${CI:-} ]] || die "refusing to run on CI: signing happens on the maintainer's Mac only"
+  [[ $(uname) == Darwin ]] || die "signing needs macOS"
+}
+
+require_identity() {
+  local identity=$(fact identity)
+  security find-identity -v -p codesigning 2>/dev/null | grep -qF "\"$identity\"" ||
+    die "the signing identity is not in this keychain: $identity"
+}
+
+version() { sed -n 's/^version = "\(.*\)"$/\1/p' Cargo.toml | head -1 }
+triple() { rustc -vV | sed -n 's/^host: //p' }
+
+cmd_stage() {
+  local b
+  for b in $binaries; do
+    [[ -x target/release/$b ]] || die "no release build of $b: run tools/build --release"
+  done
+  mkdir -p $stage
+  for b in $binaries; do
+    /usr/bin/ditto target/release/$b $stage/$b
+  done
+  print "staged: ${(j:, :)binaries} into $stage"
+}
+
+require_staged() {
+  local b
+  for b in $binaries; do [[ -f $stage/$b ]] || die "$stage/$b is not staged: run bin/devbin macos stage"; done
+}
+
+cmd_sign() {
+  local adhoc=$1 b
+  require_staged
+  local -a how
+  if (( adhoc )); then
+    how=(--sign - --timestamp=none)
+  else
+    require_identity
+    how=(--sign "$(fact identity)" --timestamp)
+  fi
+  for b in $binaries; do
+    local -a extra=()
+    [[ $b == pplr-contacts ]] && extra=(--entitlements $entitlements)
+    step "signing $b as $(fact id.$b)"
+    # --force replaces the ad-hoc signature the linker puts on every arm64 binary
+    codesign --force --options runtime $how --identifier "$(fact id.$b)" $extra $stage/$b
+  done
+  print "signed: ${(j:, :)binaries} ($( (( adhoc )) && print ad-hoc || print Developer ID ))"
+}
+
+# The designated requirement for a binary; ad-hoc has no anchor, so its
+# requirement is the identifier alone.
+requirement() {
+  local adhoc=$1 b=$2
+  if (( adhoc )); then print -r -- "identifier \"$(fact id.$b)\""; else fact requirement.$b; fi
+}
+
+cmd_verify() {
+  local adhoc=$1 b
+  require_staged
+  for b in $binaries; do
+    step "verifying $b"
+    codesign --verify --strict -R="$(requirement $adhoc $b)" $stage/$b ||
+      die "$b does not meet its designated requirement"
+    # The hardened runtime is a property of the bytes, read back, not assumed
+    local flags=$(codesign -d --verbose=2 $stage/$b 2>&1 | sed -n 's/.*flags=\([^ ]*\).*/\1/p' | head -1)
+    [[ $flags == *runtime* ]] || die "$b carries no hardened runtime (flags=${flags:-unreadable})"
+    if [[ $b == pplr-contacts ]]; then
+      codesign -d --entitlements - --xml $stage/$b 2>/dev/null | grep -q $addressbook ||
+        die "$b lacks the $addressbook entitlement, so the hardened runtime would deny it Contacts"
+    fi
+    if (( ! adhoc )); then
+      spctl -a -t open --context context:primary-signature $stage/$b ||
+        die "Gatekeeper refuses $b (has it been notarised?)"
+    fi
+    local checked="requirement, hardened runtime"
+    [[ $b == pplr-contacts ]] && checked+=", entitlement"
+    (( adhoc )) || checked+=", spctl"
+    print "  ok: $checked"
+  done
+}
+
+# A notary credential from the login keychain, under the signing file's prefix
+secret() {
+  local keychain=$(fact keychain)
+  security find-generic-password -a $USER -s "$keychain.$1" -w 2>/dev/null || die "no $keychain.$1 in the login keychain"
+}
+
+cmd_notarize() {
+  local dry=$1
+  require_staged
+  local zip=dist/macos/pplr-notary.zip keychain=$(fact keychain)
+  local -a submit=(xcrun notarytool submit $zip --apple-id "<$keychain.APPLE_ID>" --password "<$keychain.APPLE_APP_PASSWORD>" --team-id "<$keychain.APPLE_TEAM_ID>" --wait)
+  if (( dry )); then
+    print "dry run: would zip ${(j:, :)binaries} into $zip with ditto, then run:"
+    print -r -- "  ${(j: :)${(@q-)submit}}"
+    print "  (the <...> values are read from the login keychain, service prefix $keychain, at submission)"
+    return
+  fi
+  require_identity
+  local b
+  for b in $binaries; do
+    codesign -dv $stage/$b 2>&1 | grep -q 'TeamIdentifier=not set' && die "$b is not Developer ID signed: run bin/devbin macos sign"
+  done
+  local payload=dist/macos/pplr-notary
+  rm -rf $payload $zip
+  mkdir -p $payload
+  for b in $binaries; do /usr/bin/ditto $stage/$b $payload/$b; done
+  /usr/bin/ditto -c -k --keepParent --sequesterRsrc $payload $zip
+  step "submitting to Apple (notarytool waits)"
+  local out
+  out=$(xcrun notarytool submit $zip --apple-id "$(secret APPLE_ID)" --password "$(secret APPLE_APP_PASSWORD)" --team-id "$(secret APPLE_TEAM_ID)" --wait 2>&1) || true
+  print -r -- $out
+  [[ $out == *"status: Accepted"* ]] || die "notarisation was not Accepted"
+  rm -rf $payload $zip
+}
+
+cmd_pack() {
+  local adhoc=$1
+  cmd_verify $adhoc >/dev/null
+  local asset=dist/macos/pplr-$(version)-$(triple).tar.gz
+  local tree=dist/macos/tree
+  rm -rf $tree && mkdir -p $tree/bin
+  local b
+  for b in $binaries; do /usr/bin/ditto $stage/$b $tree/bin/$b; done
+  tar -czf $asset -C $tree bin
+  rm -rf $tree
+  print "packed: $asset ($( (( adhoc )) && print 'ad-hoc: never a release asset' || print 'signed and notarised' ))"
+}
+
+guard
+sub=${1:-}
+(( $# )) && shift
+adhoc=0 dry=0
+for arg in "$@"; do
+  case $arg in
+    --adhoc) adhoc=1 ;;
+    --dry-run) dry=1 ;;
+    *) die "unknown argument: $arg" ;;
+  esac
+done
+case $sub in
+  stage) cmd_stage ;;
+  sign) cmd_sign $adhoc ;;
+  verify) cmd_verify $adhoc ;;
+  notarize) cmd_notarize $dry ;;
+  pack) cmd_pack $adhoc ;;
+  prepare)
+    cmd_stage
+    cmd_sign $adhoc
+    cmd_verify $adhoc
+    cmd_notarize $(( adhoc || dry ))
+    cmd_pack $adhoc ;;
+  ""|-h|--help) sed -n '9,16p' ${0:A} | sed 's/^# \{0,1\}//' ;;
+  *) die "unknown step: $sub (stage, sign, verify, notarize, pack, prepare)" ;;
+esac

@@ -155,6 +155,9 @@ fn install_rows() -> Vec<Row> {
       }
     }
   }
+  if cfg!(target_os = "macos") {
+    rows.extend(signatures(kind, &layout.root));
+  }
   if let Some(home) = std::env::var_os("HOME") {
     let report = Links::new(PathBuf::from(home).join(".local/bin")).report();
     let status = if report.ok {
@@ -165,6 +168,63 @@ fn install_rows() -> Vec<Row> {
     rows.push(row(status, report.text.replace('\n', "; ")));
   }
   rows
+}
+
+/// How pplr's binaries are signed: the one source, shared with the signer.
+const SIGNING: &str = include_str!("../packaging/macos/signing");
+
+/// A `key=value` fact from packaging/macos/signing.
+fn signing_fact(key: &str) -> Option<&'static str> {
+  SIGNING
+    .lines()
+    .find_map(|line| line.strip_prefix(key)?.strip_prefix('='))
+}
+
+/// Each binary's signature against its designated requirement (ST0002 E2). A
+/// dev build is the linker's ad-hoc signature until the release signs it.
+fn signatures(kind: crate::install::Kind, root: &Path) -> Vec<Row> {
+  use crate::install::Kind;
+  if kind == Kind::Dev {
+    return vec![row(
+      Status::Pass,
+      "Signatures: a dev build is not Developer ID signed (a release is: bin/devbin macos prepare)",
+    )];
+  }
+  ["pplr", "pplr-contacts"]
+    .iter()
+    .map(|binary| {
+      let path = root.join("bin").join(binary);
+      let Some(requirement) = signing_fact(&format!("requirement.{binary}")) else {
+        return row(
+          Status::Fail,
+          format!("packaging/macos/signing names no requirement for {binary}"),
+        );
+      };
+      let verified = Command::new("codesign")
+        .args(["--verify", "--strict"])
+        .arg(format!("-R={requirement}"))
+        .arg(&path)
+        .output()
+        .is_ok_and(|out| out.status.success());
+      if verified {
+        row(
+          Status::Pass,
+          format!(
+            "{binary} is signed as {}",
+            signing_fact(&format!("id.{binary}")).unwrap_or(binary)
+          ),
+        )
+      } else {
+        row(
+          Status::Fail,
+          format!(
+            "{} is not signed with pplr's Developer ID (reinstall it from a release)",
+            path.display()
+          ),
+        )
+      }
+    })
+    .collect()
 }
 
 fn settings(config: &Config) -> Vec<Row> {
@@ -544,6 +604,20 @@ pub fn render(sections: &[Section], fix: bool, colour: bool) -> String {
 #[cfg(test)]
 mod tests {
   use super::*;
+
+  #[test]
+  fn every_shipped_binary_has_an_identifier_and_a_requirement_to_sign_against() {
+    for path in crate::install::runtime_set() {
+      let binary = path.trim_start_matches("bin/");
+      let id = signing_fact(&format!("id.{binary}"));
+      assert!(id.is_some(), "{binary}");
+      let requirement = signing_fact(&format!("requirement.{binary}")).unwrap_or_default();
+      assert!(
+        requirement.starts_with(&format!("identifier \"{}\"", id.unwrap_or_default())),
+        "{requirement}"
+      );
+    }
+  }
 
   #[test]
   fn the_report_names_each_row_and_counts_the_summary() {

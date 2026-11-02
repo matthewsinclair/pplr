@@ -1,0 +1,10 @@
+# How pplr's macOS binaries are signed (ST0002 E2, install-release.md section 3).
+# The one place these facts live: bin/.devbin/cmd/macos signs and checks with
+# them, and pplr doctor checks the running tree with them. key=value lines.
+identity=Developer ID Application: Geodica Pty Ltd (76BQL8L47U)
+team=76BQL8L47U
+keychain=geodica.apple
+id.pplr=com.geodica.pplr
+id.pplr-contacts=com.geodica.pplr-contacts
+requirement.pplr=identifier "com.geodica.pplr" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] and certificate leaf[field.1.2.840.113635.100.6.1.13] and certificate leaf[subject.OU] = "76BQL8L47U"
+requirement.pplr-contacts=identifier "com.geodica.pplr-contacts" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] and certificate leaf[field.1.2.840.113635.100.6.1.13] and certificate leaf[subject.OU] = "76BQL8L47U"
