@@ -2,6 +2,9 @@
 
 load test_helper
 
+# AT-12.1 (ST0001 AC-12.1): doctor reports one row per check, each saying what
+# to fix, and these tests check what it reports, not bash internals.
+
 @test "pplr doctor runs and shows system health" {
     run "$PPLR" doctor
     # Check that it runs and produces expected output

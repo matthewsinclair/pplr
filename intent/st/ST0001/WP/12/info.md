@@ -2,7 +2,7 @@
 wp_id: WP-12
 title: Doctor and Finder icons
 scope: S
-status: WIP
+status: Done
 ---
 
 # WP-12: Doctor and Finder icons
