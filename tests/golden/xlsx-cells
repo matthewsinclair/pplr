@@ -1,0 +1,32 @@
+#!/bin/zsh
+# xlsx-cells: a workbook's content, the form its goldens are kept in.
+#
+# Usage: tests/golden/xlsx-cells WORKBOOK.xlsx
+#
+# One line per non-empty cell, sheet<TAB>cell<TAB>value, sheets in workbook
+# order, with the five XML entities decoded and each newline in a value
+# written as \n. Styles and the zip's own bytes are not content. It reads
+# inline strings and numbers, which is what the legacy workbook holds; a
+# writer that uses shared strings needs this extended first. The capture and
+# the replay in tests/cli.rs both call it, so a workbook has one reading.
+
+emulate -L zsh
+setopt err_exit no_unset pipe_fail
+xlsx=${1:?usage: xlsx-cells WORKBOOK.xlsx}
+i=0
+for sheet in ${(f)"$(unzip -p -- "$xlsx" xl/workbook.xml | grep -o '<sheet name="[^"]*"' | sed 's/<sheet name="//; s/"$//')"}; do
+  i=$(( i + 1 ))
+  unzip -p -- "$xlsx" "xl/worksheets/sheet$i.xml" | LC_ALL=C awk -v sheet="$sheet" '
+    BEGIN { RS = "<c " }
+    NR > 1 {
+      if (!match($0, /^r="[^"]+"/)) next
+      cell = substr($0, 4, RLENGTH - 4)
+      v = ""
+      if (match($0, /<t[^>]*>/)) { rest = substr($0, RSTART + RLENGTH); v = substr(rest, 1, index(rest, "</t>") - 1) }
+      else if (match($0, /<v>[^<]*<\/v>/)) { v = substr($0, RSTART + 3, RLENGTH - 7) }
+      if (v == "") next
+      gsub(/\n/, "\\n", v)
+      gsub(/&lt;/, "<", v); gsub(/&gt;/, ">", v); gsub(/&quot;/, "\"", v); gsub(/&apos;/, "\047", v); gsub(/&amp;/, "\\&", v)
+      printf "%s\t%s\t%s\n", sheet, cell, v
+    }'
+done

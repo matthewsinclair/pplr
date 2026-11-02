@@ -449,10 +449,6 @@ fn replay(case: &std::path::Path) -> Result<bool> {
   } else {
     Vec::new()
   };
-  let name = case
-    .file_name()
-    .map(|n| n.to_string_lossy().into_owned())
-    .unwrap_or_default();
 
   for (stem, args) in &argv {
     let mut command = Command::new(env!("CARGO_BIN_EXE_pplr"));
@@ -488,7 +484,7 @@ fn replay(case: &std::path::Path) -> Result<bool> {
     for line in &case_env {
       let (key, value) = line
         .split_once('=')
-        .ok_or_else(|| format!("{name}: a setting without '=': {line}"))?;
+        .ok_or_else(|| format!("a setting without '=': {line}"))?;
       command.env(key, value.replace("@SANDBOX@", &sandbox));
     }
     command.args(args.iter().map(|a| a.replace("@SANDBOX@", &sandbox)));
@@ -517,7 +513,7 @@ fn replay(case: &std::path::Path) -> Result<bool> {
   if fs::metadata(root.join("tripwire.log")).is_ok_and(|m| m.len() > 0) {
     return Err(
       format!(
-        "{name}: reached a tool no scenario should: {}",
+        "reached a tool no scenario should: {}",
         fs::read_to_string(root.join("tripwire.log"))?
       )
       .into(),
@@ -545,8 +541,7 @@ fn replay(case: &std::path::Path) -> Result<bool> {
       parts.next().unwrap_or_default(),
     );
     let actual = sb.join(rel);
-    let meta =
-      fs::symlink_metadata(&actual).map_err(|e| format!("{name}: {rel} is missing: {e}"))?;
+    let meta = fs::symlink_metadata(&actual).map_err(|e| format!("{rel} is missing: {e}"))?;
     match kind {
       "d" => same(meta.is_dir(), true, &format!("{rel} is a directory"))?,
       "l" => same(
@@ -574,12 +569,23 @@ fn replay(case: &std::path::Path) -> Result<bool> {
         )?;
       }
       "x" => {
-        return Err(
-          format!("{name}: {rel} is a workbook, compared by cells once WP11 brings a reader")
-            .into(),
-        );
+        // A workbook by its cells, read by the same script the capture uses
+        let dump = Command::new(golden.join("xlsx-cells"))
+          .arg(&actual)
+          .output()?;
+        same(
+          dump.status.success(),
+          true,
+          &format!("xlsx-cells reads {rel}"),
+        )?;
+        let want = fs::read_to_string(case.join("files").join(format!("{rel}.cells")))?;
+        same(
+          golden_normalise(&text(&dump.stdout), &sandbox),
+          want,
+          &format!("{rel}'s cells against their golden"),
+        )?;
       }
-      other => return Err(format!("{name}: unknown manifest kind {other}").into()),
+      other => return Err(format!("unknown manifest kind {other}").into()),
     }
     expected.push(rel.to_owned());
   }

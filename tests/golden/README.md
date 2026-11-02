@@ -13,6 +13,7 @@ What the bash, Python and Swift pplr prints and writes, captured over a syntheti
 | `capture`       | The zsh driver. `tests/golden/capture [SCENARIO...]` re-captures all scenarios, or the ones named, into `cases/`.                      |
 | `scenarios.zsh` | The one list of scenarios: each a name, optional settings, and one or more `pplr` steps run in order.                                  |
 | `fixture/`      | The sandbox seed: `Career/People/` (the data tree), `contacts.json` (the Contacts store), `refs/` and `refs-link`, `mail/`, `inputs/`. |
+| `xlsx-cells`    | A workbook's content as text, the form its goldens are kept in; the capture and the replay both call it.                               |
 | `fakes/`        | Stand-ins on `PATH`: a pinned `date`, `mail-recent`, `curl`, and a tripwire for every tool no scenario may reach.                      |
 | `cases/`        | The goldens, one directory per scenario, and `LEGACY`, the commit whose code produced them.                                            |
 
@@ -64,7 +65,7 @@ The bash scripts read a fake `date` that answers `2026-06-15 09:30:00` local tim
 
 - Each case whose steps all name a command in `cli::COMMANDS` runs against the Rust binary, with the same settings and a sandbox seeded from `fixture/`; a case with a step on the fallback is skipped, and the test prints which cases ran. Stdout, stderr, exit code and the tree must match after the rewrites above, except the real-date rewrite: the port reads `PPLR_TODAY` (design 3.5).
 - **The sandbox root must be as long as `/private/tmp/pplr-golden.XXXXXXXX`.** `rename` cuts each running-text line at 200 columns, absolute path included, so those lines change with the root's length.
-- A workbook compares by its `.cells` dump: one `sheet<TAB>cell<TAB>value` line per non-empty cell, with the XML entities decoded and newlines as `\n`. The replay refuses an `x` entry until WP11 brings an `.xlsx` reader. Styling (the shaded review columns, the Decision list, the Low and Medium highlights) is not in the dump; WP11 decides how to check it.
+- A workbook compares by its `.cells` dump, which `xlsx-cells` writes for the capture and the replay alike: one `sheet<TAB>cell<TAB>value` line per non-empty cell, with the XML entities decoded and newlines as `\n`. It reads inline strings and numbers, as the legacy workbook holds them; WP11 extends it if the port writes shared strings. Styling (the shaded review columns, the Decision list, the Low and Medium highlights) is not in the dump; WP11 decides how to check it.
 - JSON on stdout is to compare semantically (design D4): Swift writes `"key" : value` and escapes `/`, which `serde_json` does not. The replay compares bytes today; the first WP to port a command that prints JSON makes it semantic.
 - `open-print-cms-up` tells `fakes/curl` the CMS is up through `PPLR_GOLDEN_CMS`; WP04 decides how the replay tells the port.
 - `email` scenarios feed the legacy code a listing through `fakes/mail-recent`. WP14 replaces `mail-recent` with pplr's own reader, and decides how the replay gives that reader the same listing.
