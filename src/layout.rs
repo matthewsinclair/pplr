@@ -6,6 +6,8 @@ use std::path::{Path, PathBuf};
 
 /// The Contacts sidecar's file name; it always sits beside `pplr`.
 const SIDECAR: &str = "pplr-contacts";
+/// The pplr:// handler app's bundle name.
+pub const APP: &str = "Pplr Links.app";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Layout {
@@ -44,6 +46,17 @@ impl Layout {
   /// The Contacts sidecar, beside the binary in every tree.
   pub fn sidecar(&self) -> PathBuf {
     self.bin_dir.join(SIDECAR)
+  }
+
+  /// The pplr:// handler app: at the root of an installed tree, beside the
+  /// binary in a dev build.
+  pub fn app(&self) -> PathBuf {
+    let dir = if self.bin_dir.file_name().is_some_and(|n| n == "bin") {
+      &self.root
+    } else {
+      &self.bin_dir
+    };
+    dir.join(APP)
   }
 }
 

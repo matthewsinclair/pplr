@@ -5,7 +5,7 @@
 # signer (itself ported from Lamplight's) to pplr's two binaries. It replaces
 # devbin's built-in macos, which signs a .app only.
 #
-#   bin/devbin macos stage                  copy target/release's pplr and pplr-contacts into dist/macos/stage
+#   bin/devbin macos stage                  copy target/release's pplr, pplr-contacts and Pplr Links.app into dist/macos/stage
 #   bin/devbin macos sign [--adhoc]         sign each staged binary: hardened runtime, secure timestamp,
 #                                           its fixed identifier, and pplr-contacts' addressbook entitlement
 #   bin/devbin macos verify [--adhoc]       codesign --verify --strict -R <designated requirement>, the
@@ -32,7 +32,8 @@ root=${0:A:h:h:h:h}
 cd $root
 signing=packaging/macos/signing
 stage=dist/macos/stage
-binaries=(pplr pplr-contacts)
+# What a release signs: the two binaries, and the pplr:// handler app
+binaries=(pplr pplr-contacts "Pplr Links.app")
 entitlements=swift/pplr-contacts/pplr-contacts.entitlements
 addressbook=com.apple.security.personal-information.addressbook
 
@@ -63,7 +64,7 @@ triple() { rustc -vV | sed -n 's/^host: //p' }
 cmd_stage() {
   local b
   for b in $binaries; do
-    [[ -x target/release/$b ]] || die "no release build of $b: run tools/build --release"
+    [[ -e target/release/$b ]] || die "no release build of $b: run tools/build --release"
   done
   mkdir -p $stage
   for b in $binaries; do
@@ -74,7 +75,7 @@ cmd_stage() {
 
 require_staged() {
   local b
-  for b in $binaries; do [[ -f $stage/$b ]] || die "$stage/$b is not staged: run bin/devbin macos stage"; done
+  for b in $binaries; do [[ -e $stage/$b ]] || die "$stage/$b is not staged: run bin/devbin macos stage"; done
 }
 
 cmd_sign() {
@@ -171,8 +172,12 @@ cmd_pack() {
   local tree=dist/macos/tree
   rm -rf $tree && mkdir -p $tree/bin
   local b
-  for b in $binaries; do /usr/bin/ditto $stage/$b $tree/bin/$b; done
-  tar -czf $asset -C $tree bin
+  for b in $binaries; do
+    # The binaries go in bin/, the app at the root, as the tree lays them out
+    if [[ $b == *.app ]]; then /usr/bin/ditto $stage/$b $tree/$b; else /usr/bin/ditto $stage/$b $tree/bin/$b; fi
+  done
+  local out=$PWD/$asset
+  ( cd $tree && tar -czf $out * )
   rm -rf $tree
   print "packed: $asset ($( (( adhoc )) && print 'ad-hoc: never a release asset' || print 'signed and notarised' ))"
 }

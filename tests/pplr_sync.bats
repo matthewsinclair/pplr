@@ -319,7 +319,6 @@ setup_plan() {
 }
 
 @test "pplr links rewrites path and CMS links as pplr:// URLs, and leaves the unknown alone" {
-    needs_legacy_engine WP08
     make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
     mkdir -p "$PPLR_TEST_DATA/K/Kemp, Jon/Meetings/20260924 Intro"; touch "$PPLR_TEST_DATA/K/Kemp, Jon/Meetings/20260924 Intro/Summary.md"
     notes="$PPLR_TEST_DATA/journal/2026/notes.md"; mkdir -p "$(dirname "$notes")"
@@ -350,7 +349,6 @@ setup_plan() {
 }
 
 @test "pplr links follows a symlinked note to its file, once, and keeps the symlink" {
-    needs_legacy_engine WP08
     make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
     j="$PPLR_TEST_DATA/journal"; mkdir -p "$j"
     echo '[Jon](<../../Career/People/K/Kemp, Jon/About/Jon Kemp (About).md>)' > "$j/20260901 Day Notes.md"
@@ -363,7 +361,6 @@ setup_plan() {
 }
 
 @test "pplr links takes a path relative to where it was run" {
-    needs_legacy_engine WP08
     make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
     mkdir -p "$PPLR_TEST_DATA/elsewhere"
     echo '[Jon](<../../Career/People/K/Kemp, Jon/About/Jon Kemp (About).md>)' > "$PPLR_TEST_DATA/elsewhere/n.md"

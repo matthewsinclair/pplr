@@ -4,8 +4,8 @@
 use crate::Result;
 use crate::config::Config;
 use crate::{
-  contact, doctor, fallback, grep, icons, index, install, marker, meetings, new, open, pictures,
-  refresh, search, tags,
+  contact, doctor, fallback, grep, handler, icons, index, install, links, marker, meetings, new,
+  open, pictures, refresh, rename, search, tags,
 };
 use std::io::{IsTerminal, Write};
 use std::process::{Command as Process, ExitCode, Stdio};
@@ -62,6 +62,11 @@ pub const COMMANDS: &[Command] = &[
     run: grep::run,
   },
   Command {
+    name: "handler",
+    usage: "register this tree's app for pplr:// links (macOS)\n--install    register it with Launch Services, by the tree's stable path\n--uninstall  unregister it\n--status     the app, and which app macOS uses for pplr://",
+    run: handler::run,
+  },
+  Command {
     name: "help",
     usage: "provide help for a specific command (if provided) or all commands\n[cmd] specific command to get help for\n--details show comprehensive documentation",
     run: run_help,
@@ -85,6 +90,11 @@ pub const COMMANDS: &[Command] = &[
     name: "linkedin",
     usage: "open a person's LinkedIn URL (if it exists)\n<first>        firstname of person to edit\n<surname>      surname of person to edit",
     run: open::run_linkedin,
+  },
+  Command {
+    name: "links",
+    usage: "rewrite Markdown links into the people tree as pplr:// URLs\n<file or dir>...  the Markdown to convert (directories are searched for .md)\n[--apply]         write the changes (a dry run otherwise)\n[--json]          every link found, converted or not, as JSON",
+    run: links::run,
   },
   Command {
     name: "meetings",
@@ -115,6 +125,11 @@ pub const COMMANDS: &[Command] = &[
     name: "reindex",
     usage: "(re)create the indexes in $PPLR_DIR/.index, the tag pages and each About's Tags line",
     run: index::run_reindex,
+  },
+  Command {
+    name: "rename",
+    usage: "rename a person: the folder, their files, and every path-style link to them\n<\"Old, First\">   the current folder name (\"Surname, First\", or \"L/Surname, First\")\n<\"New, First\">   the new folder name\n[--dry-run]      list what would change, and change nothing\n[--refs DIR]     where to repoint links (repeatable; default $PPLR_REFS_DIR, or ~/Dropbox)",
+    run: rename::run,
   },
   Command {
     name: "resolve",

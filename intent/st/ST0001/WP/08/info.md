@@ -2,7 +2,7 @@
 wp_id: WP-08
 title: Rename, links and the pplr:// handler
 scope: M
-status: Not Started
+status: WIP
 ---
 
 # WP-08: Rename, links and the pplr:// handler

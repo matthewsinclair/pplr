@@ -156,28 +156,21 @@ fn the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status() -> Re
 }
 
 #[test]
-fn a_person_marker_becomes_their_folder_except_for_commands_that_take_urls() -> Result<()> {
+fn a_person_marker_becomes_their_folder_for_a_fallback_command() -> Result<()> {
+  // The URL-taking commands (open, resolve, links, handler) are all native now;
+  // marker::rewrite_args' own tests cover their exemption
   let sandbox = Sandbox::new()?;
   let about = sandbox.data().join("K/Kemp, Jon/About");
   fs::create_dir_all(&about)?;
   fs::write(about.join("Jon Kemp (About).md"), "# Jon Kemp (About)\n")?;
-  sandbox.legacy_script("links", r#"for a in "$@"; do echo "$a"; done"#)?;
-  let bin = sandbox.legacy_script("rename", r#"for a in "$@"; do echo "$a"; done"#)?;
+  let bin = sandbox.legacy_script("sync", r#"for a in "$@"; do echo "$a"; done"#)?;
 
-  let tag = run(sandbox.pplr().env("PPLR_BIN_DIR", &bin).args([
-    "rename",
+  let sync = run(sandbox.pplr().env("PPLR_BIN_DIR", &bin).args([
+    "sync",
     "pplr://k/kemp-jon",
     "pplr://k/kemp-jon/About",
   ]))?;
-  assert_eq!(text(&tag.stdout), "Kemp, Jon\npplr://k/kemp-jon/About\n");
-
-  let links = run(
-    sandbox
-      .pplr()
-      .env("PPLR_BIN_DIR", &bin)
-      .args(["links", "pplr://k/kemp-jon"]),
-  )?;
-  assert_eq!(text(&links.stdout), "pplr://k/kemp-jon\n");
+  assert_eq!(text(&sync.stdout), "Kemp, Jon\npplr://k/kemp-jon/About\n");
   Ok(())
 }
 
@@ -1191,5 +1184,58 @@ fn contact_is_native_and_its_goldens_replay() -> Result<()> {
     }
   }
   assert!(!replayed.is_empty(), "no golden of contact or tag replayed");
+  Ok(())
+}
+
+#[test]
+fn publish_lays_out_an_app_bundle_file_by_file_with_each_mode_kept() -> Result<()> {
+  use pplr::install::{MANIFEST, Manifest, drift};
+  let sandbox = Sandbox::new()?;
+  let app = sandbox.path("built/Pplr Links.app");
+  fs::create_dir_all(app.join("Contents/MacOS"))?;
+  fs::write(app.join("Contents/Info.plist"), "<plist/>")?;
+  fs::set_permissions(
+    app.join("Contents/Info.plist"),
+    fs::Permissions::from_mode(0o644),
+  )?;
+  fs::write(app.join("Contents/MacOS/applet"), "#!/bin/sh\n")?;
+  fs::set_permissions(
+    app.join("Contents/MacOS/applet"),
+    fs::Permissions::from_mode(0o755),
+  )?;
+  let prefix = sandbox.path("opt");
+  let sources = [
+    ("bin/pplr", PathBuf::from(env!("CARGO_BIN_EXE_pplr"))),
+    ("Pplr Links.app", app),
+  ];
+  pplr::install::publish(
+    &sources,
+    &prefix,
+    "2.0.0",
+    "0123456789abcdef0123456789abcdef01234567",
+    "pplr",
+    false,
+  )
+  .map_err(|e| e.to_string())?;
+  let manifest =
+    Manifest::parse(&fs::read_to_string(prefix.join(MANIFEST))?).ok_or("no manifest")?;
+  let paths: Vec<&str> = manifest.files.iter().map(|(_, p)| p.as_str()).collect();
+  assert_eq!(
+    paths,
+    [
+      "Pplr Links.app/Contents/Info.plist",
+      "Pplr Links.app/Contents/MacOS/applet",
+      "bin/pplr"
+    ]
+  );
+  assert!(drift(&prefix, &manifest).is_empty());
+  let mode = |p: &str| fs::metadata(prefix.join(p)).map(|m| m.permissions().mode() & 0o777);
+  assert_eq!(
+    (
+      mode("Pplr Links.app/Contents/MacOS/applet")?,
+      mode("Pplr Links.app/Contents/Info.plist")?
+    ),
+    (0o755, 0o644)
+  );
   Ok(())
 }

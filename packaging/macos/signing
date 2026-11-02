@@ -8,3 +8,5 @@ id.pplr=com.geodica.pplr
 id.pplr-contacts=com.geodica.pplr-contacts
 requirement.pplr=identifier "com.geodica.pplr" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] and certificate leaf[field.1.2.840.113635.100.6.1.13] and certificate leaf[subject.OU] = "76BQL8L47U"
 requirement.pplr-contacts=identifier "com.geodica.pplr-contacts" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] and certificate leaf[field.1.2.840.113635.100.6.1.13] and certificate leaf[subject.OU] = "76BQL8L47U"
+id.Pplr Links.app=com.geodica.pplr-links
+requirement.Pplr Links.app=identifier "com.geodica.pplr-links" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] and certificate leaf[field.1.2.840.113635.100.6.1.13] and certificate leaf[subject.OU] = "76BQL8L47U"

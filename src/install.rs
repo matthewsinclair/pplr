@@ -147,6 +147,7 @@ pub fn runtime_set() -> Vec<&'static str> {
   let mut set = vec!["bin/pplr"];
   if cfg!(target_os = "macos") {
     set.push("bin/pplr-contacts");
+    set.push(crate::layout::APP);
   }
   set
 }
@@ -171,6 +172,32 @@ fn sha256(path: &Path) -> Option<String> {
   )
 }
 
+/// Each source as the files it holds, by their paths in the set: a file is
+/// itself, and a directory (an app bundle) is every file beneath it.
+fn expand(sources: &[(&str, PathBuf)]) -> Vec<(String, PathBuf)> {
+  fn walk(path: String, source: &Path, out: &mut Vec<(String, PathBuf)>) {
+    match std::fs::read_dir(source) {
+      Ok(entries) => {
+        let mut entries: Vec<_> = entries.flatten().map(|e| e.path()).collect();
+        entries.sort();
+        for entry in entries {
+          let name = entry
+            .file_name()
+            .map(|n| n.to_string_lossy().into_owned())
+            .unwrap_or_default();
+          walk(format!("{path}/{name}"), &entry, out);
+        }
+      }
+      Err(_) => out.push((path, source.to_path_buf())),
+    }
+  }
+  let mut out = Vec::new();
+  for (path, source) in sources {
+    walk((*path).to_owned(), source, &mut out);
+  }
+  out
+}
+
 /// Lay a runtime set out in `prefix` and write its manifest (T2, T3). Each
 /// source maps to its path in the set. An existing prefix is replaced only with
 /// `force`, and only when pplr's own manifest says pplr wrote it.
@@ -182,6 +209,7 @@ pub fn publish(
   managed_by: &str,
   force: bool,
 ) -> Result<()> {
+  let sources = expand(sources);
   let occupied = prefix
     .read_dir()
     .is_ok_and(|mut entries| entries.next().is_some());
@@ -230,7 +258,7 @@ pub fn publish(
     }
   }
   let mut files = Vec::new();
-  for (path, source) in sources {
+  for (path, source) in &sources {
     let bytes =
       std::fs::read(source).map_err(|e| format!("cannot read {}: {e}", source.display()))?;
     let target = prefix.join(path);
@@ -238,14 +266,14 @@ pub fn publish(
       std::fs::create_dir_all(dir).map_err(|e| format!("cannot make {}: {e}", dir.display()))?;
     }
     crate::fs::write_atomic(&target, &bytes)?;
-    use std::os::unix::fs::PermissionsExt;
-    std::fs::set_permissions(&target, std::fs::Permissions::from_mode(0o755))?;
+    // Each file keeps its own mode: the binaries are 0755, an app's plist is not
+    std::fs::set_permissions(&target, std::fs::metadata(source)?.permissions())?;
     files.push((
       Sha256::digest(&bytes)
         .iter()
         .map(|b| format!("{b:02x}"))
         .collect(),
-      (*path).to_owned(),
+      path.clone(),
     ));
   }
   let manifest = Manifest {
@@ -306,6 +334,17 @@ pub fn install(args: &[String], config: &Config) -> Result<ExitCode> {
       );
     }
     sources.push(("bin/pplr-contacts", sidecar));
+    let app = layout.app();
+    if !app.is_dir() {
+      return Err(
+        format!(
+          "the pplr:// handler app is missing at {}: build it with bin/devbin build",
+          app.display()
+        )
+        .into(),
+      );
+    }
+    sources.push((crate::layout::APP, app));
   }
   publish(
     &sources,

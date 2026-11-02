@@ -22,3 +22,25 @@ if [[ ! -x $out || $src -nt $out || $plist -nt $out ]]; then
   swiftc -O -swift-version 5 -o $out $src -framework Contacts \
     -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __info_plist -Xlinker $plist
 fi
+
+# The pplr:// handler app, beside the binary (ST0001 WP08; hv's ruling: built
+# ahead of time and signed, never on the user's machine)
+app_src="packaging/macos/Pplr Links.applescript"
+app="target/$profile/Pplr Links.app"
+if [[ ! -d $app || $app_src -nt $app ]]; then
+  print "build: compiling the pplr:// handler into $app"
+  rm -rf $app
+  osacompile -o $app $app_src
+  plist=$app/Contents/Info.plist
+  pb() { /usr/libexec/PlistBuddy -c "$1" $plist }
+  pb "Set :CFBundleIdentifier com.geodica.pplr-links" 2>/dev/null || pb "Add :CFBundleIdentifier string com.geodica.pplr-links"
+  pb "Add :LSUIElement bool true"
+  pb "Add :CFBundleURLTypes array"
+  pb "Add :CFBundleURLTypes:0 dict"
+  pb "Add :CFBundleURLTypes:0:CFBundleURLName string pplr link"
+  pb "Add :CFBundleURLTypes:0:CFBundleURLSchemes array"
+  pb "Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string pplr"
+  # The plist edits break osacompile's signature: sign it ad hoc again, as the
+  # dev build it is (the release signs it with the Developer ID)
+  codesign --force --sign - $app
+fi

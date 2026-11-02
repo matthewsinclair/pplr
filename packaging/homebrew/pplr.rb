@@ -36,13 +36,16 @@ class Pplr < Formula
                  "and certificate leaf[field.1.2.840.113635.100.6.1.13] " \
                  "and certificate leaf[subject.OU] = \"76BQL8L47U\"".freeze
   REQUIREMENTS = {
-    "pplr"          => "identifier \"com.geodica.pplr\" and #{DEVELOPER_ID}",
-    "pplr-contacts" => "identifier \"com.geodica.pplr-contacts\" and #{DEVELOPER_ID}",
+    "pplr"           => "identifier \"com.geodica.pplr\" and #{DEVELOPER_ID}",
+    "pplr-contacts"  => "identifier \"com.geodica.pplr-contacts\" and #{DEVELOPER_ID}",
+    "Pplr Links.app" => "identifier \"com.geodica.pplr-links\" and #{DEVELOPER_ID}",
   }.freeze
 
   def verify_signatures
     REQUIREMENTS.each do |binary, requirement|
-      system "/usr/bin/codesign", "--verify", "--strict", "-R=#{requirement}", libexec/"bin"/binary
+      # The binaries are in bin/, the pplr:// handler app at the root
+      path = binary.end_with?(".app") ? libexec/binary : libexec/"bin"/binary
+      system "/usr/bin/codesign", "--verify", "--strict", "-R=#{requirement}", path
     end
   end
 

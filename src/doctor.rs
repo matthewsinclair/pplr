@@ -195,10 +195,11 @@ fn signatures(kind: crate::install::Kind, root: &Path) -> Vec<Row> {
       "Signatures: a dev or opt build is not Developer ID signed (a release is: bin/devbin macos prepare)",
     )];
   }
-  ["pplr", "pplr-contacts"]
+  crate::install::runtime_set()
     .iter()
-    .map(|binary| {
-      let path = root.join("bin").join(binary);
+    .map(|item| {
+      let binary = item.trim_start_matches("bin/");
+      let path = root.join(item);
       let Some(requirement) = signing_fact(&format!("requirement.{binary}")) else {
         return row(
           Status::Fail,
