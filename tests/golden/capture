@@ -136,8 +136,7 @@ for name in "${names[@]}"; do
 
   typeset -a extra=("${(@f)envs[$name]}")
   extra=("${(@)extra:#}")
-  print -rl -- "${extra[@]}" > "$out/env"
-  [[ -s $out/env ]] || rm -f -- "$out/env"
+  (( ${#extra} == 0 )) || print -rl -- "${extra[@]}" > "$out/env"
   extra=("${(@)extra//@SANDBOX@/$sb}")
 
   i=0

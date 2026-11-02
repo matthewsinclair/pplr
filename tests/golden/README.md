@@ -60,12 +60,13 @@ Applied to every stdout, stderr and changed text file, in this order. This list 
 
 The bash scripts read a fake `date` that answers `2026-06-15 09:30:00` local time, so the default workbook is `_out/contacts-plan-20260615-0930.xlsx`. The Rust port takes the same day from `PPLR_TODAY` (design 3.5).
 
-## Rules for the replay (tests/cli.rs, on WP02's scaffold)
+## The replay (`every_golden_of_a_ported_command_replays` in tests/cli.rs)
 
-- Run each step of each case against the Rust binary, with the same settings and a sandbox seeded from `fixture/`, skipping only the commands still on the fallback. Compare stdout, stderr, exit code and the manifest, after the rewrites above.
+- Each case whose steps all name a command in `cli::COMMANDS` runs against the Rust binary, with the same settings and a sandbox seeded from `fixture/`; a case with a step on the fallback is skipped, and the test prints which cases ran. Stdout, stderr, exit code and the tree must match after the rewrites above, except the real-date rewrite: the port reads `PPLR_TODAY` (design 3.5).
 - **The sandbox root must be as long as `/private/tmp/pplr-golden.XXXXXXXX`.** `rename` cuts each running-text line at 200 columns, absolute path included, so those lines change with the root's length.
-- A workbook compares by its `.cells` dump: one `sheet<TAB>cell<TAB>value` line per non-empty cell, with the XML entities decoded and newlines as `\n`. Styling (the shaded review columns, the Decision list, the Low and Medium highlights) is not in the dump; WP11 decides how to check it.
-- JSON on stdout compares semantically (design D4): Swift writes `"key" : value` and escapes `/`, which `serde_json` does not.
+- A workbook compares by its `.cells` dump: one `sheet<TAB>cell<TAB>value` line per non-empty cell, with the XML entities decoded and newlines as `\n`. The replay refuses an `x` entry until WP11 brings an `.xlsx` reader. Styling (the shaded review columns, the Decision list, the Low and Medium highlights) is not in the dump; WP11 decides how to check it.
+- JSON on stdout is to compare semantically (design D4): Swift writes `"key" : value` and escapes `/`, which `serde_json` does not. The replay compares bytes today; the first WP to port a command that prints JSON makes it semantic.
+- `open-print-cms-up` tells `fakes/curl` the CMS is up through `PPLR_GOLDEN_CMS`; WP04 decides how the replay tells the port.
 - `email` scenarios feed the legacy code a listing through `fakes/mail-recent`. WP14 replaces `mail-recent` with pplr's own reader, and decides how the replay gives that reader the same listing.
 
 ## Not captured, and why
