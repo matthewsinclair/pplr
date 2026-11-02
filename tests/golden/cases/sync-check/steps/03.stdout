@@ -1,0 +1,44 @@
+pplr sync --check (read-only)
+
+  pplr people             9
+  Contacts cards          11
+  in group PPLR           3
+
+  linked (pplr marker)    2
+    in another account    1  (marked by the pplr URL; the group is iCloud's only)
+  matched by email        1
+  matched by LinkedIn     1
+  matched by phone        0
+  name only (confirm)     2
+  ambiguous               1
+  only in pplr            2
+  group orphans           1
+  matched, fields differ  4
+
+Name only: same name, no shared email, LinkedIn or phone. Confirm before linking:
+  D/de Vries, Annelies  <->  Annelies de Vries
+  P/Pemberton, Rufus  <->  Rufus Pemberton
+
+Ambiguous: more than one card could be this person:
+  H/Hartigan, Mo: Mo Hartigan (c-hartigan-1:ABPerson); Mo Hartigan (c-hartigan-2:ABPerson)
+
+Matched, with differences:
+  O/Okafor, Chidi  <->  Chidi Okafor  [linked, in group]
+      role      pplr: CTO  |  Contacts: Chief Technology Officer
+      email     pplr: -  |  Contacts: chidi.personal@example.net
+      phone     pplr: -  |  Contacts: +447700900777
+  T/Thistlewood, Ottoline  <->  Ottoline Thistle  [linked, in group]
+      name      pplr: Ottoline Thistlewood  |  Contacts: Ottoline Thistle
+  M/Moreau-Lindqvist, Henrik  <->  Henrik Moreau Lindqvist  [linkedin]
+      name      pplr: Henrik Moreau-Lindqvist  |  Contacts: Henrik Moreau Lindqvist
+      role      pplr: Partner  |  Contacts: -
+      email     pplr: -  |  Contacts: henrik@brightmoor.example
+  V/Varga, Zsófia  <->  Zsófia Varga  [email, other account]
+      linkedin  pplr: zsofia-varga  |  Contacts: -
+
+In the "PPLR" group but not matched to anyone in pplr:
+  Lena Orphanidis
+
+Only in pplr:
+  B/Blackwood, Esme
+  Q/Quennell, Imogen

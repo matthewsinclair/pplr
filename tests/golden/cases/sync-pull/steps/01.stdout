@@ -1,0 +1,10 @@
+pplr sync --pull (dry run: nothing written; --apply to write)
+
+  people to update in pplr  2
+
+  M/Moreau-Lindqvist, Henrik  <-  Henrik Moreau Lindqvist
+      + email henrik@brightmoor.example
+
+  O/Okafor, Chidi  <-  Chidi Okafor
+      + email chidi.personal@example.net
+      + phone +447700900777

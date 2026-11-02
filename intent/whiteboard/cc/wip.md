@@ -3,10 +3,10 @@ node: cc
 name: cc
 role: cc
 session_id: ae86b27f-47f4-447b-b2aa-713a050085b2
-heartbeat_at: 2026-11-02 09:10Z
+heartbeat_at: 2026-11-02 15:07Z
 status: active
-focus: "quiesced for hv's move; ST0001 port lane awaits vc's handout after hv's go-ahead"
-claims: []
+focus: "ST0001 WP03: golden capture from the legacy code (synthetic fixtures, sandboxed PPLR_DATA)"
+claims: [ST0001/03]
 ---
 
 # cc (cc)

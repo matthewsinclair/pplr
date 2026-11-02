@@ -1,0 +1,9 @@
+pplr sync --plan (read-only)
+
+  1	Low / Add
+  1	Low / Update
+  2	Medium / Update
+  2	High / Add
+  3	High / Update
+
+Workbook: @SANDBOX@/plan.xlsx

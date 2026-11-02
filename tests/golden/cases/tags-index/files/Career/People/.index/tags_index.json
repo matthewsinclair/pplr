@@ -1,0 +1,196 @@
+{
+ "generated_at": "@GENERATED_AT@",
+ "people_count": 9,
+ "people": [
+  {
+   "name": "Blackwood, Esme",
+   "display": "Esme Blackwood",
+   "path": "B/Blackwood, Esme",
+   "about": "B/Blackwood, Esme/About/Esme Blackwood (About).md",
+   "marker": "pplr://b/blackwood-esme",
+   "role": "",
+   "company": "",
+   "picture": null,
+   "tags": [],
+   "facets": {}
+  },
+  {
+   "name": "de Vries, Annelies",
+   "display": "Annelies de Vries",
+   "path": "D/de Vries, Annelies",
+   "about": "D/de Vries, Annelies/About/Annelies de Vries (About).md",
+   "marker": "pplr://d/de-vries-annelies",
+   "role": "Founder",
+   "company": "Kestrel Pay",
+   "picture": "D/de Vries, Annelies/About/Annelies de Vries (Picture).jpeg",
+   "tags": [
+    "contact",
+    "founder",
+    "fintech"
+   ],
+   "facets": {
+    "role": [
+     "founder"
+    ],
+    "sector": [
+     "fintech"
+    ],
+    "relationship": [
+     "contact"
+    ]
+   }
+  },
+  {
+   "name": "Hartigan, Mo",
+   "display": "Mo Hartigan",
+   "path": "H/Hartigan, Mo",
+   "about": "H/Hartigan, Mo/About/Mo Hartigan (About).md",
+   "marker": "pplr://h/hartigan-mo",
+   "role": "Investor",
+   "company": "Gullwing Capital",
+   "picture": null,
+   "tags": [
+    "vip",
+    "3month"
+   ],
+   "facets": {
+    "relationship": [
+     "vip"
+    ],
+    "cadence": [
+     "3month"
+    ]
+   }
+  },
+  {
+   "name": "Moreau-Lindqvist, Henrik",
+   "display": "Henrik Moreau-Lindqvist",
+   "path": "M/Moreau-Lindqvist, Henrik",
+   "about": "M/Moreau-Lindqvist, Henrik/About/Henrik Moreau-Lindqvist (About).md",
+   "marker": "pplr://m/moreau-lindqvist-henrik",
+   "role": "Partner",
+   "company": "Brightmoor Ventures",
+   "picture": "M/Moreau-Lindqvist, Henrik/About/Henrik Moreau-Lindqvist (Picture).png",
+   "tags": [
+    "career",
+    "6month",
+    "investor"
+   ],
+   "facets": {
+    "role": [
+     "investor"
+    ],
+    "relationship": [
+     "career"
+    ],
+    "cadence": [
+     "6month"
+    ]
+   }
+  },
+  {
+   "name": "Okafor, Chidi",
+   "display": "Chidi Okafor",
+   "path": "O/Okafor, Chidi",
+   "about": "O/Okafor, Chidi/About/Chidi Okafor (About).md",
+   "marker": "pplr://o/okafor-chidi",
+   "role": "CTO",
+   "company": "Larkspur Ledger",
+   "picture": "O/Okafor, Chidi/About/Chidi Okafor (Picture).jpg",
+   "tags": [
+    "vip",
+    "london",
+    "cto",
+    "fintech",
+    "mentor"
+   ],
+   "facets": {
+    "role": [
+     "cto"
+    ],
+    "sector": [
+     "fintech"
+    ],
+    "relationship": [
+     "vip",
+     "mentor"
+    ],
+    "place": [
+     "london"
+    ]
+   }
+  },
+  {
+   "name": "Pemberton, Rufus",
+   "display": "Rufus Pemberton",
+   "path": "P/Pemberton, Rufus",
+   "about": "P/Pemberton, Rufus/About/Rufus Pemberton (About).md",
+   "marker": "pplr://p/pemberton-rufus",
+   "role": "",
+   "company": "",
+   "picture": null,
+   "tags": [],
+   "facets": {}
+  },
+  {
+   "name": "Quennell, Imogen",
+   "display": "Imogen Quennell",
+   "path": "Q/Quennell, Imogen",
+   "about": "Q/Quennell, Imogen/About/Imogen Quennell (About).md",
+   "marker": "pplr://q/quennell-imogen",
+   "role": "Principal Engineer",
+   "company": "Tarnhelm Labs",
+   "picture": "Q/Quennell, Imogen/About/Imogen Quennell (Picture).png",
+   "tags": [],
+   "facets": {}
+  },
+  {
+   "name": "Thistlewood, Ottoline",
+   "display": "Ottoline Thistlewood",
+   "path": "T/Thistlewood, Ottoline",
+   "about": "T/Thistlewood, Ottoline/About/Ottoline Thistlewood (About).md",
+   "marker": "pplr://t/thistlewood-ottoline",
+   "role": "Advisor",
+   "company": "",
+   "picture": null,
+   "tags": [
+    "contact"
+   ],
+   "facets": {
+    "relationship": [
+     "contact"
+    ]
+   }
+  },
+  {
+   "name": "Varga, Zsófia",
+   "display": "Zsófia Varga",
+   "path": "V/Varga, Zsófia",
+   "about": "V/Varga, Zsófia/About/Zsófia Varga (About).md",
+   "marker": "pplr://v/varga-zsofia",
+   "role": "Head of Engineering",
+   "company": "Fenwick Health",
+   "picture": "V/Varga, Zsófia/About/Zsófia Varga (Picture).jpg",
+   "tags": [
+    "contact",
+    "engineering",
+    "healthtech",
+    "berlin"
+   ],
+   "facets": {
+    "function": [
+     "engineering"
+    ],
+    "sector": [
+     "healthtech"
+    ],
+    "relationship": [
+     "contact"
+    ],
+    "place": [
+     "berlin"
+    ]
+   }
+  }
+ ]
+}

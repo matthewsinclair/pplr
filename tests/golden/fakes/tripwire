@@ -1,0 +1,5 @@
+#!/bin/zsh
+# A tool no scenario should reach. The call is logged outside the recorded tree,
+# and the capture fails when the log is not empty.
+print -r -- "${0:t} $*" >> "$PPLR_GOLDEN_TRIPWIRE"
+exit 97

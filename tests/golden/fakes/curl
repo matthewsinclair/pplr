@@ -1,0 +1,3 @@
+#!/bin/zsh
+# The CMS probe in pplr open: up when PPLR_GOLDEN_CMS is "up", down otherwise.
+[[ $PPLR_GOLDEN_CMS == up ]]

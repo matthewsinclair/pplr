@@ -5,10 +5,12 @@
     "name": "cc",
     "role": "cc",
     "session_id": "ae86b27f-47f4-447b-b2aa-713a050085b2",
-    "heartbeat_at": "2026-11-02T09:10:12.128Z",
+    "heartbeat_at": "2026-11-02T15:07:04.642Z",
     "status": "active",
-    "focus": "quiesced for hv's move; ST0001 port lane awaits vc's handout after hv's go-ahead",
-    "claims": [],
+    "focus": "ST0001 WP03: golden capture from the legacy code (synthetic fixtures, sandboxed PPLR_DATA)",
+    "claims": [
+      "ST0001/03"
+    ],
     "recorded_at": "2026-11-02T07:22:34.821Z",
     "migrated_at": "2026-11-02T07:22:34.821Z"
   },
@@ -23,5 +25,11 @@
       "archived_at": "2026-11-02T09:10:12.108Z"
     }
   ],
-  "handled": []
+  "handled": [
+    {
+      "id": "01M6EBJN0FHKYGJBHTFH5G1XQD",
+      "sender": "vc",
+      "handled_at": "2026-11-02T14:46:29.077Z"
+    }
+  ]
 }

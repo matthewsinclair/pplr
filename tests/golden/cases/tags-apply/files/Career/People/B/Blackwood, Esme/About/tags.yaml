@@ -1,0 +1,7 @@
+# Tags for Esme Blackwood. A bare word is your own tag; auto and inferred tags
+# are rewritten by pplr, hand tags never are. Vocabulary: _pplr/vocabulary.yaml
+tags:
+  - {tag: founder, source: auto, at: 2026-06-15}
+  - {tag: healthtech, source: auto, at: 2026-06-15}
+  - {tag: mentor, source: inferred, evidence: "Ran the \"Seedling\" mentoring circle"}
+  - london

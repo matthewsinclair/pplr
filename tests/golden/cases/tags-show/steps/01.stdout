@@ -1,0 +1,4 @@
+role          cto (auto)
+sector        fintech (auto)
+relationship  vip  mentor (inferred)
+place         london

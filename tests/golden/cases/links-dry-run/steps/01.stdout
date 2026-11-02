@@ -1,0 +1,11 @@
+pplr links (dry run: nothing written; --apply to write)
+
+  links into the people tree  9
+  to convert                  6
+  left as they are            3
+  files                       2
+
+Left as they are:
+  @SANDBOX@/refs/Notes/project.md:8  no such file in Q/Quennell, Imogen: About/Imogen Quennell (About
+  @SANDBOX@/refs/Notes/project.md:13  no such person: Z/Zephyr, Nobody
+  @SANDBOX@/refs/Notes/project.md:14  no such file in O/Okafor, Chidi: Meetings/20990101 Never/Notes.md

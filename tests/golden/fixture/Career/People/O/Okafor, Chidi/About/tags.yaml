@@ -1,0 +1,8 @@
+# Tags for Chidi Okafor. A bare word is your own tag; auto and inferred tags
+# are rewritten by pplr, hand tags never are. Vocabulary: _pplr/vocabulary.yaml
+tags:
+  - vip
+  - london
+  - {tag: cto, source: auto}
+  - {tag: fintech, source: auto}
+  - {tag: mentor, source: inferred, evidence: "Mentored the \"Ledger\" cohort"}

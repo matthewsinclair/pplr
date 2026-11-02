@@ -1,0 +1,11 @@
+pplr sync --apply-plan --apply
+
+  add (new iCloud cards)  3
+  update                  6
+  link only               0
+  nothing to change       0
+  written now             9
+  failed                  0
+  still to write          0
+
+Backup: @SANDBOX@/backups/@STAMP@-contacts.json

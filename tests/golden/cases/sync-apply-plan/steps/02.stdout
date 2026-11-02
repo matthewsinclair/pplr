@@ -1,0 +1,17 @@
+pplr sync --apply-plan (dry run: nothing written; --apply to write)
+
+  add (new iCloud cards)  3
+  update                  6
+  link only               0
+  nothing to change       0
+
+Would write:
+  Update     H/Hartigan, Mo  <->  Mo Hartigan  [company, role, +1 email, +1 phone, +pplr URL, +group]
+  Add        P/Pemberton, Rufus  [new iCloud card]
+  Update     M/Moreau-Lindqvist, Henrik  <->  Henrik Moreau Lindqvist  [name, role, +pplr URL, +group]
+  Update     T/Thistlewood, Ottoline  <->  Ottoline Thistle  [name, pplr URL updated]
+  Update     D/de Vries, Annelies  <->  Annelies de Vries  [role, +1 email, +2 phone, +pplr URL, +group]
+  Update     O/Okafor, Chidi  <->  Chidi Okafor  [role]
+  Update     V/Varga, Zsófia  <->  Zsófia Varga  [+LinkedIn, +pplr URL]
+  Add        B/Blackwood, Esme  [new iCloud card]
+  Add        Q/Quennell, Imogen  [new iCloud card, 1 email, photo]

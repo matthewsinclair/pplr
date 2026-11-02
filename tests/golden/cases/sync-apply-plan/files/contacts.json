@@ -1,0 +1,358 @@
+[
+  {
+    "account" : "home",
+    "emails" : [
+      "chidi@larkspur.example",
+      "chidi.personal@example.net"
+    ],
+    "family" : "Okafor",
+    "given" : "Chidi",
+    "groups" : [
+      "PPLR"
+    ],
+    "hasImage" : false,
+    "id" : "c-okafor:ABPerson",
+    "jobTitle" : "CTO",
+    "linkedin" : [
+      "chidi-okafor-x"
+    ],
+    "organization" : "Larkspur Ledger",
+    "phones" : [
+      "+442079460001",
+      "+447700900777"
+    ],
+    "urls" : [
+      {
+        "label" : "pplr",
+        "value" : "pplr:\/\/o\/okafor-chidi"
+      }
+    ]
+  },
+  {
+    "account" : "other",
+    "emails" : [
+      "zsofiavarga+news@gmail.com"
+    ],
+    "family" : "Varga",
+    "given" : "Zsófia",
+    "groups" : [
+
+    ],
+    "id" : "c-varga:ABPerson",
+    "jobTitle" : "Head of Engineering",
+    "linkedin" : [
+      "zsofia-varga"
+    ],
+    "organization" : "Fenwick Health",
+    "phones" : [
+
+    ],
+    "urls" : [
+      {
+        "label" : "LinkedIn",
+        "value" : "https:\/\/www.linkedin.com\/in\/zsofia-varga\/"
+      },
+      {
+        "label" : "pplr",
+        "value" : "pplr:\/\/v\/varga-zsofia"
+      }
+    ]
+  },
+  {
+    "account" : "home",
+    "emails" : [
+      "henrik@brightmoor.example"
+    ],
+    "family" : "Moreau-Lindqvist",
+    "given" : "Henrik",
+    "groups" : [
+      "PPLR"
+    ],
+    "hasImage" : false,
+    "id" : "c-moreau:ABPerson",
+    "jobTitle" : "Partner",
+    "linkedin" : [
+      "henrik-ml"
+    ],
+    "organization" : "Brightmoor Ventures",
+    "phones" : [
+
+    ],
+    "urls" : [
+      {
+        "label" : "pplr",
+        "value" : "pplr:\/\/m\/moreau-lindqvist-henrik"
+      }
+    ]
+  },
+  {
+    "account" : "home",
+    "emails" : [
+      "annelies@kestrel.example"
+    ],
+    "family" : "de Vries",
+    "given" : "Annelies",
+    "groups" : [
+      "PPLR"
+    ],
+    "hasImage" : true,
+    "id" : "c-devries:ABPerson",
+    "jobTitle" : "Founder",
+    "linkedin" : [
+
+    ],
+    "organization" : "Kestrel Pay",
+    "phones" : [
+      "07700900123",
+      "+447700900123",
+      "+491512345678"
+    ],
+    "urls" : [
+      {
+        "label" : "pplr",
+        "value" : "pplr:\/\/d\/de-vries-annelies"
+      }
+    ]
+  },
+  {
+    "account" : "home",
+    "emails" : [
+      "ottoline@thistle.example"
+    ],
+    "family" : "Thistlewood",
+    "given" : "Ottoline",
+    "groups" : [
+      "PPLR"
+    ],
+    "id" : "c-thistle:ABPerson",
+    "jobTitle" : "Advisor",
+    "linkedin" : [
+
+    ],
+    "organization" : "",
+    "phones" : [
+
+    ],
+    "urls" : [
+      {
+        "label" : "pplr",
+        "value" : "pplr:\/\/t\/thistlewood-ottoline"
+      }
+    ]
+  },
+  {
+    "account" : "none",
+    "emails" : [
+
+    ],
+    "family" : "Pemberton",
+    "given" : "Rufus",
+    "groups" : [
+
+    ],
+    "id" : "c-pemberton:ABPerson",
+    "jobTitle" : "",
+    "linkedin" : [
+
+    ],
+    "organization" : "",
+    "phones" : [
+
+    ],
+    "urls" : [
+
+    ]
+  },
+  {
+    "emails" : [
+
+    ],
+    "family" : "Hartigan",
+    "given" : "Mo",
+    "groups" : [
+
+    ],
+    "id" : "c-hartigan-1:ABPerson",
+    "jobTitle" : "",
+    "linkedin" : [
+
+    ],
+    "organization" : "",
+    "phones" : [
+
+    ],
+    "urls" : [
+
+    ]
+  },
+  {
+    "emails" : [
+      "mo@gullwing.example"
+    ],
+    "family" : "Hartigan",
+    "given" : "Mo",
+    "groups" : [
+      "PPLR"
+    ],
+    "id" : "c-hartigan-2:ABPerson",
+    "jobTitle" : "Investor",
+    "linkedin" : [
+
+    ],
+    "organization" : "Gullwing Capital",
+    "phones" : [
+      "+447700900456"
+    ],
+    "urls" : [
+      {
+        "label" : "pplr",
+        "value" : "pplr:\/\/h\/hartigan-mo"
+      }
+    ]
+  },
+  {
+    "account" : "home",
+    "emails" : [
+      "immy@tarnhelm.example"
+    ],
+    "family" : "Quennell",
+    "given" : "Immy",
+    "groups" : [
+
+    ],
+    "id" : "c-quennell:ABPerson",
+    "jobTitle" : "",
+    "linkedin" : [
+
+    ],
+    "organization" : "Tarnhelm Labs",
+    "phones" : [
+
+    ],
+    "urls" : [
+
+    ]
+  },
+  {
+    "emails" : [
+      "ivo@northgate.example"
+    ],
+    "family" : "Strand",
+    "given" : "Ivo",
+    "groups" : [
+
+    ],
+    "id" : "c-strand:ABPerson",
+    "jobTitle" : "",
+    "linkedin" : [
+
+    ],
+    "organization" : "Northgate",
+    "phones" : [
+
+    ],
+    "urls" : [
+
+    ]
+  },
+  {
+    "emails" : [
+
+    ],
+    "family" : "Orphanidis",
+    "given" : "Lena",
+    "groups" : [
+      "PPLR"
+    ],
+    "id" : "c-orphan:ABPerson",
+    "jobTitle" : "",
+    "linkedin" : [
+
+    ],
+    "organization" : "",
+    "phones" : [
+
+    ],
+    "urls" : [
+
+    ]
+  },
+  {
+    "account" : "home",
+    "emails" : [
+
+    ],
+    "family" : "Pemberton",
+    "given" : "Rufus",
+    "groups" : [
+      "PPLR"
+    ],
+    "id" : "new-12",
+    "jobTitle" : "",
+    "linkedin" : [
+
+    ],
+    "organization" : "",
+    "phones" : [
+
+    ],
+    "urls" : [
+      {
+        "label" : "pplr",
+        "value" : "pplr:\/\/p\/pemberton-rufus"
+      }
+    ]
+  },
+  {
+    "account" : "home",
+    "emails" : [
+
+    ],
+    "family" : "Blackwood",
+    "given" : "Esme",
+    "groups" : [
+      "PPLR"
+    ],
+    "id" : "new-13",
+    "jobTitle" : "",
+    "linkedin" : [
+
+    ],
+    "organization" : "",
+    "phones" : [
+
+    ],
+    "urls" : [
+      {
+        "label" : "pplr",
+        "value" : "pplr:\/\/b\/blackwood-esme"
+      }
+    ]
+  },
+  {
+    "account" : "home",
+    "emails" : [
+      "imogen@tarnhelm.example"
+    ],
+    "family" : "Quennell",
+    "given" : "Imogen",
+    "groups" : [
+      "PPLR"
+    ],
+    "id" : "new-14",
+    "jobTitle" : "Principal Engineer",
+    "linkedin" : [
+
+    ],
+    "organization" : "Tarnhelm Labs",
+    "phones" : [
+
+    ],
+    "urls" : [
+      {
+        "label" : "pplr",
+        "value" : "pplr:\/\/q\/quennell-imogen"
+      }
+    ]
+  }
+]

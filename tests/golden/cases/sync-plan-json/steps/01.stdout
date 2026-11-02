@@ -1,0 +1,580 @@
+{
+  "cards" : [
+    {
+      "account" : "home",
+      "emails" : [
+
+      ],
+      "family" : "de Vries",
+      "given" : "Annelies",
+      "groups" : [
+
+      ],
+      "id" : "c-devries:ABPerson",
+      "jobTitle" : "Founder & CEO",
+      "linkedin" : [
+
+      ],
+      "name" : "Annelies de Vries",
+      "organization" : "Kestrel Pay",
+      "phones" : [
+        "07700900123"
+      ],
+      "proposedFor" : "D\/de Vries, Annelies",
+      "ref" : "C0001"
+    },
+    {
+      "account" : "home",
+      "emails" : [
+
+      ],
+      "family" : "Hartigan",
+      "given" : "Mo",
+      "groups" : [
+
+      ],
+      "id" : "c-hartigan-1:ABPerson",
+      "jobTitle" : "",
+      "linkedin" : [
+
+      ],
+      "name" : "Mo Hartigan",
+      "organization" : "",
+      "phones" : [
+
+      ],
+      "proposedFor" : "dupe? H\/Hartigan, Mo",
+      "ref" : "C0002"
+    },
+    {
+      "account" : "home",
+      "emails" : [
+
+      ],
+      "family" : "Hartigan",
+      "given" : "Mo",
+      "groups" : [
+
+      ],
+      "id" : "c-hartigan-2:ABPerson",
+      "jobTitle" : "",
+      "linkedin" : [
+
+      ],
+      "name" : "Mo Hartigan",
+      "organization" : "Gullwing",
+      "phones" : [
+
+      ],
+      "proposedFor" : "H\/Hartigan, Mo",
+      "ref" : "C0003"
+    },
+    {
+      "account" : "home",
+      "emails" : [
+        "henrik@brightmoor.example"
+      ],
+      "family" : "Moreau Lindqvist",
+      "given" : "Henrik",
+      "groups" : [
+
+      ],
+      "id" : "c-moreau:ABPerson",
+      "jobTitle" : "",
+      "linkedin" : [
+        "henrik-ml"
+      ],
+      "name" : "Henrik Moreau Lindqvist",
+      "organization" : "Brightmoor Ventures",
+      "phones" : [
+
+      ],
+      "proposedFor" : "M\/Moreau-Lindqvist, Henrik",
+      "ref" : "C0004"
+    },
+    {
+      "account" : "home",
+      "emails" : [
+        "chidi@larkspur.example",
+        "chidi.personal@example.net"
+      ],
+      "family" : "Okafor",
+      "given" : "Chidi",
+      "groups" : [
+        "PPLR"
+      ],
+      "id" : "c-okafor:ABPerson",
+      "jobTitle" : "Chief Technology Officer",
+      "linkedin" : [
+        "chidi-okafor-x"
+      ],
+      "marker" : "o\/okafor-chidi",
+      "name" : "Chidi Okafor",
+      "organization" : "Larkspur Ledger",
+      "phones" : [
+        "+442079460001",
+        "+447700900777"
+      ],
+      "proposedFor" : "O\/Okafor, Chidi",
+      "ref" : "C0005"
+    },
+    {
+      "account" : "home",
+      "emails" : [
+
+      ],
+      "family" : "Orphanidis",
+      "given" : "Lena",
+      "groups" : [
+        "PPLR"
+      ],
+      "id" : "c-orphan:ABPerson",
+      "jobTitle" : "",
+      "linkedin" : [
+
+      ],
+      "name" : "Lena Orphanidis",
+      "organization" : "",
+      "phones" : [
+
+      ],
+      "ref" : "C0006"
+    },
+    {
+      "account" : "none",
+      "emails" : [
+
+      ],
+      "family" : "Pemberton",
+      "given" : "Rufus",
+      "groups" : [
+
+      ],
+      "id" : "c-pemberton:ABPerson",
+      "jobTitle" : "",
+      "linkedin" : [
+
+      ],
+      "name" : "Rufus Pemberton",
+      "organization" : "",
+      "phones" : [
+
+      ],
+      "ref" : "C0007"
+    },
+    {
+      "account" : "home",
+      "emails" : [
+        "immy@tarnhelm.example"
+      ],
+      "family" : "Quennell",
+      "given" : "Immy",
+      "groups" : [
+
+      ],
+      "id" : "c-quennell:ABPerson",
+      "jobTitle" : "",
+      "linkedin" : [
+
+      ],
+      "name" : "Immy Quennell",
+      "organization" : "Tarnhelm Labs",
+      "phones" : [
+
+      ],
+      "ref" : "C0008"
+    },
+    {
+      "account" : "home",
+      "emails" : [
+        "ivo@northgate.example"
+      ],
+      "family" : "Strand",
+      "given" : "Ivo",
+      "groups" : [
+
+      ],
+      "id" : "c-strand:ABPerson",
+      "jobTitle" : "",
+      "linkedin" : [
+
+      ],
+      "name" : "Ivo Strand",
+      "organization" : "Northgate",
+      "phones" : [
+
+      ],
+      "ref" : "C0009"
+    },
+    {
+      "account" : "home",
+      "emails" : [
+        "ottoline@thistle.example"
+      ],
+      "family" : "Thistle",
+      "given" : "Ottoline",
+      "groups" : [
+        "PPLR"
+      ],
+      "id" : "c-thistle:ABPerson",
+      "jobTitle" : "Advisor",
+      "linkedin" : [
+
+      ],
+      "marker" : "T\/Thistle,%20Ottoline",
+      "name" : "Ottoline Thistle",
+      "organization" : "",
+      "phones" : [
+
+      ],
+      "proposedFor" : "T\/Thistlewood, Ottoline",
+      "ref" : "C0010"
+    },
+    {
+      "account" : "other",
+      "emails" : [
+        "zsofiavarga+news@gmail.com"
+      ],
+      "family" : "Varga",
+      "given" : "Zsófia",
+      "groups" : [
+
+      ],
+      "id" : "c-varga:ABPerson",
+      "jobTitle" : "Head of Engineering",
+      "linkedin" : [
+
+      ],
+      "name" : "Zsófia Varga",
+      "organization" : "Fenwick Health",
+      "phones" : [
+
+      ],
+      "proposedFor" : "V\/Varga, Zsófia",
+      "ref" : "C0011"
+    }
+  ],
+  "generated" : "@GENERATED@",
+  "group" : "PPLR",
+  "people" : [
+    {
+      "company" : "",
+      "dir" : "@SANDBOX@\/Career\/People\/B\/Blackwood, Esme",
+      "emails" : [
+
+      ],
+      "family" : "Blackwood",
+      "given" : "Esme",
+      "key" : "B\/Blackwood, Esme",
+      "linkedin" : "",
+      "marker" : "pplr:\/\/b\/blackwood-esme",
+      "phones" : [
+
+      ],
+      "role" : ""
+    },
+    {
+      "company" : "Kestrel Pay",
+      "dir" : "@SANDBOX@\/Career\/People\/D\/de Vries, Annelies",
+      "emails" : [
+        "annelies@kestrel.example"
+      ],
+      "family" : "de Vries",
+      "given" : "Annelies",
+      "key" : "D\/de Vries, Annelies",
+      "linkedin" : "",
+      "marker" : "pplr:\/\/d\/de-vries-annelies",
+      "phones" : [
+        "+447700900123",
+        "+491512345678"
+      ],
+      "picture" : "@SANDBOX@\/Career\/People\/D\/de Vries, Annelies\/About\/Annelies de Vries (Picture).jpeg",
+      "role" : "Founder"
+    },
+    {
+      "company" : "Gullwing Capital",
+      "dir" : "@SANDBOX@\/Career\/People\/H\/Hartigan, Mo",
+      "emails" : [
+        "mo@gullwing.example"
+      ],
+      "family" : "Hartigan",
+      "given" : "Mo",
+      "key" : "H\/Hartigan, Mo",
+      "linkedin" : "",
+      "marker" : "pplr:\/\/h\/hartigan-mo",
+      "phones" : [
+        "+447700900456"
+      ],
+      "role" : "Investor"
+    },
+    {
+      "company" : "Brightmoor Ventures",
+      "dir" : "@SANDBOX@\/Career\/People\/M\/Moreau-Lindqvist, Henrik",
+      "emails" : [
+
+      ],
+      "family" : "Moreau-Lindqvist",
+      "given" : "Henrik",
+      "key" : "M\/Moreau-Lindqvist, Henrik",
+      "linkedin" : "henrik-ml",
+      "marker" : "pplr:\/\/m\/moreau-lindqvist-henrik",
+      "phones" : [
+
+      ],
+      "picture" : "@SANDBOX@\/Career\/People\/M\/Moreau-Lindqvist, Henrik\/About\/Henrik Moreau-Lindqvist (Picture).png",
+      "role" : "Partner"
+    },
+    {
+      "company" : "Larkspur Ledger",
+      "dir" : "@SANDBOX@\/Career\/People\/O\/Okafor, Chidi",
+      "emails" : [
+        "chidi@larkspur.example"
+      ],
+      "family" : "Okafor",
+      "given" : "Chidi",
+      "key" : "O\/Okafor, Chidi",
+      "linkedin" : "chidi-okafor-x",
+      "marker" : "pplr:\/\/o\/okafor-chidi",
+      "phones" : [
+        "+442079460001"
+      ],
+      "picture" : "@SANDBOX@\/Career\/People\/O\/Okafor, Chidi\/About\/Chidi Okafor (Picture).jpg",
+      "role" : "CTO"
+    },
+    {
+      "company" : "",
+      "dir" : "@SANDBOX@\/Career\/People\/P\/Pemberton, Rufus",
+      "emails" : [
+
+      ],
+      "family" : "Pemberton",
+      "given" : "Rufus",
+      "key" : "P\/Pemberton, Rufus",
+      "linkedin" : "",
+      "marker" : "pplr:\/\/p\/pemberton-rufus",
+      "phones" : [
+
+      ],
+      "role" : ""
+    },
+    {
+      "company" : "Tarnhelm Labs",
+      "dir" : "@SANDBOX@\/Career\/People\/Q\/Quennell, Imogen",
+      "emails" : [
+        "imogen@tarnhelm.example"
+      ],
+      "family" : "Quennell",
+      "given" : "Imogen",
+      "key" : "Q\/Quennell, Imogen",
+      "linkedin" : "",
+      "marker" : "pplr:\/\/q\/quennell-imogen",
+      "phones" : [
+
+      ],
+      "picture" : "@SANDBOX@\/Career\/People\/Q\/Quennell, Imogen\/About\/Imogen Quennell (Picture).png",
+      "role" : "Principal Engineer"
+    },
+    {
+      "company" : "",
+      "dir" : "@SANDBOX@\/Career\/People\/T\/Thistlewood, Ottoline",
+      "emails" : [
+        "ottoline@thistle.example"
+      ],
+      "family" : "Thistlewood",
+      "given" : "Ottoline",
+      "key" : "T\/Thistlewood, Ottoline",
+      "linkedin" : "",
+      "marker" : "pplr:\/\/t\/thistlewood-ottoline",
+      "phones" : [
+
+      ],
+      "role" : "Advisor"
+    },
+    {
+      "company" : "Fenwick Health",
+      "dir" : "@SANDBOX@\/Career\/People\/V\/Varga, Zsófia",
+      "emails" : [
+        "zsofia.varga@gmail.com"
+      ],
+      "family" : "Varga",
+      "given" : "Zsófia",
+      "key" : "V\/Varga, Zsófia",
+      "linkedin" : "zsofia-varga",
+      "marker" : "pplr:\/\/v\/varga-zsofia",
+      "phones" : [
+
+      ],
+      "picture" : "@SANDBOX@\/Career\/People\/V\/Varga, Zsófia\/About\/Zsófia Varga (Picture).jpg",
+      "role" : "Head of Engineering"
+    }
+  ],
+  "rows" : [
+    {
+      "candidates" : [
+
+      ],
+      "card" : "C0003",
+      "changes" : [
+        "company: Gullwing Capital (was Gullwing)",
+        "role: Investor (was empty)",
+        "+ email mo@gullwing.example",
+        "+ phone +447700900456",
+        "+ pplr URL",
+        "+ PPLR group"
+      ],
+      "confidence" : "Low",
+      "decision" : "Update",
+      "dupes" : [
+        "C0002"
+      ],
+      "person" : "H\/Hartigan, Mo",
+      "why" : "same name, same company; 2 cards look like this person"
+    },
+    {
+      "candidates" : [
+        {
+          "name" : "Rufus Pemberton",
+          "ref" : "C0007",
+          "score" : 60,
+          "why" : "same name"
+        }
+      ],
+      "changes" : [
+        "new iCloud card: name",
+        "+ pplr URL",
+        "+ PPLR group"
+      ],
+      "confidence" : "Low",
+      "decision" : "Add",
+      "dupes" : [
+
+      ],
+      "person" : "P\/Pemberton, Rufus",
+      "why" : "same name, but that card is in no account (Other Known or a directory)"
+    },
+    {
+      "candidates" : [
+
+      ],
+      "card" : "C0004",
+      "changes" : [
+        "name: Henrik Moreau-Lindqvist (was Henrik Moreau Lindqvist)",
+        "role: Partner (was empty)",
+        "+ pplr URL",
+        "+ PPLR group"
+      ],
+      "confidence" : "Medium",
+      "decision" : "Update",
+      "dupes" : [
+
+      ],
+      "person" : "M\/Moreau-Lindqvist, Henrik",
+      "why" : "same LinkedIn, names differ"
+    },
+    {
+      "candidates" : [
+
+      ],
+      "card" : "C0010",
+      "changes" : [
+        "name: Ottoline Thistlewood (was Ottoline Thistle)",
+        "pplr URL updated"
+      ],
+      "confidence" : "Medium",
+      "decision" : "Update",
+      "dupes" : [
+
+      ],
+      "person" : "T\/Thistlewood, Ottoline",
+      "why" : "linked by pplr URL, names differ"
+    },
+    {
+      "candidates" : [
+
+      ],
+      "card" : "C0001",
+      "changes" : [
+        "role: Founder (was Founder & CEO)",
+        "+ email annelies@kestrel.example",
+        "+ phone +447700900123",
+        "+ phone +491512345678",
+        "+ pplr URL",
+        "+ PPLR group"
+      ],
+      "confidence" : "High",
+      "decision" : "Update",
+      "dupes" : [
+
+      ],
+      "person" : "D\/de Vries, Annelies",
+      "why" : "same name, same company"
+    },
+    {
+      "candidates" : [
+
+      ],
+      "card" : "C0005",
+      "changes" : [
+        "role: CTO (was Chief Technology Officer)"
+      ],
+      "confidence" : "High",
+      "decision" : "Update",
+      "dupes" : [
+
+      ],
+      "person" : "O\/Okafor, Chidi",
+      "why" : "linked by pplr URL"
+    },
+    {
+      "candidates" : [
+
+      ],
+      "card" : "C0011",
+      "changes" : [
+        "+ LinkedIn zsofia-varga",
+        "+ pplr URL"
+      ],
+      "confidence" : "High",
+      "decision" : "Update",
+      "dupes" : [
+
+      ],
+      "person" : "V\/Varga, Zsófia",
+      "why" : "same email"
+    },
+    {
+      "candidates" : [
+
+      ],
+      "changes" : [
+        "new iCloud card: name",
+        "+ pplr URL",
+        "+ PPLR group"
+      ],
+      "confidence" : "High",
+      "decision" : "Add",
+      "dupes" : [
+
+      ],
+      "person" : "B\/Blackwood, Esme",
+      "why" : "no card found"
+    },
+    {
+      "candidates" : [
+
+      ],
+      "changes" : [
+        "new iCloud card: name, company, role, email, photo",
+        "+ pplr URL",
+        "+ PPLR group"
+      ],
+      "confidence" : "High",
+      "decision" : "Add",
+      "dupes" : [
+
+      ],
+      "person" : "Q\/Quennell, Imogen",
+      "why" : "no card found"
+    }
+  ]
+}

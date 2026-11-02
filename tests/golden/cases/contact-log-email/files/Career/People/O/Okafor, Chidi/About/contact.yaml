@@ -1,0 +1,5 @@
+# Contact with Chidi Okafor: last spoke, and when to get in touch next.
+# pplr contact scan fills last from Meetings; pplr contact log records an email or call.
+last: {date: 2026-06-15, via: email, link: "message://%3Cledger-1@larkspur.example%3E", note: "Ledger follow-up"}
+next: 2026-09-13
+cadence: 90

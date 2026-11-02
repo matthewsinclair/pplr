@@ -1,0 +1,1 @@
+Usage: pplr email [recent|inbox] [--account TEXT] [--hours N] [--sent]

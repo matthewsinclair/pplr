@@ -1,0 +1,56 @@
+[
+  {
+    "file" : "@SANDBOX@\/refs\/Notes\/project.md",
+    "from" : "@SANDBOX@\/Career\/People\/Q\/Quennell, Imogen\/Meetings\/20260415 Architecture chat\/Notes.md",
+    "line" : 5,
+    "to" : "pplr:\/\/q\/quennell-imogen\/Meetings\/20260415 Architecture chat\/Notes.md"
+  },
+  {
+    "file" : "@SANDBOX@\/refs\/Notes\/project.md",
+    "from" : "..\/..\/Career\/People\/O\/Okafor, Chidi\/About\/Chidi Okafor (About).md",
+    "line" : 7,
+    "to" : "pplr:\/\/o\/okafor-chidi"
+  },
+  {
+    "file" : "@SANDBOX@\/refs\/Notes\/project.md",
+    "from" : "..\/..\/Career\/People\/Q\/Quennell,%20Imogen\/About\/Imogen%20Quennell%20(About",
+    "line" : 8,
+    "problem" : "no such file in Q\/Quennell, Imogen: About\/Imogen Quennell (About"
+  },
+  {
+    "file" : "@SANDBOX@\/refs\/Notes\/project.md",
+    "from" : "http:\/\/localhost:4360\/people\/H\/Hartigan%2C%20Mo\/About",
+    "line" : 11,
+    "to" : "pplr:\/\/h\/hartigan-mo"
+  },
+  {
+    "file" : "@SANDBOX@\/refs\/Notes\/project.md",
+    "from" : "http:\/\/localhost:4360\/people\/O\/Okafor%2C%20Chidi\/Meetings\/20260528%20Catch-up\/Notes.md?view=1",
+    "line" : 12,
+    "to" : "pplr:\/\/o\/okafor-chidi\/Meetings\/20260528 Catch-up\/Notes.md"
+  },
+  {
+    "file" : "@SANDBOX@\/refs\/Notes\/project.md",
+    "from" : "..\/..\/Career\/People\/Z\/Zephyr, Nobody\/About\/Nobody Zephyr (About).md",
+    "line" : 13,
+    "problem" : "no such person: Z\/Zephyr, Nobody"
+  },
+  {
+    "file" : "@SANDBOX@\/refs\/Notes\/project.md",
+    "from" : "..\/..\/Career\/People\/O\/Okafor, Chidi\/Meetings\/20990101 Never\/Notes.md",
+    "line" : 14,
+    "problem" : "no such file in O\/Okafor, Chidi: Meetings\/20990101 Never\/Notes.md"
+  },
+  {
+    "file" : "@SANDBOX@\/refs\/Other\/real.md",
+    "from" : "..\/..\/Career\/People\/V\/Varga, Zsófia\/About\/Zsófia Varga (About).md",
+    "line" : 3,
+    "to" : "pplr:\/\/v\/varga-zsofia"
+  },
+  {
+    "file" : "@SANDBOX@\/refs\/Other\/real.md",
+    "from" : "..\/..\/Career\/People\/Q\/Quennell, Imogen",
+    "line" : 3,
+    "to" : "pplr:\/\/q\/quennell-imogen"
+  }
+]

@@ -1,0 +1,17 @@
+pplr sync --link --apply
+
+  linked now              4
+  failed                  0
+  still to link           0
+  already linked          0
+
+Linked (the pplr URL on the card, the "PPLR" group for iCloud cards; a (Contacts).inetloc in About):
+  O/Okafor, Chidi  <->  Chidi Okafor  [linked; .inetloc]
+  T/Thistlewood, Ottoline  <->  Ottoline Thistle  [linked; pplr URL updated + .inetloc]
+  M/Moreau-Lindqvist, Henrik  <->  Henrik Moreau Lindqvist  [linkedin; pplr URL + group + .inetloc]
+  V/Varga, Zsófia  <->  Zsófia Varga  [email; pplr URL + .inetloc]
+
+Matched, but the card is in no account (a directory or Other Known card?), so cannot be linked:
+  P/Pemberton, Rufus
+
+Backup: @SANDBOX@/backups/@STAMP@-contacts.json

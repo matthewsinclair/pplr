@@ -1,0 +1,6 @@
+#!/bin/zsh
+# Stands in for mail-recent: `index --json [--inbox] ...` prints a fixture listing.
+# The other filters are ignored; the listing is what the scenario is about.
+listing="$PPLR_GOLDEN_SANDBOX/mail/recent.json"
+for a in "$@"; do [[ $a == --inbox ]] && listing="$PPLR_GOLDEN_SANDBOX/mail/inbox.json"; done
+cat "$listing"

@@ -1,0 +1,5 @@
+[
+ {"date": "2026-06-15T08:12:00+01:00", "account": "me@example.com", "address": "chidi@larkspur.example", "from": "Chidi Okafor <chidi@larkspur.example>", "to": ["me@example.com"], "subject": "Ledger follow-up", "message_id": "<ledger-1@larkspur.example>"},
+ {"date": "2026-06-14T17:40:00+01:00", "account": "me@example.com", "address": "news@bulletin.example", "from": "Bulletin <news@bulletin.example>", "to": ["me@example.com"], "subject": "Weekly digest", "message_id": "<digest-77@bulletin.example>"},
+ {"date": "2026-06-14T09:05:00+01:00", "account": "me@example.com", "address": "me@example.com", "from": "Me <me@example.com>", "to": ["someone@else.example", "zsofia.varga@gmail.com"], "subject": "Intro: Zsófia, meet Someone", "message_id": "<intro-3@example.com>"}
+]

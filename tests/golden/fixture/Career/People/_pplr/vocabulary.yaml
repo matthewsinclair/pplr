@@ -1,0 +1,27 @@
+version: 1
+role:
+  cto: {also: [chief-technology-officer]}
+  founder: {}
+  investor: {also: [vc-partner]}
+function:
+  engineering: {}
+sector:
+  fintech: {also: [payments]}
+  healthtech: {}
+org:
+  startup: {}
+relationship:
+  contact: {}
+  vip: {}
+  career: {}
+  mentor: {also: [mentoring]}
+  podcast: {}
+place:
+  london: {}
+  berlin: {}
+cadence:
+  3month: {}
+  6month: {}
+  12month: {}
+split:
+  podcast-guest: [podcast]

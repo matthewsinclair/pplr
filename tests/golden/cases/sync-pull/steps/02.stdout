@@ -1,0 +1,13 @@
+pplr sync --pull --apply
+
+  people updated in pplr  2
+  failed                  0
+
+  M/Moreau-Lindqvist, Henrik  <-  Henrik Moreau Lindqvist
+      + email henrik@brightmoor.example
+
+  O/Okafor, Chidi  <-  Chidi Okafor
+      + email chidi.personal@example.net
+      + phone +447700900777
+
+Backup of each About file: @SANDBOX@/backups/@STAMP@-pull

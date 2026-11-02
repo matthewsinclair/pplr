@@ -1,0 +1,145 @@
+{
+  "people": {
+    "B": [
+      {
+        "name": "Blackwood, Esme",
+        "about": {
+          "about": "./B/Blackwood, Esme/About/Esme Blackwood (About).md",
+          "linkedin": "./B/Blackwood, Esme/About/Esme Blackwood (LinkedIn).webloc",
+          "picture": "./B/Blackwood, Esme/About/Esme Blackwood (Picture).jpg",
+          "profile": "./B/Blackwood, Esme/About/Esme Blackwood (Profile).pdf"
+        },
+        "meetings": []
+      }
+    ],
+    "D": [
+      {
+        "name": "de Vries, Annelies",
+        "about": {
+          "about": "./D/de Vries, Annelies/About/Annelies de Vries (About).md",
+          "linkedin": "./D/de Vries, Annelies/About/Annelies de Vries (LinkedIn).webloc",
+          "picture": "./D/de Vries, Annelies/About/Annelies de Vries (Picture).jpeg",
+          "profile": "./D/de Vries, Annelies/About/Annelies de Vries (Profile).pdf"
+        },
+        "meetings": []
+      }
+    ],
+    "H": [
+      {
+        "name": "Hartigan, Mo",
+        "about": {
+          "about": "./H/Hartigan, Mo/About/Mo Hartigan (About).md",
+          "linkedin": "./H/Hartigan, Mo/About/Mo Hartigan (LinkedIn).webloc",
+          "picture": "./H/Hartigan, Mo/About/Mo Hartigan (Picture).jpg",
+          "profile": "./H/Hartigan, Mo/About/Mo Hartigan (Profile).pdf"
+        },
+        "meetings": [
+          {
+            "id": "20260210 Fund update",
+            "details": "./H/Hartigan, Mo/Meetings/20260210 Fund update/20260210 Fund update.md"
+          }
+        ]
+      }
+    ],
+    "M": [
+      {
+        "name": "Moreau-Lindqvist, Henrik",
+        "about": {
+          "about": "./M/Moreau-Lindqvist, Henrik/About/Henrik Moreau-Lindqvist (About).md",
+          "linkedin": "./M/Moreau-Lindqvist, Henrik/About/Henrik Moreau-Lindqvist (LinkedIn).webloc",
+          "picture": "./M/Moreau-Lindqvist, Henrik/About/Henrik Moreau-Lindqvist (Picture).png",
+          "profile": "./M/Moreau-Lindqvist, Henrik/About/Henrik Moreau-Lindqvist (Profile).pdf"
+        },
+        "meetings": []
+      }
+    ],
+    "O": [
+      {
+        "name": "Okafor, Chidi",
+        "about": {
+          "about": "./O/Okafor, Chidi/About/Chidi Okafor (About).md",
+          "linkedin": "./O/Okafor, Chidi/About/Chidi Okafor (LinkedIn).webloc",
+          "picture": "./O/Okafor, Chidi/About/Chidi Okafor (Picture).jpg",
+          "profile": "./O/Okafor, Chidi/About/Chidi Okafor (Profile).pdf"
+        },
+        "meetings": [
+          {
+            "id": "20260120 Intro at Larkspur",
+            "details": "./O/Okafor, Chidi/Meetings/20260120 Intro at Larkspur/20260120 Intro at Larkspur.md"
+          },
+          {
+            "id": "20260304 Platform review",
+            "details": "./O/Okafor, Chidi/Meetings/20260304 Platform review/Summary.md"
+          },
+          {
+            "id": "20260528 Catch-up",
+            "details": "./O/Okafor, Chidi/Meetings/20260528 Catch-up/Notes.md"
+          }
+        ]
+      }
+    ],
+    "P": [
+      {
+        "name": "Pemberton, Rufus",
+        "about": {
+          "about": "./P/Pemberton, Rufus/About/Rufus Pemberton (About).md",
+          "linkedin": "./P/Pemberton, Rufus/About/Rufus Pemberton (LinkedIn).webloc",
+          "picture": "./P/Pemberton, Rufus/About/Rufus Pemberton (Picture).jpg",
+          "profile": "./P/Pemberton, Rufus/About/Rufus Pemberton (Profile).pdf"
+        },
+        "meetings": []
+      }
+    ],
+    "Q": [
+      {
+        "name": "Quennell-Shaw, Imogen",
+        "about": {
+          "about": "./Q/Quennell-Shaw, Imogen/About/Imogen Quennell-Shaw (About).md",
+          "linkedin": "./Q/Quennell-Shaw, Imogen/About/Imogen Quennell-Shaw (LinkedIn).webloc",
+          "picture": "./Q/Quennell-Shaw, Imogen/About/Imogen Quennell-Shaw (Picture).png",
+          "profile": "./Q/Quennell-Shaw, Imogen/About/Imogen Quennell-Shaw (Profile).pdf"
+        },
+        "meetings": [
+          {
+            "id": "20260415 Architecture chat",
+            "details": "./Q/Quennell-Shaw, Imogen/Meetings/20260415 Architecture chat/Notes.md"
+          }
+        ]
+      }
+    ],
+    "T": [
+      {
+        "name": "Thistlewood, Ottoline",
+        "about": {
+          "about": "./T/Thistlewood, Ottoline/About/Ottoline Thistlewood (About).md",
+          "linkedin": "./T/Thistlewood, Ottoline/About/Ottoline Thistlewood (LinkedIn).webloc",
+          "picture": "./T/Thistlewood, Ottoline/About/Ottoline Thistlewood (Picture).jpg",
+          "profile": "./T/Thistlewood, Ottoline/About/Ottoline Thistlewood (Profile).pdf"
+        },
+        "meetings": [
+          {
+            "id": "20260702 Board prep",
+            "details": "./T/Thistlewood, Ottoline/Meetings/20260702 Board prep/Notes.md"
+          }
+        ]
+      }
+    ],
+    "V": [
+      {
+        "name": "Varga, Zsófia",
+        "about": {
+          "about": "./V/Varga, Zsófia/About/Zsófia Varga (About).md",
+          "linkedin": "./V/Varga, Zsófia/About/Zsófia Varga (LinkedIn).webloc",
+          "picture": "./V/Varga, Zsófia/About/Zsófia Varga (Picture).jpg",
+          "profile": "./V/Varga, Zsófia/About/Zsófia Varga (Profile).pdf"
+        },
+        "meetings": [
+          {
+            "id": "20251110 Coffee",
+            "details": "./V/Varga, Zsófia/Meetings/20251110 Coffee/Notes.md"
+          }
+        ]
+      }
+    ]
+  }
+}

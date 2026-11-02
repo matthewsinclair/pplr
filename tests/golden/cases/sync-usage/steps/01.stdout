@@ -1,0 +1,24 @@
+Usage: pplr sync --check [--json] [-v|--verbose] [--group NAME]
+       pplr sync --plan [--out FILE] [--json] [--group NAME]
+       pplr sync --apply-plan WORKBOOK [--apply] [--limit N] [--name "Surname, First"]...
+       pplr sync --photos [--apply] [--limit N]
+       pplr sync --pull [--apply] [--name "Surname, First"]... [--skip "Surname, First"]... [--limit N]
+       pplr sync --backup
+       pplr sync --link [--apply] [--name "Surname, First"]... [--all-names] [--group NAME]
+  --check         Compare pplr with Apple Contacts; changes nothing
+  --link          Mark matched cards as pplr's: the pplr URL and the group, nothing else
+  --plan          Write a workbook for review: pplr, Contacts, and a proposed merge; changes nothing
+  --apply-plan F  Carry out a reviewed --plan workbook: Add, Update, Link only (a dry run without --apply)
+  --photos        Give linked cards with no photo the pplr picture (a dry run without --apply)
+  --pull          Copy into pplr the emails, phones and LinkedIn a linked card has and pplr lacks, and its
+                  company or role where pplr has none; pplr wins, nothing is removed (a dry run without --apply)
+  --backup        Save every Contacts card to a dated .vcf in $PPLR_BACKUP_DIR
+  --apply         With --link, write (a dry run otherwise); every card is saved to a .vcf first
+  --name NAME     With --link, also link this name-only match (repeatable)
+  --limit N       With --link --apply, write only the first N
+  --all-names     With --link, also link every name-only match
+  --skip NAME     With --pull, leave this person alone (repeatable)
+  --out FILE      With --plan, the workbook to write (default: $PPLR_DATA/_out/contacts-plan-<stamp>.xlsx)
+  --json          Print the report (or with --plan, the plan) as JSON
+  -v, --verbose   Also list everyone who is only in pplr
+  --group NAME    The Contacts group that marks pplr people (default: PPLR)

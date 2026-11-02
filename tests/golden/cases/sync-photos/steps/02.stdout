@@ -1,0 +1,6 @@
+pplr sync --photos --apply
+
+  photos set              1
+  failed                  0
+
+Backup: @SANDBOX@/backups/@STAMP@-contacts.json

@@ -1,0 +1,16 @@
+pplr sync --link (dry run: nothing written; --apply to write)
+
+  to link                 4
+  already linked          0
+  name only, not linked   2
+  ambiguous, not linked   1
+
+Would link (the pplr URL on the card, the "PPLR" group for iCloud cards, nothing else; a (Contacts).inetloc in About):
+  O/Okafor, Chidi  <->  Chidi Okafor  [linked; .inetloc]
+  T/Thistlewood, Ottoline  <->  Ottoline Thistle  [linked; pplr URL updated + .inetloc]
+  M/Moreau-Lindqvist, Henrik  <->  Henrik Moreau Lindqvist  [linkedin; pplr URL + group + .inetloc]
+  V/Varga, Zsófia  <->  Zsófia Varga  [email; pplr URL + .inetloc]
+
+Name-only matches left alone (confirm with --name "Surname, First", or --all-names):
+  D/de Vries, Annelies
+  P/Pemberton, Rufus

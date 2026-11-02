@@ -1,0 +1,7 @@
+# Tags for Zsófia Varga. A bare word is your own tag; auto and inferred tags
+# are rewritten by pplr, hand tags never are. Vocabulary: _pplr/vocabulary.yaml
+tags:
+  - {tag: engineering, source: auto}
+  - {tag: healthtech, source: auto}
+  - contact
+  - london

@@ -1,0 +1,4 @@
+sync
+--plan
+--out
+@SANDBOX@/plan.xlsx

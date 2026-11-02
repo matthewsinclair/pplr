@@ -1,0 +1,4 @@
+sync
+--apply-plan
+@SANDBOX@/plan.xlsx
+--apply

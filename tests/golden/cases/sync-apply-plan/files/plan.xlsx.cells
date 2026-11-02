@@ -1,0 +1,319 @@
+Merged	A1	Person
+Merged	B1	Decision
+Merged	C1	Card
+Merged	D1	Dupes
+Merged	E1	Notes
+Merged	F1	Confidence
+Merged	G1	Why
+Merged	H1	Changes
+Merged	I1	Card name
+Merged	J1	Company (pplr)
+Merged	K1	Company (card)
+Merged	L1	Role (pplr)
+Merged	M1	Role (card)
+Merged	N1	Emails (pplr)
+Merged	O1	Emails (card)
+Merged	P1	Phones (pplr)
+Merged	Q1	Phones (card)
+Merged	R1	LinkedIn (pplr)
+Merged	S1	LinkedIn (card)
+Merged	T1	Card account
+Merged	U1	Other candidates
+Merged	A2	H/Hartigan, Mo
+Merged	B2	Update
+Merged	C2	C0003
+Merged	D2	C0002
+Merged	F2	Low
+Merged	G2	same name, same company; 2 cards look like this person
+Merged	H2	company: Gullwing Capital (was Gullwing)\nrole: Investor (was empty)\n+ email mo@gullwing.example\n+ phone +447700900456\n+ pplr URL\n+ PPLR group
+Merged	I2	Mo Hartigan
+Merged	J2	Gullwing Capital
+Merged	K2	Gullwing
+Merged	L2	Investor
+Merged	N2	mo@gullwing.example
+Merged	P2	+447700900456
+Merged	T2	home
+Merged	A3	P/Pemberton, Rufus
+Merged	B3	Add
+Merged	F3	Low
+Merged	G3	same name, but that card is in no account (Other Known or a directory)
+Merged	H3	new iCloud card: name\n+ pplr URL\n+ PPLR group
+Merged	U3	C0007 Rufus Pemberton (60: same name)
+Merged	A4	M/Moreau-Lindqvist, Henrik
+Merged	B4	Update
+Merged	C4	C0004
+Merged	F4	Medium
+Merged	G4	same LinkedIn, names differ
+Merged	H4	name: Henrik Moreau-Lindqvist (was Henrik Moreau Lindqvist)\nrole: Partner (was empty)\n+ pplr URL\n+ PPLR group
+Merged	I4	Henrik Moreau Lindqvist
+Merged	J4	Brightmoor Ventures
+Merged	K4	Brightmoor Ventures
+Merged	L4	Partner
+Merged	O4	henrik@brightmoor.example
+Merged	R4	henrik-ml
+Merged	S4	henrik-ml
+Merged	T4	home
+Merged	A5	T/Thistlewood, Ottoline
+Merged	B5	Update
+Merged	C5	C0010
+Merged	F5	Medium
+Merged	G5	linked by pplr URL, names differ
+Merged	H5	name: Ottoline Thistlewood (was Ottoline Thistle)\npplr URL updated
+Merged	I5	Ottoline Thistle
+Merged	L5	Advisor
+Merged	M5	Advisor
+Merged	N5	ottoline@thistle.example
+Merged	O5	ottoline@thistle.example
+Merged	T5	home
+Merged	A6	D/de Vries, Annelies
+Merged	B6	Update
+Merged	C6	C0001
+Merged	F6	High
+Merged	G6	same name, same company
+Merged	H6	role: Founder (was Founder & CEO)\n+ email annelies@kestrel.example\n+ phone +447700900123\n+ phone +491512345678\n+ pplr URL\n+ PPLR group
+Merged	I6	Annelies de Vries
+Merged	J6	Kestrel Pay
+Merged	K6	Kestrel Pay
+Merged	L6	Founder
+Merged	M6	Founder & CEO
+Merged	N6	annelies@kestrel.example
+Merged	P6	+447700900123\n+491512345678
+Merged	Q6	07700900123
+Merged	T6	home
+Merged	A7	O/Okafor, Chidi
+Merged	B7	Update
+Merged	C7	C0005
+Merged	F7	High
+Merged	G7	linked by pplr URL
+Merged	H7	role: CTO (was Chief Technology Officer)
+Merged	I7	Chidi Okafor
+Merged	J7	Larkspur Ledger
+Merged	K7	Larkspur Ledger
+Merged	L7	CTO
+Merged	M7	Chief Technology Officer
+Merged	N7	chidi@larkspur.example
+Merged	O7	chidi@larkspur.example\nchidi.personal@example.net
+Merged	P7	+442079460001
+Merged	Q7	+442079460001\n+447700900777
+Merged	R7	chidi-okafor-x
+Merged	S7	chidi-okafor-x
+Merged	T7	home
+Merged	A8	V/Varga, Zsófia
+Merged	B8	Update
+Merged	C8	C0011
+Merged	F8	High
+Merged	G8	same email
+Merged	H8	+ LinkedIn zsofia-varga\n+ pplr URL
+Merged	I8	Zsófia Varga
+Merged	J8	Fenwick Health
+Merged	K8	Fenwick Health
+Merged	L8	Head of Engineering
+Merged	M8	Head of Engineering
+Merged	N8	zsofia.varga@gmail.com
+Merged	O8	zsofiavarga+news@gmail.com
+Merged	R8	zsofia-varga
+Merged	T8	other
+Merged	A9	B/Blackwood, Esme
+Merged	B9	Add
+Merged	F9	High
+Merged	G9	no card found
+Merged	H9	new iCloud card: name\n+ pplr URL\n+ PPLR group
+Merged	A10	Q/Quennell, Imogen
+Merged	B10	Add
+Merged	F10	High
+Merged	G10	no card found
+Merged	H10	new iCloud card: name, company, role, email, photo\n+ pplr URL\n+ PPLR group
+Merged	J10	Tarnhelm Labs
+Merged	L10	Principal Engineer
+Merged	N10	imogen@tarnhelm.example
+pplr	A1	Person
+pplr	B1	Given
+pplr	C1	Family
+pplr	D1	Company
+pplr	E1	Role
+pplr	F1	Emails
+pplr	G1	Phones
+pplr	H1	LinkedIn
+pplr	I1	pplr URL
+pplr	J1	Photo
+pplr	K1	Folder
+pplr	A2	B/Blackwood, Esme
+pplr	B2	Esme
+pplr	C2	Blackwood
+pplr	I2	pplr://b/blackwood-esme
+pplr	K2	@SANDBOX@/Career/People/B/Blackwood, Esme
+pplr	A3	D/de Vries, Annelies
+pplr	B3	Annelies
+pplr	C3	de Vries
+pplr	D3	Kestrel Pay
+pplr	E3	Founder
+pplr	F3	annelies@kestrel.example
+pplr	G3	+447700900123\n+491512345678
+pplr	I3	pplr://d/de-vries-annelies
+pplr	J3	yes
+pplr	K3	@SANDBOX@/Career/People/D/de Vries, Annelies
+pplr	A4	H/Hartigan, Mo
+pplr	B4	Mo
+pplr	C4	Hartigan
+pplr	D4	Gullwing Capital
+pplr	E4	Investor
+pplr	F4	mo@gullwing.example
+pplr	G4	+447700900456
+pplr	I4	pplr://h/hartigan-mo
+pplr	K4	@SANDBOX@/Career/People/H/Hartigan, Mo
+pplr	A5	M/Moreau-Lindqvist, Henrik
+pplr	B5	Henrik
+pplr	C5	Moreau-Lindqvist
+pplr	D5	Brightmoor Ventures
+pplr	E5	Partner
+pplr	H5	henrik-ml
+pplr	I5	pplr://m/moreau-lindqvist-henrik
+pplr	J5	yes
+pplr	K5	@SANDBOX@/Career/People/M/Moreau-Lindqvist, Henrik
+pplr	A6	O/Okafor, Chidi
+pplr	B6	Chidi
+pplr	C6	Okafor
+pplr	D6	Larkspur Ledger
+pplr	E6	CTO
+pplr	F6	chidi@larkspur.example
+pplr	G6	+442079460001
+pplr	H6	chidi-okafor-x
+pplr	I6	pplr://o/okafor-chidi
+pplr	J6	yes
+pplr	K6	@SANDBOX@/Career/People/O/Okafor, Chidi
+pplr	A7	P/Pemberton, Rufus
+pplr	B7	Rufus
+pplr	C7	Pemberton
+pplr	I7	pplr://p/pemberton-rufus
+pplr	K7	@SANDBOX@/Career/People/P/Pemberton, Rufus
+pplr	A8	Q/Quennell, Imogen
+pplr	B8	Imogen
+pplr	C8	Quennell
+pplr	D8	Tarnhelm Labs
+pplr	E8	Principal Engineer
+pplr	F8	imogen@tarnhelm.example
+pplr	I8	pplr://q/quennell-imogen
+pplr	J8	yes
+pplr	K8	@SANDBOX@/Career/People/Q/Quennell, Imogen
+pplr	A9	T/Thistlewood, Ottoline
+pplr	B9	Ottoline
+pplr	C9	Thistlewood
+pplr	E9	Advisor
+pplr	F9	ottoline@thistle.example
+pplr	I9	pplr://t/thistlewood-ottoline
+pplr	K9	@SANDBOX@/Career/People/T/Thistlewood, Ottoline
+pplr	A10	V/Varga, Zsófia
+pplr	B10	Zsófia
+pplr	C10	Varga
+pplr	D10	Fenwick Health
+pplr	E10	Head of Engineering
+pplr	F10	zsofia.varga@gmail.com
+pplr	H10	zsofia-varga
+pplr	I10	pplr://v/varga-zsofia
+pplr	J10	yes
+pplr	K10	@SANDBOX@/Career/People/V/Varga, Zsófia
+Contacts	A1	Card
+Contacts	B1	Name
+Contacts	C1	Company
+Contacts	D1	Role
+Contacts	E1	Emails
+Contacts	F1	Phones
+Contacts	G1	LinkedIn
+Contacts	H1	Account
+Contacts	I1	Groups
+Contacts	J1	pplr URL
+Contacts	K1	Proposed for
+Contacts	L1	Card id
+Contacts	A2	C0001
+Contacts	B2	Annelies de Vries
+Contacts	C2	Kestrel Pay
+Contacts	D2	Founder & CEO
+Contacts	F2	07700900123
+Contacts	H2	home
+Contacts	K2	D/de Vries, Annelies
+Contacts	L2	c-devries:ABPerson
+Contacts	A3	C0002
+Contacts	B3	Mo Hartigan
+Contacts	H3	home
+Contacts	K3	dupe? H/Hartigan, Mo
+Contacts	L3	c-hartigan-1:ABPerson
+Contacts	A4	C0003
+Contacts	B4	Mo Hartigan
+Contacts	C4	Gullwing
+Contacts	H4	home
+Contacts	K4	H/Hartigan, Mo
+Contacts	L4	c-hartigan-2:ABPerson
+Contacts	A5	C0004
+Contacts	B5	Henrik Moreau Lindqvist
+Contacts	C5	Brightmoor Ventures
+Contacts	E5	henrik@brightmoor.example
+Contacts	G5	henrik-ml
+Contacts	H5	home
+Contacts	K5	M/Moreau-Lindqvist, Henrik
+Contacts	L5	c-moreau:ABPerson
+Contacts	A6	C0005
+Contacts	B6	Chidi Okafor
+Contacts	C6	Larkspur Ledger
+Contacts	D6	Chief Technology Officer
+Contacts	E6	chidi@larkspur.example\nchidi.personal@example.net
+Contacts	F6	+442079460001\n+447700900777
+Contacts	G6	chidi-okafor-x
+Contacts	H6	home
+Contacts	I6	PPLR
+Contacts	J6	o/okafor-chidi
+Contacts	K6	O/Okafor, Chidi
+Contacts	L6	c-okafor:ABPerson
+Contacts	A7	C0006
+Contacts	B7	Lena Orphanidis
+Contacts	H7	home
+Contacts	I7	PPLR
+Contacts	L7	c-orphan:ABPerson
+Contacts	A8	C0007
+Contacts	B8	Rufus Pemberton
+Contacts	H8	none
+Contacts	L8	c-pemberton:ABPerson
+Contacts	A9	C0008
+Contacts	B9	Immy Quennell
+Contacts	C9	Tarnhelm Labs
+Contacts	E9	immy@tarnhelm.example
+Contacts	H9	home
+Contacts	L9	c-quennell:ABPerson
+Contacts	A10	C0009
+Contacts	B10	Ivo Strand
+Contacts	C10	Northgate
+Contacts	E10	ivo@northgate.example
+Contacts	H10	home
+Contacts	L10	c-strand:ABPerson
+Contacts	A11	C0010
+Contacts	B11	Ottoline Thistle
+Contacts	D11	Advisor
+Contacts	E11	ottoline@thistle.example
+Contacts	H11	home
+Contacts	I11	PPLR
+Contacts	J11	T/Thistle,%20Ottoline
+Contacts	K11	T/Thistlewood, Ottoline
+Contacts	L11	c-thistle:ABPerson
+Contacts	A12	C0011
+Contacts	B12	Zsófia Varga
+Contacts	C12	Fenwick Health
+Contacts	D12	Head of Engineering
+Contacts	E12	zsofiavarga+news@gmail.com
+Contacts	H12	other
+Contacts	K12	V/Varga, Zsófia
+Contacts	L12	c-varga:ABPerson
+How to review	A1	pplr and Apple Contacts: sync plan, @GENERATED@
+How to review	A3	Review the Merged sheet. Change only the four shaded columns; leave the rest as they are.
+How to review	A4	  Decision: Add (a new iCloud card), Update (bring the card up to date from pplr), Link only (the pplr URL and group, no field changes), No change, or Skip (leave this person out of Contacts).
+How to review	A5	  Card: the card to update or link, as a ref from the Contacts sheet (C0123). Change it if the plan picked the wrong card; clear it for Add.
+How to review	A6	  Dupes: other cards that are the same person, comma-separated refs. They are listed for merging, never deleted without asking.
+How to review	A7	  Notes: anything else, eg keep the card's name.
+How to review	A9	Rows run least certain first: Low, then Medium, then High. Low and Medium rows are shaded in the Confidence column.
+How to review	A10	Update never removes anything from a card. pplr wins on name, company and role; its emails, phones and LinkedIn are added beside the card's own. Addresses, birthdays, notes and photos on existing cards are left alone.
+How to review	A11	Add makes an iCloud card from pplr with its photo, and every card touched gets the pplr URL and the PPLR group.
+How to review	A12	Nothing is written until the reviewed workbook is applied, after a .vcf backup of every card.
+How to review	A14	Proposals:
+How to review	A15	     1  Low / Add
+How to review	A16	     1  Low / Update
+How to review	A17	     2  Medium / Update
+How to review	A18	     2  High / Add
+How to review	A19	     3  High / Update

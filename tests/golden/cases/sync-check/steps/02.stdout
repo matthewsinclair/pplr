@@ -1,0 +1,222 @@
+{
+  "ambiguous" : {
+    "H\/Hartigan, Mo" : [
+      "Mo Hartigan (c-hartigan-1:ABPerson)",
+      "Mo Hartigan (c-hartigan-2:ABPerson)"
+    ]
+  },
+  "contacts" : 11,
+  "group" : "PPLR",
+  "groupMembers" : 3,
+  "groupOrphans" : [
+    "Lena Orphanidis"
+  ],
+  "linked" : [
+    {
+      "contact" : "c-okafor:ABPerson",
+      "contactName" : "Chidi Okafor",
+      "diffs" : [
+        {
+          "contacts" : [
+            "Chief Technology Officer"
+          ],
+          "field" : "role",
+          "pplr" : [
+            "CTO"
+          ]
+        },
+        {
+          "contacts" : [
+            "chidi.personal@example.net"
+          ],
+          "field" : "email",
+          "pplr" : [
+
+          ]
+        },
+        {
+          "contacts" : [
+            "+447700900777"
+          ],
+          "field" : "phone",
+          "pplr" : [
+
+          ]
+        }
+      ],
+      "hasInetloc" : false,
+      "hasMarker" : true,
+      "how" : "linked",
+      "inGroup" : true,
+      "inetloc" : "@SANDBOX@\/Career\/People\/O\/Okafor, Chidi\/About\/Chidi Okafor (Contacts).inetloc",
+      "markerStale" : false,
+      "needsGroup" : false,
+      "noAccount" : false,
+      "otherAccount" : false,
+      "person" : "O\/Okafor, Chidi"
+    },
+    {
+      "contact" : "c-thistle:ABPerson",
+      "contactName" : "Ottoline Thistle",
+      "diffs" : [
+        {
+          "contacts" : [
+            "Ottoline Thistle"
+          ],
+          "field" : "name",
+          "pplr" : [
+            "Ottoline Thistlewood"
+          ]
+        }
+      ],
+      "hasInetloc" : false,
+      "hasMarker" : false,
+      "how" : "linked",
+      "inGroup" : true,
+      "inetloc" : "@SANDBOX@\/Career\/People\/T\/Thistlewood, Ottoline\/About\/Ottoline Thistlewood (Contacts).inetloc",
+      "markerStale" : true,
+      "needsGroup" : false,
+      "noAccount" : false,
+      "otherAccount" : false,
+      "person" : "T\/Thistlewood, Ottoline"
+    }
+  ],
+  "matched" : [
+    {
+      "contact" : "c-moreau:ABPerson",
+      "contactName" : "Henrik Moreau Lindqvist",
+      "diffs" : [
+        {
+          "contacts" : [
+            "Henrik Moreau Lindqvist"
+          ],
+          "field" : "name",
+          "pplr" : [
+            "Henrik Moreau-Lindqvist"
+          ]
+        },
+        {
+          "contacts" : [
+
+          ],
+          "field" : "role",
+          "pplr" : [
+            "Partner"
+          ]
+        },
+        {
+          "contacts" : [
+            "henrik@brightmoor.example"
+          ],
+          "field" : "email",
+          "pplr" : [
+
+          ]
+        }
+      ],
+      "hasInetloc" : false,
+      "hasMarker" : false,
+      "how" : "linkedin",
+      "inGroup" : false,
+      "inetloc" : "@SANDBOX@\/Career\/People\/M\/Moreau-Lindqvist, Henrik\/About\/Henrik Moreau-Lindqvist (Contacts).inetloc",
+      "markerStale" : false,
+      "needsGroup" : true,
+      "noAccount" : false,
+      "otherAccount" : false,
+      "person" : "M\/Moreau-Lindqvist, Henrik"
+    },
+    {
+      "contact" : "c-varga:ABPerson",
+      "contactName" : "Zsófia Varga",
+      "diffs" : [
+        {
+          "contacts" : [
+
+          ],
+          "field" : "linkedin",
+          "pplr" : [
+            "zsofia-varga"
+          ]
+        }
+      ],
+      "hasInetloc" : false,
+      "hasMarker" : false,
+      "how" : "email",
+      "inGroup" : false,
+      "inetloc" : "@SANDBOX@\/Career\/People\/V\/Varga, Zsófia\/About\/Zsófia Varga (Contacts).inetloc",
+      "markerStale" : false,
+      "needsGroup" : false,
+      "noAccount" : false,
+      "otherAccount" : true,
+      "person" : "V\/Varga, Zsófia"
+    }
+  ],
+  "nameOnly" : [
+    {
+      "contact" : "c-devries:ABPerson",
+      "contactName" : "Annelies de Vries",
+      "diffs" : [
+        {
+          "contacts" : [
+            "Founder & CEO"
+          ],
+          "field" : "role",
+          "pplr" : [
+            "Founder"
+          ]
+        },
+        {
+          "contacts" : [
+
+          ],
+          "field" : "email",
+          "pplr" : [
+            "annelies@kestrel.example"
+          ]
+        },
+        {
+          "contacts" : [
+            "07700900123"
+          ],
+          "field" : "phone",
+          "pplr" : [
+            "+447700900123",
+            "+491512345678"
+          ]
+        }
+      ],
+      "hasInetloc" : false,
+      "hasMarker" : false,
+      "how" : "name",
+      "inGroup" : false,
+      "inetloc" : "@SANDBOX@\/Career\/People\/D\/de Vries, Annelies\/About\/Annelies de Vries (Contacts).inetloc",
+      "markerStale" : false,
+      "needsGroup" : true,
+      "noAccount" : false,
+      "otherAccount" : false,
+      "person" : "D\/de Vries, Annelies"
+    },
+    {
+      "contact" : "c-pemberton:ABPerson",
+      "contactName" : "Rufus Pemberton",
+      "diffs" : [
+
+      ],
+      "hasInetloc" : false,
+      "hasMarker" : false,
+      "how" : "name",
+      "inGroup" : false,
+      "inetloc" : "@SANDBOX@\/Career\/People\/P\/Pemberton, Rufus\/About\/Rufus Pemberton (Contacts).inetloc",
+      "markerStale" : false,
+      "needsGroup" : false,
+      "noAccount" : true,
+      "otherAccount" : false,
+      "person" : "P\/Pemberton, Rufus"
+    }
+  ],
+  "people" : 9,
+  "pplrOnly" : [
+    "B\/Blackwood, Esme",
+    "Q\/Quennell, Imogen"
+  ]
+}

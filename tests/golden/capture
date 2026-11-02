@@ -1,0 +1,225 @@
+#!/bin/zsh
+# capture: record goldens from the legacy pplr (ST0001 WP03).
+#
+# Usage: tests/golden/capture [SCENARIO...]
+#
+# Runs every scenario in scenarios.zsh (or the ones named) under the legacy
+# bash, Python and Swift code, exported from git so that only tracked files
+# take part, against a sandbox seeded from fixture/. For each scenario it
+# writes cases/<name>/: per step the arguments, stdout, stderr and exit code,
+# then a manifest of the resulting tree and a copy of every file the steps
+# added or changed. README.md says how the output is normalised.
+#
+# PPLR_GOLDEN_REF names the commit whose legacy code runs (default HEAD).
+# Nothing outside the sandbox and cases/ is written, apart from the Swift
+# engine the legacy code builds inside its own export.
+
+emulate -L zsh
+setopt err_exit no_unset pipe_fail extended_glob
+
+here=${0:A:h}
+repo=${here:h:h}
+fixture=$here/fixture
+fakes=$here/fakes
+cases=$here/cases
+
+pinned_day=2026-06-15
+pinned_now="$pinned_day 09:30:00"
+author="Matthew Sinclair"
+# The last commit that changed the legacy code, so a capture does not move
+# with HEAD; the port deletes that code from later commits
+ref=${PPLR_GOLDEN_REF:-f0beeaa4844abd0e770f259a6210ced2fc28d2c6}
+real_day=$(/bin/date +%Y-%m-%d)
+# rename cuts its running-text lines at 200 columns, absolute path included,
+# so the sandbox root has a fixed length: README.md says what the replay needs
+root_template=/private/tmp/pplr-golden.XXXXXXXX
+
+die() { print -u2 -r -- "capture: $*"; exit 1; }
+
+[[ $real_day != "$pinned_day" ]] || die "today is the pinned day, so the real date cannot be told from it; capture on another day"
+if grep -rqF -- "$real_day" "$fixture"; then die "the fixture contains today's date ($real_day), which the capture rewrites"; fi
+
+work=$(mktemp -d "$root_template")
+work=${work:A}
+(( ${#work} == ${#root_template} )) || die "the sandbox root $work is not as long as $root_template"
+trap 'rm -rf -- "$work"' EXIT
+sb=$work/sandbox
+legacy=$work/legacy
+tripwire=$work/tripwire.log
+
+# The legacy code, as committed
+mkdir -p "$legacy" "$work/tmp"
+commit=$(git -C "$repo" rev-parse "$ref")
+git -C "$repo" archive "$commit" bin lib src templates VERSION.md README.md | tar -x -C "$legacy"
+( PPLR_ROOT=$legacy; source "$legacy/lib/engine.sh"; build_engine ) || die "the legacy Swift engine did not build"
+
+# The scenarios
+typeset -a names
+typeset -A envs steps
+current=""
+scenario() { current=$1; names+=("$1"); envs[$1]=""; steps[$1]="" }
+env() { envs[$current]+="$1"$'\n' }
+run() { steps[$current]+="${(pj:\x1f:)@}"$'\n' }
+source "$here/scenarios.zsh"
+unfunction scenario env run
+
+if (( $# )); then
+  for n in "$@"; do (( ${names[(Ie)$n]} )) || die "no such scenario: $n"; done
+  names=("$@")
+fi
+
+# Normalisation, applied to every recorded stream and every changed text file
+normalise() { # FILE
+  LC_ALL=C sed -i '' -E \
+    -e "s|$sb|@SANDBOX@|g" \
+    -e "s|${sb#/private}|@SANDBOX@|g" \
+    -e "s|${sb//\//\\\\/}|@SANDBOX@|g" \
+    -e "s|${${sb#/private}//\//\\\\/}|@SANDBOX@|g" \
+    -e "s|$legacy|@LEGACY@|g" \
+    -e "s|${legacy#/private}|@LEGACY@|g" \
+    -e "s|$real_day|$pinned_day|g" \
+    -e 's|("generated_at": ")[^"]*"|\1@GENERATED_AT@"|g' \
+    -e 's|("generated" *: *")[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}"|\1@GENERATED@"|g' \
+    -e 's|(sync plan, )[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}|\1@GENERATED@|g' \
+    -e 's|[0-9]{8}-[0-9]{6}|@STAMP@|g' \
+    "$1"
+}
+
+# A workbook is golden by its content: one line per non-empty cell, as
+# sheet<TAB>cell<TAB>value, with the five XML entities decoded and each
+# newline in a value written as \n. Styles and the zip's own bytes are not.
+xlsx_cells() { # XLSX OUT
+  local xlsx=$1 out=$2 i=0 sheet
+  : > "$out"
+  for sheet in ${(f)"$(unzip -p -- "$xlsx" xl/workbook.xml | grep -o '<sheet name="[^"]*"' | sed 's/<sheet name="//; s/"$//')"}; do
+    i=$(( i + 1 ))
+    unzip -p -- "$xlsx" "xl/worksheets/sheet$i.xml" | LC_ALL=C awk -v sheet="$sheet" '
+      BEGIN { RS = "<c " }
+      NR > 1 {
+        if (!match($0, /^r="[^"]+"/)) next
+        cell = substr($0, 4, RLENGTH - 4)
+        v = ""
+        if (match($0, /<t[^>]*>/)) { rest = substr($0, RSTART + RLENGTH); v = substr(rest, 1, index(rest, "</t>") - 1) }
+        else if (match($0, /<v>[^<]*<\/v>/)) { v = substr($0, RSTART + 3, RLENGTH - 7) }
+        if (v == "") next
+        gsub(/\n/, "\\n", v)
+        gsub(/&lt;/, "<", v); gsub(/&gt;/, ">", v); gsub(/&quot;/, "\"", v); gsub(/&apos;/, "\047", v); gsub(/&amp;/, "\\&", v)
+        printf "%s\t%s\t%s\n", sheet, cell, v
+      }' >> "$out"
+  done
+  normalise "$out"
+}
+
+subst_sandbox() { # in every fixture text file, @SANDBOX@ becomes the sandbox path
+  local f
+  grep -rlF --null '@SANDBOX@' "$sb" 2>/dev/null | while IFS= read -r -d '' f; do
+    LC_ALL=C sed -i '' "s|@SANDBOX@|$sb|g" "$f"
+  done
+}
+
+recorded() { # every path of the recorded tree, sorted bytewise
+  ( cd "$sb" && find . -mindepth 1 \( -path ./home -o -path ./mail -o -path ./inputs \) -prune -o -print ) | LC_ALL=C sort
+}
+
+failed=0
+for name in "${names[@]}"; do
+  rm -rf -- "$sb"
+  cp -R "$fixture" "$sb"
+  mkdir -p "$sb/home" "$sb/cache" "$sb/backups"
+  printf '[user]\n\tname = %s\n\temail = golden@example.invalid\n' "$author" > "$sb/home/.gitconfig"
+  subst_sandbox
+  : > "$tripwire"
+
+  out=$cases/$name
+  rm -rf -- "$out"
+  mkdir -p "$out/steps"
+
+  typeset -a extra=("${(@f)envs[$name]}")
+  extra=("${(@)extra:#}")
+  print -rl -- "${extra[@]}" > "$out/env"
+  [[ -s $out/env ]] || rm -f -- "$out/env"
+  extra=("${(@)extra//@SANDBOX@/$sb}")
+
+  i=0
+  for line in "${(@f)steps[$name]}"; do
+    [[ -n $line ]] || continue
+    i=$(( i + 1 )); n=${(l:2::0:)i}
+    typeset -a args=("${(@ps:\x1f:)line}")
+    print -rl -- "${args[@]}" > "$out/steps/$n.args"
+    args=("${(@)args//@SANDBOX@/$sb}")
+    set +e
+    ( cd "$sb" && /usr/bin/env -i \
+        HOME="$sb/home" PATH="$fakes:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin" \
+        LANG=en_GB.UTF-8 TZ=Europe/London TMPDIR="$work/tmp" \
+        UV_CACHE_DIR="$(uv cache dir)" UV_PYTHON_INSTALL_DIR="$(uv python dir)" UV_OFFLINE=1 \
+        PPLR_DATA="$sb/Career/People" PPLR_DIR="$sb/Career/People" PPLR_TODAY="$pinned_day" \
+        PPLR_CONTACTS_JSON="$sb/contacts.json" PPLR_BACKUP_DIR="$sb/backups" PPLR_CACHE_DIR="$sb/cache" \
+        PPLR_REFS_DIR="$sb" PPLR_MAIL_RECENT="$fakes/mail-recent" \
+        PPLR_HANDLER_APP="$sb/home/Applications/Pplr Links.app" \
+        PPLR_GOLDEN_NOW="$pinned_now" PPLR_GOLDEN_SANDBOX="$sb" PPLR_GOLDEN_TRIPWIRE="$tripwire" \
+        "${extra[@]}" \
+        "$legacy/bin/pplr" "${args[@]}" > "$out/steps/$n.stdout" 2> "$out/steps/$n.stderr" < /dev/null )
+    print -r -- $? > "$out/steps/$n.exit"
+    set -e
+    normalise "$out/steps/$n.stdout"
+    normalise "$out/steps/$n.stderr"
+  done
+
+  if [[ -s $tripwire ]]; then
+    print -u2 -r -- "capture: $name reached a tool no scenario should:"; sed 's/^/  /' "$tripwire" >&2
+    failed=1
+  fi
+
+  # Stamped backup names (the engine names each backup by the second), then
+  # the text the steps wrote
+  for p in "$sb"/backups/*(N); do
+    if [[ ${p:t} == [0-9](#c8)-[0-9](#c6)* ]]; then
+      q=${p:h}/${${p:t}/[0-9](#c8)-[0-9](#c6)/@STAMP@}
+      [[ ! -e $q ]] || die "$name: two backups share a stamped name: ${q:t}"
+      mv -- "$p" "$q"
+    fi
+  done
+  for p in ${(f)"$(recorded)"}; do
+    rel=${p#./}
+    if [[ -f $sb/$rel && ! -L $sb/$rel ]] && ! cmp -s -- "$sb/$rel" "$fixture/$rel" && grep -Iq . -- "$sb/$rel" 2>/dev/null; then
+      normalise "$sb/$rel"
+    fi
+  done
+
+  # The tree: a manifest of everything, and a copy of what was added or changed
+  : > "$out/manifest"
+  for p in ${(f)"$(recorded)"}; do
+    rel=${p#./}
+    if [[ -L $sb/$rel ]]; then
+      print -r -- "l $(readlink -- "$sb/$rel") $rel" >> "$out/manifest"
+    elif [[ -d $sb/$rel ]]; then
+      print -r -- "d - $rel" >> "$out/manifest"
+    elif [[ $rel == *.xlsx ]]; then
+      mkdir -p -- "$out/files/${rel:h}"
+      xlsx_cells "$sb/$rel" "$out/files/$rel.cells"
+      print -r -- "x $(shasum -a 256 -- "$out/files/$rel.cells" | cut -d' ' -f1) $rel" >> "$out/manifest"
+    else
+      print -r -- "f $(shasum -a 256 -- "$sb/$rel" | cut -d' ' -f1) $rel" >> "$out/manifest"
+      if [[ -L $fixture/$rel || ! -f $fixture/$rel ]] || ! cmp -s -- "$sb/$rel" "$fixture/$rel"; then
+        mkdir -p -- "$out/files/${rel:h}"
+        cp -p -- "$sb/$rel" "$out/files/$rel"
+      fi
+    fi
+  done
+  ( cd "$fixture" && find . -mindepth 1 \( -path ./mail -o -path ./inputs \) -prune -o -print ) | LC_ALL=C sort | while IFS= read -r p; do
+    rel=${p#./}
+    [[ -e $sb/$rel || -L $sb/$rel ]] || print -r -- "$rel"
+  done > "$out/removed"
+  [[ -s $out/removed ]] || rm -f -- "$out/removed"
+
+  # Anything of the temporary directory that survived normalisation would make
+  # the golden depend on where and when it was captured
+  if grep -rlF -- "${work:t}" "$out" >&2; then
+    die "$name: the files above still name the capture's temporary directory"
+  fi
+
+  print -r -- "captured $name ($i step(s))"
+done
+
+print -r -- "$commit" > "$cases/LEGACY"
+(( failed == 0 )) || die "a scenario reached a tripwire; its golden is not trustworthy"
