@@ -59,7 +59,7 @@ title: Port Pplr from shell scripts to Rust
 
 ### WP-08 -- Rename, links and the pplr:// handler (status: WIP)
 
-- AC-08.1 rename, links and handler run natively in Rust; their goldens and bats tests pass, and handler --install registers the tree's prebuilt, signed Pplr Links.app by its stable path, never a Cellar path (ST0002 ruling 7). -- satisfied: no (computed)
+- AC-08.1 rename, links and handler run natively in Rust; their goldens and bats tests pass, and handler --install registers the tree's prebuilt, signed Pplr Links.app by its stable path, never a Cellar path (ST0002 ruling 7). -- satisfied: yes (computed)
 
 ### WP-09 -- The Contacts store and the Swift I/O sidecar (status: WIP)
 
@@ -121,7 +121,7 @@ _(no tests in this group)_
 
 ### WP-08 -- Rename, links and the pplr:// handler (status: WIP)
 
-_(no tests in this group)_
+- AT-08.1 `tests/cli.rs` -- covers AC-08.1 -- status: green -- first measure, in the shared tree, was red (replay rc 101) from cc's uncommitted WP10 work, not WP08's; re-measured 2026-11-02 in a clean clone at 0013d4c with its own target/ (slot 01M6EKXYE10RJVNRTE8Q660SV5): cli replay exit 0, handler stable-path test exit 0, bats rename tests ok (two filtered runs exit 0)
 
 ### WP-09 -- The Contacts store and the Swift I/O sidecar (status: WIP)
 

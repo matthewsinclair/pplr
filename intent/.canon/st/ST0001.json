@@ -445,6 +445,16 @@
       "note": "contact_is_native_and_its_goldens_replay: red at a143133 (contact on the fallback), green with WP07 (35/54 goldens replay, every contact and tag case among them); bats 101/101 on both implementations from a scratch worktree"
     },
     {
+      "id": "AT-08.1",
+      "kind": "test",
+      "file": "tests/cli.rs",
+      "covers": [
+        "AC-08.1"
+      ],
+      "status": "green",
+      "note": "first measure, in the shared tree, was red (replay rc 101) from cc's uncommitted WP10 work, not WP08's; re-measured 2026-11-02 in a clean clone at 0013d4c with its own target/ (slot 01M6EKXYE10RJVNRTE8Q660SV5): cli replay exit 0, handler stable-path test exit 0, bats rename tests ok (two filtered runs exit 0)"
+    },
+    {
       "id": "AT-12.1",
       "kind": "test",
       "file": "tests/pplr_doctor.bats",

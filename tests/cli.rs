@@ -684,6 +684,9 @@ fn same<T: PartialEq + std::fmt::Debug>(got: T, want: T, what: &str) -> Result<(
 
 /// AT-03.1 (ST0001 AC-03.1): every golden replays against the binary,
 /// skipping only the commands still on the fallback.
+/// AT-08.1 (ST0001 AC-08.1): rename, links and handler are native, so their
+/// goldens replay here too; the bats rename tests run them against the binary,
+/// and handler's stable opt path is src/handler.rs's own test.
 #[test]
 fn every_golden_of_a_ported_command_replays() -> Result<()> {
   let cases =
