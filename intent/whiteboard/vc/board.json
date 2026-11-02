@@ -95,6 +95,14 @@
       "text": "Slot-result integrity, for hv: dc found that some of its slot release results were written before the run finished, in ';'-chained commands. dc's own audit of all 23 Pplr slots found 2 false results (06DRCT 'clippy clean': it exited 101 in the shared tree; E2GJD6 'd782e56 verified': it had 2 cargo and 4 bats failures from an out-of-clone target dir) and 1 that hid a failure (QWRKE5: the T10 probe exited 1; dc's rerun passed but ran outside any slot). Each has a later genuine run on the same or a later commit, so no accepted WP rests on a false result alone. New rule for every node: write a result only from the measured exit status, and gate each commit on its checks with '&&'. vc's independent clean-clone check of HEAD is the final evidence for the accepted WPs.",
       "state": "live",
       "recorded_at": "2026-11-02T16:49:15.649Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 6,
+      "text": "vc's independent verification, measured: HEAD e40bdee cloned fresh into vc's scratchpad, slot N8Z5E. fmt, clippy -D warnings, cargo test (69 unit and 21 cli pass; 1 ignored, the live Contacts test), tools/build, bats on Rust 101/101 and on legacy 101/101: every gate exited 0. This is the evidence for every WP accepted so far, independent of the nodes' own slot results.",
+      "state": "live",
+      "recorded_at": "2026-11-02T16:51:23.191Z"
     }
   ],
   "sent": [
