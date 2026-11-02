@@ -1,0 +1,38 @@
+# The tap's CI (ST0002 E5): the source of matthewsinclair/homebrew-pplr's
+# .github/workflows/test.yml, adapted from homebrew-ccusage's. It is copied
+# into the tap in ST0002 WP06, with hv's approval.
+name: Homebrew install
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: ${{ matrix.runner }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, ubuntu-22.04]
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      HOMEBREW_NO_INSTALL_CLEANUP: "1"
+    steps:
+      # This official action also checks out and registers the tap under test.
+      - uses: Homebrew/actions/setup-homebrew@d482da0e602890d3160aade42e72c8556103bf04
+        with:
+          stable: true
+      - run: brew style matthewsinclair/pplr/pplr
+      - run: brew audit --strict matthewsinclair/pplr/pplr
+      # The release's assets are signed and prebuilt; there is nothing to build
+      - run: brew install matthewsinclair/pplr/pplr
+      # Verifies each macOS binary's signature, and runs the version line
+      - run: brew test --verbose matthewsinclair/pplr/pplr
+      - run: pplr --version

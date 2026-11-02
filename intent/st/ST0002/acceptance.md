@@ -34,7 +34,7 @@ title: Create a homebrew distro for the new Rust version of Pplr
 - AC-03.2 The version line reads `pplr <version> (<tree>, <sha12>[+dirty])` in dev, opt and brew, built from stamps taken at build time, with the tree named by the one tree function. -- satisfied: yes (computed)
 - AC-03.3 `pplr use dev|opt|brew` moves only the link set {pplr} in ~/.local/bin, and refuses a missing tree or a brew copy that would not answer. Doctor's shadow check fails on a link that is shadowed or split across trees. -- satisfied: yes (computed)
 
-### WP-04 -- Assets formula, tap and tap CI (status: Not Started)
+### WP-04 -- Assets formula, tap and tap CI (status: WIP)
 
 - AC-04.1 packaging/homebrew/pplr.rb is a devbin `assets` template, rendered through `bin/devbin formula render` with nothing typed. The render passes `brew style` and `brew audit --strict`, its install verifies every macOS binary's signature against its designated requirement and writes the T3 manifest, and its test re-verifies the signatures and runs the version line. -- satisfied: no (computed)
 - AC-04.2 (non-test) The tap matthewsinclair/homebrew-pplr is described as "Homebrew tap for pplr", and its CI runs style, audit, install and test on macOS and Ubuntu. -- satisfied: no
@@ -73,7 +73,7 @@ _(no tests in this group)_
 - AT-03.2 `tests/cli.rs` -- covers AC-03.2 -- status: green -- red before fed44e6 (no install module, so these tests did not build; the old version test expected the bare version), green at fed44e6: cargo test 19 of 19 end to end
 - AT-03.3 `tests/cli.rs` -- covers AC-03.3 -- status: green -- red before fed44e6 (no install module, so these tests did not build; the old version test expected the bare version), green at fed44e6: cargo test 19 of 19 end to end
 
-### WP-04 -- Assets formula, tap and tap CI (status: Not Started)
+### WP-04 -- Assets formula, tap and tap CI (status: WIP)
 
 _(no tests in this group)_
 

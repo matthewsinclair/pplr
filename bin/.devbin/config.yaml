@@ -54,7 +54,13 @@ release:
   after:
     - bin/devbin formula publish
 
-# The Homebrew formula: signed release assets (ST0002 E1). Its template and
-# asset list arrive with ST0002 WP04.
+# The Homebrew formula: signed release assets (ST0002 E1), from the template
+# packaging/homebrew/pplr.rb.
 formula:
   mode: assets
+  assets:
+    - "pplr-{version}-aarch64-apple-darwin.tar.gz"
+    - "pplr-{version}-x86_64-unknown-linux-musl.tar.gz"
+    - "pplr-{version}-aarch64-unknown-linux-musl.tar.gz"
+  bin:
+    - bin/pplr

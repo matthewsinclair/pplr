@@ -47,7 +47,7 @@
       "seq": 4,
       "title": "Assets formula, tap and tap CI",
       "scope": "M",
-      "status": "not-started",
+      "status": "wip",
       "objective": "Write the `assets` formula template, put the tap in shape, and add the tap's CI.",
       "body": "**Scope**\n\n- **`packaging/homebrew/pplr.rb`**, in devbin's `assets` mode, after Intent's formula:\n  - `@@VERSION@@`, one `@@SHA256:<asset>@@` per target, and `@@INSTALL@@`/`@@FINISH@@`. No redundant top-level `version`.\n  - The macOS assets hold the signed `pplr` and `pplr-contacts`; the Linux assets hold `pplr`.\n  - `install` lays the binaries out in `libexec` with mode 0755, writes the T3 manifest with `managed_by: brew`, runs `codesign --verify --strict -R <requirement>` on each macOS binary, and links `pplr` into `bin`.\n  - The caveats name `pplr use`, the data root, and the Contacts grant.\n  - `test do` verifies the signatures again and runs the version line.\n- **Rendering**: `bin/devbin formula render <tag> <out>` renders the template, and the render passes `brew style` and `brew audit --strict`.\n- **The tap**, `matthewsinclair/homebrew-pplr`, which hv created:\n  - correct its description to \"Homebrew tap for pplr\" (`gh repo edit matthewsinclair/homebrew-pplr --description \"Homebrew tap for pplr\"`), with hv's approval;\n  - add a `test.yml` adapted from homebrew-ccusage's, running on macOS and Ubuntu.\n\n**Criteria**: AC-04.1 and AC-04.2.\n\n**Depends on**: WP02, WP03 and WP07.\n",
       "preamble": ""

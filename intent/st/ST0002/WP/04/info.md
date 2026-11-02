@@ -2,7 +2,7 @@
 wp_id: WP-04
 title: Assets formula, tap and tap CI
 scope: M
-status: Not Started
+status: WIP
 ---
 
 # WP-04: Assets formula, tap and tap CI

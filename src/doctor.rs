@@ -606,6 +606,48 @@ mod tests {
   use super::*;
 
   #[test]
+  fn the_formula_checks_the_same_requirements_the_signer_signs_to() {
+    // A Ruby formula cannot read packaging/macos/signing, so its copy is held to it here
+    let formula = include_str!("../packaging/homebrew/pplr.rb");
+    // DEVELOPER_ID is one Ruby string, written as adjacent literals over lines
+    let start = formula.find("DEVELOPER_ID = ").unwrap_or_default();
+    let block = &formula[start..];
+    let block = &block[..block.find(".freeze").unwrap_or_default()];
+    let tail: String = block
+      .lines()
+      .map(|l| {
+        l.trim()
+          .trim_start_matches("DEVELOPER_ID = ")
+          .trim_end_matches('\\')
+          .trim()
+      })
+      .map(|l| {
+        l.strip_prefix('"')
+          .and_then(|l| l.strip_suffix('"'))
+          .unwrap_or(l)
+          .replace("\\\"", "\"")
+      })
+      .collect();
+    for path in crate::install::runtime_set() {
+      let binary = path.trim_start_matches("bin/");
+      let id = signing_fact(&format!("id.{binary}")).unwrap_or_default();
+      let entry = format!("\"{binary}\"");
+      let line = formula
+        .lines()
+        .find(|l| l.trim_start().starts_with(&entry))
+        .unwrap_or_default();
+      assert!(
+        line.contains(&format!("identifier \\\"{id}\\\" and #{{DEVELOPER_ID}}")),
+        "{line}"
+      );
+      assert_eq!(
+        signing_fact(&format!("requirement.{binary}")),
+        Some(format!("identifier \"{id}\" and {tail}").as_str())
+      );
+    }
+  }
+
+  #[test]
   fn every_shipped_binary_has_an_identifier_and_a_requirement_to_sign_against() {
     for path in crate::install::runtime_set() {
       let binary = path.trim_start_matches("bin/");
