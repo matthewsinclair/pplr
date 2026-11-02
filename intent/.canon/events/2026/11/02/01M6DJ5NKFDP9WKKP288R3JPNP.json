@@ -1,0 +1,14 @@
+{
+  "id": "01M6DJ5NKFDP9WKKP288R3JPNP",
+  "ts": "2026-11-02T07:21:54.031Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "st.new",
+  "subject": {
+    "type": "thread",
+    "id": "ST0002"
+  },
+  "payload": {
+    "title": "Create a homebrew distro for the new Rust version of Pplr"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "01M6DJ518J2XQ6WW16MCVRK1H7",
+  "ts": "2026-11-02T07:21:33.202Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "st.new",
+  "subject": {
+    "type": "thread",
+    "id": "ST0001"
+  },
+  "payload": {
+    "title": "Port Pplr from shel scripts to Rust"
+  }
+}

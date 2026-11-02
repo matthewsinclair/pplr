@@ -1,0 +1,15 @@
+{
+  "id": "01M6DKR6B9RVXGVDYVXVMS47N5",
+  "ts": "2026-11-02T07:49:29.577Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wp.new",
+  "subject": {
+    "type": "wp",
+    "id": "ST0001/01"
+  },
+  "payload": {
+    "scope": "S",
+    "title": "Test safety, the parity seam and an honest runner"
+  }
+}

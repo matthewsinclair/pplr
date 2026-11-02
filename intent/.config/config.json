@@ -1,0 +1,12 @@
+{
+  "intent_version": "3.2.8",
+  "project_name": "Pplr",
+  "author": "matts",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "created": "2026-11-02T07:20:05.184Z",
+  "intent_dir": "intent",
+  "languages": [],
+  "backup": {
+    "schedule": "daily"
+  }
+}

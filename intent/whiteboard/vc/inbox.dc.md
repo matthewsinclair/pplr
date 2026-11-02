@@ -1,0 +1,39 @@
+# inbox: dc -> vc
+
+## (2026-11-02 07:37Z)
+
+**dc boot findings for ST0001 and ST0002.** hv asked me to send these to you. I am holding, with nothing claimed, until you update the threads and distribute work.
+
+By estate convention dc is DevX Claude, so my likely lane is the build and release environment: ST0002, plus the groundwork the port runs on. Your brief decides. If it leaves dc's order open, I would propose:
+
+1. Test safety and a parity seam: a temp dir per test, and one setting that points the bats suite at either the bash or the Rust `pplr`.
+2. The Rust project scaffold: `rustfmt.toml` (`tab_spaces = 2`, as in Intent and Utilz), clippy, `.gitignore`, and CI running the suite against both implementations.
+3. ST0002's design under devbin's dev/opt/brew contract, with draft ACs for you.
+4. A walking skeleton: a stub binary installed through a locally rendered formula, in a scratch clone. No tags or pushes on the real repo; those are hv's.
+
+**Findings**
+
+1. **The bats suite could check the port, but not yet.** All 99 tests run `"$PPLR_BIN_DIR/pplr"`, but `setup()` in `tests/test_helper.bash` resets `PPLR_BIN_DIR` to `$PPLR_ROOT/bin`, so nothing can point the suite at a Rust binary.
+2. **Test cleanup can delete real data, and is worth fixing first.** `setup()` honours an inherited `PPLR_TEST_DATA`, teardown runs `rm -rf "$PPLR_TEST_DATA"/*`, and `tests/run_tests.sh` ends with `rm -rf "$PPLR_TEST_DATA"`. Run one bats file directly with that variable aimed at the real People tree and it is wiped. The fix is `$BATS_TEST_TMPDIR` per test.
+3. **ST0002 has a contract to follow.** Utilz, Intent, Molt and devbin follow `~/Devel/prj/Devbin/docs/dev-opt-brew.md` (T1 to T10): the formula rendered from `packaging/homebrew/pplr.rb` into the tap `matthewsinclair/homebrew-pplr`, `pplr install --prefix <dir> --managed-by brew`, the manifest, the version line `pplr <version> (<tree>, <sha12>)`, and `pplr use dev|opt|brew`. A source-build formula, Utilz's pattern (`~/Devel/prj/Utilz/docs/releasing.md`), fits: `github.com/matthewsinclair/pplr` is public and MIT licensed. Intent's formula is the signed-binary variant, heavier than Pplr needs.
+4. **Blockers for any brew install, whoever builds them:**
+   - `lib/engine.sh` compiles the Swift Contacts engine (`src/pplr-contacts/main.swift`, 1,681 lines) on first use into `$PPLR_ROOT/.build`. A keg cannot do that, so Contacts access has to be built at install time: in pure Rust (framework bindings for the reads; the writes already go through `osascript` to Contacts.app, because the framework refused card updates with Cocoa error 134092), or by the formula compiling the Swift.
+   - `PPLR_ROOT`, `PPLR_BIN_DIR` and `PPLR_TEMPLATE_DIR` go: the binary finds its own templates and icons from its resolved path (T1). `PPLR_DATA` stays.
+   - `pplr handler --install` bakes `$PPLR_ROOT/bin/pplr` into its AppleScript app. Under brew it must name the opt link, never a Cellar path.
+   - `pplr help --details` pages `$PPLR_ROOT/README.md`, which a keg lacks unless the formula installs it.
+   - Once `Cargo.toml` exists the version lives in two places (`VERSION.md` is what `bin/pplr_version` reads), and one has to go.
+   - The `--contacts-json` fixture seam, which keeps the tests away from Contacts (42 of the 99 tests are in `pplr_sync.bats`), should survive the port in the same dump format.
+5. **The Python goes.** `src/pplr-tags/tags.py`, `src/pplr-contact/contact.py`, `src/pplr-contacts/workbook.py` and `src/pplr-email/email_list.py`, run under `uv` with PyYAML or openpyxl, break the no-Python rule. The port needs Rust for YAML, for writing and reading `.xlsx`, and for the email listing.
+6. **Repo hygiene.** `.gitignore` is an Elixir/Mix template (`/_build/`, `/deps/`, `lotto-*.tar`). A Finder `Icon\r` is tracked at the root. `usage-rules.md` describes the retired Claude tagger and `.index/tags.json`. The CHANGELOG's open section is `## [Unreleased]`, with `### Fixed` twice, where devbin's release core wants `## [X.Y.Z] - unreleased`. `setup.sh` writes `PPLR_ROOT` and `PATH` into the shell's rc file, and `.env.example` documents the same variables.
+7. **Toolchain on rhadamanth.** Rust 1.99.1 from Homebrew with no rustup, so a `rust-toolchain.toml` would be ignored; a minimum Rust version goes in `Cargo.toml` as `rust-version`. bats 1.14, jq, uv, swiftc 6.4.2, fileicon and claude are installed. `mail-recent` is not, so `pplr email` cannot run here. The estate runs cargo and bats in single-slot lanes (`intent estate status`).
+8. **Intent state.** No languages are declared, so the critic gate arms nothing (`intent lang init rust shell` would arm it). A dry run of `intent claude upgrade` would write `.claude/settings.json`, `.mcp.json`, `.intent_critic.yml` and the git hooks. Doctor's one advisory is the pre-commit hook lagging the templates.
+
+**Raised with hv in my session, and hv has seen them:**
+
+- Pplr's roster has no `hv` node and no `intent/whiteboard/README.md`, so nothing names the reader of `hv/inbox.*` (you, in every other project).
+- The Intent bootstrap is uncommitted: `intent/`, `AGENTS.md`, the new `CLAUDE.md` (its Project-specific section empty, with the old guidance in `__OLD_CLAUDE.md`), `.prettierignore`, the `.gitignore` change and the staged rename. My own `intent wb` writes (`dc/board.json`, `dc/wip.md`) sit inside that untracked tree, so I have committed nothing.
+- ST0001's title reads "shel scripts".
+
+---
+
+_Generated by Intent v3 from the whiteboard model. Do not edit this file -- it is rendered from the model, and `intent doctor` reports any hand-edit as skew._

@@ -1,0 +1,21 @@
+{
+  "schema": "intent/board@4.0",
+  "node": {
+    "moniker": "vc",
+    "name": "vc",
+    "role": "vc",
+    "session_id": "01f7e7ed-4beb-47d7-b826-1033c56a385d",
+    "heartbeat_at": "2026-11-02T07:29:41.548Z",
+    "status": "active",
+    "focus": "ST0001+ST0002: recon of Pplr:sh and the Rust/brew exemplars (Cldr, Ccusage, devbin 0.1.19), then elaborate both threads for cc and dc",
+    "claims": [
+      "ST0001",
+      "ST0002"
+    ],
+    "recorded_at": "2026-11-02T07:20:39.673Z",
+    "migrated_at": "2026-11-02T07:20:39.673Z"
+  },
+  "items": [],
+  "sent": [],
+  "handled": []
+}

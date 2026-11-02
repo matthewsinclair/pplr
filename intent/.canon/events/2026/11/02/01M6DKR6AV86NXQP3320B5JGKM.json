@@ -1,0 +1,15 @@
+{
+  "id": "01M6DKR6AV86NXQP3320B5JGKM",
+  "ts": "2026-11-02T07:49:29.563Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "st.relate",
+  "subject": {
+    "type": "thread",
+    "id": "ST0002"
+  },
+  "payload": {
+    "note": "ST0002 ships ST0001's binary through Homebrew; the install layout is their seam (ST0001 WP02, ST0002 WP01); the release waits on ST0001 WP13",
+    "target": "ST0001"
+  }
+}

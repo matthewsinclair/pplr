@@ -1,0 +1,15 @@
+{
+  "id": "01M6DPDX913BS0ANHQE7PH5WN7",
+  "ts": "2026-11-02T08:36:18.337Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wp.new",
+  "subject": {
+    "type": "wp",
+    "id": "ST0001/08"
+  },
+  "payload": {
+    "scope": "S",
+    "title": "Rename, links and the pplr:// handler"
+  }
+}

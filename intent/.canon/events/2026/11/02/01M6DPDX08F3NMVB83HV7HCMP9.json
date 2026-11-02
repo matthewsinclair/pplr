@@ -1,0 +1,15 @@
+{
+  "id": "01M6DPDX08F3NMVB83HV7HCMP9",
+  "ts": "2026-11-02T08:36:18.056Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wp.new",
+  "subject": {
+    "type": "wp",
+    "id": "ST0001/03"
+  },
+  "payload": {
+    "scope": "S",
+    "title": "Golden capture from the legacy code"
+  }
+}

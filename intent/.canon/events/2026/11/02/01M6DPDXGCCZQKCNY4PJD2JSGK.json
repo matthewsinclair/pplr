@@ -1,0 +1,15 @@
+{
+  "id": "01M6DPDXGCCZQKCNY4PJD2JSGK",
+  "ts": "2026-11-02T08:36:18.572Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wp.new",
+  "subject": {
+    "type": "wp",
+    "id": "ST0001/12"
+  },
+  "payload": {
+    "scope": "S",
+    "title": "Doctor and Finder icons"
+  }
+}

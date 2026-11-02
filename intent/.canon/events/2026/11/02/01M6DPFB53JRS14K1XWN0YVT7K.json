@@ -1,0 +1,15 @@
+{
+  "id": "01M6DPFB53JRS14K1XWN0YVT7K",
+  "ts": "2026-11-02T08:37:05.315Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wp.new",
+  "subject": {
+    "type": "wp",
+    "id": "ST0002/03"
+  },
+  "payload": {
+    "scope": "S",
+    "title": "Install, manifest, tree identity, version line and use"
+  }
+}

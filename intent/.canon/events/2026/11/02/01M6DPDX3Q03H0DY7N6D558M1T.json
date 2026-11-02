@@ -1,0 +1,15 @@
+{
+  "id": "01M6DPDX3Q03H0DY7N6D558M1T",
+  "ts": "2026-11-02T08:36:18.167Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wp.new",
+  "subject": {
+    "type": "wp",
+    "id": "ST0001/05"
+  },
+  "payload": {
+    "scope": "S",
+    "title": "Indexes, new person, pictures and search"
+  }
+}

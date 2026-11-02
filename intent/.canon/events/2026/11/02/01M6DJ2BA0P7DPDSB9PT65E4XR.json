@@ -1,0 +1,14 @@
+{
+  "id": "01M6DJ2BA0P7DPDSB9PT65E4XR",
+  "ts": "2026-11-02T07:20:05.184Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "Pplr",
+  "op": "init",
+  "subject": {
+    "type": "project",
+    "id": "Pplr"
+  },
+  "payload": {
+    "intent_version": "3.2.8"
+  }
+}
