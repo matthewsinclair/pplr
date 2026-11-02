@@ -1,0 +1,8 @@
+[
+ {"date": "2026-06-10T11:00:00+01:00", "account": "me@example.com", "address": "annelies@kestrel.example", "from": "Annelies de Vries <annelies@kestrel.example>", "to": ["me@example.com"], "subject": "Kestrel seed round", "message_id": "<seed-9@kestrel.example>", "mailboxes": ["INBOX"]},
+ {"date": "2026-06-14T17:40:00+01:00", "account": "me@example.com", "address": "news@bulletin.example", "from": "Bulletin <news@bulletin.example>", "to": ["me@example.com"], "subject": "Weekly digest", "message_id": "<digest-77@bulletin.example>", "mailboxes": ["[Gmail]/All Mail"]},
+ {"date": "2026-06-14T18:05:00+01:00", "account": "me@example.com", "address": "me@example.com", "from": "Me <me@example.com>", "to": ["someone@else.example", "zsofia.varga@gmail.com"], "subject": "Intro: Zsófia, meet Someone", "message_id": "<intro-3@example.com>", "mailboxes": ["Sent Messages"]},
+ {"date": "2026-06-15T07:00:00+01:00", "account": "me@example.com", "address": "win@prize.example", "from": "Prize Desk <win@prize.example>", "to": ["me@example.com"], "subject": "You have won", "message_id": "<prize-1@prize.example>", "mailboxes": ["[Gmail]/Spam"]},
+ {"date": "2026-06-15T08:12:00+01:00", "account": "me@example.com", "address": "chidi@larkspur.example", "from": "Chidi Okafor <chidi@larkspur.example>", "to": ["me@example.com"], "subject": "Ledger follow-up", "message_id": "<ledger-1@larkspur.example>", "mailboxes": ["[Gmail]/All Mail", "INBOX"]},
+ {"date": "2026-06-15T08:12:00+01:00", "account": "me@example.com", "address": "chidi@larkspur.example", "from": "Chidi Okafor <chidi@larkspur.example>", "to": ["me@example.com"], "subject": "Ledger follow-up", "message_id": "<ledger-1@larkspur.example>", "mailboxes": ["Archive"]}
+]

@@ -1,6 +1,54 @@
 #!/bin/zsh
-# Stands in for mail-recent: `index --json [--inbox] ...` prints a fixture listing.
-# The other filters are ignored; the listing is what the scenario is about.
-listing="$PPLR_GOLDEN_SANDBOX/mail/recent.json"
-for a in "$@"; do [[ $a == --inbox ]] && listing="$PPLR_GOLDEN_SANDBOX/mail/inbox.json"; done
-cat "$listing"
+# Stands in for mail-recent's `index --json`, with its rules: from the fixture's
+# messages (mail/messages.json, each with the mailboxes it is in), --inbox keeps
+# those in INBOX whatever their age, else those that arrived in the last --hours
+# (default 24) before the pinned PPLR_GOLDEN_NOW; Junk, Trash, Deleted, Drafts,
+# Spam and Bin always go, Sent unless --sent; --account keeps the accounts that
+# contain its text; one row per Message-ID; oldest first; the last --limit.
+
+emulate -L zsh
+setopt err_exit no_unset pipe_fail extended_glob
+
+[[ ${1-} == index ]] || { print -u2 "fake mail-recent: only index"; exit 2 }
+shift
+inbox=0 sent=0 hours=24 account= limit=200
+while (( $# )); do
+  case $1 in
+    --inbox) inbox=1 ;;
+    --sent) sent=1 ;;
+    --json) ;;
+    --hours) hours=$2; shift ;;
+    --account) account=$2; shift ;;
+    --limit) limit=$2; shift ;;
+    *) print -u2 "fake mail-recent: $1?"; exit 2 ;;
+  esac
+  shift
+done
+
+messages=$PPLR_GOLDEN_SANDBOX/mail/messages.json
+epoch() { /bin/date -j -f '%Y-%m-%dT%H:%M:%S%z' "${1/%(#b)([+-][0-9][0-9]):([0-9][0-9])/$match[1]$match[2]}" +%s }
+cutoff=0
+(( inbox )) || cutoff=$(( $(/bin/date -j -f '%Y-%m-%d %H:%M:%S' "$PPLR_GOLDEN_NOW" +%s) - hours * 3600 ))
+
+typeset -A seen
+keep=()
+for line in "${(@f)$(jq -r 'to_entries[] | [.key, .value.date, .value.account, .value.message_id, (.value.mailboxes | join("\u001f"))] | @tsv' $messages)}"; do
+  fields=("${(@ps:\t:)line}")
+  i=$fields[1] date=$fields[2] acct=$fields[3] mid=$fields[4]
+  boxes=("${(@ps:\x1f:)fields[5]}")
+  when=$(epoch $date)
+  (( when >= cutoff )) || continue
+  [[ -z $account || ${acct:l} == *${account:l}* ]] || continue
+  # each test matches every mailbox name on its own
+  [[ -z ${(M)boxes:#(#i)*(junk|trash|deleted|drafts|spam)*} && -z ${(M)boxes:#(#i)*bin} ]] || continue
+  (( ! inbox )) || [[ -n ${(M)boxes:#(#i)inbox} ]] || continue
+  (( sent )) || [[ -z ${(M)boxes:#(#i)*sent*} ]] || continue
+  key=${mid:-row$i}
+  (( ! ${+seen[$key]} )) || continue
+  seen[$key]=1
+  keep+=("$when $i")
+done
+
+order=(${${(on)keep}#* })
+(( $#order <= limit )) || order=(${order[-limit,-1]})
+jq --argjson order "[${(j:,:)order}]" '[ . as $all | $order[] | $all[.] | del(.mailboxes) ]' $messages

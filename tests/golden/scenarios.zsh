@@ -42,12 +42,12 @@ scenario contact-scan;        run contact scan; run contact scan
 scenario contact-due;         run contact due; run contact due 30; run contact due --all
 scenario contact-show;        run contact show "Okafor, Chidi"; run contact show "Blackwood, Esme"
 scenario contact-log;         run contact log "Hartigan, Mo" 2026-06-12 --via call --note "Discussed Fund II"
-scenario contact-log-email;   run email recent; run contact log --email 1
+scenario contact-log-email;   run email recent; run contact log --email 2
 scenario contact-next;        run contact next "Varga, Zsófia" +2w; run contact next "Varga, Zsófia" 2026-09-01
 scenario contact-context;     run contact context "Okafor, Chidi"
 scenario contact-render;      run contact render
 
-# Email, through a fake mail-recent
+# Email, through a fake mail-recent that keeps its rules (fakes/mail-recent)
 scenario email;               run email; run email recent --sent; run email inbox; run email --bogus
 
 # Rename, with refs reached through a symlink
