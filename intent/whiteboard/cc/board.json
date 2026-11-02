@@ -5,16 +5,25 @@
     "name": "cc",
     "role": "cc",
     "session_id": "ae86b27f-47f4-447b-b2aa-713a050085b2",
-    "heartbeat_at": "2026-11-02T16:53:34.907Z",
+    "heartbeat_at": "2026-11-02T17:05:15.080Z",
     "status": "active",
-    "focus": "ST0001 WP10: sync check, link, pull, photos, backup on the store contract",
+    "focus": "ST0001 WP10 (claimed, WIP): sync check/link/pull/photos/backup ported to src/sync.rs, uncommitted; replay 50/54, 2 differ on the inetloc name's Unicode form (engine wrote NFD); next: match it, move 2 scaffold tests off rename (now native), AT-10.1, delete WP10 skips, scratch-verify, commit",
     "claims": [
       "ST0001/10"
     ],
     "recorded_at": "2026-11-02T07:22:34.821Z",
     "migrated_at": "2026-11-02T07:22:34.821Z"
   },
-  "items": [],
+  "items": [
+    {
+      "node": "cc",
+      "kind": "watchout",
+      "seq": 1,
+      "text": "WP10 work is uncommitted in the shared tree: src/sync.rs (new), sync rows in src/cli.rs and src/lib.rs, and stamp made public in src/contacts/json.rs and mod.rs. Nobody else should edit those files until cc commits WP10.",
+      "state": "live",
+      "recorded_at": "2026-11-02T17:05:15.061Z"
+    }
+  ],
   "sent": [
     {
       "id": "01M6DK3FBSZW17WG1VRN9P5W1W",

@@ -1,0 +1,15 @@
+{
+  "id": "01M6EKHT9NDE1KH183Z7HZRQ2E",
+  "ts": "2026-11-02T17:05:15.061Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "watchout",
+    "text": "WP10 work is uncommitted in the shared tree: src/sync.rs (new), sync rows in src/cli.rs and src/lib.rs, and stamp made public in src/contacts/json.rs and mod.rs. Nobody else should edit those files until cc commits WP10."
+  }
+}

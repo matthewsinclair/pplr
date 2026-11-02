@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: ae86b27f-47f4-447b-b2aa-713a050085b2
-heartbeat_at: 2026-11-02 16:53Z
+heartbeat_at: 2026-11-02 17:05Z
 status: active
-focus: "ST0001 WP10: sync check, link, pull, photos, backup on the store contract"
+focus: "ST0001 WP10 (claimed, WIP): sync check/link/pull/photos/backup ported to src/sync.rs, uncommitted; replay 50/54, 2 differ on the inetloc name's Unicode form (engine wrote NFD); next: match it, move 2 scaffold tests off rename (now native), AT-10.1, delete WP10 skips, scratch-verify, commit"
 claims: [ST0001/10]
 ---
 
@@ -25,7 +25,7 @@ _(none)_
 
 ## Watch-outs
 
-_(none)_
+- WP10 work is uncommitted in the shared tree: src/sync.rs (new), sync rows in src/cli.rs and src/lib.rs, and stamp made public in src/contacts/json.rs and mod.rs. Nobody else should edit those files until cc commits WP10.
 
 ## Decisions
 
