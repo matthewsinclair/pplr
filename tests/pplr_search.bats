@@ -43,7 +43,7 @@ load test_helper
 exit 1
 EOF
     chmod +x "$PPLR_TEST_BIN/claude"
-    command -v uv >/dev/null 2>&1 || skip "uv not installed"
+    needs_uv_for_legacy reindex
     "$PPLR" reindex >/dev/null
 
     run "$PPLR" search "test"

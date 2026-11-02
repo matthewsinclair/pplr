@@ -2,7 +2,8 @@
 wp_id: WP-07
 title: Contact cadence
 scope: M
-status: Done
+status: WIP
+status_reason: seven contact bats tests skip on a missing uv against the Rust binary too (rule 8); the guards become legacy-only
 ---
 
 # WP-07: Contact cadence

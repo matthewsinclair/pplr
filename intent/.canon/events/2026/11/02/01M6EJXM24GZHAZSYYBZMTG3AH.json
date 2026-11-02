@@ -1,0 +1,16 @@
+{
+  "id": "01M6EJXM24GZHAZSYYBZMTG3AH",
+  "ts": "2026-11-02T16:54:13.316Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wp.reopen",
+  "subject": {
+    "type": "wp",
+    "id": "ST0001/06"
+  },
+  "payload": {
+    "from": "done",
+    "reason": "eight tags/tag bats tests and the search fallback test skip on a missing uv against the Rust binary too (rule 8); the guards become legacy-only",
+    "to": "wip"
+  }
+}

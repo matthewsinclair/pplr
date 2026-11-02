@@ -49,11 +49,11 @@ title: Port Pplr from shell scripts to Rust
 
 - AC-05.1 json, index, reindex, new, pictures and search run natively in Rust, and their goldens and bats tests pass; a search query is never interpolated into a command line. -- satisfied: yes (computed)
 
-### WP-06 -- Tags (status: Done)
+### WP-06 -- Tags (status: WIP)
 
 - AC-06.1 tag and tags run natively in Rust, and their goldens and bats tests pass. -- satisfied: yes (computed)
 
-### WP-07 -- Contact cadence (status: Done)
+### WP-07 -- Contact cadence (status: WIP)
 
 - AC-07.1 contact runs natively in Rust, and the contact goldens and bats tests pass; `log --email` is covered by AC-14.1. -- satisfied: yes (computed)
 
@@ -66,7 +66,7 @@ title: Port Pplr from shell scripts to Rust
 - AC-09.1 Sync reaches Contacts only through the store interface. The JSON store reads and writes the dump format, and the Swift sidecar does only dump, backup and group, built ahead of time and never at run time. -- satisfied: no (computed)
 - AC-09.2 (non-test) On rhadamanth, the sidecar reads the live Contacts store, and the Rust `pplr sync --check --json` matches the legacy engine's report (read-only). -- satisfied: no
 
-### WP-10 -- Sync: check, link, pull, photos and backup (status: Not Started)
+### WP-10 -- Sync: check, link, pull, photos and backup (status: WIP)
 
 - AC-10.1 sync --check, --link, --pull, --photos and --backup run in Rust against the JSON store, and their goldens and bats tests pass. -- satisfied: no (computed)
 
@@ -111,11 +111,11 @@ _(no tests in this group)_
 
 - AT-05.1 `tests/cli.rs` -- covers AC-05.1 -- status: green -- the_index_new_pictures_and_search_commands_are_native_and_their_goldens_replay: red at 3302f2e (none native), green with WP05 (15/54 goldens replay; reindex's index.json byte-equal to jq's print; search's query only ever in the prompt); bats 101/101 on both implementations from a scratch worktree
 
-### WP-06 -- Tags (status: Done)
+### WP-06 -- Tags (status: WIP)
 
 - AT-06.1 `tests/cli.rs` -- covers AC-06.1 -- status: green -- tag_and_tags_are_native_and_their_goldens_replay: red at b93fc2e (tags on the fallback, reindex delegating), green with WP06 (23/54 goldens replay, the six tags cases and both reindex cases among them); bats 101/101 on both implementations from a scratch worktree
 
-### WP-07 -- Contact cadence (status: Done)
+### WP-07 -- Contact cadence (status: WIP)
 
 - AT-07.1 `tests/cli.rs` -- covers AC-07.1 -- status: green -- contact_is_native_and_its_goldens_replay: red at a143133 (contact on the fallback), green with WP07 (35/54 goldens replay, every contact and tag case among them); bats 101/101 on both implementations from a scratch worktree
 
@@ -127,7 +127,7 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-10 -- Sync: check, link, pull, photos and backup (status: Not Started)
+### WP-10 -- Sync: check, link, pull, photos and backup (status: WIP)
 
 _(no tests in this group)_
 

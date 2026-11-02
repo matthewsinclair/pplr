@@ -5,7 +5,7 @@ load test_helper
 meeting() { mkdir -p "$PPLR_TEST_DATA/$1/Meetings/$2"; echo "# $2" > "$PPLR_TEST_DATA/$1/Meetings/$2/Notes.md"; }
 
 @test "pplr contact scan takes last from the newest meeting, and next from a tag's cadence" {
-    command -v uv >/dev/null 2>&1 || skip "uv not installed (the legacy contact is Python until ST0001 WP07 ports it)"
+    needs_uv_for_legacy contact
     create_test_person "Adams" "Amy" >/dev/null
     create_test_person "Brown" "Bob" >/dev/null
     mkdir -p "$PPLR_TEST_DATA/_pplr"; printf "roster:\n  contact: 180\n  vip: 90\nevery:\n  12month: 365\n" > "$PPLR_TEST_DATA/_pplr/cadence.yaml"
@@ -32,7 +32,7 @@ meeting() { mkdir -p "$PPLR_TEST_DATA/$1/Meetings/$2"; echo "# $2" > "$PPLR_TEST
 }
 
 @test "pplr contact log moves next on, next snoozes, and a booked meeting is not due" {
-    command -v uv >/dev/null 2>&1 || skip "uv not installed (the legacy contact is Python until ST0001 WP07 ports it)"
+    needs_uv_for_legacy contact
     create_test_person "Adams" "Amy" >/dev/null
     mkdir -p "$PPLR_TEST_DATA/_pplr"; printf "roster:\n  contact: 180\n  vip: 90\nevery:\n  12month: 365\n" > "$PPLR_TEST_DATA/_pplr/cadence.yaml"
     printf 'tags:\n  - vip\n' > "$PPLR_TEST_DATA/A/Adams, Amy/About/tags.yaml"
@@ -57,7 +57,7 @@ meeting() { mkdir -p "$PPLR_TEST_DATA/$1/Meetings/$2"; echo "# $2" > "$PPLR_TEST
 }
 
 @test "pplr contact context shows the role, the latest update and the last meeting's notes" {
-    command -v uv >/dev/null 2>&1 || skip "uv not installed (the legacy contact is Python until ST0001 WP07 ports it)"
+    needs_uv_for_legacy contact
     create_test_person "Adams" "Amy" >/dev/null
     meeting "A/Adams, Amy" "20260301 Catch-up"
     echo "Talked about the Series A." >> "$PPLR_TEST_DATA/A/Adams, Amy/Meetings/20260301 Catch-up/Notes.md"
@@ -72,7 +72,7 @@ meeting() { mkdir -p "$PPLR_TEST_DATA/$1/Meetings/$2"; echo "# $2" > "$PPLR_TEST
 }
 
 @test "pplr contact: a cadence tag overrides the roster tag's default" {
-    command -v uv >/dev/null 2>&1 || skip "uv not installed (the legacy contact is Python until ST0001 WP07 ports it)"
+    needs_uv_for_legacy contact
     create_test_person "Adams" "Amy" >/dev/null
     create_test_person "Brown" "Bob" >/dev/null
     mkdir -p "$PPLR_TEST_DATA/_pplr"; printf "roster:\n  contact: 180\n  vip: 90\nevery:\n  12month: 365\n" > "$PPLR_TEST_DATA/_pplr/cadence.yaml"
@@ -85,7 +85,7 @@ meeting() { mkdir -p "$PPLR_TEST_DATA/$1/Meetings/$2"; echo "# $2" > "$PPLR_TEST
 }
 
 @test "a person's pplr:// marker stands for \"Surname, First\"" {
-    command -v uv >/dev/null 2>&1 || skip "uv not installed (the legacy contact is Python until ST0001 WP07 ports it)"
+    needs_uv_for_legacy contact
     create_test_person "Adams" "Amy" >/dev/null
     run "$PPLR" contact show pplr://a/adams-amy
     [ "$status" -eq 0 ]
@@ -97,7 +97,7 @@ meeting() { mkdir -p "$PPLR_TEST_DATA/$1/Meetings/$2"; echo "# $2" > "$PPLR_TEST
 }
 
 @test "pplr contact writes (Contact).md beside contact.yaml, and log --email links the message" {
-    command -v uv >/dev/null 2>&1 || skip "uv not installed (the legacy contact is Python until ST0001 WP07 ports it)"
+    needs_uv_until WP14 "contact log --email"
     create_test_person "Adams" "Amy" >/dev/null
     meeting "A/Adams, Amy" "20260301 Catch-up"
     export PPLR_TODAY=2026-09-25
@@ -119,7 +119,7 @@ meeting() { mkdir -p "$PPLR_TEST_DATA/$1/Meetings/$2"; echo "# $2" > "$PPLR_TEST
 }
 
 @test "pplr contact log --email N takes the message, date, subject and person from the last pplr email listing" {
-    command -v uv >/dev/null 2>&1 || skip "uv not installed (the legacy contact is Python until ST0001 WP07 ports it)"
+    needs_uv_until WP14 "contact log --email"
     create_test_person "Adams" "Amy" >/dev/null
     cat > "$PPLR_CACHE_DIR/email-last.json" <<'JSON'
 [{"n": 1, "date": "2026-09-24T09:00:00+01:00", "message_id": "<a1@x>", "subject": "Hello", "direction": "in", "person": null},

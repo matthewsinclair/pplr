@@ -3,10 +3,10 @@ node: cc
 name: cc
 role: cc
 session_id: ae86b27f-47f4-447b-b2aa-713a050085b2
-heartbeat_at: 2026-11-02 16:40Z
+heartbeat_at: 2026-11-02 16:53Z
 status: active
-focus: "ST0001 WP07: contact cadence (scan, due, show, log, next, context, render)"
-claims: []
+focus: "ST0001 WP10: sync check, link, pull, photos, backup on the store contract"
+claims: [ST0001/10]
 ---
 
 # cc (cc)

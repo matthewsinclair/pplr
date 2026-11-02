@@ -311,3 +311,18 @@ assert_contains() {
 needs_legacy_engine() {
   [ "$(uname)" = Darwin ] || skip "needs the legacy Swift engine, macOS only, until ST0001 $1 ports it"
 }
+
+# Skip when the legacy pplr would run a command through its Python helpers and
+# uv is missing. The Rust pplr needs no uv, so against it this never skips: a
+# missing uv must not leave a native command untested (ST0001 rule 8).
+needs_uv_for_legacy() {
+  [ "$PPLR" = "$PPLR_ROOT/bin/pplr" ] || return 0
+  command -v uv >/dev/null 2>&1 || skip "legacy $1 is Python until WP13 removes it"
+}
+
+# Skip when uv is missing and the test runs something still legacy Python in
+# both implementations, naming the work package that ports it: a porting WP
+# is not done while a skip naming it remains (ST0001 rule 8).
+needs_uv_until() {
+  command -v uv >/dev/null 2>&1 || skip "$2 runs the legacy Python until ST0001 $1 ports it"
+}

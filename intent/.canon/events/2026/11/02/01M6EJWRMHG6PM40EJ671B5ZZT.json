@@ -1,0 +1,16 @@
+{
+  "id": "01M6EJWRMHG6PM40EJ671B5ZZT",
+  "ts": "2026-11-02T16:53:45.234Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wp.reopen",
+  "subject": {
+    "type": "wp",
+    "id": "ST0001/07"
+  },
+  "payload": {
+    "from": "done",
+    "reason": "seven contact bats tests skip on a missing uv against the Rust binary too (rule 8); the guards become legacy-only",
+    "to": "wip"
+  }
+}

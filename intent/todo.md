@@ -14,11 +14,11 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
   - [x] 03: Golden capture from the legacy code
   - [x] 04: Core model and the read commands
   - [x] 05: Indexes, new person, pictures and search
-  - [x] 06: Tags
-  - [x] 07: Contact cadence
+  - [-] 06: Tags
+  - [-] 07: Contact cadence
   - [-] 08: Rename, links and the pplr:// handler
   - [-] 09: The Contacts store and the Swift I/O sidecar
-  - [ ] 10: Sync: check, link, pull, photos and backup
+  - [-] 10: Sync: check, link, pull, photos and backup
   - [ ] 11: The sync plan and its workbook
   - [x] 12: Doctor and Finder icons
   - [ ] 13: Cutover
