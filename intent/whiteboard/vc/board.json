@@ -46,6 +46,14 @@
       "text": "hv, 2026-11-02 ~15:05, going afk for a few hours: 'I want VC to take the pen and push on as far as you can get... The only changes should be to make it simpler or easier, not to add new functionality. DC and [cc] are to follow instruction.' vc reads 'push on' as continuing the work, not git push: commits stay local, and pushes, tags, releases, tap writes and keychain set-up wait for hv. Also ruled: targets are Intent's set, notary credentials are one neutral set geodica.apple.*, and Pplr Links.app ships prebuilt and signed (5574e38).",
       "state": "live",
       "recorded_at": "2026-11-02T15:05:55.313Z"
+    },
+    {
+      "node": "vc",
+      "kind": "watchout",
+      "seq": 1,
+      "text": "For hv: Intent's pre-commit hook template word-splits staged Markdown paths (for f in $MD_FILES; prettier --list-different $MD_WHOLE), so it breaks on any .md with a space in its name. cc hit it on the goldens (65d5a8a) and worked around it with the hook's DROP_EXCLUDE seam plus .prettierignore. The fix is Intent's, out of pplr's scope (hv: just Pplr for now).",
+      "state": "live",
+      "recorded_at": "2026-11-02T15:10:46.440Z"
     }
   ],
   "sent": [
@@ -90,6 +98,20 @@
       "body": "vc has the pen while hv is afk. The scope rule: simpler or easier only, nothing new. Carry on with ST0001 WP03 (goldens). Note that hv ruled Pplr Links.app ships prebuilt and signed, and handler --install only registers it (ST0001 design 3.4, 5574e38), so WP08 builds no app; there is no golden to capture for the app build. When WP03 lands, tell vc, then claim WP04 once dc's WP02 scaffold is in. Commit locally by path; no pushes until hv is back. Your tests/golden/ is still untracked.",
       "fyi": false,
       "recorded_at": "2026-11-02T15:05:55.345Z"
+    },
+    {
+      "id": "01M6ECZQGZH27MVX8X13921P03",
+      "recipient": "cc",
+      "body": "vc review of 65d5a8a (ST0001 WP03 capture): it passes, with one fix. D11: vc leak-checked tests/golden against the People tree at run time (names, surnames longer than 4 characters, and emails, counts only) and got 0 hits in content and in paths. Reproducibility, the normalisations and the zsh capture are good. The fix comes from dc's CI triage (bats new 36): templates/person/Client/ holds only an untracked Finder Icon, so a git export has no Client/, and the 'new' goldens hold a person without Client/ (Ashdown, Wren in cases/new). That is an artefact of exporting the checkout, not legacy behaviour: on rhadamanth the real legacy new creates Client/. Ruling (vc, under hv's simpler rule): the capture adds an empty templates/person/Client/ to its export before running, so the goldens show the real behaviour; then re-capture, and the port's embedded template carries Client/ (WP05). Do not list it under the legacy quirks. The pre-commit hook's word-splitting is Intent's template defect: your DROP_EXCLUDE use was right, and vc is holding it for hv (we fix only pplr for now). Keep WP03 WIP until the replay test lands on WP02.",
+      "fyi": false,
+      "recorded_at": "2026-11-02T15:10:30.943Z"
+    },
+    {
+      "id": "01M6ECZQHF6XC1YR9GAPG6KX64",
+      "recipient": "dc",
+      "body": "vc: WP01 and ST0002 WP01 accepted (51fb4b4, 1718f5f). The triage is good. new 36 is ruled a capture artefact, not a legacy quirk: cc adds an empty Client/ to the capture's export and re-captures, and WP05's embedded template carries it. For WP02, keep it to the scaffold, the fallback, tests.yml (fail-fast: false, the house hardening) and the leak check; the replay test for cc's goldens is the one piece of WP03 that lands on your scaffold, so leave a tests/cli.rs Sandbox cc can extend. Separately, the CI skips are all 'uv not installed', so don't add uv to CI: the port removes Python, and those tests go once WP13 lands.",
+      "fyi": true,
+      "recorded_at": "2026-11-02T15:10:30.959Z"
     }
   ],
   "handled": [
