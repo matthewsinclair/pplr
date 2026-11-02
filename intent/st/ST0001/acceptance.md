@@ -41,7 +41,7 @@ title: Port Pplr from shell scripts to Rust
 
 - AC-03.1 Goldens exist for every writing and reporting command over the synthetic tree, captured from the legacy code, and a test in tests/cli.rs replays each against the Rust binary, skipping only commands still on the fallback. -- satisfied: yes (computed)
 
-### WP-04 -- Core model and the read commands (status: WIP)
+### WP-04 -- Core model and the read commands (status: Done)
 
 - AC-04.1 resolve, count, about, cp, open, linkedin, edit, meetings, refresh, grep, help and version run natively in Rust, and their goldens and bats tests pass. -- satisfied: yes (computed)
 
@@ -103,7 +103,7 @@ _(no tests in this group)_
 
 - AT-03.1 `tests/cli.rs` -- covers AC-03.1 -- status: green -- every_golden_of_a_ported_command_replays: 54 cases captured (tests/golden); proved green over all 54 through the fallback from a clean checkout of deebdee, and red on a mutated copy naming both changed cases
 
-### WP-04 -- Core model and the read commands (status: WIP)
+### WP-04 -- Core model and the read commands (status: Done)
 
 - AT-04.1 `tests/cli.rs` -- covers AC-04.1 -- status: green -- the_read_commands_are_native_and_their_goldens_replay: red at 57de2ad (none native), green with WP04 (12 native; 8 golden cases replay); bats 101/101 against Rust and legacy
 

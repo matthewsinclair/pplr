@@ -2,7 +2,7 @@
 wp_id: WP-04
 title: Core model and the read commands
 scope: M
-status: WIP
+status: Done
 ---
 
 # WP-04: Core model and the read commands

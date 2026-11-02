@@ -8,9 +8,7 @@
     "heartbeat_at": "2026-11-02T15:56:31.731Z",
     "status": "active",
     "focus": "ST0001 WP04: core model (tree, about, normalise, marker) and the read commands",
-    "claims": [
-      "ST0001/04"
-    ],
+    "claims": [],
     "recorded_at": "2026-11-02T07:22:34.821Z",
     "migrated_at": "2026-11-02T07:22:34.821Z"
   },
@@ -52,6 +50,13 @@
       "body": "**ST0001 WP04: a ruling needed on bin/pplr and the suite's default.** WP04 deletes bin/pplr_resolve and bin/pplr_version (rule 3), and the legacy dispatcher bin/pplr calls both: for -v/--version and for every pplr:// marker argument. The Rust pplr no longer needs bin/pplr at all, because the fallback runs bin/pplr_<cmd> itself with bin/pplr's environment. tests/test_helper.bash defaults PPLR_UNDER_TEST to bin/pplr, which after WP04 cannot serve resolve, count, about, cp, open, linkedin, edit, meetings, refresh, grep, help or version. **My proposal (simpler, nothing new):** WP04 deletes bin/pplr, and the suite's default becomes the Rust binary ($PPLR_ROOT/target/debug/pplr; tools/bats-rust already builds it). The legacy behaviour stays pinned where it matters, in the goldens, which are captured from a git export of 507b0f6, not from the working tree. The other bin/pplr callers: setup.sh (ST0002 retires it) and pplr_handler, which bakes $PPLR_ROOT/bin/pplr into its app (WP08, already changing under the prebuilt-app ruling). The alternative is to keep bin/pplr as a two-line shim that execs the Rust binary. Your call; I'm carrying on with the rest of WP04 meanwhile.",
       "fyi": false,
       "recorded_at": "2026-11-02T16:03:53.211Z"
+    },
+    {
+      "id": "01M6EGE16SDXSEMGVRPRR8DR3Y",
+      "recipient": "vc",
+      "body": "**ST0001 WP04 done (938902c, local).** resolve, count, about, cp, open, linkedin, edit, meetings, refresh, grep, help and version run natively. **Per your D3 ruling no bin/ or lib/ file is touched**; the Rust pplr simply no longer calls bin/pplr_resolve or pplr_version: the marker rewrite, data-folder check and -v/--version now live in cli::run for native and fallback commands alike. Core modules, all pure with unit tests (48 lib tests): tree (walk, people, names; dc moved his module to layout), about, normalise (Foundation's fold from a table tools/fold-table.swift generates from Foundation itself, so no hand-made accent list), marker. **Evidence:** golden replay 8 of 54 cases native and all matching (count-no-index, grep, meetings, refresh, resolve, open-print-files, -cms-down, and -cms-up through a stub CMS on 127.0.0.1:47360); bats 101/101 against Rust and 101/101 against legacy, the two WP04 skips gone (rule 8); fmt and clippy -D warnings clean; AT-04.1 (to-write, red, green) covers AC-04.1; wp gate PASS; claim released. **Two goldens changed scenario, not oracle** (8baa79b): grep searches now have one hit each, because grep -r walks in readdir order (hash order on APFS, another on Linux); the CMS scenarios name 127.0.0.1:9 and :47360, so hv's own CMS on 4360 can never change a result. **Choices to look at:** cp -o works on Linux and only the clipboard refuses there; help --details pages the embedded README through less at a terminal, else prints it; an unreadable --older-than leaves no cutoff, as the bash did. The shared renders in my commit also carry dc's WP12 close. Next: WP05 (indexes, new person, pictures, search), unless you sequence otherwise.",
+      "fyi": false,
+      "recorded_at": "2026-11-02T16:10:45.337Z"
     }
   ],
   "handled": [
@@ -69,6 +74,11 @@
       "id": "01M6ECZQGZH27MVX8X13921P03",
       "sender": "vc",
       "handled_at": "2026-11-02T15:12:06.324Z"
+    },
+    {
+      "id": "01M6EFJW1MSWG3TBK4JRJ006DF",
+      "sender": "vc",
+      "handled_at": "2026-11-02T16:10:30.396Z"
     }
   ]
 }

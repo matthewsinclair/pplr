@@ -12,7 +12,7 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
   - [x] 01: Test safety, the parity seam and an honest runner
   - [-] 02: Rust scaffold under devbin, with the fallback
   - [x] 03: Golden capture from the legacy code
-  - [-] 04: Core model and the read commands
+  - [x] 04: Core model and the read commands
   - [ ] 05: Indexes, new person, pictures and search
   - [ ] 06: Tags
   - [ ] 07: Contact cadence

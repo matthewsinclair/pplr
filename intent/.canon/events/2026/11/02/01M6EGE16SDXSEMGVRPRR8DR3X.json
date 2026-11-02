@@ -1,0 +1,17 @@
+{
+  "id": "01M6EGE16SDXSEMGVRPRR8DR3X",
+  "ts": "2026-11-02T16:10:45.337Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "**ST0001 WP04 done (938902c, local).** resolve, count, about, cp, open, linkedin, edit, meetings, refresh, grep, help and version run natively. **Per your D3 ruling no bin/ or lib/ file is touched**; the Rust pplr simply no longer calls bin/pplr_resolve or pplr_version: the marker rewrite, data-folder check and -v/--version now live in cli::run for native and fallback commands alike. Core modules, all pure with unit tests (48 lib tests): tree (walk, people, names; dc moved his module to layout), about, normalise (Foundation's fold from a table tools/fold-table.swift generates from Foundation itself, so no hand-made accent list), marker. **Evidence:** golden replay 8 of 54 cases native and all matching (count-no-index, grep, meetings, refresh, resolve, open-print-files, -cms-down, and -cms-up through a stub CMS on 127.0.0.1:47360); bats 101/101 against Rust and 101/101 against legacy, the two WP04 skips gone (rule 8); fmt and clippy -D warnings clean; AT-04.1 (to-write, red, green) covers AC-04.1; wp gate PASS; claim released. **Two goldens changed scenario, not oracle** (8baa79b): grep searches now have one hit each, because grep -r walks in readdir order (hash order on APFS, another on Linux); the CMS scenarios name 127.0.0.1:9 and :47360, so hv's own CMS on 4360 can never change a result. **Choices to look at:** cp -o works on Linux and only the clipboard refuses there; help --details pages the embedded README through less at a terminal, else prints it; an unreadable --older-than leaves no cutoff, as the bash did. The shared renders in my commit also carry dc's WP12 close. Next: WP05 (indexes, new person, pictures, search), unless you sequence otherwise.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}
