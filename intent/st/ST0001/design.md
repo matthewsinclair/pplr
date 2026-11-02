@@ -74,10 +74,10 @@ sync logic (Rust, pure)  ->  Store trait  ->  JsonStore      (PPLR_CONTACTS_JSON
 
 Proposed here and settled by dc in ST0001 WP02 and ST0002 WP01, which dc owns both of:
 
-- A tree is `<root>/bin/pplr`, plus `<root>/bin/pplr-contacts` on macOS, plus ST0002's manifest. Brew's root is `$(brew --prefix)/opt/pplr/libexec`, named by its opt link, never a Cellar path.
-- The binary resolves its own path and takes its root and the sidecar from it.
-- Templates, icons and the README are inside the binary (D6), so the runtime set is the binaries and the manifest.
-- `pplr handler --install` writes the app to run the stable path of the running tree: under brew the opt link, never the Cellar.
+- A tree is `<root>/bin/pplr`, plus `<root>/bin/pplr-contacts` and `<root>/Pplr Links.app` on macOS, plus ST0002's manifest. Brew's root is `$(brew --prefix)/opt/pplr/libexec`, named by its opt link, never a Cellar path.
+- The binary resolves its own path, and one function returns the root, the tree kind and the sidecar and app paths.
+- Templates, icons and the README are inside the binary (D6), so the runtime set is the binaries, the app and the manifest.
+- **`Pplr Links.app` ships prebuilt and signed in the tree** (hv, 2026-11-02): signing happens only on rhadamanth, so nothing is built or ad-hoc signed on a user's machine. The app finds `bin/pplr` beside itself, and `pplr handler --install` only registers it with `lsregister`. This removes the app build from `handler`, which is simpler than the legacy flow.
 
 ### 3.5 Data compatibility
 
