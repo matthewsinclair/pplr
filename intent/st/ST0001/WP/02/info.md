@@ -31,6 +31,8 @@ Stand up the Rust crate in house style, with devbin's gates and CI on macOS and 
 
 **Heavy runs** go through `intent estate slots`: cargo and bats each have one heavy lane, shared with Devbin and Utilz.
 
+**The People leak check** (D11): a check in the gate, eg `bin/devbin check people-leak` called from the pre-commit hook. It reads the folder names, their `pplr://` markers and the About emails from `PPLR_DATA` at run time and fails on any match in the staged tree. The names are never written into the repo. Skip it with a stated reason when `PPLR_DATA` is absent (eg on CI).
+
 ## Acceptance
 
 Acceptance Criteria for this work package are RENDERED into `ST0001/acceptance.md`, under the `WP-02` heading. THAT FILE IS A GENERATED VIEW -- a row authored there is discarded by the next sync. The contract is canon in the thread's model, and the verbs write it: `intent ac new` and `intent at new` mint a row, `intent ac edit` and `intent at edit` reword or re-cite one, and `intent ac satisfy|unsatisfy|descope|rescope|withdraw|reinstate` and `intent at green|red|na` move its state. This cover never restates them.

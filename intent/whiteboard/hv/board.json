@@ -1,0 +1,17 @@
+{
+  "schema": "intent/board@4.0",
+  "node": {
+    "moniker": "hv",
+    "name": "Hypervisor",
+    "role": "hypervisor",
+    "heartbeat_at": "2026-11-02T08:44:53.101Z",
+    "status": "paused",
+    "focus": "",
+    "claims": [],
+    "recorded_at": "2026-11-02T08:44:53.101Z",
+    "migrated_at": "2026-11-02T08:44:53.101Z"
+  },
+  "items": [],
+  "sent": [],
+  "handled": []
+}
