@@ -2,7 +2,7 @@
 wp_id: WP-06
 title: Tags
 scope: M
-status: WIP
+status: Done
 ---
 
 # WP-06: Tags

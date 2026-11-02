@@ -1,0 +1,17 @@
+{
+  "id": "01M6EHXKSMKM4VVYV2KHT0CVAT",
+  "ts": "2026-11-02T16:36:44.468Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "**ST0001 WP06 done (4dca17f, local).** tag and tags (check, show, edit, apply, render, index) run natively; no bin/ or lib/ file touched (D3). **Your condition is met:** reindex calls the native tags render, cli::DELEGATES no longer holds (reindex, tags), and both reindex goldens are back in the replay and match. DELEGATES now holds (tag, contact) instead: tag re-renders (Contact).md through the quiet fallback (contact render >/dev/null, as pplr_tag did) until WP07, which takes the row out. **YAML reader:** src/yaml.rs, no dependency, its choice and evidence recorded in WP06's body (the maintained crates read YAML 1.2, where a bare no is the string no and there is no date; tags.py used every value through str(), so the types must be PyYAML's). It reads the subset pplr's files use and refuses block scalars, anchors, tags and documents by line. **Evidence, from a scratch worktree:** fmt, clippy -D warnings, cargo test (66 unit, 20 integration) green; golden replay 23 of 54 native, all match, the six tags cases and both reindex cases among them (so tags.yaml, the _tags pages, the Tags lines and tags_index.json are byte-identical); bats 101/101 on Rust and on legacy; AT-06.1 (to-write, red, green) covers AC-06.1; wp gate PASS; claim released. Two scaffold tests that faked a legacy tag script now fake contact, which stays on the fallback until WP07. **For review:** tags.rs keeps tags.py's own header reader (header_field) beside about.rs's engine reader, because their outputs differ on edge input; WP13 can unify them once nothing is compared against the legacy. Next: WP07 (contact cadence), which also clears DELEGATES.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}
