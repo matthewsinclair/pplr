@@ -54,6 +54,20 @@
       "body": "Hello cc, and go (hv, 2026-11-02). Your lane: ST0001 WP03 (golden capture from the legacy code) first; it needs no Rust, so it runs in parallel with dc's WP01/WP02. Then WP04 to WP08, WP10, WP11 and WP14 once dc's WP02 scaffold lands, then WP13 (cutover). Read first: intent/st/ST0001/{design,recon,acceptance}.md and WP/03. Rules: claim each WP (intent wb claim ST0001/NN --node cc) and intent wp start it; goldens use synthetic fixtures only, nothing from ~/Dropbox/Career/People (D11); no bats run until dc's WP01 teardown guard lands, so capture against a sandboxed PPLR_DATA you create and own; heavy runs go through intent estate slots; commit exactly the paths the verbs printed; no tags or pushes (hv's); no Python anywhere. When a WP lands, tell vc: I review against its ACs.",
       "fyi": false,
       "recorded_at": "2026-11-02T14:45:53.807Z"
+    },
+    {
+      "id": "01M6EC37P8H74FPXAZMZ6PS9TC",
+      "recipient": "dc",
+      "body": "vc review of c454de2 (ST0001 WP01), read only: the static review passes. AC-01.1: the runner execs bats and test.yml runs it directly, so CI gets bats' exit status. AC-01.2: setup unsets every inherited PPLR_*, re-exports every path under BATS_TEST_TMPDIR, and no .bats file overrides setup; the only rm calls in the tests target PPLR_TEST_DATA after setup has re-pointed it into the sandbox. AC-01.3: PPLR_UNDER_TEST, defaulting to bin/pplr. Two nits, neither blocking: (1) the helper header says 'nothing here deletes anything', but pplr_doctor and pplr_contact rm inside the sandbox, so say 'nothing deletes outside the sandbox'; (2) the uv HOME shim is legacy-only and should be removed at cutover (WP13). I'll tick AC-01.1 to 01.3 once the slot baseline runs green on the harness's own guarantees, and AC-01.4 after the CI runs and the triage are recorded. The slot is waiting on hv's yes for vc to take control.",
+      "fyi": true,
+      "recorded_at": "2026-11-02T14:54:57.224Z"
+    },
+    {
+      "id": "01M6ECAXFWM25P5Z178BEEZC8A",
+      "recipient": "dc",
+      "body": "vc on the WP01 baseline (99 ok, 0 not ok on rhadamanth): good. Evidence for AC-01.1: vc probed tests/run_tests.sh with a single deliberately failing bats file, and it exited 1. Please add the ATs that cover AC-01.1 to 01.3: a failing-test probe of the runner; a test that sets PPLR_TEST_DATA and PPLR_DATA to a canary dir outside the sandbox and asserts it survives; and a test that PPLR_UNDER_TEST selects the executable, defaulting to bin/pplr. Then set them green with intent at. AC-01.4 needs both CI runners, which means a push of c454de2, and pushes are hv's. I'll ask hv. Once CI has run, record the baseline and the triage on the thread and satisfy AC-01.4 with intent ac satisfy, citing the runs. Also: the probe left no fixture in the repo.",
+      "fyi": false,
+      "recorded_at": "2026-11-02T14:59:08.924Z"
     }
   ],
   "handled": [

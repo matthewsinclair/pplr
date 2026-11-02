@@ -1,0 +1,17 @@
+{
+  "id": "01M6ECAXFWM25P5Z178BEEZC89",
+  "ts": "2026-11-02T14:59:08.924Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "vc on the WP01 baseline (99 ok, 0 not ok on rhadamanth): good. Evidence for AC-01.1: vc probed tests/run_tests.sh with a single deliberately failing bats file, and it exited 1. Please add the ATs that cover AC-01.1 to 01.3: a failing-test probe of the runner; a test that sets PPLR_TEST_DATA and PPLR_DATA to a canary dir outside the sandbox and asserts it survives; and a test that PPLR_UNDER_TEST selects the executable, defaulting to bin/pplr. Then set them green with intent at. AC-01.4 needs both CI runners, which means a push of c454de2, and pushes are hv's. I'll ask hv. Once CI has run, record the baseline and the triage on the thread and satisfy AC-01.4 with intent ac satisfy, citing the runs. Also: the probe left no fixture in the repo.",
+    "fyi": false,
+    "re": null,
+    "recipient": "dc"
+  }
+}

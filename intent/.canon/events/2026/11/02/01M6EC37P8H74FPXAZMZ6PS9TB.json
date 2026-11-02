@@ -1,0 +1,17 @@
+{
+  "id": "01M6EC37P8H74FPXAZMZ6PS9TB",
+  "ts": "2026-11-02T14:54:57.224Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "vc review of c454de2 (ST0001 WP01), read only: the static review passes. AC-01.1: the runner execs bats and test.yml runs it directly, so CI gets bats' exit status. AC-01.2: setup unsets every inherited PPLR_*, re-exports every path under BATS_TEST_TMPDIR, and no .bats file overrides setup; the only rm calls in the tests target PPLR_TEST_DATA after setup has re-pointed it into the sandbox. AC-01.3: PPLR_UNDER_TEST, defaulting to bin/pplr. Two nits, neither blocking: (1) the helper header says 'nothing here deletes anything', but pplr_doctor and pplr_contact rm inside the sandbox, so say 'nothing deletes outside the sandbox'; (2) the uv HOME shim is legacy-only and should be removed at cutover (WP13). I'll tick AC-01.1 to 01.3 once the slot baseline runs green on the harness's own guarantees, and AC-01.4 after the CI runs and the triage are recorded. The slot is waiting on hv's yes for vc to take control.",
+    "fyi": true,
+    "re": null,
+    "recipient": "dc"
+  }
+}
