@@ -1,2 +1,3 @@
 grep
-zzz-nothing
+--tag
+nomatch

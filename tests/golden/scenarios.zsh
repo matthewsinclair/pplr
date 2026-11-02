@@ -14,7 +14,9 @@ scenario index;               run index
 scenario reindex;             run reindex
 scenario reindex-then-count;  run reindex; run count
 scenario meetings;            run meetings 2026; run meetings 202603; run meetings 20260101 20260531; run meetings; run meetings 2026-13
-scenario grep;                run grep ledger; run grep -t vip; run grep --tag nomatch; run grep zzz-nothing
+# Each search has one hit: grep -r walks in readdir order, which the port does
+# not keep (design D10), so a multi-hit order would be the filesystem's
+scenario grep;                run grep ledgers; run grep Ledger; run grep -t berlin; run grep --tag nomatch; run grep zzz-nothing
 scenario refresh;             run refresh status; run refresh next; run refresh next 2 --older-than 30; run refresh stamp "Varga, Zsófia" linkedin; run refresh status
 scenario pictures-dry-run;    run pictures --dry-run
 scenario pictures;            run pictures; run pictures "Varga, Zsófia"
@@ -61,8 +63,10 @@ scenario links-symlinked;     run links @SANDBOX@/refs/Notes/linked.md --apply
 # Resolve and open --print
 scenario resolve;             run resolve pplr://o/okafor-chidi; run resolve pplr://t/thistle-ottoline; run resolve "pplr://T/Thistle,%20Ottoline"; run resolve pplr://o/okafor-chidi/Meetings; run resolve pplr://tag/vip; run resolve pplr://z/nobody-here
 scenario open-print-files;    env PPLR_CMS_URL=; run open --print pplr://o/okafor-chidi
-scenario open-print-cms-down; run open --print pplr://o/okafor-chidi
-scenario open-print-cms-up;   env PPLR_GOLDEN_CMS=up; run open --print pplr://v/varga-zsofia; run open --print "pplr://q/quennell-imogen/Meetings/20260415 Architecture chat"
+# The CMS is named on loopback ports so the machine's own CMS (4360) never answers:
+# 9 is closed; on 47360 the replay runs a stub, and the capture's fake curl answers
+scenario open-print-cms-down; env PPLR_CMS_URL=http://127.0.0.1:9/people; run open --print pplr://o/okafor-chidi
+scenario open-print-cms-up;   env PPLR_CMS_URL=http://127.0.0.1:47360/people; env PPLR_GOLDEN_CMS=up; run open --print pplr://v/varga-zsofia; run open --print "pplr://q/quennell-imogen/Meetings/20260415 Architecture chat"
 
 # Sync, against the JSON store
 scenario sync-usage;          run sync
