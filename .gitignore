@@ -10,6 +10,8 @@ __pycache__/
 
 # macOS and editor droppings
 .DS_Store
+# Finder custom-icon files: "Icon" and a carriage return, written with two CRs because git strips one
+Icon
 .obsidian
 
 # The Intent runtime store: per-machine, rebuilt from the committed extract.

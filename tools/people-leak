@@ -1,0 +1,61 @@
+#!/usr/bin/env zsh
+# Refuse a commit that carries anything from the People tree (ST0001 design
+# D11): each person's folder name, the name on their About file, every pplr://
+# marker and every email address in their About files, read from the tree at
+# run time and never written down. It checks the staged blobs and their paths,
+# and prints counts and repo paths only, never what matched.
+#
+# The tree is pplr's own: PPLR_DATA, then PPLR_DIR, then ~/Dropbox/Career/People.
+# Where there is no tree (eg CI) it says so and passes: there is nothing to leak.
+
+emulate -L zsh
+setopt err_exit no_unset pipe_fail extended_glob null_glob
+
+tree=${PPLR_DATA:-${PPLR_DIR:-$HOME/Dropbox/Career/People}}
+if [[ ! -d $tree ]]; then
+  print "people-leak: skipped, no People tree here (PPLR_DATA, PPLR_DIR or ~/Dropbox/Career/People); nothing checked"
+  exit 0
+fi
+
+typeset -aU names markers emails
+for person in $tree/[A-Z]/*(/); do
+  names+=(${person:t})
+  for about in $person/About/*\(About\).md(.); do
+    names+=(${${about:t}% \(About\).md})
+    markers+=(${(f)"$(grep -Eo 'pplr://[a-z]/[^][ )>"'\''`]+' $about || true)"})
+    emails+=(${(f)"$(grep -Eio '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}' $about || true)"})
+  done
+done
+# Each person's own marker, made as the engine makes it: lowercase, accents
+# dropped, and every run of other characters one hyphen ("K/Kemp, Jon" -> k/kemp-jon)
+for person in $tree/[A-Z]/*(/); do
+  print -r -- "${person:h:t}/${person:t}"
+done | perl -CS -MUnicode::Normalize -nle '
+  my ($l, $n) = split m{/}, $_, 2;
+  ($n = lc NFD $n) =~ s/\pM//g;
+  $n =~ s/[^a-z0-9]+/-/g; $n =~ s/^-|-$//g;
+  print "pplr://", lc($l), "/$n";
+' | while IFS= read -r marker; do markers+=($marker); done
+
+needles=(${names:#} ${markers:#} ${emails:#})
+if (( ! ${#names} )); then
+  print -u2 "people-leak: REFUSED, the People tree at its usual place holds no people, so nothing could be checked"
+  exit 1
+fi
+
+staged=(${(0)"$(git diff --cached --name-only --diff-filter=ACMR -z)"})
+hits=0
+for file in $staged; do
+  count=$( { print -r -- $file; git show ":$file" } | grep -Faic -f =(print -rl -- $needles) || true)
+  if (( count )); then
+    print -u2 "people-leak: $file: $count line(s) match the People tree"
+    (( hits += 1 ))
+  fi
+done
+
+summary="${#names} names, ${#markers} markers and ${#emails} emails from the People tree, over ${#staged} staged file(s)"
+if (( hits )); then
+  print -u2 "people-leak: REFUSED, $hits staged file(s) carry People data ($summary). Nothing from the tree enters Pplr (D11)."
+  exit 1
+fi
+print "people-leak: clean, $summary"

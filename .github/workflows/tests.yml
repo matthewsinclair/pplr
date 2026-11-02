@@ -1,0 +1,56 @@
+name: Tests
+
+# The cargo gates and the bats suite against the Rust pplr, on macOS and Linux,
+# through devbin's own gates (ST0001 WP02, ST0002 E6). ST0002 WP02 adds the
+# candidate/** trigger.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      # One runner's failure must not hide the other's result
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # devbin needs bash 5 (macOS ships 3.2); tools/bats-rust is zsh
+      - name: Install bats, bash and zsh (macOS)
+        if: runner.os == 'macOS'
+        run: brew install bats-core bash
+
+      - name: Install bats and zsh (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y bats zsh
+
+      - name: Rust toolchain
+        run: rustup component add clippy rustfmt && rustc --version
+
+      - name: Format
+        run: bin/devbin check format
+
+      - name: Clippy
+        run: bin/devbin check clippy
+
+      - name: One test target, one target directory
+        run: bin/devbin check autotests && bin/devbin check targetdir
+
+      - name: Cargo tests
+        run: bin/devbin test rust
+
+      - name: The bats suite against the Rust pplr
+        run: bin/devbin test shell

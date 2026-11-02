@@ -12,5 +12,12 @@
   ],
   "backup": {
     "schedule": "daily"
-  }
+  },
+  "guards": [
+    {
+      "run": [
+        "tools/people-leak"
+      ]
+    }
+  ]
 }
