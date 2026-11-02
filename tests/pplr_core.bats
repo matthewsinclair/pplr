@@ -3,17 +3,17 @@
 load test_helper
 
 @test "pplr command exists and is executable" {
-    [ -x "$PPLR_BIN_DIR/pplr" ]
+    [ -x "$PPLR" ]
 }
 
 @test "pplr shows help when run without arguments" {
-    run "$PPLR_BIN_DIR/pplr"
+    run "$PPLR"
     [ "$status" -eq 1 ]
     assert_contains "$output" "Usage:"
 }
 
 @test "pplr help shows all commands" {
-    run "$PPLR_BIN_DIR/pplr" help
+    run "$PPLR" help
     [ "$status" -eq 0 ]
     assert_contains "$output" "search"
     assert_contains "$output" "new"
@@ -22,17 +22,15 @@ load test_helper
 }
 
 @test "pplr help --details shows README" {
-    run "$PPLR_BIN_DIR/pplr" help --details
+    run "$PPLR" help --details
     [ "$status" -eq 0 ]
     assert_contains "$output" "pplr - Personal Relationship Manager"
 }
 
-@test "environment variables are set correctly" {
-    [ -n "$PPLR_ROOT" ]
-    [ -n "$PPLR_DATA" ]
-    [ -n "$PPLR_BIN_DIR" ]
-    [ -n "$PPLR_TEMPLATE_DIR" ]
+@test "the data environment is the test's own sandbox" {
+    [ "$PPLR_DATA" = "$BATS_TEST_TMPDIR/data" ]
     [ "$PPLR_DIR" = "$PPLR_DATA" ]
+    [ "$HOME" = "$BATS_TEST_TMPDIR/home" ]
 }
 
 @test "test data directory structure is created" {
@@ -42,7 +40,7 @@ load test_helper
 }
 
 @test "pplr count works with empty directory" {
-    run "$PPLR_BIN_DIR/pplr" count
+    run "$PPLR" count
     [ "$status" -eq 0 ]
     assert_contains "$output" "0"
 }
@@ -51,7 +49,7 @@ load test_helper
     create_test_person "Smith" "John"
     create_test_person "Doe" "Jane"
     
-    run "$PPLR_BIN_DIR/pplr" count
+    run "$PPLR" count
     [ "$status" -eq 0 ]
     assert_contains "$output" "2"
 }
@@ -59,7 +57,7 @@ load test_helper
 @test "pplr version displays version from VERSION.md" {
     # Read expected version from VERSION.md
     expected_version=$(cat "$PPLR_ROOT/VERSION.md")
-    run "$PPLR_BIN_DIR/pplr" version
+    run "$PPLR" version
     [ "$status" -eq 0 ]
     assert_contains "$output" "$expected_version"
 }
@@ -67,7 +65,7 @@ load test_helper
 @test "pplr -v displays version" {
     # Read expected version from VERSION.md
     expected_version=$(cat "$PPLR_ROOT/VERSION.md")
-    run "$PPLR_BIN_DIR/pplr" -v
+    run "$PPLR" -v
     [ "$status" -eq 0 ]
     assert_contains "$output" "$expected_version"
 }
@@ -75,7 +73,7 @@ load test_helper
 @test "pplr --version displays version" {
     # Read expected version from VERSION.md
     expected_version=$(cat "$PPLR_ROOT/VERSION.md")
-    run "$PPLR_BIN_DIR/pplr" --version
+    run "$PPLR" --version
     [ "$status" -eq 0 ]
     assert_contains "$output" "$expected_version"
 }

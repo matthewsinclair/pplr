@@ -25,7 +25,7 @@ title: Port Pplr from shell scripts to Rust
 - AC-00.8 (non-test) One version, current docs: Cargo.toml is the only version source, and README, usage-rules.md, CHANGELOG and intent/llm/ARCHITECTURE.md describe the Rust binary. -- satisfied: no
 - AC-00.9 Code and data never mix: no name, marker, email or other content from the People tree is in Pplr's tree or history, tests use synthetic data alone, and a leak check that reads PPLR_DATA at run time fails the pre-commit gate on any match. -- satisfied: no (computed)
 
-### WP-01 -- Test safety, the parity seam and an honest runner (status: Not Started)
+### WP-01 -- Test safety, the parity seam and an honest runner (status: WIP)
 
 - AC-01.1 The bats runner and CI exit non-zero when any test fails. -- satisfied: no (computed)
 - AC-01.2 No test or runner deletes outside its own temporary directory: an inherited PPLR_TEST_DATA, or any other path from the environment, is never a deletion target. -- satisfied: no (computed)
@@ -89,7 +89,7 @@ title: Port Pplr from shell scripts to Rust
 
 _(no tests in this group)_
 
-### WP-01 -- Test safety, the parity seam and an honest runner (status: Not Started)
+### WP-01 -- Test safety, the parity seam and an honest runner (status: WIP)
 
 _(no tests in this group)_
 

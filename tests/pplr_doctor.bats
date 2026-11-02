@@ -2,18 +2,8 @@
 
 load test_helper
 
-setup() {
-    load test_helper
-    setup
-}
-
-teardown() {
-    load test_helper
-    teardown
-}
-
 @test "pplr doctor runs and shows system health" {
-    run "$PPLR_BIN_DIR/pplr" doctor
+    run "$PPLR" doctor
     # Check that it runs and produces expected output
     assert_contains "$output" "System Health Check"
     assert_contains "$output" "Environment Variables"
@@ -26,7 +16,7 @@ teardown() {
     # Remove a letter directory
     rm -rf "$PPLR_TEST_DATA/Z"
     
-    run "$PPLR_BIN_DIR/pplr" doctor
+    run "$PPLR" doctor
     # Doctor returns number of errors as exit code
     assert_contains "$output" "Missing directories"
     assert_contains "$output" "Z"
@@ -38,7 +28,7 @@ teardown() {
     rm -rf "$PPLR_TEST_DATA/Z"
     rm -rf "$PPLR_TEST_DATA/.index"
     
-    run "$PPLR_BIN_DIR/pplr" doctor --fix
+    run "$PPLR" doctor --fix
     [ "$status" -eq 0 ]
     assert_contains "$output" "Created missing directories"
     assert_contains "$output" "Created .index directory"
@@ -51,16 +41,16 @@ teardown() {
 
 @test "pplr doctor detects mock Claude" {
     # Create a mock Claude in the test environment
-    mkdir -p "$PPLR_TEST_DATA/.mock_home/.claude/local"
-    cat > "$PPLR_TEST_DATA/.mock_home/.claude/local/claude" << 'EOF'
+    mkdir -p "$BATS_TEST_TMPDIR/mock_home/.claude/local"
+    cat > "$BATS_TEST_TMPDIR/mock_home/.claude/local/claude" << 'EOF'
 #!/bin/bash
 # Mock claude for testing
 echo "Mock response"
 EOF
-    chmod +x "$PPLR_TEST_DATA/.mock_home/.claude/local/claude"
+    chmod +x "$BATS_TEST_TMPDIR/mock_home/.claude/local/claude"
     
     # Run doctor with modified HOME
-    HOME="$PPLR_TEST_DATA/.mock_home" run "$PPLR_BIN_DIR/pplr" doctor
+    HOME="$BATS_TEST_TMPDIR/mock_home" run "$PPLR" doctor
     [ "$status" -ne 0 ]
     assert_contains "$output" "Mock Claude detected"
 }
@@ -71,7 +61,7 @@ EOF
     mkdir -p "$person_dir/About"
     # Don't create the About file
     
-    run "$PPLR_BIN_DIR/pplr" doctor
+    run "$PPLR" doctor
     # Should have warnings but not errors
     assert_contains "$output" "people missing About files"
 }
@@ -81,21 +71,23 @@ EOF
     mkdir -p "$PPLR_TEST_DATA/.index"
     echo "invalid json" > "$PPLR_TEST_DATA/.index/index.json"
     
-    run "$PPLR_BIN_DIR/pplr" doctor
+    run "$PPLR" doctor
     [ "$status" -ne 0 ]
     assert_contains "$output" "index.json is invalid JSON"
 }
 
 @test "pplr doctor detects non-executable scripts" {
-    # Create a non-executable script
-    touch "$PPLR_BIN_DIR/pplr_test_nonexec"
-    chmod -x "$PPLR_BIN_DIR/pplr_test_nonexec"
-    
-    run "$PPLR_BIN_DIR/pplr" doctor
+    # Legacy-only: doctor scans PPLR_BIN_DIR, so give it a copy of the
+    # checkout's bin/ in the sandbox, never the checkout itself
+    local bin="$BATS_TEST_TMPDIR/legacy_bin" script
+    mkdir -p "$bin"
+    for script in "$PPLR_ROOT"/bin/pplr*; do
+        ln -s "$script" "$bin/"
+    done
+    touch "$bin/pplr_test_nonexec"
+
+    PPLR_BIN_DIR="$bin" run "$PPLR" doctor
     [ "$status" -ne 0 ]
     assert_contains "$output" "Scripts not executable"
     assert_contains "$output" "pplr_test_nonexec"
-    
-    # Clean up
-    rm -f "$PPLR_BIN_DIR/pplr_test_nonexec"
 }

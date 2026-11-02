@@ -8,7 +8,7 @@ load test_helper
     create_test_meeting "$person_dir" "20240215" "February Sync"
     create_test_meeting "$person_dir" "20240301" "March Review"
     
-    run "$PPLR_BIN_DIR/pplr" meetings 2024-02-01 2024-02-28
+    run "$PPLR" meetings 2024-02-01 2024-02-28
     [ "$status" -eq 0 ]
     assert_contains "$output" "February Sync"
     # Should not contain meetings outside date range
@@ -22,7 +22,7 @@ load test_helper
     create_test_meeting "$person_dir" "20240315" "Afternoon Review"
     create_test_meeting "$person_dir" "20240316" "Next Day Meeting"
     
-    run "$PPLR_BIN_DIR/pplr" meetings 2024-03-15
+    run "$PPLR" meetings 2024-03-15
     [ "$status" -eq 0 ]
     assert_contains "$output" "Morning Standup"
     assert_contains "$output" "Afternoon Review"
@@ -35,14 +35,14 @@ load test_helper
     local today=$(date +%Y%m%d)
     create_test_meeting "$person_dir" "$today" "Today Meeting"
     
-    run "$PPLR_BIN_DIR/pplr" meetings
+    run "$PPLR" meetings
     [ "$status" -eq 0 ]
     # Should find today's meeting
     assert_contains "$output" "Today Meeting"
 }
 
 @test "pplr meetings handles invalid date format" {
-    run "$PPLR_BIN_DIR/pplr" meetings "invalid-date"
+    run "$PPLR" meetings "invalid-date"
     [ "$status" -ne 0 ]
     assert_contains "$output" "Invalid date"
 }
@@ -54,7 +54,7 @@ load test_helper
     create_test_meeting "$person1" "20240501" "Alice Meeting"
     create_test_meeting "$person2" "20240501" "Bob Meeting"
     
-    run "$PPLR_BIN_DIR/pplr" meetings 2024-05-01
+    run "$PPLR" meetings 2024-05-01
     [ "$status" -eq 0 ]
     assert_contains "$output" "Alice Meeting"
     assert_contains "$output" "Bob Meeting"
@@ -63,7 +63,7 @@ load test_helper
 @test "pplr meetings with no results" {
     create_test_person "Empty" "Eve"
     
-    run "$PPLR_BIN_DIR/pplr" meetings 2020-01-01 2020-12-31
+    run "$PPLR" meetings 2020-01-01 2020-12-31
     [ "$status" -eq 0 ]
     assert_contains "$output" "No meetings found"
 }

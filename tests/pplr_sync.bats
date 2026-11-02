@@ -32,14 +32,14 @@ EOF
 }
 
 @test "pplr sync without a mode shows usage" {
-    run "$PPLR_BIN_DIR/pplr" sync
+    run "$PPLR" sync
     [ "$status" -eq 1 ]
     assert_contains "$output" "Usage: pplr sync --check"
 }
 
 @test "pplr sync --check reports each category" {
     setup_contacts
-    run "$PPLR_BIN_DIR/pplr" sync --check
+    run "$PPLR" sync --check
     [ "$status" -eq 0 ]
     assert_contains "$output" "linked (pplr marker)    1"
     assert_contains "$output" "matched by email        1"
@@ -50,7 +50,7 @@ EOF
 
 @test "pplr sync --check normalises phones and LinkedIn before comparing" {
     setup_contacts
-    run "$PPLR_BIN_DIR/pplr" sync --check --json
+    run "$PPLR" sync --check --json
     [ "$status" -eq 0 ]
     ada_diffs=$(echo "$output" | jq '[.matched[] | select(.person == "L/Lovelace, Ada") | .diffs[]] | length')
     [ "$ada_diffs" -eq 0 ]
@@ -58,7 +58,7 @@ EOF
 
 @test "pplr sync --check shows differing fields for a linked person" {
     setup_contacts
-    run "$PPLR_BIN_DIR/pplr" sync --check --json
+    run "$PPLR" sync --check --json
     [ "$status" -eq 0 ]
     field=$(echo "$output" | jq -r '.linked[] | select(.person == "T/Turing, Alan") | .diffs[].field')
     [ "$field" = "email" ]
@@ -66,7 +66,7 @@ EOF
 
 @test "pplr sync --check --verbose lists people only in pplr" {
     setup_contacts
-    run "$PPLR_BIN_DIR/pplr" sync --check --verbose
+    run "$PPLR" sync --check --verbose
     [ "$status" -eq 0 ]
     assert_contains "$output" "N/Nobody, Nemo"
 }
@@ -74,7 +74,7 @@ EOF
 @test "pplr sync --link is a dry run by default" {
     setup_contacts
     before=$(cat "$PPLR_CONTACTS_JSON")
-    run "$PPLR_BIN_DIR/pplr" sync --link
+    run "$PPLR" sync --link
     [ "$status" -eq 0 ]
     assert_contains "$output" "dry run"
     assert_contains "$output" "L/Lovelace, Ada"
@@ -84,7 +84,7 @@ EOF
 @test "pplr sync --link --apply adds the marker and group, and backs up first" {
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
-    run "$PPLR_BIN_DIR/pplr" sync --link --apply
+    run "$PPLR" sync --link --apply
     [ "$status" -eq 0 ]
     [ "$(ls "$PPLR_BACKUP_DIR" | wc -l | tr -d ' ')" -eq 1 ]
     marker=$(jq -r '.[] | select(.id == "c1") | .urls[] | select(.label == "pplr") | .value' "$PPLR_CONTACTS_JSON")
@@ -98,7 +98,7 @@ EOF
 @test "pplr sync --link --name links a confirmed name-only match" {
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
-    run "$PPLR_BIN_DIR/pplr" sync --link --apply --name "Hopper, Grace"
+    run "$PPLR" sync --link --apply --name "Hopper, Grace"
     [ "$status" -eq 0 ]
     hopper_groups=$(jq -r '.[] | select(.id == "c2") | .groups | join(",")' "$PPLR_CONTACTS_JSON")
     [ "$hopper_groups" = "PPLR" ]
@@ -107,8 +107,8 @@ EOF
 @test "pplr sync --link --apply twice changes nothing the second time" {
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
-    "$PPLR_BIN_DIR/pplr" sync --link --apply
-    run "$PPLR_BIN_DIR/pplr" sync --link --apply
+    "$PPLR" sync --link --apply
+    run "$PPLR" sync --link --apply
     [ "$status" -eq 0 ]
     assert_contains "$output" "linked now              0"
     urls=$(jq -r '.[] | select(.id == "c1") | .urls | length' "$PPLR_CONTACTS_JSON")
@@ -118,7 +118,7 @@ EOF
 @test "pplr sync --link --apply writes a Contacts .inetloc in About" {
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
-    run "$PPLR_BIN_DIR/pplr" sync --link --apply
+    run "$PPLR" sync --link --apply
     [ "$status" -eq 0 ]
     w="$PPLR_TEST_DATA/L/Lovelace, Ada/About/Ada Lovelace (Contacts).inetloc"
     [ -f "$w" ]
@@ -128,7 +128,7 @@ EOF
 @test "pplr sync --link --apply --limit 1 writes one and reports the rest as still to link" {
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
-    run "$PPLR_BIN_DIR/pplr" sync --link --apply --limit 1
+    run "$PPLR" sync --link --apply --limit 1
     [ "$status" -eq 0 ]
     assert_contains "$output" "linked now              1"
     assert_contains "$output" "still to link           1"
@@ -137,7 +137,7 @@ EOF
 @test "pplr sync --link --apply replaces a pplr URL in the old form, rather than adding one" {
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
-    run "$PPLR_BIN_DIR/pplr" sync --link --apply
+    run "$PPLR" sync --link --apply
     [ "$status" -eq 0 ]
     urls=$(jq -r '.[] | select(.id == "c3") | [.urls[] | select(.label == "pplr") | .value] | join(",")' "$PPLR_CONTACTS_JSON")
     [ "$urls" = "pplr://t/turing-alan" ]
@@ -150,14 +150,14 @@ EOF
     mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
     jq '(.[] | select(.id == "c1")).groups = []' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json"
     mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
-    run "$PPLR_BIN_DIR/pplr" sync --link --apply
+    run "$PPLR" sync --link --apply
     [ "$status" -eq 0 ]
     assert_contains "$output" "cannot be linked"
     ada=$(jq -r '.[] | select(.id == "c1") | "\(.groups | length) \([.urls[] | select(.label == "pplr")] | length)"' "$PPLR_CONTACTS_JSON")
     [ "$ada" = "0 1" ]
     turing=$(jq -r '.[] | select(.id == "c3") | [.urls[] | select(.label == "pplr") | .value] | join(",")' "$PPLR_CONTACTS_JSON")
     [ "$turing" = "pplr://T/Turing, Alan" ]
-    run "$PPLR_BIN_DIR/pplr" sync --link
+    run "$PPLR" sync --link
     assert_contains "$output" "to link                 0"
 }
 
@@ -177,7 +177,7 @@ setup_plan() {
 
 @test "pplr sync --plan --json proposes a decision for every pplr person" {
     setup_plan
-    run "$PPLR_BIN_DIR/pplr" sync --plan --json
+    run "$PPLR" sync --plan --json
     [ "$status" -eq 0 ]
     [ "$(echo "$output" | jq '.rows | length')" -eq 6 ]
     [ "$(echo "$output" | jq -r '.rows[] | select(.person == "N/Nobody, Nemo") | .decision')" = "Add" ]
@@ -186,7 +186,7 @@ setup_plan() {
 
 @test "pplr sync --plan matches a nickname with the same surname and company" {
     setup_plan
-    run "$PPLR_BIN_DIR/pplr" sync --plan --json
+    run "$PPLR" sync --plan --json
     [ "$status" -eq 0 ]
     row=$(echo "$output" | jq -r '.rows[] | select(.person == "M/Mayhew, Bill") | "\(.decision) \(.why)"')
     assert_contains "$row" "Update same surname, William for Bill, same company"
@@ -196,7 +196,7 @@ setup_plan() {
 
 @test "pplr sync --plan reads a phone written as a link, and never marks a rename High" {
     setup_plan
-    run "$PPLR_BIN_DIR/pplr" sync --plan --json
+    run "$PPLR" sync --plan --json
     [ "$status" -eq 0 ]
     row=$(echo "$output" | jq -r '.rows[] | select(.person == "G/Grifiths, Glen") | "\(.confidence) \(.why)"')
     [ "$row" = "Medium same phone, names differ" ]
@@ -204,7 +204,7 @@ setup_plan() {
 
 @test "pplr sync --plan reads a LinkedIn link without its closing bracket" {
     setup_plan
-    run "$PPLR_BIN_DIR/pplr" sync --plan --json
+    run "$PPLR" sync --plan --json
     [ "$(echo "$output" | jq -r '.people[] | select(.key == "M/Mayhew, Bill") | .linkedin')" = "bill-mayhew" ]
 }
 
@@ -212,7 +212,7 @@ setup_plan() {
     command -v uv >/dev/null 2>&1 || skip "uv not installed"
     setup_plan
     out="$PPLR_TEST_DATA/plan.xlsx"
-    run "$PPLR_BIN_DIR/pplr" sync --plan --out "$out"
+    run "$PPLR" sync --plan --out "$out"
     [ "$status" -eq 0 ]
     assert_contains "$output" "Workbook: $out"
     sheets=$(uv run --quiet --with openpyxl python3 -c "import openpyxl,sys; print(','.join(openpyxl.load_workbook(sys.argv[1]).sheetnames))" "$out")
@@ -222,7 +222,7 @@ setup_plan() {
 @test "pplr sync reads several phones apart by a middle dot" {
     setup_contacts
     make_about Carron Elise "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:    +262 262 90 00 00 — switchboard · +262 692 90 00 01 — mobile')"
-    run "$PPLR_BIN_DIR/pplr" sync --plan --json
+    run "$PPLR" sync --plan --json
     [ "$status" -eq 0 ]
     [ "$(echo "$output" | jq -r '.people[] | select(.key == "C/Carron, Elise") | .phones | join(",")')" = "+262262900000,+262692900001" ]
 }
@@ -232,7 +232,7 @@ setup_plan() {
     touch "$PPLR_TEST_DATA/G/Grifiths, Glen/About/Glen Grifiths (Picture).jpg"
     refs="$PPLR_TEST_DATA/refs"; mkdir -p "$refs"
     printf '%s\n' '[Glen](<../G/Grifiths, Glen/About/Glen Grifiths (About).md>)' 'http://x/people/G/Grifiths%2C%20Glen/About/Glen%20Grifiths%20%28About%29.md' 'Met Glen Grifiths today' > "$refs/notes.md"
-    run "$PPLR_BIN_DIR/pplr" rename "Grifiths, Glen" "Griffiths, Glen" --refs "$refs"
+    run "$PPLR" rename "Grifiths, Glen" "Griffiths, Glen" --refs "$refs"
     [ "$status" -eq 0 ]
     [ -f "$PPLR_TEST_DATA/G/Griffiths, Glen/About/Glen Griffiths (About).md" ]
     [ -f "$PPLR_TEST_DATA/G/Griffiths, Glen/About/Glen Griffiths (Picture).jpg" ]
@@ -248,7 +248,7 @@ setup_plan() {
 
 @test "pplr rename --dry-run changes nothing" {
     make_about Grifiths Glen "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
-    run "$PPLR_BIN_DIR/pplr" rename "Grifiths, Glen" "Griffiths, Glen" --dry-run --refs "$PPLR_TEST_DATA"
+    run "$PPLR" rename "Grifiths, Glen" "Griffiths, Glen" --dry-run --refs "$PPLR_TEST_DATA"
     [ "$status" -eq 0 ]
     [ -d "$PPLR_TEST_DATA/G/Grifiths, Glen" ]
     [ ! -e "$PPLR_TEST_DATA/G/Griffiths, Glen" ]
@@ -260,10 +260,10 @@ setup_plan() {
     jq '(.[] | select(.id == "c3")).urls = [{"label": "pplr", "value": "pplr://t/turing-alan"}]' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json"
     mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
     mkdir -p "$PPLR_TEST_DATA/none"
-    "$PPLR_BIN_DIR/pplr" rename "Turing, Alan" "Turing, Alan Mathison" --refs "$PPLR_TEST_DATA/none" >/dev/null
-    run "$PPLR_BIN_DIR/pplr" sync --check --json
+    "$PPLR" rename "Turing, Alan" "Turing, Alan Mathison" --refs "$PPLR_TEST_DATA/none" >/dev/null
+    run "$PPLR" sync --check --json
     [ "$(echo "$output" | jq -r '.linked[] | select(.contact == "c3") | "\(.person) \(.markerStale)"')" = "T/Turing, Alan Mathison true" ]
-    "$PPLR_BIN_DIR/pplr" sync --link --apply >/dev/null
+    "$PPLR" sync --link --apply >/dev/null
     [ "$(jq -r '.[] | select(.id == "c3") | [.urls[] | select(.label == "pplr") | .value] | join(",")' "$PPLR_CONTACTS_JSON")" = "pplr://t/turing-alan-mathison" ]
 }
 
@@ -271,7 +271,7 @@ setup_plan() {
     make_about Grifiths Glen "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
     mkdir -p "$PPLR_TEST_DATA/real"; ln -s "$PPLR_TEST_DATA/real" "$PPLR_TEST_DATA/link"
     echo '[G](<G/Grifiths, Glen/About/Glen Grifiths (About).md>)' > "$PPLR_TEST_DATA/real/n.md"
-    run "$PPLR_BIN_DIR/pplr" rename "Grifiths, Glen" "Griffiths, Glen" --refs "$PPLR_TEST_DATA/link"
+    run "$PPLR" rename "Grifiths, Glen" "Griffiths, Glen" --refs "$PPLR_TEST_DATA/link"
     [ "$status" -eq 0 ]
     grep -qF 'G/Griffiths, Glen/About/Glen Griffiths (About).md' "$PPLR_TEST_DATA/real/n.md"
 }
@@ -280,7 +280,7 @@ setup_plan() {
     make_about Varley Hanna "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
     mkdir -p "$PPLR_TEST_DATA/refs"
     echo '[H](<V/Varley, Hanna/About/Hanna Varley (About).md>) `V/Varley, Hanna`' > "$PPLR_TEST_DATA/refs/n.md"
-    run "$PPLR_BIN_DIR/pplr" rename "Varley, Hanna" "Varley, Hannah" --refs "$PPLR_TEST_DATA/refs"
+    run "$PPLR" rename "Varley, Hanna" "Varley, Hannah" --refs "$PPLR_TEST_DATA/refs"
     [ "$status" -eq 0 ]
     [ "$(cat "$PPLR_TEST_DATA/refs/n.md")" = '[H](<V/Varley, Hannah/About/Hannah Varley (About).md>) `V/Varley, Hannah`' ]
     ! grep -q "Hannahh" "$PPLR_TEST_DATA/V/Varley, Hannah/About/Hannah Varley (About).md"
@@ -289,14 +289,14 @@ setup_plan() {
 @test "pplr resolve finds a person, a path in their folder, and a former name" {
     make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
     mkdir -p "$PPLR_TEST_DATA/K/Kemp, Jon/Meetings/20260924 Intro"; touch "$PPLR_TEST_DATA/K/Kemp, Jon/Meetings/20260924 Intro/Summary.md"
-    run "$PPLR_BIN_DIR/pplr" resolve "pplr://k/kemp-jon"
+    run "$PPLR" resolve "pplr://k/kemp-jon"
     [ "$status" -eq 0 ]; [ "$output" = "$PPLR_TEST_DATA/K/Kemp, Jon/About/Jon Kemp (About).md" ]
-    run "$PPLR_BIN_DIR/pplr" resolve "pplr://k/kemp-jon/Meetings/20260924%20Intro/Summary.md"
+    run "$PPLR" resolve "pplr://k/kemp-jon/Meetings/20260924%20Intro/Summary.md"
     [ "$output" = "$PPLR_TEST_DATA/K/Kemp, Jon/Meetings/20260924 Intro/Summary.md" ]
     echo "K/Kraf, Jon" > "$PPLR_TEST_DATA/K/Kemp, Jon/.index/aliases" 2>/dev/null || { mkdir -p "$PPLR_TEST_DATA/K/Kemp, Jon/.index"; echo "K/Kraf, Jon" > "$PPLR_TEST_DATA/K/Kemp, Jon/.index/aliases"; }
-    run "$PPLR_BIN_DIR/pplr" resolve "pplr://k/kraf-jon"
+    run "$PPLR" resolve "pplr://k/kraf-jon"
     [ "$output" = "$PPLR_TEST_DATA/K/Kemp, Jon/About/Jon Kemp (About).md" ]
-    run "$PPLR_BIN_DIR/pplr" resolve "pplr://x/nobody"
+    run "$PPLR" resolve "pplr://x/nobody"
     [ "$status" -ne 0 ]
 }
 
@@ -310,12 +310,12 @@ setup_plan() {
       '[Jon](http://localhost:4360/people/K/Kemp%2C%20Jon/About/Jon%20Kemp%20%28About%29.md)' \
       '[Gone](<../../Career/People/G/Gone, Person/About/Person Gone (About).md>)' \
       '[Elsewhere](https://example.com/x)' > "$notes"
-    run "$PPLR_BIN_DIR/pplr" links "$PPLR_TEST_DATA/journal"
+    run "$PPLR" links "$PPLR_TEST_DATA/journal"
     [ "$status" -eq 0 ]
     assert_contains "$output" "to convert                  3"
     assert_contains "$output" "no such person: G/Gone, Person"
     grep -qF 'Career/People/K/Kemp' "$notes"
-    run "$PPLR_BIN_DIR/pplr" links "$PPLR_TEST_DATA/journal" --apply
+    run "$PPLR" links "$PPLR_TEST_DATA/journal" --apply
     [ "$(sed -n 1p "$notes")" = '[Jon](pplr://k/kemp-jon)' ]
     [ "$(sed -n 2p "$notes")" = '[Summary](<pplr://k/kemp-jon/Meetings/20260924 Intro/Summary.md>)' ]
     [ "$(sed -n 3p "$notes")" = '[Jon](pplr://k/kemp-jon)' ]
@@ -325,7 +325,7 @@ setup_plan() {
 
 @test "pplr open --print names the file when no CMS answers" {
     make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
-    PPLR_CMS_URL="" run "$PPLR_BIN_DIR/pplr" open --print "pplr://k/kemp-jon"
+    PPLR_CMS_URL="" run "$PPLR" open --print "pplr://k/kemp-jon"
     [ "$status" -eq 0 ]
     [ "$output" = "$PPLR_TEST_DATA/K/Kemp, Jon/About/Jon Kemp (About).md" ]
 }
@@ -335,7 +335,7 @@ setup_plan() {
     j="$PPLR_TEST_DATA/journal"; mkdir -p "$j"
     echo '[Jon](<../../Career/People/K/Kemp, Jon/About/Jon Kemp (About).md>)' > "$j/20260901 Day Notes.md"
     ln -s "20260901 Day Notes.md" "$j/aa_day_notes.md"
-    run "$PPLR_BIN_DIR/pplr" links "$j" --apply
+    run "$PPLR" links "$j" --apply
     [ "$status" -eq 0 ]
     assert_contains "$output" "converted                   1"
     [ -L "$j/aa_day_notes.md" ]
@@ -347,7 +347,7 @@ setup_plan() {
     mkdir -p "$PPLR_TEST_DATA/elsewhere"
     echo '[Jon](<../../Career/People/K/Kemp, Jon/About/Jon Kemp (About).md>)' > "$PPLR_TEST_DATA/elsewhere/n.md"
     cd "$PPLR_TEST_DATA/elsewhere"
-    run "$PPLR_BIN_DIR/pplr" links n.md
+    run "$PPLR" links n.md
     assert_contains "$output" "to convert                  1"
 }
 
@@ -355,14 +355,14 @@ setup_plan() {
     make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
     make_about Nobody Nemo "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
     touch "$PPLR_TEST_DATA/K/Kemp, Jon/About/Jon Kemp (Picture).jpg"
-    run "$PPLR_BIN_DIR/pplr" pictures
+    run "$PPLR" pictures
     [ "$status" -eq 0 ]
     assert_contains "$output" "1 added"
     a="$PPLR_TEST_DATA/K/Kemp, Jon/About/Jon Kemp (About).md"
     [ "$(sed -n 1p "$a")" = "# Jon Kemp (About)" ]
     [ "$(sed -n 3p "$a")" = '<img src="Jon Kemp (Picture).jpg" alt="Jon Kemp" width="160" align="right">' ]
     ! grep -q "<img" "$PPLR_TEST_DATA/N/Nobody, Nemo/About/Nemo Nobody (About).md"
-    run "$PPLR_BIN_DIR/pplr" pictures
+    run "$PPLR" pictures
     assert_contains "$output" "0 added, 0 updated, 1 already there"
     [ "$(grep -c "<img" "$a")" -eq 1 ]
 }
@@ -370,9 +370,9 @@ setup_plan() {
 @test "pplr sync --apply-plan is a dry run by default, and changes nothing" {
     command -v uv >/dev/null 2>&1 || skip "uv not installed"
     setup_contacts
-    "$PPLR_BIN_DIR/pplr" sync --plan --out "$PPLR_TEST_DATA/plan.xlsx" >/dev/null
+    "$PPLR" sync --plan --out "$PPLR_TEST_DATA/plan.xlsx" >/dev/null
     before=$(cat "$PPLR_CONTACTS_JSON")
-    run "$PPLR_BIN_DIR/pplr" sync --apply-plan "$PPLR_TEST_DATA/plan.xlsx"
+    run "$PPLR" sync --apply-plan "$PPLR_TEST_DATA/plan.xlsx"
     [ "$status" -eq 0 ]
     assert_contains "$output" "dry run"
     assert_contains "$output" "add (new iCloud cards)  1"
@@ -384,8 +384,8 @@ setup_plan() {
     command -v uv >/dev/null 2>&1 || skip "uv not installed"
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
-    "$PPLR_BIN_DIR/pplr" sync --plan --out "$PPLR_TEST_DATA/plan.xlsx" >/dev/null
-    run "$PPLR_BIN_DIR/pplr" sync --apply-plan "$PPLR_TEST_DATA/plan.xlsx" --apply
+    "$PPLR" sync --plan --out "$PPLR_TEST_DATA/plan.xlsx" >/dev/null
+    run "$PPLR" sync --apply-plan "$PPLR_TEST_DATA/plan.xlsx" --apply
     [ "$status" -eq 0 ]
     [ "$(ls "$PPLR_BACKUP_DIR" | wc -l | tr -d ' ')" -eq 1 ]
     # Nemo Nobody had no card: now one, in the group, with the pplr URL
@@ -396,7 +396,7 @@ setup_plan() {
     [ "$grace" = "Rear Admiral|grace@work.example|pplr://h/hopper-grace" ]
     [ -f "$PPLR_TEST_DATA/N/Nobody, Nemo/About/Nemo Nobody (Contacts).inetloc" ]
     # Applying again finds nothing left to do, and never adds a card twice
-    run "$PPLR_BIN_DIR/pplr" sync --apply-plan "$PPLR_TEST_DATA/plan.xlsx"
+    run "$PPLR" sync --apply-plan "$PPLR_TEST_DATA/plan.xlsx"
     assert_contains "$output" "add (new iCloud cards)  0"
     assert_contains "$output" "update                  0"
 }
@@ -405,8 +405,8 @@ setup_plan() {
     command -v uv >/dev/null 2>&1 || skip "uv not installed"
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
-    "$PPLR_BIN_DIR/pplr" sync --plan --out "$PPLR_TEST_DATA/plan.xlsx" >/dev/null
-    run "$PPLR_BIN_DIR/pplr" sync --apply-plan "$PPLR_TEST_DATA/plan.xlsx" --apply --name "Hopper, Grace"
+    "$PPLR" sync --plan --out "$PPLR_TEST_DATA/plan.xlsx" >/dev/null
+    run "$PPLR" sync --apply-plan "$PPLR_TEST_DATA/plan.xlsx" --apply --name "Hopper, Grace"
     [ "$status" -eq 0 ]
     assert_contains "$output" "written now             1"
     [ "$(jq '[.[] | select(.family == "Nobody")] | length' "$PPLR_CONTACTS_JSON")" -eq 0 ]
@@ -416,7 +416,7 @@ setup_plan() {
     setup_contacts
     jq '(.[] | select(.id == "c2")).emails = ["grace.hopper@gmail.com"]' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
     make_about Hopper Grace "$(printf '%s\n' '- Role:     Rear Admiral' '- Company:  Navy' '- LinkedIn:' '- Email:    [gracehopper+navy@gmail.com](mailto:gracehopper+navy@gmail.com)' '- Phone:')"
-    run "$PPLR_BIN_DIR/pplr" sync --check --json
+    run "$PPLR" sync --check --json
     [ "$(echo "$output" | jq -r '.matched[] | select(.person == "H/Hopper, Grace") | .how')" = "email" ]
     [ "$(echo "$output" | jq '[.matched[] | select(.person == "H/Hopper, Grace") | .diffs[] | select(.field == "email")] | length')" -eq 0 ]
 }
@@ -426,11 +426,11 @@ setup_plan() {
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     jq '(.[] | select(.id == "c1")).urls = [{"label": "pplr", "value": "pplr://l/lovelace-ada"}] | (.[] | select(.id == "c3")).hasImage = true' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
     touch "$PPLR_TEST_DATA/L/Lovelace, Ada/About/Ada Lovelace (Picture).jpg" "$PPLR_TEST_DATA/T/Turing, Alan/About/Alan Turing (Picture).jpg"
-    run "$PPLR_BIN_DIR/pplr" sync --photos
+    run "$PPLR" sync --photos
     [ "$status" -eq 0 ]
     assert_contains "$output" "L/Lovelace, Ada"
     [[ "$output" != *"Turing"* ]]
-    run "$PPLR_BIN_DIR/pplr" sync --photos --apply
+    run "$PPLR" sync --photos --apply
     [ "$(jq -r '.[] | select(.id == "c1") | .hasImage' "$PPLR_CONTACTS_JSON")" = "true" ]
 }
 
@@ -446,7 +446,7 @@ setup_pull() {
     setup_pull
     about="$PPLR_TEST_DATA/T/Turing, Alan/About/Alan Turing (About).md"
     before=$(cat "$about")
-    run "$PPLR_BIN_DIR/pplr" sync --pull
+    run "$PPLR" sync --pull
     [ "$status" -eq 0 ]
     assert_contains "$output" "dry run"
     assert_contains "$output" "T/Turing, Alan"
@@ -459,7 +459,7 @@ setup_pull() {
 @test "pplr sync --pull --apply fills blanks and appends, removes nothing, and backs up first" {
     setup_pull
     about="$PPLR_TEST_DATA/T/Turing, Alan/About/Alan Turing (About).md"
-    run "$PPLR_BIN_DIR/pplr" sync --pull --apply
+    run "$PPLR" sync --pull --apply
     [ "$status" -eq 0 ]
     grep -qx -- '- Email:    \[alan@example.com\](mailto:alan@example.com), \[alan@bletchley.example\](mailto:alan@bletchley.example)' "$about"
     grep -qx -- '- Company:  Bletchley' "$about"
@@ -467,7 +467,7 @@ setup_pull() {
     [ -n "$(ls -d "$PPLR_BACKUP_DIR"/*-pull)" ]
     grep -q 'alan@example.com' "$PPLR_BACKUP_DIR"/*-pull/t_turing-alan.md
     # Ada already has everything her card has; a second pull finds nothing
-    run "$PPLR_BIN_DIR/pplr" sync --pull
+    run "$PPLR" sync --pull
     assert_contains "$output" "people to update in pplr  0"
 }
 
@@ -475,7 +475,7 @@ setup_pull() {
     setup_pull
     jq '(.[] | select(.id == "c1")) |= (.organization = "Elsewhere" | .emails += ["ada@other.example"])' \
         "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
-    "$PPLR_BIN_DIR/pplr" sync --pull --apply >/dev/null
+    "$PPLR" sync --pull --apply >/dev/null
     about="$PPLR_TEST_DATA/L/Lovelace, Ada/About/Ada Lovelace (About).md"
     grep -qx -- '- Company:  Analytical' "$about"
     grep -q 'ada@other.example' "$about"
@@ -483,7 +483,7 @@ setup_pull() {
 
 @test "pplr sync --pull --skip leaves that person alone" {
     setup_pull
-    run "$PPLR_BIN_DIR/pplr" sync --pull --apply --skip "Turing, Alan"
+    run "$PPLR" sync --pull --apply --skip "Turing, Alan"
     [ "$status" -eq 0 ]
     ! grep -q 'bletchley' "$PPLR_TEST_DATA/T/Turing, Alan/About/Alan Turing (About).md"
 }
@@ -491,16 +491,16 @@ setup_pull() {
 @test "pplr sync --check says when a linked card is in another account" {
     setup_contacts
     jq '(.[] | select(.id == "c1")) |= (.account = "other" | .groups = [])' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
-    run "$PPLR_BIN_DIR/pplr" sync --check
+    run "$PPLR" sync --check
     assert_contains "$output" "in another account    1"
-    run "$PPLR_BIN_DIR/pplr" sync --check --json
+    run "$PPLR" sync --check --json
     [ "$(echo "$output" | jq -r '[.linked[], .matched[]] | map(select(.otherAccount)) | .[0].person')" = "L/Lovelace, Ada" ]
 }
 
 @test "pplr sync --pull leaves out a number that is not a real UK number" {
     setup_pull
     jq '(.[] | select(.id == "c3")).phones = ["+44438901687", "+61438901687"]' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
-    run "$PPLR_BIN_DIR/pplr" sync --pull --apply
+    run "$PPLR" sync --pull --apply
     [ "$status" -eq 0 ]
     assert_contains "$output" "left out +44438901687"
     about="$PPLR_TEST_DATA/T/Turing, Alan/About/Alan Turing (About).md"
@@ -512,10 +512,10 @@ setup_pull() {
     jq '. + [{"id": "c3", "given": "Alan", "family": "Turing", "organization": "", "jobTitle": "",
               "emails": ["alan@work.example"], "phones": [], "urls": [], "linkedin": [], "groups": [], "account": "other"}]' \
         "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
-    "$PPLR_BIN_DIR/pplr" sync --pull --apply >/dev/null
+    "$PPLR" sync --pull --apply >/dev/null
     about="$PPLR_TEST_DATA/T/Turing, Alan/About/Alan Turing (About).md"
     grep -q 'alan@bletchley.example' "$about"
     grep -q 'alan@work.example' "$about"
-    run "$PPLR_BIN_DIR/pplr" sync --pull
+    run "$PPLR" sync --pull
     assert_contains "$output" "people to update in pplr  0"
 }

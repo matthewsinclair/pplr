@@ -28,14 +28,14 @@ YAML
     command -v uv >/dev/null 2>&1 || skip "uv not installed"
     setup_vocab
     echo '[{"person": "K/Kemp, Jon", "auto": ["cto", "fintech"], "inferred": [{"tag": "bcg", "evidence": "BCG DV 2018"}], "hand": ["london"]}]' > "$PPLR_TEST_DATA/r.json"
-    run "$PPLR_BIN_DIR/pplr" tags apply "$PPLR_TEST_DATA/r.json"
+    run "$PPLR" tags apply "$PPLR_TEST_DATA/r.json"
     [ "$status" -eq 0 ]
     f="$PPLR_TEST_DATA/K/Kemp, Jon/About/tags.yaml"
     grep -q '^  - london$' "$f"
     grep -q 'tag: cto, source: auto' "$f"
     grep -q 'tag: bcg, source: inferred, evidence: "BCG DV 2018"' "$f"
     echo '[{"person": "K/Kemp, Jon", "auto": ["founder"], "inferred": []}]' > "$PPLR_TEST_DATA/r2.json"
-    run "$PPLR_BIN_DIR/pplr" tags apply "$PPLR_TEST_DATA/r2.json"
+    run "$PPLR" tags apply "$PPLR_TEST_DATA/r2.json"
     grep -q '^  - london$' "$f"
     grep -q 'tag: founder, source: auto' "$f"
     ! grep -q 'tag: cto' "$f"
@@ -46,7 +46,7 @@ YAML
     command -v uv >/dev/null 2>&1 || skip "uv not installed"
     setup_vocab
     printf '%s\n' 'tags:' '  - payments' '  - Fin-Tech' '  - {tag: london, source: inferred}' > "$PPLR_TEST_DATA/K/Kemp, Jon/About/tags.yaml"
-    run "$PPLR_BIN_DIR/pplr" tags check
+    run "$PPLR" tags check
     [ "$status" -eq 1 ]
     assert_contains "$output" "payments is not in the vocabulary (the vocabulary folds it into fintech)"
     assert_contains "$output" "'Fin-Tech' is not a single lowercase word"
@@ -57,12 +57,12 @@ YAML
     command -v uv >/dev/null 2>&1 || skip "uv not installed"
     setup_vocab
     printf '%s\n' 'tags:' '  - london' '  - {tag: cto, source: auto}' > "$PPLR_TEST_DATA/K/Kemp, Jon/About/tags.yaml"
-    run "$PPLR_BIN_DIR/pplr" tags render
+    run "$PPLR" tags render
     [ "$status" -eq 0 ]
     a="$PPLR_TEST_DATA/K/Kemp, Jon/About/Jon Kemp (About).md"
     [ "$(sed -n 7p "$a")" = '- Tags:     [#cto](../../../_tags/cto.md) [#london](../../../_tags/london.md) <!-- from tags.yaml: pplr tags render -->' ]
     printf '%s\n' 'tags:' '  - founder' > "$PPLR_TEST_DATA/K/Kemp, Jon/About/tags.yaml"
-    "$PPLR_BIN_DIR/pplr" tags render
+    "$PPLR" tags render
     [ "$(grep -c '^- Tags:' "$a")" -eq 1 ]
     grep -q '^- Tags:     \[#founder\](../../../_tags/founder.md) <!--' "$a"
 }
@@ -74,7 +74,7 @@ YAML
     mkdir -p "$PPLR_TEST_DATA/S/Tolley, Jon/About"
     printf '%s\n' '# Jon Tolley (About)' '' '- Role:     Founder' '' '_About_' > "$PPLR_TEST_DATA/S/Tolley, Jon/About/Jon Tolley (About).md"
     printf '%s\n' 'tags:' '  - cto' > "$PPLR_TEST_DATA/S/Tolley, Jon/About/tags.yaml"
-    run "$PPLR_BIN_DIR/pplr" tags render
+    run "$PPLR" tags render
     [ "$status" -eq 0 ]
     t="$PPLR_TEST_DATA/_tags"
     grep -qF '[Jon Kemp](<../K/Kemp, Jon/About/Jon Kemp (About).md>): CTO at Acme · #london' "$t/cto.md"
@@ -83,6 +83,6 @@ YAML
     grep -qF '[#cto](cto.md) 2' "$t/index.md"
     [ -f "$t/london.md" ]
     printf '%s\n' 'tags:' '  - cto' > "$PPLR_TEST_DATA/K/Kemp, Jon/About/tags.yaml"
-    "$PPLR_BIN_DIR/pplr" tags render >/dev/null
+    "$PPLR" tags render >/dev/null
     [ ! -f "$t/london.md" ]
 }

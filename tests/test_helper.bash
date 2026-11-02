@@ -1,68 +1,81 @@
 #!/usr/bin/env bash
 
-# Common test utilities for pplr tests
+# Common test utilities for pplr tests.
+#
+# Every test runs in its own sandbox under $BATS_TEST_TMPDIR, which bats
+# creates for the test and removes after it. Nothing here deletes anything:
+# no path taken from the environment is ever a deletion target.
+#
+# PPLR_UNDER_TEST names the pplr executable the suite tests, and defaults to
+# the checkout's legacy bin/pplr. Point it at another build to test that:
+#   PPLR_UNDER_TEST=target/debug/pplr bats -r tests/
 
-# Setup function - runs before each test
+# The checkout these tests belong to
+PPLR_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
+
 setup() {
-    # Create a clean test data directory
-    export PPLR_TEST_DATA="${PPLR_TEST_DATA:-$BATS_TEST_DIRNAME/fixtures}"
-    mkdir -p "$PPLR_TEST_DATA"
-    
-    # Create A-Z directories
-    for letter in {A..Z}; do
-        mkdir -p "$PPLR_TEST_DATA/$letter"
-    done
-    
-    # Create .index directory for search files
-    mkdir -p "$PPLR_TEST_DATA/.index"
-    
-    # Set up environment
-    export PPLR_DATA="$PPLR_TEST_DATA"
-    export PPLR_DIR="$PPLR_DATA"
-    # Use absolute path - if BATS_TEST_DIRNAME not set, use current test directory
-    local test_dir="${BATS_TEST_DIRNAME:-$PWD}"
-    if [ -n "$BATS_TEST_DIRNAME" ]; then
-        export PPLR_ROOT="$(cd "$(dirname "$test_dir")" && pwd)"
-    else
-        # When run manually, we're likely in tests dir or project root
-        if [ -f "$PWD/bin/pplr" ]; then
-            export PPLR_ROOT="$PWD"
-        elif [ -f "$PWD/../bin/pplr" ]; then
-            export PPLR_ROOT="$(cd "$PWD/.." && pwd)"
-        else
-            export PPLR_ROOT="$(cd "$(dirname "$test_dir")" && pwd)"
-        fi
-    fi
-    export PPLR_BIN_DIR="$PPLR_ROOT/bin"
-    export PPLR_TEMPLATE_DIR="$PPLR_ROOT/templates"
-    
-    # Create mock Claude command for testing
-    setup_mock_claude
-}
+  [ -n "$BATS_TEST_TMPDIR" ] && [ -d "$BATS_TEST_TMPDIR" ] || {
+    echo "test_helper: BATS_TEST_TMPDIR is not a directory; bats 1.4 or later is required" >&2
+    return 1
+  }
 
-# Teardown function - runs after each test
-teardown() {
-    # Clean up test data
-    # "*" skips dotfiles: clear .index too, or an index one test writes (eg
-    # .index/index.md, which pplr count reads) leaks into the next
-    if [ -d "$PPLR_TEST_DATA" ]; then
-        rm -rf "$PPLR_TEST_DATA"/* "$PPLR_TEST_DATA/.index"
-    fi
+  # The implementation under test, as an absolute path
+  local under_test="${PPLR_UNDER_TEST:-$PPLR_ROOT/bin/pplr}"
+  [ -x "$under_test" ] && [ -f "$under_test" ] || {
+    echo "test_helper: PPLR_UNDER_TEST is not an executable file: $under_test" >&2
+    return 1
+  }
+  PPLR="$(cd "$(dirname "$under_test")" && pwd)/$(basename "$under_test")"
+
+  # Nothing pplr reads from the caller's shell leaks into a test: a stray
+  # PPLR_BIN_DIR would run another checkout, a stray PPLR_DATA the real tree
+  local var
+  for var in $(compgen -v PPLR_); do
+    [ "$var" = PPLR_UNDER_TEST ] || [ "$var" = PPLR_ROOT ] || unset "$var"
+  done
+  export -n PPLR_ROOT
+
+  # uv keeps its cache and Pythons under HOME, which the sandbox replaces
+  if command -v uv >/dev/null 2>&1; then
+    export UV_CACHE_DIR="${UV_CACHE_DIR:-$(uv cache dir 2>/dev/null)}"
+    export UV_PYTHON_INSTALL_DIR="${UV_PYTHON_INSTALL_DIR:-$(uv python dir 2>/dev/null)}"
+  fi
+
+  local sandbox="$BATS_TEST_TMPDIR"
+  export HOME="$sandbox/home"
+  export XDG_DATA_HOME="$HOME/.local/share"
+  export XDG_CACHE_HOME="$HOME/.cache"
+  export XDG_CONFIG_HOME="$HOME/.config"
+  export PPLR_TEST_DATA="$sandbox/data"
+  export PPLR_DATA="$PPLR_TEST_DATA"
+  export PPLR_DIR="$PPLR_DATA"
+  export PPLR_CACHE_DIR="$sandbox/cache"
+  export PPLR_BACKUP_DIR="$sandbox/backups"
+  export PPLR_REFS_DIR="$sandbox/refs"
+  PPLR_TEST_BIN="$sandbox/bin"
+
+  mkdir -p "$HOME" "$PPLR_CACHE_DIR" "$PPLR_TEST_BIN" "$PPLR_TEST_DATA/.index"
+  local letter
+  for letter in {A..Z}; do
+    mkdir -p "$PPLR_TEST_DATA/$letter"
+  done
+
+  setup_mock_claude
 }
 
 # Helper function to create a test person
 create_test_person() {
-    local surname="$1"
-    local firstname="$2"
-    local first_letter=$(echo "$surname" | cut -c1 | tr '[:lower:]' '[:upper:]')
-    local person_dir="$PPLR_TEST_DATA/$first_letter/$surname, $firstname"
-    
-    mkdir -p "$person_dir/About"
-    mkdir -p "$person_dir/Meetings"
-    mkdir -p "$person_dir/Client"
-    
-    # Create a basic About file
-    cat > "$person_dir/About/$firstname $surname (About).md" << EOF
+  local surname="$1"
+  local firstname="$2"
+  local first_letter=$(echo "$surname" | cut -c1 | tr '[:lower:]' '[:upper:]')
+  local person_dir="$PPLR_TEST_DATA/$first_letter/$surname, $firstname"
+
+  mkdir -p "$person_dir/About"
+  mkdir -p "$person_dir/Meetings"
+  mkdir -p "$person_dir/Client"
+
+  # Create a basic About file
+  cat > "$person_dir/About/$firstname $surname (About).md" << EOF
 verblock(1.0.0)
 
 # $firstname $surname (About)
@@ -76,17 +89,14 @@ verblock(1.0.0)
 ## Bio
 This is a test bio for $firstname $surname.
 EOF
-    
-    echo "$person_dir"
+
+  echo "$person_dir"
 }
 
-# Helper function to set up mock Claude for testing
+
+# Put the mock claude first on PATH
 setup_mock_claude() {
-    local mock_claude_dir="$PPLR_TEST_DATA/.mock_bin"
-    mkdir -p "$mock_claude_dir"
-    
-    # Create mock claude command
-    cat > "$mock_claude_dir/claude" << 'EOF'
+  cat > "$PPLR_TEST_BIN/claude" << 'EOF'
 #!/bin/bash
 # Mock Claude for testing
 # Read the input and generate a simple response based on query
@@ -156,16 +166,15 @@ RESPONSE
         ;;
 esac
 EOF
-    
-    chmod +x "$mock_claude_dir/claude"
-    export PATH="$mock_claude_dir:$PATH"
+  chmod +x "$PPLR_TEST_BIN/claude"
+  export PATH="$PPLR_TEST_BIN:$PATH"
 }
 
 # Helper function to create a basic tags index for testing
 create_test_tags_index() {
-    local tags_index="$PPLR_TEST_DATA/.index/tags_index.json"
-    
-    cat > "$tags_index" << 'EOF'
+  local tags_index="$PPLR_TEST_DATA/.index/tags_index.json"
+
+  cat > "$tags_index" << 'EOF'
 {
   "generated_at": "2024-01-01T00:00:00Z",
   "people_count": 0,
@@ -174,169 +183,10 @@ create_test_tags_index() {
 EOF
 }
 
-# Mock Claude functions for tag tests
+
+# Replace the mock claude with one that also answers tag generation
 mock_claude() {
-    # Already set up in setup_mock_claude, but we need a more sophisticated version for tags
-    local mock_claude_dir="$PPLR_TEST_DATA/.mock_bin"
-    
-    # Update mock claude to handle tag generation
-    cat > "$mock_claude_dir/claude" << 'EOF'
-#!/bin/bash
-# Enhanced mock Claude for testing tags and search
-
-input=$(cat)
-
-# Check if this is a tag generation request
-if echo "$input" | grep -qi "generate.*tags.*based.*content"; then
-    # Tag generation response
-    cat << 'RESPONSE'
-{
-  "profile_tags": ["test-role", "technology", "startup"],
-  "meeting_tags": ["intro-meeting", "collaboration"],
-  "generated_at": "2024-01-01T00:00:00Z", 
-  "version": "1.0"
-}
-RESPONSE
-elif echo "$input" | grep -q "SEARCH QUERY:"; then
-    # Search request - use the existing search logic
-    query=$(echo "$input" | grep 'SEARCH QUERY:' | sed 's/.*SEARCH QUERY: "\(.*\)".*/\1/')
-    
-    case "$query" in
-        *"Anderson"*)
-            cat << 'RESPONSE'
-{
-  "results": [
-    {
-      "name": "Anderson, James",
-      "path": "A/Anderson, James",
-      "role": "Test Role",
-      "company": "Test Company",
-      "relevance_score": 0.9,
-      "explanation": "Name matches Anderson"
-    },
-    {
-      "name": "Anderson, Sarah", 
-      "path": "A/Anderson, Sarah",
-      "role": "Test Role",
-      "company": "Test Company", 
-      "relevance_score": 0.85,
-      "explanation": "Name matches Anderson"
-    }
-  ],
-  "total_matches": 2
-}
-RESPONSE
-            ;;
-        *"technology"*)
-            cat << 'RESPONSE'
-{
-  "results": [
-    {
-      "name": "Tech, Tom",
-      "path": "T/Tech, Tom", 
-      "role": "Chief Technology Officer",
-      "company": "Test Company",
-      "relevance_score": 0.95,
-      "explanation": "Role matches technology query"
-    }
-  ],
-  "total_matches": 1
-}
-RESPONSE
-            ;;
-        *"nonexistent"*)
-            cat << 'RESPONSE'
-{
-  "results": [],
-  "total_matches": 0
-}
-RESPONSE
-            ;;
-        *)
-            cat << 'RESPONSE'
-{
-  "results": [],
-  "total_matches": 0
-}
-RESPONSE
-            ;;
-    esac
-else
-    # Default response
-    echo '{"error": "Unknown request type"}'
-fi
-EOF
-    
-    chmod +x "$mock_claude_dir/claude"
-}
-
-remove_mock_claude() {
-    # Mock claude is cleaned up in teardown automatically
-    true
-}
-
-# Helper function to create a test meeting
-create_test_meeting() {
-    local person_dir="$1"
-    local date="$2"
-    local title="$3"
-    
-    local meeting_dir="$person_dir/Meetings/$date $title"
-    mkdir -p "$meeting_dir"
-    
-    cat > "$meeting_dir/$date $title.md" << EOF
-verblock(1.0.0)
-
-# $date $title
-
-## Meeting Summary
-Purpose: Test meeting
-Date: $date
-Attendees: Test Person
-
-## Key Takeaways
-- Test takeaway
-
-## Action Items
-- [ ] Test action
-EOF
-}
-
-# Helper function to assert file exists
-assert_file_exists() {
-    local file="$1"
-    if [ ! -f "$file" ]; then
-        echo "File does not exist: $file" >&2
-        return 1
-    fi
-}
-
-# Helper function to assert directory exists
-assert_dir_exists() {
-    local dir="$1"
-    if [ ! -d "$dir" ]; then
-        echo "Directory does not exist: $dir" >&2
-        return 1
-    fi
-}
-
-# Helper function to assert string contains
-assert_contains() {
-    local haystack="$1"
-    local needle="$2"
-    if [[ ! "$haystack" =~ "$needle" ]]; then
-        echo "String does not contain expected value" >&2
-        echo "Expected to find: $needle" >&2
-        echo "In: $haystack" >&2
-        return 1
-    fi
-}
-
-# Mock Claude for testing (creates a simple mock response)
-mock_claude() {
-    # Update the PATH-based mock claude to handle tag generation
-    local mock_claude_dir="$PPLR_TEST_DATA/.mock_bin"
-    cat > "$mock_claude_dir/claude" << 'EOF'
+  cat > "$PPLR_TEST_BIN/claude" << 'EOF'
 #!/bin/bash
 # Enhanced mock Claude for testing tags and search
 
@@ -387,14 +237,67 @@ RESPONSE
     esac
 fi
 EOF
-    chmod +x "$mock_claude_dir/claude"
-    
-    # Note: We do NOT create a mock in the real home directory
-    # Tests should only use the mock in PPLR_TEST_DATA/.mock_bin
+  chmod +x "$PPLR_TEST_BIN/claude"
 }
 
-# Remove mock claude
 remove_mock_claude() {
-    # Mock claude is in the test directory and cleaned up automatically
-    true
+  # The mock lives in the test's own sandbox, which bats removes
+  true
+}
+
+# Helper function to create a test meeting
+create_test_meeting() {
+  local person_dir="$1"
+  local date="$2"
+  local title="$3"
+
+  local meeting_dir="$person_dir/Meetings/$date $title"
+  mkdir -p "$meeting_dir"
+
+  cat > "$meeting_dir/$date $title.md" << EOF
+verblock(1.0.0)
+
+# $date $title
+
+## Meeting Summary
+Purpose: Test meeting
+Date: $date
+Attendees: Test Person
+
+## Key Takeaways
+- Test takeaway
+
+## Action Items
+- [ ] Test action
+EOF
+}
+
+# Helper function to assert file exists
+assert_file_exists() {
+  local file="$1"
+  if [ ! -f "$file" ]; then
+    echo "File does not exist: $file" >&2
+    return 1
+  fi
+}
+
+# Helper function to assert directory exists
+assert_dir_exists() {
+  local dir="$1"
+  if [ ! -d "$dir" ]; then
+    echo "Directory does not exist: $dir" >&2
+    return 1
+  fi
+}
+
+# Helper function to assert string contains
+assert_contains() {
+  local haystack="$1"
+  local needle="$2"
+  if [[ ! "$haystack" =~ "$needle" ]]; then
+    echo "String does not contain expected value" >&2
+    echo "Expected to find: $needle" >&2
+    echo "In: $haystack" >&2
+    return 1
+  fi
 }

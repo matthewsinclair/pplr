@@ -1,40 +1,25 @@
 #!/bin/bash
 
-# Run all BATS tests
-# Usage: ./run_tests.sh [specific-test.bats]
+# Run the bats suite, and exit with bats' own status.
+# Usage: ./run_tests.sh [specific-test.bats ...]
+#
+# Each test makes and removes its own sandbox (see test_helper.bash), so this
+# runner sets no data paths and deletes nothing. PPLR_UNDER_TEST names the pplr
+# executable to test; it defaults to the checkout's bin/pplr.
 
-# Get the directory where this script is located
 TEST_DIR="$(cd "$(dirname "$0")" && pwd)"
-cd "$TEST_DIR"
+cd "$TEST_DIR" || exit 1
 
-# Set test environment
-export PPLR_TEST_MODE=1
-export PPLR_TEST_DATA="$TEST_DIR/fixtures"
-export PPLR_ROOT="$(dirname "$TEST_DIR")"
-export PPLR_DATA="$PPLR_TEST_DATA"
-export PPLR_BIN_DIR="$PPLR_ROOT/bin"
-export PPLR_TEMPLATE_DIR="$PPLR_ROOT/templates"
-export PPLR_DIR="$PPLR_DATA"  # For backwards compatibility
-
-# Check if bats is installed
-if ! command -v bats &> /dev/null; then
-    echo "Error: BATS is not installed"
-    echo "Install with: brew install bats-core (macOS) or see https://github.com/bats-core/bats-core"
-    exit 1
+if ! command -v bats >/dev/null 2>&1; then
+  echo "Error: bats is not installed" >&2
+  echo "Install with: brew install bats-core (macOS) or see https://github.com/bats-core/bats-core" >&2
+  exit 1
 fi
 
-# Create test fixtures directory if it doesn't exist
-mkdir -p "$PPLR_TEST_DATA"
-
-# Run tests
 if [ $# -eq 0 ]; then
-    echo "Running all tests..."
-    bats *.bats
-else
-    echo "Running specific tests: $@"
-    bats "$@"
+  echo "Running all tests against ${PPLR_UNDER_TEST:-bin/pplr}..."
+  exec bats ./*.bats
 fi
 
-# Clean up test data
-echo "Cleaning up test data..."
-rm -rf "$PPLR_TEST_DATA"
+echo "Running $* against ${PPLR_UNDER_TEST:-bin/pplr}..."
+exec bats "$@"

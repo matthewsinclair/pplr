@@ -33,21 +33,6 @@ jobs:
         cd bats-core
         sudo ./install.sh /usr/local
         
-    - name: Set up test environment
-      run: |
-        export PPLR_ROOT="${GITHUB_WORKSPACE}"
-        export PPLR_BIN_DIR="${PPLR_ROOT}/bin"
-        echo "PPLR_ROOT=${PPLR_ROOT}" >> $GITHUB_ENV
-        echo "PPLR_BIN_DIR=${PPLR_BIN_DIR}" >> $GITHUB_ENV
-        
+    # The runner exits with bats' status, so a failing test fails the job
     - name: Run tests
-      run: |
-        cd tests
-        ./run_tests.sh
-        
-    - name: Upload test results
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results-${{ matrix.os }}
-        path: tests/*.log
+      run: tests/run_tests.sh

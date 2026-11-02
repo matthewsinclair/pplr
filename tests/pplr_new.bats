@@ -3,7 +3,7 @@
 load test_helper
 
 @test "pplr new creates person with valid names" {
-    run "$PPLR_BIN_DIR/pplr" new "John" "Smith"
+    run "$PPLR" new "John" "Smith"
     [ "$status" -eq 0 ]
     
     assert_dir_exists "$PPLR_TEST_DATA/S/Smith, John"
@@ -11,7 +11,7 @@ load test_helper
 }
 
 @test "pplr new creates correct directory structure" {
-    run "$PPLR_BIN_DIR/pplr" new "Mary" "Johnson"
+    run "$PPLR" new "Mary" "Johnson"
     [ "$status" -eq 0 ]
     
     local person_dir="$PPLR_TEST_DATA/J/Johnson, Mary"
@@ -22,27 +22,27 @@ load test_helper
 }
 
 @test "pplr new with LinkedIn URL" {
-    run "$PPLR_BIN_DIR/pplr" new "Alice" "Brown" "https://linkedin.com/in/alicebrown"
+    run "$PPLR" new "Alice" "Brown" "https://linkedin.com/in/alicebrown"
     [ "$status" -eq 0 ]
     
     assert_file_exists "$PPLR_TEST_DATA/B/Brown, Alice/About/Alice Brown (LinkedIn).webloc"
 }
 
 @test "pplr new fails without enough arguments" {
-    run "$PPLR_BIN_DIR/pplr" new "Smith"
+    run "$PPLR" new "Smith"
     [ "$status" -ne 0 ]
     assert_contains "$output" "Usage:"
 }
 
 @test "pplr new handles names with spaces" {
-    run "$PPLR_BIN_DIR/pplr" new "Jan" "Van Der Berg"
+    run "$PPLR" new "Jan" "Van Der Berg"
     [ "$status" -eq 0 ]
     
     assert_dir_exists "$PPLR_TEST_DATA/V/Van Der Berg, Jan"
 }
 
 @test "pplr new preserves About file template structure" {
-    run "$PPLR_BIN_DIR/pplr" new "Bob" "Wilson"
+    run "$PPLR" new "Bob" "Wilson"
     [ "$status" -eq 0 ]
     
     local about_file="$PPLR_TEST_DATA/W/Wilson, Bob/About/Bob Wilson (About).md"
@@ -59,7 +59,7 @@ load test_helper
     create_test_person "Davis" "Emma"
     
     # Try to create the same person again
-    run "$PPLR_BIN_DIR/pplr" new "Emma" "Davis"
+    run "$PPLR" new "Emma" "Davis"
     [ "$status" -ne 0 ]
     assert_contains "$output" "already exists"
 }
