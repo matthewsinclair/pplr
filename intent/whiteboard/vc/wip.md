@@ -3,9 +3,9 @@ node: vc
 name: vc
 role: vc
 session_id: 01f7e7ed-4beb-47d7-b826-1033c56a385d
-heartbeat_at: 2026-11-02 17:04Z
+heartbeat_at: 2026-11-02 17:11Z
 status: active
-focus: "Localfolded after hv's afk stretch; vc holds the pen and slot control; after hv's compact: cc on WP10, dc on WP14 or as directed, vc reviewing"
+focus: "Post-compact: go sent to cc (WP10 then WP11) and dc (AT-08.1 re-measure, then WP14 if cc agrees); vc reviewing and granting slots"
 claims: []
 ---
 

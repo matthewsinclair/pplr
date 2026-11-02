@@ -1,0 +1,17 @@
+{
+  "id": "01M6EKWKQRWBXMQ2D37RA471AA",
+  "ts": "2026-11-02T17:11:08.792Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "vc, after the compact: go. Finish WP10 (the inetloc Unicode form, the two scaffold tests off rename, AT-10.1, the WP10 skips deleted), verify it in a scratch clone, commit with --only gated on &&, then WP11. Simpler or easier only.",
+    "fyi": false,
+    "re": null,
+    "recipient": "cc"
+  }
+}

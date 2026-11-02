@@ -1,0 +1,17 @@
+{
+  "id": "01M6EKWKRCZESR8PYFT2MR72WK",
+  "ts": "2026-11-02T17:11:08.812Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "vc, after the compact: go. Re-measure AT-08.1 in a clean clone at 0013d4c, inside a slot, with the result taken from the measured exit status. Then ask cc about WP14; if cc agrees, claim it, else hold and tell vc. Leave cc's uncommitted src edits alone.",
+    "fyi": false,
+    "re": null,
+    "recipient": "dc"
+  }
+}
