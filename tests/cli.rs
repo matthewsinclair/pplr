@@ -663,3 +663,22 @@ fn the_golden_rewrites_mask_what_varies_between_runs() {
   let want = "@SANDBOX@/x and @SANDBOX@/y and @SANDBOX@\n\"generated_at\": \"@GENERATED_AT@\"\n\"generated\" : \"@GENERATED@\"\nsync plan, @GENERATED@\nbackups/@STAMP@-contacts.json\n";
   assert_eq!(golden_normalise(&raw, sb), want);
 }
+
+/// ST0001 WP09, read-only and by hand on macOS: `cargo test -- --ignored live`.
+/// The live store through the sidecar, and its dump through the Rust card
+/// model and back, byte for byte. It prints a count, never a card (D11).
+#[test]
+#[ignore = "reads the live Contacts store; run by hand on macOS"]
+fn live_contacts_round_trip_through_the_sidecar_store() -> pplr::Result<()> {
+  use pplr::contacts::{Card, SidecarStore, Store, to_swift_json};
+  let sidecar = std::path::Path::new(env!("CARGO_BIN_EXE_pplr")).with_file_name("pplr-contacts");
+  let dump = Command::new(&sidecar).arg("dump").output()?;
+  assert!(dump.status.success(), "the sidecar's dump failed");
+  let text = text(&dump.stdout);
+  let cards: Vec<Card> = serde_json::from_str(&text)?;
+  assert_eq!(to_swift_json(&serde_json::to_value(&cards)?), text.trim_end_matches('\n'));
+  let through_store = SidecarStore::new(sidecar)?.cards()?;
+  assert_eq!(through_store.len(), cards.len());
+  println!("live Contacts: {} cards, read through the store and round-tripped", cards.len());
+  Ok(())
+}

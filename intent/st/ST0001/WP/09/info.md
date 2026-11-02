@@ -2,7 +2,7 @@
 wp_id: WP-09
 title: The Contacts store and the Swift I/O sidecar
 scope: M
-status: Not Started
+status: WIP
 ---
 
 # WP-09: The Contacts store and the Swift I/O sidecar

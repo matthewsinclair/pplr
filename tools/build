@@ -1,0 +1,21 @@
+#!/usr/bin/env zsh
+# Build pplr, and on macOS its Contacts sidecar beside it, ahead of time
+# (ST0001 design D2 and 3.2): nothing compiles at run time. Arguments go to
+# cargo build, eg --release; the sidecar lands in the same target/<profile>/.
+
+emulate -L zsh
+setopt err_exit no_unset pipe_fail
+
+root=${0:A:h:h}
+cd $root
+cargo build --quiet "$@"
+
+[[ $(uname) == Darwin ]] || { print "build: no Contacts sidecar off macOS (it needs the Contacts framework)"; exit 0 }
+profile=debug
+(( ${@[(Ie)--release]} )) && profile=release
+src=swift/pplr-contacts/main.swift
+out=target/$profile/pplr-contacts
+if [[ ! -x $out || $src -nt $out ]]; then
+  print "build: compiling the Contacts sidecar into $out"
+  swiftc -O -swift-version 5 -o $out $src -framework Contacts
+fi

@@ -335,7 +335,7 @@ Only the About header fields take part: the name (from the folder), Role, Compan
 
 A linked card in an account other than iCloud (eg Gmail) is counted on its own line, "in another account": it carries the `pplr` URL but cannot join the `PPLR` group, which lives in iCloud.
 
-The Contacts side is a small Swift program, `src/pplr-contacts/main.swift`, built into `.build/` on first use. The first run asks for access to Contacts for the app running pplr (eg iTerm or Terminal).
+The Contacts side is a small Swift program, `swift/pplr-contacts/main.swift`, built into `.build/` on first use. The first run asks for access to Contacts for the app running pplr (eg iTerm or Terminal).
 
 #### `pplr sync --plan [options]`
 

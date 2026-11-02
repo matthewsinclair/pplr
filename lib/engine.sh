@@ -1,8 +1,8 @@
-# The Swift engine behind pplr sync, resolve, links and open (src/pplr-contacts),
+# The Swift engine behind pplr sync, resolve, links and open (swift/pplr-contacts),
 # built into .build/ on first use and again whenever its source changes.
 # Source this after PPLR_ROOT is set.
 
-engine_src="$PPLR_ROOT/src/pplr-contacts/main.swift"
+engine_src="$PPLR_ROOT/swift/pplr-contacts/main.swift"
 engine="$PPLR_ROOT/.build/pplr-contacts"
 
 build_engine() {

@@ -16,6 +16,8 @@ pub struct Config {
   pub backup_dir: PathBuf,
   /// PPLR_CACHE_DIR, default $XDG_CACHE_HOME/pplr (D5).
   pub cache_dir: PathBuf,
+  /// PPLR_CONTACTS_JSON: a Contacts dump file standing in for the live store.
+  pub contacts_json: Option<PathBuf>,
 }
 
 impl Config {
@@ -46,11 +48,13 @@ impl Config {
       Some(dir) => dir,
       None => xdg("XDG_CACHE_HOME", ".cache")?.join("pplr"),
     };
+    let contacts_json = get("PPLR_CONTACTS_JSON");
     Ok(Self {
       data,
       data_legacy,
       backup_dir,
       cache_dir,
+      contacts_json,
     })
   }
 }

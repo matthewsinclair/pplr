@@ -23,6 +23,7 @@
 //   pplr-contacts pull --people-dir DIR [--apply] [--name N]... [--skip N]... [--limit N]
 //                       [--backup-dir DIR] [--contacts-json FILE]
 //   pplr-contacts dump [--group NAME]
+//   pplr-contacts group [--group NAME]       (the group's id in the default account, made if missing)
 //
 // `plan` proposes, for every pplr person, what should happen to their card:
 // Add, Update, Link only, No change or Skip, with the card it would change,
@@ -988,7 +989,10 @@ func homeGroupID(_ store: CNContactStore, _ group: String) throws -> String {
     let g = CNMutableGroup(); g.name = group
     let req = CNSaveRequest(); req.add(g, toContainerWithIdentifier: home)
     try store.execute(req)
-    return try inHome().first(where: { $0.name == group })!.identifier
+    guard let made = try inHome().first(where: { $0.name == group }) else {
+        throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "made the \(group) group in Contacts, but cannot find it"])
+    }
+    return made.identifier
 }
 
 func applyLive(_ plan: LinkPlan, group: String, limit: Int?) throws -> Outcome {
@@ -1548,7 +1552,7 @@ do {
         let enc = JSONEncoder(); enc.outputFormatting = [.prettyPrinted, .sortedKeys]
         var cards = try loadCards(fixture: fixture)
         if args.contains("--only-group") { cards = cards.filter { $0.groups.contains(group) } }
-        print(String(data: try enc.encode(cards), encoding: .utf8)!)
+        FileHandle.standardOutput.write(try enc.encode(cards) + Data("\n".utf8))
     case "check":
         guard let peopleDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "check needs --people-dir"]) }
         let report = check(people: loadPeople(peopleDir), cards: try loadCards(fixture: fixture), group: group)
@@ -1650,6 +1654,8 @@ do {
                 for c in left { print("  \(c.file):\(c.line)  \(c.problem!)") }
             }
         }
+    case "group":
+        print(try homeGroupID(openStore(), group))
     case "backup":
         guard let backupDir else { throw NSError(domain: "pplr", code: 2, userInfo: [NSLocalizedDescriptionKey: "backup needs --backup-dir"]) }
         print("Backup: \(try backup(to: backupDir, fixture: fixture))")
