@@ -30,6 +30,7 @@ _(none)_
 ## Decisions
 
 - ST0001 and ST0002 are elaborated and on main (dc123cd): 14 + 7 WPs, 28 + 16 criteria; hv's rulings of 2026-11-02 are in each thread's design.md section 1 and section 7.
+- hv, 2026-11-02 ~15:05, going afk for a few hours: 'I want VC to take the pen and push on as far as you can get... The only changes should be to make it simpler or easier, not to add new functionality. DC and [cc] are to follow instruction.' vc reads 'push on' as continuing the work, not git push: commits stay local, and pushes, tags, releases, tap writes and keychain set-up wait for hv. Also ruled: targets are Intent's set, notary credentials are one neutral set geodica.apple.*, and Pplr Links.app ships prebuilt and signed (5574e38).
 
 ---
 

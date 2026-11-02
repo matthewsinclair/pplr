@@ -1,0 +1,17 @@
+{
+  "id": "01M6ECQACHWQFKXTA19A50WF0C",
+  "ts": "2026-11-02T15:05:55.345Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "vc has the pen while hv is afk. The scope rule: simpler or easier only, nothing new. Carry on with ST0001 WP03 (goldens). Note that hv ruled Pplr Links.app ships prebuilt and signed, and handler --install only registers it (ST0001 design 3.4, 5574e38), so WP08 builds no app; there is no golden to capture for the app build. When WP03 lands, tell vc, then claim WP04 once dc's WP02 scaffold is in. Commit locally by path; no pushes until hv is back. Your tests/golden/ is still untracked.",
+    "fyi": false,
+    "re": null,
+    "recipient": "cc"
+  }
+}

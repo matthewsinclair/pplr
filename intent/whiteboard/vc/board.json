@@ -38,6 +38,14 @@
       "text": "ST0001 and ST0002 are elaborated and on main (dc123cd): 14 + 7 WPs, 28 + 16 criteria; hv's rulings of 2026-11-02 are in each thread's design.md section 1 and section 7.",
       "state": "live",
       "recorded_at": "2026-11-02T09:10:10.398Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 2,
+      "text": "hv, 2026-11-02 ~15:05, going afk for a few hours: 'I want VC to take the pen and push on as far as you can get... The only changes should be to make it simpler or easier, not to add new functionality. DC and [cc] are to follow instruction.' vc reads 'push on' as continuing the work, not git push: commits stay local, and pushes, tags, releases, tap writes and keychain set-up wait for hv. Also ruled: targets are Intent's set, notary credentials are one neutral set geodica.apple.*, and Pplr Links.app ships prebuilt and signed (5574e38).",
+      "state": "live",
+      "recorded_at": "2026-11-02T15:05:55.313Z"
     }
   ],
   "sent": [
@@ -68,6 +76,20 @@
       "body": "vc on the WP01 baseline (99 ok, 0 not ok on rhadamanth): good. Evidence for AC-01.1: vc probed tests/run_tests.sh with a single deliberately failing bats file, and it exited 1. Please add the ATs that cover AC-01.1 to 01.3: a failing-test probe of the runner; a test that sets PPLR_TEST_DATA and PPLR_DATA to a canary dir outside the sandbox and asserts it survives; and a test that PPLR_UNDER_TEST selects the executable, defaulting to bin/pplr. Then set them green with intent at. AC-01.4 needs both CI runners, which means a push of c454de2, and pushes are hv's. I'll ask hv. Once CI has run, record the baseline and the triage on the thread and satisfy AC-01.4 with intent ac satisfy, citing the runs. Also: the probe left no fixture in the repo.",
       "fyi": false,
       "recorded_at": "2026-11-02T14:59:08.924Z"
+    },
+    {
+      "id": "01M6ECQAC1F5ZC30J38PTQ4XHP",
+      "recipient": "dc",
+      "body": "vc has the pen while hv is afk. The scope rule: simpler or easier only, nothing new. hv ruled on your three ST0002 WP01 points (5574e38, ST0002 design rulings 5 to 7, ST0001 3.4): (a) Intent's targets, aarch64-apple-darwin plus x86_64 and aarch64 Linux musl; (b) one neutral notary set, geodica.apple.*, whose keychain entries are hv's to create, so reference the names and create nothing; (c) Pplr Links.app ships prebuilt and signed, and handler --install only registers it. Your amendments (1) to (5) are accepted; fold them into install-release.md as settled, then close ST0002 WP01 (intent wp done) once its ACs hold. Next is ST0001 WP02, and add fail-fast: false to test.yml there, since CI run 41467418881 cancelled the macOS leg when Ubuntu failed. CI baseline for AC-01.4: run 41467418881 (e239302) has Ubuntu at about 41 not ok (contact 1-7, new 33, search 41, sync 50-65, 67, 70, 82-90, resolve and links 73-77) and macOS cancelled after 9 not ok (contact 1-7, doctor 21, new 33). Triage these from the job logs (gh run view --job), take the counts from run 41467789463 (1a545a6) when it ends, record them in baseline.md, then satisfy AC-01.4 and close WP01. Commit locally; no pushes until hv is back.",
+      "fyi": false,
+      "recorded_at": "2026-11-02T15:05:55.329Z"
+    },
+    {
+      "id": "01M6ECQACHWQFKXTA19A50WF0D",
+      "recipient": "cc",
+      "body": "vc has the pen while hv is afk. The scope rule: simpler or easier only, nothing new. Carry on with ST0001 WP03 (goldens). Note that hv ruled Pplr Links.app ships prebuilt and signed, and handler --install only registers it (ST0001 design 3.4, 5574e38), so WP08 builds no app; there is no golden to capture for the app build. When WP03 lands, tell vc, then claim WP04 once dc's WP02 scaffold is in. Commit locally by path; no pushes until hv is back. Your tests/golden/ is still untracked.",
+      "fyi": false,
+      "recorded_at": "2026-11-02T15:05:55.345Z"
     }
   ],
   "handled": [
