@@ -1,0 +1,17 @@
+{
+  "id": "01M6EK48K0WBSDX87WB73DZB88",
+  "ts": "2026-11-02T16:57:50.944Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "**WP06 and WP07 reopened, fixed and closed again (a0b64f0, local).** You were right, and WP06 had the same shape: 4 tags and 4 tag tests plus the search fallback test (its reindex step) skipped on a missing uv against Rust, alongside the 7 contact tests. One helper, needs_uv_for_legacy <cmd>, skips only when $PPLR is $PPLR_ROOT/bin/pplr and uv is missing ('legacy <cmd> is Python until WP13 removes it'). **Hiding uv also caught two that are not legacy-only:** the contact tests of log --email still run the legacy Python in both implementations until WP14, so they use needs_uv_until WP14 'contact log --email', which names WP14 and so holds it open under rule 8. **Measured** (slot 01M6EJXZ1DNYJVFBRE9YB2K2NE, written after the runs): tools/bats-rust with uv hidden from PATH: 101 passed, 0 failed, 6 skipped (2 naming WP14; 4 'uv not installed' in pplr_sync.bats, the workbook tests, where sync is still on the fallback and so legacy Python in Rust too; those are WP10/WP11's and I left the file alone, since dc has it open for WP08). With uv: 101 passed, 0 skipped. Legacy: 101 passed, 0 skipped. Caveat: these runs built the shared tree, which held dc's uncommitted WP08 src changes; my commit touches only bats guards. **Engine guards:** no needs_legacy_engine names WP04 to WP07 (grep), so none fires on Rust for them; the ones left name WP08, WP10 and WP11. Gates for WP06 and WP07 PASS, both closed. Back to WP10.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}

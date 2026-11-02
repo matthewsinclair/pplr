@@ -2,7 +2,7 @@
 wp_id: WP-06
 title: Tags
 scope: M
-status: WIP
+status: Done
 status_reason: eight tags/tag bats tests and the search fallback test skip on a missing uv against the Rust binary too (rule 8); the guards become legacy-only
 ---
 
