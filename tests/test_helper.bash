@@ -11,7 +11,7 @@
 #   PPLR_UNDER_TEST=target/debug/pplr bats -r tests/
 
 # The checkout these tests belong to
-PPLR_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
+PPLR_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 setup() {
   [ -n "$BATS_TEST_TMPDIR" ] && [ -d "$BATS_TEST_TMPDIR" ] || {

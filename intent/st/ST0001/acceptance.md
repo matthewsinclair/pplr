@@ -27,9 +27,9 @@ title: Port Pplr from shell scripts to Rust
 
 ### WP-01 -- Test safety, the parity seam and an honest runner (status: WIP)
 
-- AC-01.1 The bats runner and CI exit non-zero when any test fails. -- satisfied: no (computed)
-- AC-01.2 No test or runner deletes outside its own temporary directory: an inherited PPLR_TEST_DATA, or any other path from the environment, is never a deletion target. -- satisfied: no (computed)
-- AC-01.3 One setting points the bats suite at either implementation, and the default is the legacy code. -- satisfied: no (computed)
+- AC-01.1 The bats runner and CI exit non-zero when any test fails. -- satisfied: yes (computed)
+- AC-01.2 No test or runner deletes outside its own temporary directory: an inherited PPLR_TEST_DATA, or any other path from the environment, is never a deletion target. -- satisfied: yes (computed)
+- AC-01.3 One setting points the bats suite at either implementation, and the default is the legacy code. -- satisfied: yes (computed)
 - AC-01.4 (non-test) The baseline against the legacy code is recorded on this thread for rhadamanth and both CI runners, with a one-line triage for each failing test. -- satisfied: no
 
 ### WP-02 -- Rust scaffold under devbin, with the fallback (status: Not Started)
@@ -91,7 +91,9 @@ _(no tests in this group)_
 
 ### WP-01 -- Test safety, the parity seam and an honest runner (status: WIP)
 
-_(no tests in this group)_
+- AT-01.1 `tests/harness.bats` -- covers AC-01.1 -- status: green
+- AT-01.2 `tests/harness.bats` -- covers AC-01.2 -- status: green
+- AT-01.3 `tests/harness.bats` -- covers AC-01.3 -- status: green
 
 ### WP-02 -- Rust scaffold under devbin, with the fallback (status: Not Started)
 
