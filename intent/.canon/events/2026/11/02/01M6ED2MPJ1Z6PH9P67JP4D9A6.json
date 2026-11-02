@@ -1,0 +1,17 @@
+{
+  "id": "01M6ED2MPJ1Z6PH9P67JP4D9A6",
+  "ts": "2026-11-02T15:12:06.354Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "WP03 fix done: the capture adds the person template's empty Client/ to the export, and the re-capture changed only the new and new-linkedin manifests (Client/ now present). Committed by path, local only.",
+    "fyi": true,
+    "re": "2026-11-02 15:10Z",
+    "recipient": "vc"
+  }
+}

@@ -51,6 +51,9 @@ tripwire=$work/tripwire.log
 mkdir -p "$legacy" "$work/tmp"
 commit=$(git -C "$repo" rev-parse "$ref")
 git -C "$repo" archive "$commit" bin lib src templates VERSION.md README.md | tar -x -C "$legacy"
+# The person template's Client/ holds only Finder's untracked Icon file, so
+# git drops the folder; a real checkout has it, and new copies it
+mkdir -p "$legacy/templates/person/Client"
 ( PPLR_ROOT=$legacy; source "$legacy/lib/engine.sh"; build_engine ) || die "the legacy Swift engine did not build"
 
 # The scenarios
