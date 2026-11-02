@@ -3,10 +3,10 @@ node: dc
 name: dc
 role: dc
 session_id: 4237396b-82f9-4844-95a4-c3179b9179bc
-heartbeat_at: 2026-11-02 17:15Z
-status: active
-focus: "AT-08.1 green (d83b4af); asked cc for ST0001 WP14, holding for the answer"
-claims: [ST0001/02, ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
+heartbeat_at: 2026-11-02 17:37Z
+status: paused
+focus: "parked for hv's reboot: WP14 WIP on branch dc/wp14-wip; next is config.rs alone for cc, then the rest of WP14"
+claims: [ST0001/02, ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST0001/08, ST0001/14]
 ---
 
 # dc (dc)
@@ -21,7 +21,7 @@ _(none)_
 
 ## Holds
 
-_(none)_
+- ST0001 WP14 parked on local branch dc/wp14-wip (555eb7e, unmeasured): resume when a cargo slot is granted after hv's reboot; first measure and commit src/config.rs (PPLR_TODAY time pin, Config::now) alone, which cc's WP11 needs, then tell cc
 
 ## Watch-outs
 

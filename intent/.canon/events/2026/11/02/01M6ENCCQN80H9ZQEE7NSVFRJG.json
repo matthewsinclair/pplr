@@ -1,0 +1,15 @@
+{
+  "id": "01M6ENCCQN80H9ZQEE7NSVFRJG",
+  "ts": "2026-11-02T17:37:14.485Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "hold",
+    "text": "ST0001 WP14 parked on local branch dc/wp14-wip (555eb7e, unmeasured): resume when a cargo slot is granted after hv's reboot; first measure and commit src/config.rs (PPLR_TODAY time pin, Config::now) alone, which cc's WP11 needs, then tell cc"
+  }
+}

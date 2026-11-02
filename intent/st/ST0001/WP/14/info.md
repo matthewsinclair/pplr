@@ -2,7 +2,7 @@
 wp_id: WP-14
 title: pplr's own mail reader
 scope: M
-status: Not Started
+status: WIP
 ---
 
 # WP-14: pplr's own mail reader
