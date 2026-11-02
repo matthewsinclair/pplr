@@ -18,7 +18,7 @@ What the bash, Python and Swift pplr prints and writes, captured over a syntheti
 
 ## How a capture runs
 
-1. The legacy code is exported with `git archive` from a pinned commit (`f0beeaa`, the last that changed it; `PPLR_GOLDEN_REF` overrides it), so only tracked files take part, and its Swift engine is built once in the export.
+1. The legacy code is exported with `git archive` from a pinned commit (`507b0f6`, the last that changed it; `PPLR_GOLDEN_REF` overrides it), so only tracked files take part, and its Swift engine is built once in the export.
 2. Each scenario gets a fresh sandbox copied from `fixture/`. `@SANDBOX@` in a fixture file, argument or setting becomes the sandbox path.
 3. Each step runs `bin/pplr` from the sandbox with a clean environment: `HOME` in the sandbox (its `.gitconfig` names the author `Matthew Sinclair`), `LANG=en_GB.UTF-8`, `TZ=Europe/London`, `PPLR_DATA` and `PPLR_DIR` at `Career/People`, `PPLR_TODAY=2026-06-15`, `PPLR_CONTACTS_JSON`, `PPLR_BACKUP_DIR`, `PPLR_CACHE_DIR`, `PPLR_REFS_DIR` and `PPLR_HANDLER_APP` inside the sandbox, and `uv` offline. A scenario's own settings are in its `env` file.
 4. A tripwire call fails the capture, and so does any trace of the temporary directory left in a golden.

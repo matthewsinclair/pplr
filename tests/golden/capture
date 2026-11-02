@@ -26,9 +26,9 @@ cases=$here/cases
 pinned_day=2026-06-15
 pinned_now="$pinned_day 09:30:00"
 author="Matthew Sinclair"
-# The last commit that changed the legacy code, so a capture does not move
-# with HEAD; the port deletes that code from later commits
-ref=${PPLR_GOLDEN_REF:-f0beeaa4844abd0e770f259a6210ced2fc28d2c6}
+# The last commit that changed the legacy code (507b0f6: new makes Client/),
+# so a capture does not move with HEAD; the port deletes that code later
+ref=${PPLR_GOLDEN_REF:-507b0f6ff231797a37d3abbbddb31a342fb00291}
 real_day=$(/bin/date +%Y-%m-%d)
 # rename cuts its running-text lines at 200 columns, absolute path included,
 # so the sandbox root has a fixed length: README.md says what the replay needs
@@ -51,9 +51,6 @@ tripwire=$work/tripwire.log
 mkdir -p "$legacy" "$work/tmp"
 commit=$(git -C "$repo" rev-parse "$ref")
 git -C "$repo" archive "$commit" bin lib src templates VERSION.md README.md | tar -x -C "$legacy"
-# The person template's Client/ holds only Finder's untracked Icon file, so
-# git drops the folder; a real checkout has it, and new copies it
-mkdir -p "$legacy/templates/person/Client"
 ( PPLR_ROOT=$legacy; source "$legacy/lib/engine.sh"; build_engine ) || die "the legacy Swift engine did not build"
 
 # The scenarios
