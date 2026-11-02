@@ -14,3 +14,6 @@ intent/whiteboard/*/inbox.*.md
 # Golden data is compared byte for byte: a formatter must never touch it (ST0001 WP03).
 tests/golden/fixture/
 tests/golden/cases/
+
+# devbin is vendored and checksummed: a formatter must never touch it.
+bin/.devbin/lib/

@@ -5,8 +5,18 @@
 
 project:
   name: pplr
-  # languages:            # elixir, rust, swift, lua, shell -- this is what
-  #   - elixir            # activates the built-in gates for it
+  languages:
+    - rust
+    - shell
 
 # The devbin this project expects. Enforced by: devbin doctor
 devbin_version: "^0.1.19"
+
+commands:
+  test:
+    options:
+      shell:
+        summary: the bats suite against the Rust pplr, built first (ST0001 design D3)
+        run: tools/bats-rust
+        grammar: bats
+        log: BATS
