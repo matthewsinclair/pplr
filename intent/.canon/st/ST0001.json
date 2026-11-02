@@ -68,7 +68,7 @@
       "seq": 7,
       "title": "Contact cadence",
       "scope": "M",
-      "status": "wip",
+      "status": "done",
       "objective": "Port contact cadence to Rust and retire `contact.py`. `contact log --email` is finished in WP14, alongside pplr's own mail reader.",
       "body": "**Scope**\n\n- **`contact`**:\n  - the subcommands `scan`, `due`, `show`, `log`, `next`, `context` and `render`;\n  - `contact.yaml` and `(Contact).md` byte-identical, from a port of `contact.py`'s emitter;\n  - `cadence.yaml`'s roster and every-tag defaults;\n  - the booked-meeting rule;\n  - `PPLR_TODAY`.\n- **`log --email`**: `contact log --email N`, and `--email` with a Message-ID, run through the fallback until WP14 brings pplr's own mail reader. WP14 finishes them.\n- Delete `pplr_contact` and `contact.py` once WP14 has landed `log --email`.\n\n**Criteria**: AC-07.1.\n\n**Note**: WP14 deletes `pplr_email` and `email_list.py`.\n",
       "preamble": ""

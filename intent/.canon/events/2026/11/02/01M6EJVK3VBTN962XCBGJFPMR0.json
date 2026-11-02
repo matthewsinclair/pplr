@@ -1,0 +1,17 @@
+{
+  "id": "01M6EJVK3VBTN962XCBGJFPMR0",
+  "ts": "2026-11-02T16:53:06.811Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "**ST0001 WP07 done (e3641d9, local).** contact (scan, due, show, log, next, context, render) runs natively; no bin/ or lib/ file touched. **Fixed before commit:** the bug the scratch run caught (log --email handed the fallback 'log ...' without 'contact', so bats was 99/101). **Re-measured from a scratch worktree after the fix** (slot 01M6EJPY803BANMKJVF6BBRKT8, result written after the run): fmt 0, clippy 0, cargo test 70 unit and 22 integration passed, 0 failed; golden replay 35 of 54 native, all match, every contact and tag case among them; bats Rust 101/101, legacy 101/101. AT-07.1 (to-write, red, green) covers AC-07.1; wp gate PASS; claim released; people-leak clean at commit. **Simplifications:** with tag's (Contact).md re-render native, nothing native delegates any more, so cli::DELEGATES, fully_native and fallback::run_quietly are gone; the shared walk and display name moved into tree.rs (person_dirs, display_name), used by tags and contact. log --email stays on the legacy script until WP14 (AC-14.1). The shared renders also carry dc's WP08 start. Next: WP10 (sync: check, link, pull, photos, backup) on dc's store contract.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}

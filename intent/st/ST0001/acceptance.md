@@ -53,7 +53,7 @@ title: Port Pplr from shell scripts to Rust
 
 - AC-06.1 tag and tags run natively in Rust, and their goldens and bats tests pass. -- satisfied: yes (computed)
 
-### WP-07 -- Contact cadence (status: WIP)
+### WP-07 -- Contact cadence (status: Done)
 
 - AC-07.1 contact runs natively in Rust, and the contact goldens and bats tests pass; `log --email` is covered by AC-14.1. -- satisfied: yes (computed)
 
@@ -115,7 +115,7 @@ _(no tests in this group)_
 
 - AT-06.1 `tests/cli.rs` -- covers AC-06.1 -- status: green -- tag_and_tags_are_native_and_their_goldens_replay: red at b93fc2e (tags on the fallback, reindex delegating), green with WP06 (23/54 goldens replay, the six tags cases and both reindex cases among them); bats 101/101 on both implementations from a scratch worktree
 
-### WP-07 -- Contact cadence (status: WIP)
+### WP-07 -- Contact cadence (status: Done)
 
 - AT-07.1 `tests/cli.rs` -- covers AC-07.1 -- status: green -- contact_is_native_and_its_goldens_replay: red at a143133 (contact on the fallback), green with WP07 (35/54 goldens replay, every contact and tag case among them); bats 101/101 on both implementations from a scratch worktree
 

@@ -2,7 +2,7 @@
 wp_id: WP-07
 title: Contact cadence
 scope: M
-status: WIP
+status: Done
 ---
 
 # WP-07: Contact cadence
