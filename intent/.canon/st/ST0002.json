@@ -38,7 +38,7 @@
       "seq": 3,
       "title": "Install, manifest, tree identity, version line and use",
       "scope": "L",
-      "status": "wip",
+      "status": "done",
       "objective": "Give the binary the dev/opt/brew verbs, with their doctor rows: `install`, the manifest, the tree function, the version line and `use`.",
       "body": "**Scope**\n\n- **T2**: `pplr install [--prefix <dir>] [--force] [--managed-by brew]`.\n  - It publishes only from a dev tree, and refuses a dirty runtime set.\n  - It replaces a prefix only with `--force`, and only when the manifest says pplr wrote that prefix.\n- **T3**: the manifest at `<root>/.pplr-install`. Its header carries `tool`, `version`, `source_commit` and `managed_by`. Its body has one `shasum -a 256 -c` line per runtime file, sorted with `LC_ALL=C`.\n- **T4**: one function names the tree. The version line is `pplr <version> (<tree>, <sha12>[+dirty])`, built from stamps taken at build time:\n  - the commit;\n  - dirtiness, measured over cargo's dep-info plus the sidecar source;\n  - an optional provenance word.\n- **T5**: `pplr use [dev|opt|brew]`.\n  - The link set is `pplr` alone, in `~/.local/bin`.\n  - It refuses a missing tree, and refuses `use brew` when no brew copy would answer.\n  - It runs the shadow check.\n- **Doctor rows** for the tree, manifest drift and the shadow check. These are added to ST0001 WP12's doctor.\n- **Tests** go in `tests/cli.rs`, using the `Sandbox` with HOME and PATH redirected and a fake brew prefix.\n\n**Criteria**: AC-03.1 to AC-03.3.\n\n**Depends on**: ST0001 WP02 and this thread's WP01.\n",
       "preamble": ""
@@ -210,6 +210,38 @@
       "state": {
         "is": "unsatisfied"
       }
+    }
+  ],
+  "tests": [
+    {
+      "id": "AT-03.1",
+      "kind": "test",
+      "file": "tests/cli.rs",
+      "covers": [
+        "AC-03.1"
+      ],
+      "status": "green",
+      "note": "red before fed44e6 (no install module, so these tests did not build; the old version test expected the bare version), green at fed44e6: cargo test 19 of 19 end to end"
+    },
+    {
+      "id": "AT-03.2",
+      "kind": "test",
+      "file": "tests/cli.rs",
+      "covers": [
+        "AC-03.2"
+      ],
+      "status": "green",
+      "note": "red before fed44e6 (no install module, so these tests did not build; the old version test expected the bare version), green at fed44e6: cargo test 19 of 19 end to end"
+    },
+    {
+      "id": "AT-03.3",
+      "kind": "test",
+      "file": "tests/cli.rs",
+      "covers": [
+        "AC-03.3"
+      ],
+      "status": "green",
+      "note": "red before fed44e6 (no install module, so these tests did not build; the old version test expected the bare version), green at fed44e6: cargo test 19 of 19 end to end"
     }
   ],
   "attachments": [

@@ -200,6 +200,7 @@ fn a_marker_that_does_not_resolve_stops_the_command() -> Result<()> {
   Ok(())
 }
 
+// AT-03.2 (ST0002 AC-03.2): the version line, from the stamps taken at build time.
 #[test]
 fn version_and_its_flags_print_the_version_line() -> Result<()> {
   use pplr::install::{Kind, SOURCE_COMMIT, SOURCE_DIRTY, line};
@@ -845,6 +846,9 @@ fn publish_tree(prefix: &std::path::Path, managed_by: &str, force: bool) -> Resu
   .map_err(|e| e.to_string().into())
 }
 
+// AT-03.1 (ST0002 AC-03.1): install publishes from dev only, writes the T3
+// manifest, and replaces only its own prefix, only with --force (this test and
+// the two after it).
 #[test]
 fn publish_writes_the_runtime_set_and_its_manifest_and_names_the_tree_opt() -> Result<()> {
   use pplr::install::{Kind, MANIFEST, Manifest, drift, kind};
@@ -947,6 +951,9 @@ fn fake_brew(sandbox: &Sandbox) -> Result<PathBuf> {
   Ok(brew)
 }
 
+// AT-03.3 (ST0002 AC-03.3): use moves the one link, refuses a brew copy that
+// would not answer, and the shadow check fails a shadowed link (this test and
+// the next).
 #[test]
 fn use_points_the_one_link_and_use_brew_hands_back_to_homebrew() -> Result<()> {
   let sandbox = Sandbox::new()?;

@@ -28,11 +28,11 @@ title: Create a homebrew distro for the new Rust version of Pplr
 - AC-02.1 `bin/devbin release check` and `bin/devbin doctor` pass with the release and formula config, and tests.yml fires on candidate/** and runs the cargo gates and the bats suite on macOS and Linux. -- satisfied: no (computed)
 - AC-02.2 (non-test) tools/lock-sync (zsh) rewrites Cargo.lock for a version bump and prints Cargo.lock, and the CHANGELOG opens 2.0.0 as `## [2.0.0] - unreleased`. -- evidence: scratch-clone runs for 111b72e: version-only lock rewrite printing Cargo.lock; new-dependency refusal restoring the lock byte for byte; CHANGELOG opens ## [2.0.0] - unreleased -- satisfied: yes
 
-### WP-03 -- Install, manifest, tree identity, version line and use (status: WIP)
+### WP-03 -- Install, manifest, tree identity, version line and use (status: Done)
 
-- AC-03.1 `pplr install` publishes only from a clean dev tree and writes the T3 manifest, and it refuses an existing prefix without --force, or a prefix another tool wrote. -- satisfied: no (computed)
-- AC-03.2 The version line reads `pplr <version> (<tree>, <sha12>[+dirty])` in dev, opt and brew, built from stamps taken at build time, with the tree named by the one tree function. -- satisfied: no (computed)
-- AC-03.3 `pplr use dev|opt|brew` moves only the link set {pplr} in ~/.local/bin, and refuses a missing tree or a brew copy that would not answer. Doctor's shadow check fails on a link that is shadowed or split across trees. -- satisfied: no (computed)
+- AC-03.1 `pplr install` publishes only from a clean dev tree and writes the T3 manifest, and it refuses an existing prefix without --force, or a prefix another tool wrote. -- satisfied: yes (computed)
+- AC-03.2 The version line reads `pplr <version> (<tree>, <sha12>[+dirty])` in dev, opt and brew, built from stamps taken at build time, with the tree named by the one tree function. -- satisfied: yes (computed)
+- AC-03.3 `pplr use dev|opt|brew` moves only the link set {pplr} in ~/.local/bin, and refuses a missing tree or a brew copy that would not answer. Doctor's shadow check fails on a link that is shadowed or split across trees. -- satisfied: yes (computed)
 
 ### WP-04 -- Assets formula, tap and tap CI (status: Not Started)
 
@@ -67,9 +67,11 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-03 -- Install, manifest, tree identity, version line and use (status: WIP)
+### WP-03 -- Install, manifest, tree identity, version line and use (status: Done)
 
-_(no tests in this group)_
+- AT-03.1 `tests/cli.rs` -- covers AC-03.1 -- status: green -- red before fed44e6 (no install module, so these tests did not build; the old version test expected the bare version), green at fed44e6: cargo test 19 of 19 end to end
+- AT-03.2 `tests/cli.rs` -- covers AC-03.2 -- status: green -- red before fed44e6 (no install module, so these tests did not build; the old version test expected the bare version), green at fed44e6: cargo test 19 of 19 end to end
+- AT-03.3 `tests/cli.rs` -- covers AC-03.3 -- status: green -- red before fed44e6 (no install module, so these tests did not build; the old version test expected the bare version), green at fed44e6: cargo test 19 of 19 end to end
 
 ### WP-04 -- Assets formula, tap and tap CI (status: Not Started)
 
