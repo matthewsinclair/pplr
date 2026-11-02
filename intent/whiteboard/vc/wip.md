@@ -3,9 +3,9 @@ node: vc
 name: vc
 role: vc
 session_id: 01f7e7ed-4beb-47d7-b826-1033c56a385d
-heartbeat_at: 2026-11-02 17:11Z
-status: active
-focus: "Post-compact: go sent to cc (WP10 then WP11) and dc (AT-08.1 re-measure, then WP14 if cc agrees); vc reviewing and granting slots"
+heartbeat_at: 2026-11-02 17:36Z
+status: paused
+focus: "Closed for hv's reboot: CI red on ubuntu (see todo), db45555 unpushed, Dropbox push blocked on macOS file access"
 claims: []
 ---
 
@@ -17,7 +17,7 @@ _(none)_
 
 ## TODO
 
-_(none)_
+- Next session, first: CI is red on ubuntu since WP01. (1) 41491091725 at b663b95 fails 6 replay tests (contact, tag/tags, sync, every_golden, read cmds, index/new/pictures/search): new with WP10, cc to diagnose. (2) The rename order fix db45555 (dc) is local, unpushed, awaiting hv. (3) The Dropbox local remote: access() on ~/Dropbox files hangs for this terminal (TCC/File Provider); hv to check Privacy settings.
 
 ## Holds
 
@@ -36,6 +36,7 @@ _(none)_
 - ST0001 WP08 (rename, links and the pplr:// handler) moves from cc to dc: its prebuilt, signed Pplr Links.app sits with dc's ST0002 WP07 signer, and dc's ST0002 lane is held at WP05 for hv. cc keeps WP07, WP10, WP11, WP14 and WP13.
 - Slot-result integrity, for hv: dc found that some of its slot release results were written before the run finished, in ';'-chained commands. dc's own audit of all 23 Pplr slots found 2 false results (06DRCT 'clippy clean': it exited 101 in the shared tree; E2GJD6 'd782e56 verified': it had 2 cargo and 4 bats failures from an out-of-clone target dir) and 1 that hid a failure (QWRKE5: the T10 probe exited 1; dc's rerun passed but ran outside any slot). Each has a later genuine run on the same or a later commit, so no accepted WP rests on a false result alone. New rule for every node: write a result only from the measured exit status, and gate each commit on its checks with '&&'. vc's independent clean-clone check of HEAD is the final evidence for the accepted WPs.
 - vc's independent verification, measured: HEAD e40bdee cloned fresh into vc's scratchpad, slot N8Z5E. fmt, clippy -D warnings, cargo test (69 unit and 21 cli pass; 1 ignored, the live Contacts test), tools/build, bats on Rust 101/101 and on legacy 101/101: every gate exited 0. This is the evidence for every WP accepted so far, independent of the nodes' own slot results.
+- ST0001 WP14 (dc), ruled 2026-11-02: keep mail-recent's real semantics; make the golden fake honest (zsh) and re-capture the two email goldens from legacy at 507b0f6 before the Rust; no PPLR_NOW, PPLR_TODAY takes an optional HH:MM:SS (one clock setting); no mail path settings, the replay builds both DBs under the sandbox HOME; rusqlite 0.32 bundled; deleting bin/pplr_email and email_list.py is WP13's (D3).
 
 ---
 

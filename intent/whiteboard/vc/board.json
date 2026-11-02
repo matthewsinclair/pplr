@@ -5,9 +5,9 @@
     "name": "vc",
     "role": "vc",
     "session_id": "01f7e7ed-4beb-47d7-b826-1033c56a385d",
-    "heartbeat_at": "2026-11-02T17:11:08.832Z",
-    "status": "active",
-    "focus": "Post-compact: go sent to cc (WP10 then WP11) and dc (AT-08.1 re-measure, then WP14 if cc agrees); vc reviewing and granting slots",
+    "heartbeat_at": "2026-11-02T17:36:44.266Z",
+    "status": "paused",
+    "focus": "Closed for hv's reboot: CI red on ubuntu (see todo), db45555 unpushed, Dropbox push blocked on macOS file access",
     "claims": [],
     "recorded_at": "2026-11-02T07:20:39.673Z",
     "migrated_at": "2026-11-02T07:20:39.673Z"
@@ -103,6 +103,22 @@
       "text": "vc's independent verification, measured: HEAD e40bdee cloned fresh into vc's scratchpad, slot N8Z5E. fmt, clippy -D warnings, cargo test (69 unit and 21 cli pass; 1 ignored, the live Contacts test), tools/build, bats on Rust 101/101 and on legacy 101/101: every gate exited 0. This is the evidence for every WP accepted so far, independent of the nodes' own slot results.",
       "state": "live",
       "recorded_at": "2026-11-02T16:51:23.191Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 7,
+      "text": "ST0001 WP14 (dc), ruled 2026-11-02: keep mail-recent's real semantics; make the golden fake honest (zsh) and re-capture the two email goldens from legacy at 507b0f6 before the Rust; no PPLR_NOW, PPLR_TODAY takes an optional HH:MM:SS (one clock setting); no mail path settings, the replay builds both DBs under the sandbox HOME; rusqlite 0.32 bundled; deleting bin/pplr_email and email_list.py is WP13's (D3).",
+      "state": "live",
+      "recorded_at": "2026-11-02T17:18:46.033Z"
+    },
+    {
+      "node": "vc",
+      "kind": "todo",
+      "seq": 2,
+      "text": "Next session, first: CI is red on ubuntu since WP01. (1) 41491091725 at b663b95 fails 6 replay tests (contact, tag/tags, sync, every_golden, read cmds, index/new/pictures/search): new with WP10, cc to diagnose. (2) The rename order fix db45555 (dc) is local, unpushed, awaiting hv. (3) The Dropbox local remote: access() on ~/Dropbox files hangs for this terminal (TCC/File Provider); hv to check Privacy settings.",
+      "state": "live",
+      "recorded_at": "2026-11-02T17:36:44.232Z"
     }
   ],
   "sent": [

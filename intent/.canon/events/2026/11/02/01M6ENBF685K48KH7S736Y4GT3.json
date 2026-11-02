@@ -1,0 +1,15 @@
+{
+  "id": "01M6ENBF685K48KH7S736Y4GT3",
+  "ts": "2026-11-02T17:36:44.232Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "Next session, first: CI is red on ubuntu since WP01. (1) 41491091725 at b663b95 fails 6 replay tests (contact, tag/tags, sync, every_golden, read cmds, index/new/pictures/search): new with WP10, cc to diagnose. (2) The rename order fix db45555 (dc) is local, unpushed, awaiting hv. (3) The Dropbox local remote: access() on ~/Dropbox files hangs for this terminal (TCC/File Provider); hv to check Privacy settings."
+  }
+}
