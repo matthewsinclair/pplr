@@ -38,6 +38,7 @@ EOF
 }
 
 @test "pplr sync --check reports each category" {
+    needs_legacy_engine WP10
     setup_contacts
     run "$PPLR" sync --check
     [ "$status" -eq 0 ]
@@ -49,6 +50,7 @@ EOF
 }
 
 @test "pplr sync --check normalises phones and LinkedIn before comparing" {
+    needs_legacy_engine WP10
     setup_contacts
     run "$PPLR" sync --check --json
     [ "$status" -eq 0 ]
@@ -57,6 +59,7 @@ EOF
 }
 
 @test "pplr sync --check shows differing fields for a linked person" {
+    needs_legacy_engine WP10
     setup_contacts
     run "$PPLR" sync --check --json
     [ "$status" -eq 0 ]
@@ -65,6 +68,7 @@ EOF
 }
 
 @test "pplr sync --check --verbose lists people only in pplr" {
+    needs_legacy_engine WP10
     setup_contacts
     run "$PPLR" sync --check --verbose
     [ "$status" -eq 0 ]
@@ -72,6 +76,7 @@ EOF
 }
 
 @test "pplr sync --link is a dry run by default" {
+    needs_legacy_engine WP10
     setup_contacts
     before=$(cat "$PPLR_CONTACTS_JSON")
     run "$PPLR" sync --link
@@ -82,6 +87,7 @@ EOF
 }
 
 @test "pplr sync --link --apply adds the marker and group, and backs up first" {
+    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     run "$PPLR" sync --link --apply
@@ -96,6 +102,7 @@ EOF
 }
 
 @test "pplr sync --link --name links a confirmed name-only match" {
+    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     run "$PPLR" sync --link --apply --name "Hopper, Grace"
@@ -105,6 +112,7 @@ EOF
 }
 
 @test "pplr sync --link --apply twice changes nothing the second time" {
+    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     "$PPLR" sync --link --apply
@@ -116,6 +124,7 @@ EOF
 }
 
 @test "pplr sync --link --apply writes a Contacts .inetloc in About" {
+    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     run "$PPLR" sync --link --apply
@@ -126,6 +135,7 @@ EOF
 }
 
 @test "pplr sync --link --apply --limit 1 writes one and reports the rest as still to link" {
+    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     run "$PPLR" sync --link --apply --limit 1
@@ -135,6 +145,7 @@ EOF
 }
 
 @test "pplr sync --link --apply replaces a pplr URL in the old form, rather than adding one" {
+    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     run "$PPLR" sync --link --apply
@@ -144,6 +155,7 @@ EOF
 }
 
 @test "pplr sync --link groups iCloud cards only, and never writes a card with no account" {
+    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     jq '(.[] | select(.id == "c1")).account = "other" | (.[] | select(.id == "c3")).account = "none"' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json"
@@ -176,6 +188,7 @@ setup_plan() {
 }
 
 @test "pplr sync --plan --json proposes a decision for every pplr person" {
+    needs_legacy_engine WP11
     setup_plan
     run "$PPLR" sync --plan --json
     [ "$status" -eq 0 ]
@@ -185,6 +198,7 @@ setup_plan() {
 }
 
 @test "pplr sync --plan matches a nickname with the same surname and company" {
+    needs_legacy_engine WP11
     setup_plan
     run "$PPLR" sync --plan --json
     [ "$status" -eq 0 ]
@@ -195,6 +209,7 @@ setup_plan() {
 }
 
 @test "pplr sync --plan reads a phone written as a link, and never marks a rename High" {
+    needs_legacy_engine WP11
     setup_plan
     run "$PPLR" sync --plan --json
     [ "$status" -eq 0 ]
@@ -203,6 +218,7 @@ setup_plan() {
 }
 
 @test "pplr sync --plan reads a LinkedIn link without its closing bracket" {
+    needs_legacy_engine WP11
     setup_plan
     run "$PPLR" sync --plan --json
     [ "$(echo "$output" | jq -r '.people[] | select(.key == "M/Mayhew, Bill") | .linkedin')" = "bill-mayhew" ]
@@ -220,6 +236,7 @@ setup_plan() {
 }
 
 @test "pplr sync reads several phones apart by a middle dot" {
+    needs_legacy_engine WP11
     setup_contacts
     make_about Carron Elise "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:    +262 262 90 00 00 — switchboard · +262 692 90 00 01 — mobile')"
     run "$PPLR" sync --plan --json
@@ -255,6 +272,7 @@ setup_plan() {
 }
 
 @test "pplr sync finds a renamed person by their old pplr URL, and replaces it" {
+    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     jq '(.[] | select(.id == "c3")).urls = [{"label": "pplr", "value": "pplr://t/turing-alan"}]' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json"
@@ -287,6 +305,7 @@ setup_plan() {
 }
 
 @test "pplr resolve finds a person, a path in their folder, and a former name" {
+    needs_legacy_engine WP04
     make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
     mkdir -p "$PPLR_TEST_DATA/K/Kemp, Jon/Meetings/20260924 Intro"; touch "$PPLR_TEST_DATA/K/Kemp, Jon/Meetings/20260924 Intro/Summary.md"
     run "$PPLR" resolve "pplr://k/kemp-jon"
@@ -301,6 +320,7 @@ setup_plan() {
 }
 
 @test "pplr links rewrites path and CMS links as pplr:// URLs, and leaves the unknown alone" {
+    needs_legacy_engine WP08
     make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
     mkdir -p "$PPLR_TEST_DATA/K/Kemp, Jon/Meetings/20260924 Intro"; touch "$PPLR_TEST_DATA/K/Kemp, Jon/Meetings/20260924 Intro/Summary.md"
     notes="$PPLR_TEST_DATA/journal/2026/notes.md"; mkdir -p "$(dirname "$notes")"
@@ -324,6 +344,7 @@ setup_plan() {
 }
 
 @test "pplr open --print names the file when no CMS answers" {
+    needs_legacy_engine WP04
     make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
     PPLR_CMS_URL="" run "$PPLR" open --print "pplr://k/kemp-jon"
     [ "$status" -eq 0 ]
@@ -331,6 +352,7 @@ setup_plan() {
 }
 
 @test "pplr links follows a symlinked note to its file, once, and keeps the symlink" {
+    needs_legacy_engine WP08
     make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
     j="$PPLR_TEST_DATA/journal"; mkdir -p "$j"
     echo '[Jon](<../../Career/People/K/Kemp, Jon/About/Jon Kemp (About).md>)' > "$j/20260901 Day Notes.md"
@@ -343,6 +365,7 @@ setup_plan() {
 }
 
 @test "pplr links takes a path relative to where it was run" {
+    needs_legacy_engine WP08
     make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
     mkdir -p "$PPLR_TEST_DATA/elsewhere"
     echo '[Jon](<../../Career/People/K/Kemp, Jon/About/Jon Kemp (About).md>)' > "$PPLR_TEST_DATA/elsewhere/n.md"
@@ -413,6 +436,7 @@ setup_plan() {
 }
 
 @test "pplr sync treats Gmail addresses with and without dots as one address" {
+    needs_legacy_engine WP10
     setup_contacts
     jq '(.[] | select(.id == "c2")).emails = ["grace.hopper@gmail.com"]' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
     make_about Hopper Grace "$(printf '%s\n' '- Role:     Rear Admiral' '- Company:  Navy' '- LinkedIn:' '- Email:    [gracehopper+navy@gmail.com](mailto:gracehopper+navy@gmail.com)' '- Phone:')"
@@ -422,6 +446,7 @@ setup_plan() {
 }
 
 @test "pplr sync --photos only picks linked cards that have no photo" {
+    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     jq '(.[] | select(.id == "c1")).urls = [{"label": "pplr", "value": "pplr://l/lovelace-ada"}] | (.[] | select(.id == "c3")).hasImage = true' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
@@ -443,6 +468,7 @@ setup_pull() {
 }
 
 @test "pplr sync --pull is a dry run by default, and lists what a linked card adds" {
+    needs_legacy_engine WP10
     setup_pull
     about="$PPLR_TEST_DATA/T/Turing, Alan/About/Alan Turing (About).md"
     before=$(cat "$about")
@@ -457,6 +483,7 @@ setup_pull() {
 }
 
 @test "pplr sync --pull --apply fills blanks and appends, removes nothing, and backs up first" {
+    needs_legacy_engine WP10
     setup_pull
     about="$PPLR_TEST_DATA/T/Turing, Alan/About/Alan Turing (About).md"
     run "$PPLR" sync --pull --apply
@@ -472,6 +499,7 @@ setup_pull() {
 }
 
 @test "pplr sync --pull keeps pplr's company and role when it has them" {
+    needs_legacy_engine WP10
     setup_pull
     jq '(.[] | select(.id == "c1")) |= (.organization = "Elsewhere" | .emails += ["ada@other.example"])' \
         "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
@@ -482,6 +510,7 @@ setup_pull() {
 }
 
 @test "pplr sync --pull --skip leaves that person alone" {
+    needs_legacy_engine WP10
     setup_pull
     run "$PPLR" sync --pull --apply --skip "Turing, Alan"
     [ "$status" -eq 0 ]
@@ -489,6 +518,7 @@ setup_pull() {
 }
 
 @test "pplr sync --check says when a linked card is in another account" {
+    needs_legacy_engine WP10
     setup_contacts
     jq '(.[] | select(.id == "c1")) |= (.account = "other" | .groups = [])' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
     run "$PPLR" sync --check
@@ -498,6 +528,7 @@ setup_pull() {
 }
 
 @test "pplr sync --pull leaves out a number that is not a real UK number" {
+    needs_legacy_engine WP10
     setup_pull
     jq '(.[] | select(.id == "c3")).phones = ["+44438901687", "+61438901687"]' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
     run "$PPLR" sync --pull --apply
@@ -508,6 +539,7 @@ setup_pull() {
 }
 
 @test "pplr sync --pull reads every copy of a card linked across accounts, so a second pull finds nothing" {
+    needs_legacy_engine WP10
     setup_pull
     jq '. + [{"id": "c3", "given": "Alan", "family": "Turing", "organization": "", "jobTitle": "",
               "emails": ["alan@work.example"], "phones": [], "urls": [], "linkedin": [], "groups": [], "account": "other"}]' \

@@ -15,8 +15,9 @@ load test_helper
 
 @test "pplr search finds people by role" {
     local person_dir=$(create_test_person "Tech" "Tom")
-    # Update the About file to include CTO role
-    sed -i '' 's/Role: Test Role/Role: Chief Technology Officer/' "$person_dir/About/Tom Tech (About).md"
+    # Update the About file to include CTO role (no `sed -i`: BSD and GNU differ)
+    local about="$person_dir/About/Tom Tech (About).md"
+    sed 's/Role: Test Role/Role: Chief Technology Officer/' "$about" > "$about.new" && mv "$about.new" "$about"
     create_test_tags_index
     
     run "$PPLR" search "technology"

@@ -302,3 +302,10 @@ assert_contains() {
     return 1
   fi
 }
+
+# Skip a test that runs the legacy Swift engine (it needs the Contacts
+# framework) when not on macOS, naming the work package that ports what the
+# test runs. A porting WP is not done while a skip naming it remains.
+needs_legacy_engine() {
+  [ "$(uname)" = Darwin ] || skip "needs the legacy Swift engine, macOS only, until ST0001 $1 ports it"
+}

@@ -39,7 +39,7 @@ verblock: "$(date +%Y-%m-%d):v0.1: Matthew Sinclair - Initial version"
 ---
 # $firstname $surname (About)
 
-_$(echo $firstname) $(echo $surname)_
+_${firstname} ${surname}_
 - Role:     []()
 - Company:  []()
 - LinkedIn: [in/$linkedin_id]($url)
@@ -86,6 +86,8 @@ if [ $? -ne 0 ]; then
   echo "Error: Could not copy the template directory."
   exit 1
 fi
+# The template's Client/ is empty, and git does not keep an empty directory
+mkdir -p "$target_dir/Client"
 # echo "Successfully copied '$generic_template_dir' to '$target_dir'."
 
 # Step 4: Rename the "(About)" file in the copied template
@@ -139,4 +141,4 @@ else
   echo "Warning: URL not supplied, About file not updated and .webloc not created"
 fi
 
-echo $about_file_dest
+echo "$about_file_dest"
