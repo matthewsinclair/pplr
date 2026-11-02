@@ -3,9 +3,9 @@ node: vc
 name: vc
 role: vc
 session_id: 01f7e7ed-4beb-47d7-b826-1033c56a385d
-heartbeat_at: 2026-11-02 09:10Z
+heartbeat_at: 2026-11-02 14:42Z
 status: active
-focus: "Quiesced for hv's move: threads elaborated, handout held for hv's go-ahead"
+focus: "Post-move: localfolded; handing out ST0001 and ST0002 after hv's compact"
 claims: [ST0001, ST0002]
 ---
 
@@ -17,7 +17,7 @@ _(none)_
 
 ## TODO
 
-- Globalfold: intent/wip.md is still the template; write its DOING and TODO from ST0001 and ST0002.
+_(none)_
 
 ## Holds
 

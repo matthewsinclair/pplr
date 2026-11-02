@@ -5,9 +5,9 @@
     "name": "vc",
     "role": "vc",
     "session_id": "01f7e7ed-4beb-47d7-b826-1033c56a385d",
-    "heartbeat_at": "2026-11-02T09:10:10.416Z",
+    "heartbeat_at": "2026-11-02T14:42:48.467Z",
     "status": "active",
-    "focus": "Quiesced for hv's move: threads elaborated, handout held for hv's go-ahead",
+    "focus": "Post-move: localfolded; handing out ST0001 and ST0002 after hv's compact",
     "claims": [
       "ST0001",
       "ST0002"
@@ -29,7 +29,8 @@
       "kind": "todo",
       "seq": 1,
       "text": "Globalfold: intent/wip.md is still the template; write its DOING and TODO from ST0001 and ST0002.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-02T14:42:48.453Z",
       "recorded_at": "2026-11-02T09:10:10.379Z"
     },
     {
