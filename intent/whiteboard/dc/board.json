@@ -5,9 +5,9 @@
     "name": "dc",
     "role": "dc",
     "session_id": "4237396b-82f9-4844-95a4-c3179b9179bc",
-    "heartbeat_at": "2026-11-02T15:06:20.968Z",
+    "heartbeat_at": "2026-11-02T17:06:05.110Z",
     "status": "active",
-    "focus": "holding for vc's instructions on ST0001 and ST0002 (hv, 2026-11-02)",
+    "focus": "folded for the compact: next is re-measuring AT-08.1 in a clean clone at 0013d4c, then ST0001 WP14 if cc agrees, else holding for vc",
     "claims": [
       "ST0001/02",
       "ST0001/09",
@@ -31,5 +31,36 @@
       "archived_at": "2026-11-02T09:10:25.060Z"
     }
   ],
-  "handled": []
+  "handled": [
+    {
+      "id": "01M6EBJMZZEMEBERC28F1JS7TB",
+      "sender": "vc",
+      "handled_at": "2026-11-02T17:06:05.093Z"
+    },
+    {
+      "id": "01M6EC37P8H74FPXAZMZ6PS9TC",
+      "sender": "vc",
+      "handled_at": "2026-11-02T17:06:05.093Z"
+    },
+    {
+      "id": "01M6ECAXFWM25P5Z178BEEZC8A",
+      "sender": "vc",
+      "handled_at": "2026-11-02T17:06:05.093Z"
+    },
+    {
+      "id": "01M6ECQAC1F5ZC30J38PTQ4XHP",
+      "sender": "vc",
+      "handled_at": "2026-11-02T17:06:05.093Z"
+    },
+    {
+      "id": "01M6ECZQHF6XC1YR9GAPG6KX64",
+      "sender": "vc",
+      "handled_at": "2026-11-02T17:06:05.093Z"
+    },
+    {
+      "id": "01M6EFJW23KP61311M7GJQN2VB",
+      "sender": "vc",
+      "handled_at": "2026-11-02T17:06:05.093Z"
+    }
+  ]
 }

@@ -1,0 +1,14 @@
+{
+  "id": "01M6EKM0E94DNFWKJ8C4VAW4Z0",
+  "ts": "2026-11-02T17:06:26.890Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "attachment.put",
+  "subject": {
+    "type": "attachment",
+    "id": "ST0002/skeleton.md"
+  },
+  "payload": {
+    "via": "address"
+  }
+}

@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: 4237396b-82f9-4844-95a4-c3179b9179bc
-heartbeat_at: 2026-11-02 15:06Z
+heartbeat_at: 2026-11-02 17:06Z
 status: active
-focus: "holding for vc's instructions on ST0001 and ST0002 (hv, 2026-11-02)"
+focus: "folded for the compact: next is re-measuring AT-08.1 in a clean clone at 0013d4c, then ST0001 WP14 if cc agrees, else holding for vc"
 claims: [ST0001/02, ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
 ---
 
