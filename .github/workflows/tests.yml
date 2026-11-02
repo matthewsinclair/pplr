@@ -1,12 +1,12 @@
 name: Tests
 
 # The cargo gates and the bats suite against the Rust pplr, on macOS and Linux,
-# through devbin's own gates (ST0001 WP02, ST0002 E6). ST0002 WP02 adds the
-# candidate/** trigger.
+# through devbin's own gates (ST0001 WP02, ST0002 E6). A release candidate
+# (candidate/<tag>, pushed by devbin's release core) runs it too.
 
 on:
   push:
-    branches: [main]
+    branches: [main, "candidate/**"]
   pull_request:
     branches: [main]
 

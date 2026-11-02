@@ -25,7 +25,7 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
   - [ ] 14: pplr's own mail reader
 - [-] ST0002: Create a homebrew distro for the new Rust version of Pplr
   - [x] 01: Release and install design for pplr
-  - [ ] 02: devbin release core and CI candidates
+  - [-] 02: devbin release core and CI candidates
   - [ ] 03: Install, manifest, tree identity, version line and use
   - [ ] 04: Assets formula, tap and tap CI
   - [ ] 05: Walking skeleton through a scratch tap

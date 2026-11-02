@@ -29,7 +29,7 @@
       "seq": 2,
       "title": "devbin release core and CI candidates",
       "scope": "M",
-      "status": "not-started",
+      "status": "wip",
       "objective": "Configure devbin's release core and formula tool for pplr, and make CI fire on release candidates.",
       "body": "**Scope**\n\n- **`bin/.devbin/config.yaml`**:\n  - `version_from: Cargo.toml`;\n  - `commands.release.enabled` and `commands.formula.enabled`;\n  - a `release:` block naming the repo, the remotes (local then upstream), the gates (`check all`, `test all`, `doctor`), the kovacs leg, `derived: [tools/lock-sync]` and `after: [bin/devbin formula publish]`;\n  - `formula: mode: source`.\n- **`tools/lock-sync`**, in zsh after Gtools' model: rewrite `Cargo.lock` for the new version, then print `Cargo.lock`.\n- **CI**: `tests.yml` fires on `main` and on `candidate/**`.\n- **CHANGELOG**:\n  - opens `## [2.0.0] - unreleased`;\n  - merges the duplicate `### Fixed`;\n  - keeps the history of 1.0.1 and earlier.\n- `bin/devbin release check` and `bin/devbin doctor` pass.\n\n**Criteria**: AC-02.1 and AC-02.2.\n\n**Depends on**: ST0001 WP02, which brings the crate, devbin's gates and `tests.yml`.\n",
       "preamble": ""

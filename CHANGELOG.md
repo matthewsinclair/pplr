@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.0.0] - unreleased
 
 ### Added
 
@@ -37,9 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Phones written as a Markdown link (`[+49 …](tel:…)`) are read from the link text, a trunk 0 after a country code (`+44 07…`) is dropped, and numbers apart by a middle dot or slash are read as separate numbers.
 - A LinkedIn URL inside a Markdown link no longer keeps the closing bracket in its slug.
-
-### Fixed
-
 - Tests: teardown clears `.index`, so an index one test writes no longer leaks into the next (the intermittent `pplr count` failures).
 
 ### Removed

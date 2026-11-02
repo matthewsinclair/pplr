@@ -23,7 +23,7 @@ title: Create a homebrew distro for the new Rust version of Pplr
 
 - AC-01.1 (non-test) The release and install design (E1 to E8, the T1 to T10 table, the install layout) is settled on this thread, with hv's answers to its open questions recorded. -- evidence: install-release.md on ST0002 (settled; vc accepted amendments 1-5; hv's rulings 5574e38) -- satisfied: yes
 
-### WP-02 -- devbin release core and CI candidates (status: Not Started)
+### WP-02 -- devbin release core and CI candidates (status: WIP)
 
 - AC-02.1 `bin/devbin release check` and `bin/devbin doctor` pass with the release and formula config, and tests.yml fires on candidate/** and runs the cargo gates and the bats suite on macOS and Linux. -- satisfied: no (computed)
 - AC-02.2 tools/lock-sync (zsh) rewrites Cargo.lock for a version bump and prints Cargo.lock, and the CHANGELOG opens 2.0.0 as `## [2.0.0] - unreleased`. -- satisfied: no (computed)
@@ -63,7 +63,7 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-02 -- devbin release core and CI candidates (status: Not Started)
+### WP-02 -- devbin release core and CI candidates (status: WIP)
 
 _(no tests in this group)_
 

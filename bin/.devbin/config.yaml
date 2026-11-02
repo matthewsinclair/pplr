@@ -5,6 +5,8 @@
 
 project:
   name: pplr
+  # Cargo.toml is the one version source (ST0001 D7); Cargo.lock follows through tools/lock-sync
+  version_from: Cargo.toml
   languages:
     - rust
     - shell
@@ -23,3 +25,36 @@ commands:
         run: tools/bats-rust
         grammar: bats
         log: BATS
+  release:
+    enabled: true
+  formula:
+    enabled: true
+
+# The release core (ST0002 E3 and install-release.md section 5). Outward steps
+# (tag, push, release, tap) run only in ST0002 WP06, with hv's approval (E8).
+release:
+  repo: matthewsinclair/pplr
+  remotes:
+    - local
+    - upstream
+  branch: main
+  notes:
+    kind: changelog
+  derived:
+    - tools/lock-sync
+  gates:
+    - check all
+    - test all
+    - doctor
+  legs:
+    - kovacs
+  ci:
+    workflow: tests.yml
+  object: local
+  after:
+    - bin/devbin formula publish
+
+# The Homebrew formula: signed release assets (ST0002 E1). Its template and
+# asset list arrive with ST0002 WP04.
+formula:
+  mode: assets
