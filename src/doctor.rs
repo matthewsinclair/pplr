@@ -188,10 +188,11 @@ fn signing_fact(key: &str) -> Option<&'static str> {
 /// dev build is the linker's ad-hoc signature until the release signs it.
 fn signatures(kind: crate::install::Kind, root: &Path) -> Vec<Row> {
   use crate::install::Kind;
-  if kind == Kind::Dev {
+  // Only a release is signed; dev, and opt published from dev, carry the linker's signature
+  if kind != Kind::Brew {
     return vec![row(
       Status::Pass,
-      "Signatures: a dev build is not Developer ID signed (a release is: bin/devbin macos prepare)",
+      "Signatures: a dev or opt build is not Developer ID signed (a release is: bin/devbin macos prepare)",
     )];
   }
   ["pplr", "pplr-contacts"]
