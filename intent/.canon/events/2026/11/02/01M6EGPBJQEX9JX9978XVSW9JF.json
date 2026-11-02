@@ -1,0 +1,14 @@
+{
+  "id": "01M6EGPBJQEX9JX9978XVSW9JF",
+  "ts": "2026-11-02T16:15:18.103Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.satisfy",
+  "subject": {
+    "type": "ac",
+    "id": "ST0002/AC-02.2"
+  },
+  "payload": {
+    "evidence": "scratch-clone runs for 111b72e: version-only lock rewrite printing Cargo.lock; new-dependency refusal restoring the lock byte for byte; CHANGELOG opens ## [2.0.0] - unreleased"
+  }
+}

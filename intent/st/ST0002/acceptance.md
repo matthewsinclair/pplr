@@ -26,9 +26,9 @@ title: Create a homebrew distro for the new Rust version of Pplr
 ### WP-02 -- devbin release core and CI candidates (status: WIP)
 
 - AC-02.1 `bin/devbin release check` and `bin/devbin doctor` pass with the release and formula config, and tests.yml fires on candidate/** and runs the cargo gates and the bats suite on macOS and Linux. -- satisfied: no (computed)
-- AC-02.2 tools/lock-sync (zsh) rewrites Cargo.lock for a version bump and prints Cargo.lock, and the CHANGELOG opens 2.0.0 as `## [2.0.0] - unreleased`. -- satisfied: no (computed)
+- AC-02.2 (non-test) tools/lock-sync (zsh) rewrites Cargo.lock for a version bump and prints Cargo.lock, and the CHANGELOG opens 2.0.0 as `## [2.0.0] - unreleased`. -- evidence: scratch-clone runs for 111b72e: version-only lock rewrite printing Cargo.lock; new-dependency refusal restoring the lock byte for byte; CHANGELOG opens ## [2.0.0] - unreleased -- satisfied: yes
 
-### WP-03 -- Install, manifest, tree identity, version line and use (status: Not Started)
+### WP-03 -- Install, manifest, tree identity, version line and use (status: WIP)
 
 - AC-03.1 `pplr install` publishes only from a clean dev tree and writes the T3 manifest, and it refuses an existing prefix without --force, or a prefix another tool wrote. -- satisfied: no (computed)
 - AC-03.2 The version line reads `pplr <version> (<tree>, <sha12>[+dirty])` in dev, opt and brew, built from stamps taken at build time, with the tree named by the one tree function. -- satisfied: no (computed)
@@ -67,7 +67,7 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-03 -- Install, manifest, tree identity, version line and use (status: Not Started)
+### WP-03 -- Install, manifest, tree identity, version line and use (status: WIP)
 
 _(no tests in this group)_
 
