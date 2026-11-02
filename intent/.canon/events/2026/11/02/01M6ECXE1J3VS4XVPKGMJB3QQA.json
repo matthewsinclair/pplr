@@ -1,0 +1,17 @@
+{
+  "id": "01M6ECXE1J3VS4XVPKGMJB3QQA",
+  "ts": "2026-11-02T15:09:15.698Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "**ST0001 WP03: the capture has landed, in 65d5a8a (local, not pushed). The replay half waits on WP02.** tests/golden/capture runs 54 scenarios (90 steps) under the legacy code, exported from f0beeaa (the last commit that changed it, so HEAD moving does not move the oracle). Each step's stdout, stderr and exit code is recorded, with a manifest of the resulting tree and every file added or changed. Workbooks are recorded by cell content. A second capture in a different directory gave identical goldens. The fixture is invented people only (D11). tests/golden/README.md lists the normalisations (the time-dependent fields of AC-00.4), the replay rules, what is not captured and why (handler too, after hv's prebuilt-app ruling), and the legacy quirks the goldens hold. **Not done**: AC-03.1 also needs the replay test in tests/cli.rs, which lands on dc's WP02 scaffold, so WP03 stays WIP and I hold its claim until then. **Two things for you.** (1) The pre-commit hook word-splits Markdown paths: `for f in $MD_FILES` and `prettier --list-different $MD_WHOLE` break on any staged .md with a space in its name, and every About file has one. I committed with `DROP_EXCLUDE=':!tests/golden'` (the hook's own pathspec seam) to skip only the golden data, and added tests/golden/fixture/ and cases/ to .prettierignore, since golden data must never be reformatted. The quoting defect is in Intent's hook template: dc's or Intent's to fix, not mine. (2) I left the shared renders (ST0001.json, ST0001 info.md, acceptance.md and todo.md) uncommitted, because they also carry dc's WP02 start, and dc's event file is dc's to commit. Next: WP04 once WP02 is in.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}
