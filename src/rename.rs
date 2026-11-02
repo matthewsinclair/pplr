@@ -270,7 +270,11 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
   let (full, folder) = (old.full(), old.folder());
   let skip = [prefix.clone(), format!("{folder}/")];
   let mut prose = Vec::new();
-  'files: for f in search(&roots, PROSE_EXTENSIONS, PROSE_SKIP_DIRS) {
+  // Sorted, so the listing (and where PROSE_LINES cuts it) is the same on
+  // every filesystem; directory order is APFS's on macOS and another on Linux
+  let mut prose_files = search(&roots, PROSE_EXTENSIONS, PROSE_SKIP_DIRS);
+  prose_files.sort();
+  'files: for f in prose_files {
     let Some(text) = text_of(&f) else { continue };
     for (n, line) in text.lines().enumerate() {
       if (line.contains(&full) || line.contains(&folder))

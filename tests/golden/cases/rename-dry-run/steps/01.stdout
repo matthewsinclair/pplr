@@ -4,10 +4,8 @@ Would move the folder, and rename 2 file(s) in it:
   About/Imogen Quennell (Picture).png
   About/Imogen Quennell (About).md
 
-Would repoint links in 2 file(s):
-  @SANDBOX@/refs/Notes/project.md
+Would repoint links in 1 file(s):
   @SANDBOX@/refs/Other/real.md
 
 The old name still appears in running text (not changed):
   @SANDBOX@/refs/Other/real.md:3:[Zsófia](<../../Career/People/V/Varga, Zsófia/About/Zsófia Varga (About).md>) and [Imogen Quennell](<../../Career/People/Q/Quennell, Imog
-  @SANDBOX@/refs/Notes/project.md:3:Imogen Quennell said the design holds.

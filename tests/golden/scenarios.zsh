@@ -50,9 +50,9 @@ scenario contact-render;      run contact render
 # Email, through a fake mail-recent that keeps its rules (fakes/mail-recent)
 scenario email;               run email; run email recent --sent; run email inbox; run email --bogus
 
-# Rename, with refs reached through a symlink
-scenario rename-dry-run;      run rename "Quennell, Imogen" "Quennell-Shaw, Imogen" --dry-run --refs @SANDBOX@/refs-link
-scenario rename;              run rename "Quennell, Imogen" "Quennell-Shaw, Imogen" --refs @SANDBOX@/refs-link
+# Rename, with refs reached through a symlink; one ref file, so the legacy grep -r lists its running text in one order on every filesystem
+scenario rename-dry-run;      run rename "Quennell, Imogen" "Quennell-Shaw, Imogen" --dry-run --refs @SANDBOX@/refs-link/Other
+scenario rename;              run rename "Quennell, Imogen" "Quennell-Shaw, Imogen" --refs @SANDBOX@/refs-link/Other
 
 # Links: paths, CMS URLs and a symlinked note
 scenario links-dry-run;       run links @SANDBOX@/refs
