@@ -161,9 +161,9 @@ pub fn native(name: &str) -> Option<&'static Command> {
   COMMANDS.iter().find(|command| command.name == name)
 }
 
-/// The commands that work on pplr's own install trees (ST0002 WP03), not the
-/// People tree, so they run where there is none.
-const WITHOUT_DATA: &[&str] = &["install", "use"];
+/// The commands that run where there is no People tree: those about pplr
+/// itself (ST0002 WP03), and doctor, which reports a missing tree as a row.
+const WITHOUT_DATA: &[&str] = &["doctor", "help", "install", "use", "version"];
 
 /// Native commands that still run a legacy one through the fallback, and
 /// which: the port of the second takes its row out.

@@ -1,0 +1,86 @@
+#!/usr/bin/env zsh
+# tools/skeleton: ST0002 WP05's walking skeleton, prepared up to `brew install`.
+#
+#   tools/skeleton [--adhoc] [<dir>]
+#
+# In <dir> (default ~/Devel/scratch/pplr-skeleton), from this checkout's HEAD:
+#   1. a scratch clone, its push URLs dead, so nothing reaches a real remote;
+#   2. a release build, and the macOS asset from bin/devbin macos prepare
+#      (Developer ID by default; --adhoc for a dry run, whose asset the
+#      formula's signature check refuses, by design);
+#   3. an annotated scratch tag, v<version>, in the clone only;
+#   4. SHA256SUMS: the real asset's sum, and zeros for the Linux assets, which
+#      a Mac never downloads;
+#   5. the formula, rendered by bin/devbin formula render, into a scratch tap
+#      directory, its macOS url pointed at the local asset.
+# Then it prints the steps that install it, which change Homebrew and can
+# shadow the live pplr, and so are the maintainer's to run. Nothing is tagged
+# or pushed on the real repository, and the real tap is not written (E8).
+
+emulate -L zsh
+setopt err_exit no_unset pipe_fail
+
+root=${0:A:h:h}
+adhoc=()
+if [[ ${1:-} == --adhoc ]]; then adhoc=(--adhoc); shift; fi
+dir=${1:-$HOME/Devel/scratch/pplr-skeleton}
+
+die() { print -u2 "skeleton: $*"; exit 1 }
+step() { print -r -- "-- $*" }
+
+[[ $(uname) == Darwin ]] || die "the skeleton is the maintainer's Mac's"
+[[ -z $(git -C $root status --porcelain) ]] || print -u2 "skeleton: note: this checkout has uncommitted work; the skeleton builds HEAD only"
+
+clone=$dir/clone
+tap=$dir/tap/Formula
+rm -rf $clone $dir/tap
+mkdir -p $dir $tap
+step "scratch clone of $(git -C $root rev-parse --short HEAD) into $clone"
+git clone -q --shared $root $clone
+for remote in ${(f)"$(git -C $clone remote)"}; do
+  git -C $clone remote set-url --push $remote DISABLED-skeleton
+done
+
+cd $clone
+version=$(sed -n 's/^version = "\(.*\)"$/\1/p' Cargo.toml | head -1)
+step "release build"
+tools/build --release
+step "the macOS asset${adhoc:+ (ad hoc)}"
+bin/devbin macos prepare $adhoc
+asset=dist/macos/pplr-$version-$(rustc -vV | sed -n 's/^host: //p').tar.gz
+[[ -f $asset ]] || die "no asset at $asset"
+
+step "scratch tag v$version, in the clone only"
+git tag -a v$version -m "pplr walking skeleton: a scratch tag, never pushed"
+
+sums=$dir/SHA256SUMS
+zeros=$(printf "0%.0s" {1..64})
+{
+  print -r -- "$(shasum -a 256 $asset | cut -d' ' -f1)  ${asset:t}"
+  print -r -- "$zeros  pplr-$version-x86_64-unknown-linux-musl.tar.gz"
+  print -r -- "$zeros  pplr-$version-aarch64-unknown-linux-musl.tar.gz"
+} > $sums
+
+step "the formula, into the scratch tap"
+bin/devbin formula render v$version $tap/pplr.rb --sums $sums
+# The scratch tap installs the local asset, not a release that does not exist
+sed -i '' "s|^  url \"https://github.com/matthewsinclair/pplr/releases/download/v$version/${asset:t}\"|  url \"file://${clone}/$asset\"|" $tap/pplr.rb
+grep -q "file://" $tap/pplr.rb || die "could not point the formula at $asset"
+
+cat <<EOF
+
+Prepared in $dir. The maintainer's steps, which install into Homebrew:
+
+  export HOMEBREW_NO_AUTO_UPDATE=1
+  brew tap-new --no-git pplrskeleton/pplr
+  cp $tap/pplr.rb "\$(brew --repository)/Library/Taps/pplrskeleton/homebrew-pplr/Formula/"
+  brew trust pplrskeleton/pplr
+  brew install pplrskeleton/pplr/pplr
+  brew test pplrskeleton/pplr/pplr
+  PPLR_OPT_PREFIX=$dir/opt $clone/target/release/pplr install
+  PPLR_OPT_PREFIX=$dir/opt $root/tools/t10-probe $clone
+
+and afterwards:
+
+  brew uninstall pplrskeleton/pplr/pplr && brew untrust pplrskeleton/pplr && brew untap pplrskeleton/pplr
+EOF

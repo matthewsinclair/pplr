@@ -1,0 +1,37 @@
+#!/usr/bin/env zsh
+# tools/t10-probe: devbin's T10 proof for pplr (ST0002 WP05).
+#
+#   PPLR_OPT_PREFIX=<opt> tools/t10-probe <dev-checkout>
+#
+# `pplr use dev`, `use opt` and `use brew` in turn, each followed by the
+# version line, doctor's Install section and the shadow check (bare `use`). It
+# MOVES ~/.local/bin/pplr, so on the maintainer's machine it changes which pplr
+# answers; it ends on brew, where the switch rests. Each step's verdict is
+# printed; it exits non-zero if any failed.
+
+emulate -L zsh
+setopt no_unset pipe_fail
+
+export HOMEBREW_NO_AUTO_UPDATE=1
+dev=${1:?the dev checkout, whose target/release/pplr serves use dev}
+pplr=$dev/target/release/pplr
+[[ -x $pplr ]] || { print -u2 "t10-probe: no release build at $pplr"; exit 1 }
+[[ -n ${PPLR_OPT_PREFIX:-} ]] || { print -u2 "t10-probe: set PPLR_OPT_PREFIX to the opt tree"; exit 1 }
+
+failed=0
+probe() {
+  local what=$1; shift
+  if "$@"; then print "  ok    $what"; else print "  FAIL  $what"; failed=1; fi
+}
+
+for tree in dev opt brew; do
+  print -r -- "== use $tree"
+  probe "use $tree" $pplr use $tree
+  rehash
+  # The link (or, after use brew, Homebrew's) is what answers now
+  probe "version line names $tree" eval '[[ "$(command pplr version)" == "pplr "*" ($tree, "* ]]'
+  print -r -- "  $(command pplr version)"
+  probe "doctor's Install section passes" eval 's=$(command pplr doctor | sed -n "/^Install:/,/^$/p"); [[ -n $s && $s != *"✗"* ]]'
+  probe "shadow check" command pplr use
+done
+exit $failed

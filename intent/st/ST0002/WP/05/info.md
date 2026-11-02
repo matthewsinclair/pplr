@@ -2,7 +2,7 @@
 wp_id: WP-05
 title: Walking skeleton through a scratch tap
 scope: M
-status: Not Started
+status: WIP
 ---
 
 # WP-05: Walking skeleton through a scratch tap

@@ -56,7 +56,7 @@
       "seq": 5,
       "title": "Walking skeleton through a scratch tap",
       "scope": "M",
-      "status": "not-started",
+      "status": "wip",
       "objective": "Prove the whole path early, before any real release. Install a build of the scaffold from a locally rendered formula in a scratch tap, and prove T10's three trees.",
       "body": "**Scope**\n\n- In a scratch clone, eg under `~/Devel/scratch/`:\n  - render the formula for a scratch tag;\n  - install from a local tap;\n  - run the version line, doctor and `brew test`;\n  - then `pplr use dev`, `use opt` and `use brew`, each followed by the version line, doctor and the shadow check.\n- Prefix every brew probe with `HOMEBREW_NO_AUTO_UPDATE=1`.\n- Nothing is tagged or pushed on the real repository, and the real tap is not written (E8).\n- Record the commands and their output on this thread.\n\n**Criteria**: AC-05.1.\n\n**Depends on**: WP04. The binary needs only ST0001 WP02's scaffold plus WP03's verbs; no ported commands.\n",
       "preamble": ""

@@ -39,7 +39,7 @@ title: Create a homebrew distro for the new Rust version of Pplr
 - AC-04.1 packaging/homebrew/pplr.rb is a devbin `assets` template, rendered through `bin/devbin formula render` with nothing typed. The render passes `brew style` and `brew audit --strict`, its install verifies every macOS binary's signature against its designated requirement and writes the T3 manifest, and its test re-verifies the signatures and runs the version line. -- satisfied: no (computed)
 - AC-04.2 (non-test) The tap matthewsinclair/homebrew-pplr is described as "Homebrew tap for pplr", and its CI runs style, audit, install and test on macOS and Ubuntu. -- satisfied: no
 
-### WP-05 -- Walking skeleton through a scratch tap (status: Not Started)
+### WP-05 -- Walking skeleton through a scratch tap (status: WIP)
 
 - AC-05.1 (non-test) A scaffold build installs from a locally rendered formula in a scratch tap on rhadamanth, T10's three trees are proved, and nothing is tagged or pushed on the real repository. -- satisfied: no
 
@@ -77,7 +77,7 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-05 -- Walking skeleton through a scratch tap (status: Not Started)
+### WP-05 -- Walking skeleton through a scratch tap (status: WIP)
 
 _(no tests in this group)_
 

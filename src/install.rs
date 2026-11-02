@@ -315,15 +315,14 @@ pub fn install(args: &[String], config: &Config) -> Result<ExitCode> {
     managed_by,
     force,
   )?;
+  let tree = if managed_by == "brew" {
+    Kind::Brew
+  } else {
+    Kind::Opt
+  };
   println!(
     "Installed {} into {}",
-    line(
-      env!("CARGO_PKG_VERSION"),
-      Kind::Opt,
-      None,
-      SOURCE_COMMIT,
-      false
-    ),
+    line(env!("CARGO_PKG_VERSION"), tree, None, SOURCE_COMMIT, false),
     prefix.display()
   );
   Ok(ExitCode::SUCCESS)

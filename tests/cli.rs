@@ -1127,3 +1127,39 @@ fn tag_and_tags_are_native_and_their_goldens_replay() -> Result<()> {
   );
   Ok(())
 }
+
+#[test]
+fn commands_about_pplr_itself_run_where_there_is_no_people_tree() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let missing = sandbox.path("no-such-tree");
+  let pplr = || {
+    let mut c = sandbox.pplr();
+    c.env("PPLR_DATA", &missing);
+    c
+  };
+  let version = run(pplr().arg("version"))?;
+  assert!(version.status.success(), "{}", text(&version.stdout));
+  assert!(
+    text(&version.stdout).starts_with("pplr "),
+    "{}",
+    text(&version.stdout)
+  );
+  // doctor runs, and reports the missing tree as one of its rows
+  let doctor = run(pplr().arg("doctor"))?;
+  assert!(
+    text(&doctor.stdout).contains(&format!("Data directory not found: {}", missing.display())),
+    "{}",
+    text(&doctor.stdout)
+  );
+  assert!(run(pplr().arg("help"))?.status.success());
+  // a command about the People tree still refuses, naming it
+  let count = run(pplr().arg("count"))?;
+  assert_eq!(
+    text(&count.stdout),
+    format!(
+      "Error: Could not change to directory {}.\n",
+      missing.display()
+    )
+  );
+  Ok(())
+}
