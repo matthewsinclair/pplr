@@ -36,12 +36,12 @@ load test_helper
 @test "pplr search falls back without Claude" {
     create_test_person "Tagged" "Terry"
     # Replace mock Claude with one that fails to trigger fallback
-    cat > "$PPLR_TEST_DATA/.mock_bin/claude" << 'EOF'
+    cat > "$PPLR_TEST_BIN/claude" << 'EOF'
 #!/bin/bash
 # Failing mock Claude to test fallback
 exit 1
 EOF
-    chmod +x "$PPLR_TEST_DATA/.mock_bin/claude"
+    chmod +x "$PPLR_TEST_BIN/claude"
     command -v uv >/dev/null 2>&1 || skip "uv not installed"
     "$PPLR" reindex >/dev/null
 

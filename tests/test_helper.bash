@@ -3,8 +3,8 @@
 # Common test utilities for pplr tests.
 #
 # Every test runs in its own sandbox under $BATS_TEST_TMPDIR, which bats
-# creates for the test and removes after it. Nothing here deletes anything:
-# no path taken from the environment is ever a deletion target.
+# creates for the test and removes after it. Nothing deletes outside that
+# sandbox, and no path taken from the environment is ever a deletion target.
 #
 # PPLR_UNDER_TEST names the pplr executable the suite tests, and defaults to
 # the checkout's legacy bin/pplr. Point it at another build to test that:
@@ -35,7 +35,8 @@ setup() {
   done
   export -n PPLR_ROOT
 
-  # uv keeps its cache and Pythons under HOME, which the sandbox replaces
+  # uv keeps its cache and Pythons under HOME, which the sandbox replaces.
+  # Legacy-only: this goes with the Python at cutover (ST0001 WP13)
   if command -v uv >/dev/null 2>&1; then
     export UV_CACHE_DIR="${UV_CACHE_DIR:-$(uv cache dir 2>/dev/null)}"
     export UV_PYTHON_INSTALL_DIR="${UV_PYTHON_INSTALL_DIR:-$(uv python dir 2>/dev/null)}"
