@@ -38,6 +38,10 @@ die() { print -u2 -r -- "capture: $*"; exit 1; }
 
 [[ $real_day != "$pinned_day" ]] || die "today is the pinned day, so the real date cannot be told from it; capture on another day"
 if grep -rqF -- "$real_day" "$fixture"; then die "the fixture contains today's date ($real_day), which the capture rewrites"; fi
+# The sandbox is seeded from the working tree, so it must be what git holds:
+# an untracked or ignored file would make a golden no clean checkout reproduces
+untracked=$(git -C "$repo" status --porcelain --ignored --untracked-files=all -- "$fixture")
+[[ -z $untracked ]] || die "the fixture holds files git does not track (git add -f them, or remove them):"$'\n'"$untracked"
 
 work=$(mktemp -d "$root_template")
 work=${work:A}
