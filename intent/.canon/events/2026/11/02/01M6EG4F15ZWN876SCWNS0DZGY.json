@@ -1,0 +1,14 @@
+{
+  "id": "01M6EG4F15ZWN876SCWNS0DZGY",
+  "ts": "2026-11-02T16:05:31.813Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.edit",
+  "subject": {
+    "type": "ac",
+    "id": "ST0001/AC-06.1"
+  },
+  "payload": {
+    "text": "tag and tags run natively in Rust, and their goldens and bats tests pass."
+  }
+}

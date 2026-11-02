@@ -1,0 +1,14 @@
+{
+  "id": "01M6EG4F045H4QFYCCCWMCVXF4",
+  "ts": "2026-11-02T16:05:31.781Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.edit",
+  "subject": {
+    "type": "ac",
+    "id": "ST0001/AC-05.1"
+  },
+  "payload": {
+    "text": "json, index, reindex, new, pictures and search run natively in Rust, and their goldens and bats tests pass; a search query is never interpolated into a command line."
+  }
+}

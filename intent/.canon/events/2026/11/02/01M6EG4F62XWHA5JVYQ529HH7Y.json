@@ -1,0 +1,14 @@
+{
+  "id": "01M6EG4F62XWHA5JVYQ529HH7Y",
+  "ts": "2026-11-02T16:05:31.970Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.edit",
+  "subject": {
+    "type": "ac",
+    "id": "ST0001/AC-14.1"
+  },
+  "payload": {
+    "text": "pplr reads recent and inbox mail itself, read-only, from Mail's Envelope Index (no mail-recent, no Python). email's listing and cache and contact log --email N and --email <Message-ID> match their goldens, against a synthetic SQLite fixture."
+  }
+}

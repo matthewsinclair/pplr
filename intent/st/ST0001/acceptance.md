@@ -43,23 +43,23 @@ title: Port Pplr from shell scripts to Rust
 
 ### WP-04 -- Core model and the read commands (status: Not Started)
 
-- AC-04.1 resolve, count, about, cp, open, linkedin, edit, meetings, refresh, grep, help and version run natively in Rust, their bash is gone, and their goldens and bats tests pass. -- satisfied: no (computed)
+- AC-04.1 resolve, count, about, cp, open, linkedin, edit, meetings, refresh, grep, help and version run natively in Rust, and their goldens and bats tests pass. -- satisfied: no (computed)
 
 ### WP-05 -- Indexes, new person, pictures and search (status: Not Started)
 
-- AC-05.1 json, index, reindex, new, pictures and search run natively in Rust, their bash is gone, and their goldens and bats tests pass; a search query is never interpolated into a command line. -- satisfied: no (computed)
+- AC-05.1 json, index, reindex, new, pictures and search run natively in Rust, and their goldens and bats tests pass; a search query is never interpolated into a command line. -- satisfied: no (computed)
 
 ### WP-06 -- Tags (status: Not Started)
 
-- AC-06.1 tag and tags run natively in Rust, pplr_tag, pplr_tags and tags.py are gone, and their goldens and bats tests pass. -- satisfied: no (computed)
+- AC-06.1 tag and tags run natively in Rust, and their goldens and bats tests pass. -- satisfied: no (computed)
 
 ### WP-07 -- Contact cadence (status: Not Started)
 
-- AC-07.1 contact runs natively in Rust, pplr_contact and contact.py are gone, and the contact goldens and bats tests pass; `log --email` is covered by AC-14.1. -- satisfied: no (computed)
+- AC-07.1 contact runs natively in Rust, and the contact goldens and bats tests pass; `log --email` is covered by AC-14.1. -- satisfied: no (computed)
 
 ### WP-08 -- Rename, links and the pplr:// handler (status: Not Started)
 
-- AC-08.1 rename, links and handler run natively in Rust, and their bash is gone; their goldens and bats tests pass, and handler --install writes an app that runs the running tree's stable path, never a Cellar path. -- satisfied: no (computed)
+- AC-08.1 rename, links and handler run natively in Rust; their goldens and bats tests pass, and handler --install registers the tree's prebuilt, signed Pplr Links.app by its stable path, never a Cellar path (ST0002 ruling 7). -- satisfied: no (computed)
 
 ### WP-09 -- The Contacts store and the Swift I/O sidecar (status: WIP)
 
@@ -68,11 +68,11 @@ title: Port Pplr from shell scripts to Rust
 
 ### WP-10 -- Sync: check, link, pull, photos and backup (status: Not Started)
 
-- AC-10.1 sync --check, --link, --pull, --photos and --backup run in Rust against the JSON store, their goldens and bats tests pass, and those modes are gone from the Swift source. -- satisfied: no (computed)
+- AC-10.1 sync --check, --link, --pull, --photos and --backup run in Rust against the JSON store, and their goldens and bats tests pass. -- satisfied: no (computed)
 
 ### WP-11 -- The sync plan and its workbook (status: Not Started)
 
-- AC-11.1 sync --plan and --apply-plan run in Rust. The workbook's four sheets, review columns, Decision list and highlighting match the legacy workbook by content, and workbook.py and the bash pplr_sync are gone. -- satisfied: no (computed)
+- AC-11.1 sync --plan and --apply-plan run in Rust. The workbook's four sheets, review columns, Decision list and highlighting match the legacy workbook by content. -- satisfied: no (computed)
 
 ### WP-12 -- Doctor and Finder icons (status: Not Started)
 
@@ -80,7 +80,7 @@ title: Port Pplr from shell scripts to Rust
 
 ### WP-14 -- pplr's own mail reader (status: Not Started)
 
-- AC-14.1 pplr reads recent and inbox mail itself, read-only, from Mail's Envelope Index (no mail-recent, no Python). email's listing and cache and contact log --email N and --email <Message-ID> match their goldens, against a synthetic SQLite fixture; email_list.py and pplr_email are gone. -- satisfied: no (computed)
+- AC-14.1 pplr reads recent and inbox mail itself, read-only, from Mail's Envelope Index (no mail-recent, no Python). email's listing and cache and contact log --email N and --email <Message-ID> match their goldens, against a synthetic SQLite fixture. -- satisfied: no (computed)
 - AC-14.2 pplr email --json is a versioned contract (a schema field, documented fields and exit codes): it exits non-zero naming the cause on no Full Disk Access or an unrecognised Envelope Index schema, and never returns rows from a schema it did not verify. -- satisfied: no (computed)
 
 ## Acceptance Tests

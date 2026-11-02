@@ -1,0 +1,14 @@
+{
+  "id": "01M6EG4F43H9NHRN51H2E0G13A",
+  "ts": "2026-11-02T16:05:31.907Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.edit",
+  "subject": {
+    "type": "ac",
+    "id": "ST0001/AC-10.1"
+  },
+  "payload": {
+    "text": "sync --check, --link, --pull, --photos and --backup run in Rust against the JSON store, and their goldens and bats tests pass."
+  }
+}

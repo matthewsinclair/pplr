@@ -1,0 +1,14 @@
+{
+  "id": "01M6EG4F31FFC6SG2HES8PPVZ8",
+  "ts": "2026-11-02T16:05:31.873Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.edit",
+  "subject": {
+    "type": "ac",
+    "id": "ST0001/AC-08.1"
+  },
+  "payload": {
+    "text": "rename, links and handler run natively in Rust; their goldens and bats tests pass, and handler --install registers the tree's prebuilt, signed Pplr Links.app by its stable path, never a Cellar path (ST0002 ruling 7)."
+  }
+}

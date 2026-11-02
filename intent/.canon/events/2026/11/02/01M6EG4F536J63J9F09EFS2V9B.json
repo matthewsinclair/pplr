@@ -1,0 +1,14 @@
+{
+  "id": "01M6EG4F536J63J9F09EFS2V9B",
+  "ts": "2026-11-02T16:05:31.939Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.edit",
+  "subject": {
+    "type": "ac",
+    "id": "ST0001/AC-11.1"
+  },
+  "payload": {
+    "text": "sync --plan and --apply-plan run in Rust. The workbook's four sheets, review columns, Decision list and highlighting match the legacy workbook by content."
+  }
+}
