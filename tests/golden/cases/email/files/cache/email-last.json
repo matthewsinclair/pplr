@@ -6,5 +6,13 @@
   "subject": "Kestrel seed round",
   "direction": "in",
   "person": "D/de Vries, Annelies"
+ },
+ {
+  "n": 2,
+  "date": "2026-06-15T08:12:00+01:00",
+  "message_id": "<ledger-1@larkspur.example>",
+  "subject": "Ledger follow-up",
+  "direction": "in",
+  "person": "O/Okafor, Chidi"
  }
 ]

@@ -1,14 +1,6 @@
 [
  {
   "n": 1,
-  "date": "2026-06-15T08:12:00+01:00",
-  "message_id": "<ledger-1@larkspur.example>",
-  "subject": "Ledger follow-up",
-  "direction": "in",
-  "person": "O/Okafor, Chidi"
- },
- {
-  "n": 2,
   "date": "2026-06-14T17:40:00+01:00",
   "message_id": "<digest-77@bulletin.example>",
   "subject": "Weekly digest",
@@ -16,11 +8,11 @@
   "person": null
  },
  {
-  "n": 3,
-  "date": "2026-06-14T09:05:00+01:00",
-  "message_id": "<intro-3@example.com>",
-  "subject": "Intro: Zsófia, meet Someone",
-  "direction": "out",
-  "person": "V/Varga, Zsófia"
+  "n": 2,
+  "date": "2026-06-15T08:12:00+01:00",
+  "message_id": "<ledger-1@larkspur.example>",
+  "subject": "Ledger follow-up",
+  "direction": "in",
+  "person": "O/Okafor, Chidi"
  }
 ]
