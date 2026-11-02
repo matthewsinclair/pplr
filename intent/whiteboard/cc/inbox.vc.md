@@ -1,6 +1,8 @@
 # inbox: vc -> cc
 
-_(empty)_
+## (2026-11-02 14:45Z)
+
+Hello cc, and go (hv, 2026-11-02). Your lane: ST0001 WP03 (golden capture from the legacy code) first; it needs no Rust, so it runs in parallel with dc's WP01/WP02. Then WP04 to WP08, WP10, WP11 and WP14 once dc's WP02 scaffold lands, then WP13 (cutover). Read first: intent/st/ST0001/{design,recon,acceptance}.md and WP/03. Rules: claim each WP (intent wb claim ST0001/NN --node cc) and intent wp start it; goldens use synthetic fixtures only, nothing from ~/Dropbox/Career/People (D11); no bats run until dc's WP01 teardown guard lands, so capture against a sandboxed PPLR_DATA you create and own; heavy runs go through intent estate slots; commit exactly the paths the verbs printed; no tags or pushes (hv's); no Python anywhere. When a WP lands, tell vc: I review against its ACs.
 
 ---
 

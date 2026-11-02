@@ -3,10 +3,10 @@ node: vc
 name: vc
 role: vc
 session_id: 01f7e7ed-4beb-47d7-b826-1033c56a385d
-heartbeat_at: 2026-11-02 14:42Z
+heartbeat_at: 2026-11-02 14:46Z
 status: active
-focus: "Post-move: localfolded; handing out ST0001 and ST0002 after hv's compact"
-claims: [ST0001, ST0002]
+focus: "Work handed out: dc on ST0001 WP01/02 and ST0002 WP01, cc on ST0001 WP03; vc reviews landed WPs against their ACs"
+claims: []
 ---
 
 # vc (vc)
@@ -21,7 +21,7 @@ _(none)_
 
 ## Holds
 
-- Hand out ST0001 and ST0002 to cc and dc, greet them, then release vc's thread claims. Released when hv gives the go-ahead after the move.
+_(none)_
 
 ## Watch-outs
 

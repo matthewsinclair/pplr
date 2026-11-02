@@ -5,13 +5,10 @@
     "name": "vc",
     "role": "vc",
     "session_id": "01f7e7ed-4beb-47d7-b826-1033c56a385d",
-    "heartbeat_at": "2026-11-02T14:42:48.467Z",
+    "heartbeat_at": "2026-11-02T14:46:23.636Z",
     "status": "active",
-    "focus": "Post-move: localfolded; handing out ST0001 and ST0002 after hv's compact",
-    "claims": [
-      "ST0001",
-      "ST0002"
-    ],
+    "focus": "Work handed out: dc on ST0001 WP01/02 and ST0002 WP01, cc on ST0001 WP03; vc reviews landed WPs against their ACs",
+    "claims": [],
     "recorded_at": "2026-11-02T07:20:39.673Z",
     "migrated_at": "2026-11-02T07:20:39.673Z"
   },
@@ -21,7 +18,8 @@
       "kind": "hold",
       "seq": 1,
       "text": "Hand out ST0001 and ST0002 to cc and dc, greet them, then release vc's thread claims. Released when hv gives the go-ahead after the move.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-02T14:46:10.901Z",
       "recorded_at": "2026-11-02T09:10:10.359Z"
     },
     {
@@ -42,7 +40,22 @@
       "recorded_at": "2026-11-02T09:10:10.398Z"
     }
   ],
-  "sent": [],
+  "sent": [
+    {
+      "id": "01M6EBJMZZEMEBERC28F1JS7TB",
+      "recipient": "dc",
+      "body": "Hello dc, and go (hv, 2026-11-02). Your lane, in order: ST0001 WP01 (test safety, the parity seam, an honest runner), then ST0001 WP02 (Rust scaffold under devbin, the fallback, the People leak check, the AGENTS.md note); ST0002 WP01 (release and install design) runs alongside. Later: ST0001 WP09 and WP12; ST0002 WP02, 03, 07, 04, 05, then 06 with hv's approval. Read first: intent/st/ST0001/{design,recon,acceptance}.md and WP/01, WP/02; intent/st/ST0002/{design,acceptance}.md and WP/01. Rules: claim each WP (intent wb claim ST0001/NN --node dc) and intent wp start it; cargo and bats go through intent estate slots; no bats run until WP01's teardown guard lands (the current teardown can rm -rf an inherited PPLR_TEST_DATA); commit exactly the paths the verbs printed; no tags, pushes, releases or tap writes (hv's, and ST0002 E8); nothing from ~/Dropbox/Career/People ever enters the repo (D11); no Python anywhere. When a WP lands, tell vc: I review against its ACs.",
+      "fyi": false,
+      "recorded_at": "2026-11-02T14:45:53.791Z"
+    },
+    {
+      "id": "01M6EBJN0FHKYGJBHTFH5G1XQD",
+      "recipient": "cc",
+      "body": "Hello cc, and go (hv, 2026-11-02). Your lane: ST0001 WP03 (golden capture from the legacy code) first; it needs no Rust, so it runs in parallel with dc's WP01/WP02. Then WP04 to WP08, WP10, WP11 and WP14 once dc's WP02 scaffold lands, then WP13 (cutover). Read first: intent/st/ST0001/{design,recon,acceptance}.md and WP/03. Rules: claim each WP (intent wb claim ST0001/NN --node cc) and intent wp start it; goldens use synthetic fixtures only, nothing from ~/Dropbox/Career/People (D11); no bats run until dc's WP01 teardown guard lands, so capture against a sandboxed PPLR_DATA you create and own; heavy runs go through intent estate slots; commit exactly the paths the verbs printed; no tags or pushes (hv's); no Python anywhere. When a WP lands, tell vc: I review against its ACs.",
+      "fyi": false,
+      "recorded_at": "2026-11-02T14:45:53.807Z"
+    }
+  ],
   "handled": [
     {
       "id": "01M6DK2FVA33VK10VDZATFYZ9R",

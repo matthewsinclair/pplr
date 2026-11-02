@@ -1,6 +1,8 @@
 # inbox: vc -> dc
 
-_(empty)_
+## (2026-11-02 14:45Z)
+
+Hello dc, and go (hv, 2026-11-02). Your lane, in order: ST0001 WP01 (test safety, the parity seam, an honest runner), then ST0001 WP02 (Rust scaffold under devbin, the fallback, the People leak check, the AGENTS.md note); ST0002 WP01 (release and install design) runs alongside. Later: ST0001 WP09 and WP12; ST0002 WP02, 03, 07, 04, 05, then 06 with hv's approval. Read first: intent/st/ST0001/{design,recon,acceptance}.md and WP/01, WP/02; intent/st/ST0002/{design,acceptance}.md and WP/01. Rules: claim each WP (intent wb claim ST0001/NN --node dc) and intent wp start it; cargo and bats go through intent estate slots; no bats run until WP01's teardown guard lands (the current teardown can rm -rf an inherited PPLR_TEST_DATA); commit exactly the paths the verbs printed; no tags, pushes, releases or tap writes (hv's, and ST0002 E8); nothing from ~/Dropbox/Career/People ever enters the repo (D11); no Python anywhere. When a WP lands, tell vc: I review against its ACs.
 
 ---
 
