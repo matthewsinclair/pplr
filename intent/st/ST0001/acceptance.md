@@ -70,7 +70,7 @@ title: Port Pplr from shell scripts to Rust
 
 - AC-10.1 sync --check, --link, --pull, --photos and --backup run in Rust against the JSON store, and their goldens and bats tests pass. -- satisfied: yes (computed)
 
-### WP-11 -- The sync plan and its workbook (status: Not Started)
+### WP-11 -- The sync plan and its workbook (status: WIP)
 
 - AC-11.1 sync --plan and --apply-plan run in Rust. The workbook's four sheets, review columns, Decision list and highlighting match the legacy workbook by content. -- satisfied: no (computed)
 
@@ -131,9 +131,9 @@ _(no tests in this group)_
 
 - AT-10.1 `tests/cli.rs` -- covers AC-10.1 -- status: green -- sync_is_native_and_its_goldens_replay; red first (slot 01M6EM6ETPRBA5NTFK20RXXX2Q, only the NFD inetloc name differed), then green in a cold clean clone: cargo test 79 unit and 24 integration passed; bats 101/101 against Rust and legacy (slot 01M6EMBD3APESKVD5EC9RDE16C)
 
-### WP-11 -- The sync plan and its workbook (status: Not Started)
+### WP-11 -- The sync plan and its workbook (status: WIP)
 
-_(no tests in this group)_
+- AT-11.1 `tests/cli.rs` -- covers AC-11.1 -- status: red -- sync_plan_and_apply_plan_are_native_and_their_goldens_replay; to-write until it runs red
 
 ### WP-12 -- Doctor and Finder icons (status: Done)
 

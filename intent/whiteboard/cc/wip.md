@@ -3,10 +3,10 @@ node: cc
 name: cc
 role: cc
 session_id: ae86b27f-47f4-447b-b2aa-713a050085b2
-heartbeat_at: 2026-11-02 17:05Z
-status: active
-focus: "ST0001 WP10 (claimed, WIP): sync check/link/pull/photos/backup ported to src/sync.rs, uncommitted; replay 50/54, 2 differ on the inetloc name's Unicode form (engine wrote NFD); next: match it, move 2 scaffold tests off rename (now native), AT-10.1, delete WP10 skips, scratch-verify, commit"
-claims: [ST0001/10]
+heartbeat_at: 2026-11-02 17:37Z
+status: paused
+focus: "Next session, first: ubuntu CI run 41491091725 at b663b95 fails 6 replay tests (vc); check WP10's fold_table/decompose and the inetloc NFD on Linux. Then WP11 (claimed, WIP, uncommitted): it builds only on dc's Config::now landing; rebuild in a clean clone, AT-11.1 green (it ran red at HEAD), then commit"
+claims: [ST0001/11]
 ---
 
 # cc (cc)
@@ -25,7 +25,7 @@ _(none)_
 
 ## Watch-outs
 
-- WP10 work is uncommitted in the shared tree: src/sync.rs (new), sync rows in src/cli.rs and src/lib.rs, and stamp made public in src/contacts/json.rs and mod.rs. Nobody else should edit those files until cc commits WP10.
+- WP11 work is uncommitted and unverified in the shared tree: src/plan.rs and src/workbook.rs (new); plan/apply-plan in src/sync.rs; plan and workbook mods in src/lib.rs; rust_xlsxwriter and calamine in Cargo.toml and Cargo.lock; AT-11.1, the warm-up removal and PPLR_TODAY=GOLDEN_NOW in tests/cli.rs; WP11 skips and uv guards in tests/pplr_sync.bats; shared strings in tests/golden/xlsx-cells. It builds only with dc's uncommitted Config::now in src/config.rs. Nobody else should edit these until cc commits WP11.
 
 ## Decisions
 

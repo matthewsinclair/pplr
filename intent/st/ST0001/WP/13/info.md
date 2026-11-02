@@ -14,6 +14,7 @@ Remove the fallback and every legacy file, prove parity read-only on the live tr
 **Scope**
 
 - **Removals**: the fallback, `bin/pplr`, `lib/`, `setup.sh`, `.env.example`, `VERSION.md`, and any `src/` remnant. `templates/` stays as the embedding source.
+  - From WP11, kept until now because hv's live pplr runs the legacy code (D3): `bin/pplr_sync`, `src/pplr-contacts/workbook.py`, and the plan and applyplan modes in `swift/pplr-contacts/main.swift` (the file stays: it is also the Contacts sidecar's source). The setup_file engine build in `tests/pplr_sync.bats` goes with them.
 - **The no-Python check** joins the gate (AC-00.1).
 - **Live read-only parity** on rhadamanth (AC-00.5):
   - check the legacy code out from history into a scratch worktree;

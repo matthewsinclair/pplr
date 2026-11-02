@@ -106,7 +106,7 @@
       "seq": 11,
       "title": "The sync plan and its workbook",
       "scope": "L",
-      "status": "not-started",
+      "status": "wip",
       "objective": "Port `sync --plan` and `--apply-plan`, including the review workbook, and retire `workbook.py`.",
       "body": "**Scope**\n\n- **`plan`**:\n  - the scoring: nicknames, Levenshtein, double-barrelled surnames, a shared company or email domain;\n  - twins, confidence and card refs;\n  - the summary the bash prints with `jq`.\n- **The workbook**, written with `rust_xlsxwriter`:\n  - the four sheets and their headers, widths, wrapping, frozen panes and filters;\n  - the shaded review columns, the Decision validation, and the Low and Medium highlighting;\n  - `--out` names the file; `--json` prints the plan instead.\n- **`--apply-plan`**:\n  - reads the reviewed workbook with `calamine`, validating Decision and Card as `workbook.py` does;\n  - then applies Add, Update and Link only through the store, with photos as TIFF and a backup first;\n  - takes `--limit` and `--name`.\n- Delete `workbook.py`, the bash `pplr_sync`, and the plan modes from the sidecar's source.\n\n**Criteria**: AC-11.1.\n",
       "preamble": ""
@@ -126,7 +126,7 @@
       "scope": "M",
       "status": "not-started",
       "objective": "Remove the fallback and every legacy file, prove parity read-only on the live tree, and bring the docs up to date. This leaves one Rust binary ready for ST0002's release.",
-      "body": "**Scope**\n\n- **Removals**: the fallback, `bin/pplr`, `lib/`, `setup.sh`, `.env.example`, `VERSION.md`, and any `src/` remnant. `templates/` stays as the embedding source.\n- **The no-Python check** joins the gate (AC-00.1).\n- **Live read-only parity** on rhadamanth (AC-00.5):\n  - check the legacy code out from history into a scratch worktree;\n  - run the read-only commands over the live People tree under both implementations;\n  - compare the outputs and record them here.\n  - Nothing writes to the live tree.\n- **Docs**:\n  - README: the commands, the brew install (ST0002), and a maintainer section for dev and opt;\n  - `usage-rules.md`: the current tags model;\n  - CHANGELOG: `## [2.0.0] - unreleased`;\n  - `intent/llm/ARCHITECTURE.md`: the Rust architecture;\n  - the project-specific section of `CLAUDE.md`: pointers to these.\n\n**Criteria**: AC-00.1 to AC-00.8, the thread's own criteria, hold at the end of this WP.\n",
+      "body": "**Scope**\n\n- **Removals**: the fallback, `bin/pplr`, `lib/`, `setup.sh`, `.env.example`, `VERSION.md`, and any `src/` remnant. `templates/` stays as the embedding source.\n  - From WP11, kept until now because hv's live pplr runs the legacy code (D3): `bin/pplr_sync`, `src/pplr-contacts/workbook.py`, and the plan and applyplan modes in `swift/pplr-contacts/main.swift` (the file stays: it is also the Contacts sidecar's source). The setup_file engine build in `tests/pplr_sync.bats` goes with them.\n- **The no-Python check** joins the gate (AC-00.1).\n- **Live read-only parity** on rhadamanth (AC-00.5):\n  - check the legacy code out from history into a scratch worktree;\n  - run the read-only commands over the live People tree under both implementations;\n  - compare the outputs and record them here.\n  - Nothing writes to the live tree.\n- **Docs**:\n  - README: the commands, the brew install (ST0002), and a maintainer section for dev and opt;\n  - `usage-rules.md`: the current tags model;\n  - CHANGELOG: `## [2.0.0] - unreleased`;\n  - `intent/llm/ARCHITECTURE.md`: the Rust architecture;\n  - the project-specific section of `CLAUDE.md`: pointers to these.\n\n**Criteria**: AC-00.1 to AC-00.8, the thread's own criteria, hold at the end of this WP.\n\n",
       "preamble": ""
     },
     {
@@ -463,6 +463,16 @@
       ],
       "status": "green",
       "note": "sync_is_native_and_its_goldens_replay; red first (slot 01M6EM6ETPRBA5NTFK20RXXX2Q, only the NFD inetloc name differed), then green in a cold clean clone: cargo test 79 unit and 24 integration passed; bats 101/101 against Rust and legacy (slot 01M6EMBD3APESKVD5EC9RDE16C)"
+    },
+    {
+      "id": "AT-11.1",
+      "kind": "test",
+      "file": "tests/cli.rs",
+      "covers": [
+        "AC-11.1"
+      ],
+      "status": "red",
+      "note": "sync_plan_and_apply_plan_are_native_and_their_goldens_replay; to-write until it runs red"
     },
     {
       "id": "AT-12.1",

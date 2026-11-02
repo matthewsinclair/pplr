@@ -1,0 +1,15 @@
+{
+  "id": "01M6ENCF96RFA07DHCCVBFRHSN",
+  "ts": "2026-11-02T17:37:17.094Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "watchout",
+    "text": "WP11 work is uncommitted and unverified in the shared tree: src/plan.rs and src/workbook.rs (new); plan/apply-plan in src/sync.rs; plan and workbook mods in src/lib.rs; rust_xlsxwriter and calamine in Cargo.toml and Cargo.lock; AT-11.1, the warm-up removal and PPLR_TODAY=GOLDEN_NOW in tests/cli.rs; WP11 skips and uv guards in tests/pplr_sync.bats; shared strings in tests/golden/xlsx-cells. It builds only with dc's uncommitted Config::now in src/config.rs. Nobody else should edit these until cc commits WP11."
+  }
+}
