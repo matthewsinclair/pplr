@@ -87,6 +87,10 @@ pub fn check(config: &Config, fix: bool) -> Result<Vec<Section>> {
       rows: index_files(data, fix),
     },
     Section {
+      title: "Configuration Files",
+      rows: config_files(data),
+    },
+    Section {
       title: "Common Issues",
       rows: common_issues(data, fix)?,
     },
@@ -452,6 +456,21 @@ fn index_files(data: &Path, fix: bool) -> Vec<Row> {
   rows
 }
 
+/// The pplr configuration files under _pplr/ that are there, each read with
+/// the reader the commands use: one row each, naming any parse error.
+fn config_files(data: &Path) -> Vec<Row> {
+  ["_pplr/vocabulary.yaml", "_pplr/cadence.yaml"]
+    .into_iter()
+    .filter_map(|rel| {
+      let text = std::fs::read_to_string(data.join(rel)).ok()?;
+      Some(match crate::yaml::parse(&text) {
+        Ok(_) => row(Status::Pass, format!("{rel} parses")),
+        Err(e) => row(Status::Fail, format!("{rel} does not parse: {e}")),
+      })
+    })
+    .collect()
+}
+
 /// None when the file is absent; Err when it is there and is not JSON.
 fn read_json(path: &Path) -> Option<std::result::Result<Value, ()>> {
   let text = std::fs::read_to_string(path).ok()?;
@@ -724,5 +743,30 @@ mod tests {
       about_file(Path::new("/d/V/Van der Berg, Ann")),
       PathBuf::from("/d/V/Van der Berg, Ann/About/Ann Van der Berg (About).md")
     );
+  }
+
+  #[test]
+  fn each_present_config_file_is_parsed_and_a_bad_one_is_named() -> Result<()> {
+    let dir = std::env::temp_dir().join(format!("pplr-doctor-config-{}", std::process::id()));
+    std::fs::create_dir_all(dir.join("_pplr"))?;
+    std::fs::write(dir.join("_pplr/vocabulary.yaml"), "role:\n  cto: {}\n")?;
+    let only_vocab = config_files(&dir);
+    std::fs::write(dir.join("_pplr/cadence.yaml"), "roster: {contact: 180\n")?;
+    let both = config_files(&dir);
+    let _ = std::fs::remove_dir_all(&dir);
+    assert_eq!(
+      only_vocab,
+      [row(Status::Pass, "_pplr/vocabulary.yaml parses")]
+    );
+    assert_eq!(both.len(), 2);
+    assert_eq!(both[1].status, Status::Fail);
+    assert!(
+      both[1]
+        .text
+        .starts_with("_pplr/cadence.yaml does not parse: line 1"),
+      "{}",
+      both[1].text
+    );
+    Ok(())
   }
 }
