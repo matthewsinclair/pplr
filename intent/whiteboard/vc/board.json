@@ -62,6 +62,14 @@
       "text": "For hv: Intent's AGENTS.md generator writes 'swift build' and 'swift test' lines for any project declaring swift. pplr has no Package.swift (its sidecar is built with swiftc), but undeclaring swift would disarm the Swift critic, so the fix is Intent's, out of pplr's scope. dc noted the swiftc caveat in CLAUDE.md's project section (815210a).",
       "state": "live",
       "recorded_at": "2026-11-02T15:26:52.940Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 3,
+      "text": "For hv, about the live tool: dc's WP12 (de97d29) deleted four legacy scripts, which broke hv's live ~/.local/bin/pplr (a symlink to this checkout's bin/pplr) for doctor and the icon commands for a few minutes. Restored in a4401b7 and verified (version and help, with no People access). vc amended D3, rule 3, rule 9 and eight ACs (a7a2493): no bin/ or lib/ file is deleted before WP13, when the live link moves to Rust. One deliberate change to live behaviour, forced by the critic gate on the restore: legacy setpicsfordirs now splits 'Surname, First' at the comma, so multi-word names work, as in Rust; single-word names are unchanged.",
+      "state": "live",
+      "recorded_at": "2026-11-02T16:11:17.519Z"
     }
   ],
   "sent": [
