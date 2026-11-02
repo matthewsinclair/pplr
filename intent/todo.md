@@ -12,7 +12,7 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
   - [x] 01: Test safety, the parity seam and an honest runner
   - [-] 02: Rust scaffold under devbin, with the fallback
   - [x] 03: Golden capture from the legacy code
-  - [ ] 04: Core model and the read commands
+  - [-] 04: Core model and the read commands
   - [ ] 05: Indexes, new person, pictures and search
   - [ ] 06: Tags
   - [ ] 07: Contact cadence
@@ -20,7 +20,7 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
   - [-] 09: The Contacts store and the Swift I/O sidecar
   - [ ] 10: Sync: check, link, pull, photos and backup
   - [ ] 11: The sync plan and its workbook
-  - [ ] 12: Doctor and Finder icons
+  - [x] 12: Doctor and Finder icons
   - [ ] 13: Cutover
   - [ ] 14: pplr's own mail reader
 - [-] ST0002: Create a homebrew distro for the new Rust version of Pplr

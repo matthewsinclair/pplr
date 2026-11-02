@@ -54,26 +54,31 @@ load test_helper
     assert_contains "$output" "2"
 }
 
-@test "pplr version displays version from VERSION.md" {
-    # Read expected version from VERSION.md
-    expected_version=$(cat "$PPLR_ROOT/VERSION.md")
+# The version the implementation under test reports: the legacy dispatcher
+# prints VERSION.md, the Rust pplr the version in Cargo.toml (design D7).
+# The legacy branch goes with bin/ in ST0001 WP13.
+expected_version() {
+    if [ "$PPLR" = "$PPLR_ROOT/bin/pplr" ]; then
+        cat "$PPLR_ROOT/VERSION.md"
+    else
+        sed -n 's/^version = "\(.*\)"$/\1/p' "$PPLR_ROOT/Cargo.toml" | head -1
+    fi
+}
+
+@test "pplr version displays the implementation's version" {
     run "$PPLR" version
     [ "$status" -eq 0 ]
-    assert_contains "$output" "$expected_version"
+    [ "$output" = "$(expected_version)" ]
 }
 
 @test "pplr -v displays version" {
-    # Read expected version from VERSION.md
-    expected_version=$(cat "$PPLR_ROOT/VERSION.md")
     run "$PPLR" -v
     [ "$status" -eq 0 ]
-    assert_contains "$output" "$expected_version"
+    [ "$output" = "$(expected_version)" ]
 }
 
 @test "pplr --version displays version" {
-    # Read expected version from VERSION.md
-    expected_version=$(cat "$PPLR_ROOT/VERSION.md")
     run "$PPLR" --version
     [ "$status" -eq 0 ]
-    assert_contains "$output" "$expected_version"
+    [ "$output" = "$(expected_version)" ]
 }

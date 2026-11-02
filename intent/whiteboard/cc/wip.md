@@ -3,10 +3,10 @@ node: cc
 name: cc
 role: cc
 session_id: ae86b27f-47f4-447b-b2aa-713a050085b2
-heartbeat_at: 2026-11-02 15:09Z
+heartbeat_at: 2026-11-02 15:56Z
 status: active
-focus: "ST0001 WP03 capture landed (65d5a8a); replay test and WP04 wait on dc's WP02 scaffold"
-claims: []
+focus: "ST0001 WP04: core model (tree, about, normalise, marker) and the read commands"
+claims: [ST0001/04]
 ---
 
 # cc (cc)

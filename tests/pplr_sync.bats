@@ -305,7 +305,6 @@ setup_plan() {
 }
 
 @test "pplr resolve finds a person, a path in their folder, and a former name" {
-    needs_legacy_engine WP04
     make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
     mkdir -p "$PPLR_TEST_DATA/K/Kemp, Jon/Meetings/20260924 Intro"; touch "$PPLR_TEST_DATA/K/Kemp, Jon/Meetings/20260924 Intro/Summary.md"
     run "$PPLR" resolve "pplr://k/kemp-jon"
@@ -344,7 +343,6 @@ setup_plan() {
 }
 
 @test "pplr open --print names the file when no CMS answers" {
-    needs_legacy_engine WP04
     make_about Kemp Jon "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:')"
     PPLR_CMS_URL="" run "$PPLR" open --print "pplr://k/kemp-jon"
     [ "$status" -eq 0 ]

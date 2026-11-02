@@ -20,7 +20,14 @@ pub struct Config {
   pub contacts_json: Option<PathBuf>,
   /// PPLR_ICON_DIR: the Finder icons applyicons sets, over `_pplr/icons` and the embedded set.
   pub icon_dir: Option<PathBuf>,
+  /// PPLR_TODAY, which pins the day for every date-dependent command (design 3.5).
+  pub today: Option<jiff::civil::Date>,
+  /// PPLR_CMS_URL, default the local CMS; set empty, files only, never the CMS.
+  pub cms_url: String,
 }
+
+/// The CMS that `open` sends a person to when it answers.
+const DEFAULT_CMS: &str = "http://localhost:4360/people";
 
 impl Config {
   /// The configuration from the process environment.
@@ -52,6 +59,20 @@ impl Config {
     };
     let contacts_json = get("PPLR_CONTACTS_JSON");
     let icon_dir = get("PPLR_ICON_DIR");
+    let today = match get("PPLR_TODAY") {
+      Some(day) => Some(
+        day
+          .to_string_lossy()
+          .parse::<jiff::civil::Date>()
+          .map_err(|e| format!("PPLR_TODAY is not a date (YYYY-MM-DD): {e}"))?,
+      ),
+      None => None,
+    };
+    // `${PPLR_CMS_URL=default}`: empty is a value here, and means files only
+    let cms_url = lookup("PPLR_CMS_URL").map_or_else(
+      || DEFAULT_CMS.to_owned(),
+      |u| u.to_string_lossy().into_owned(),
+    );
     Ok(Self {
       data,
       data_legacy,
@@ -59,7 +80,14 @@ impl Config {
       cache_dir,
       contacts_json,
       icon_dir,
+      today,
+      cms_url,
     })
+  }
+
+  /// Today: PPLR_TODAY, or the local date.
+  pub fn today(&self) -> jiff::civil::Date {
+    self.today.unwrap_or_else(|| jiff::Zoned::now().date())
   }
 }
 
@@ -125,6 +153,39 @@ mod tests {
     assert_eq!(
       (set.backup_dir, set.cache_dir),
       (PathBuf::from("/b"), PathBuf::from("/c"))
+    );
+    Ok(())
+  }
+
+  #[test]
+  fn pplr_today_pins_the_day_and_a_bad_one_is_named() -> Result<()> {
+    let pinned = config(&[
+      ("HOME", "/h"),
+      ("PPLR_DATA", "/d"),
+      ("PPLR_TODAY", "2026-06-15"),
+    ])?;
+    assert_eq!(pinned.today(), jiff::civil::date(2026, 6, 15));
+    let bad = config(&[
+      ("HOME", "/h"),
+      ("PPLR_DATA", "/d"),
+      ("PPLR_TODAY", "15/06/2026"),
+    ])
+    .err()
+    .map(|e| e.to_string())
+    .unwrap_or_default();
+    assert!(bad.contains("PPLR_TODAY"), "{bad}");
+    Ok(())
+  }
+
+  #[test]
+  fn an_empty_cms_url_means_files_only_and_unset_means_the_local_cms() -> Result<()> {
+    assert_eq!(
+      config(&[("HOME", "/h"), ("PPLR_DATA", "/d")])?.cms_url,
+      DEFAULT_CMS
+    );
+    assert_eq!(
+      config(&[("HOME", "/h"), ("PPLR_DATA", "/d"), ("PPLR_CMS_URL", "")])?.cms_url,
+      ""
     );
     Ok(())
   }

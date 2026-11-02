@@ -1,3 +1,4 @@
+pub mod about;
 pub mod assets;
 pub mod cli;
 pub mod config;
@@ -5,9 +6,18 @@ pub mod contacts;
 pub mod doctor;
 pub mod fallback;
 pub mod fs;
+pub mod grep;
 pub mod icons;
+pub mod index;
 pub mod layout;
+pub mod marker;
+pub mod meetings;
+pub mod normalise;
+pub mod open;
+pub mod refresh;
 pub mod tools;
+pub mod tree;
 
 mod error;
+mod fold_table;
 pub use error::{Error, Result, clean};

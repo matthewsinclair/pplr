@@ -41,7 +41,7 @@
       "seq": 4,
       "title": "Core model and the read commands",
       "scope": "M",
-      "status": "not-started",
+      "status": "wip",
       "objective": "Build the core every command shares (the tree, person references, the About header, normalisation and markers), and port the commands that only read.",
       "body": "**Scope**\n\n- **Modules** `tree`, `about`, `normalise` and `marker` (design 3.1), as pure functions with unit tests taken from the Swift and bash behaviour:\n  - the walk rules;\n  - `PersonRef`, which accepts two arguments, `Surname, First`, `L/Surname, First` or a `pplr://` marker;\n  - the header fields as the engine reads them;\n  - case and diacritic folding matching Swift's on the fixtures, phones, Gmail keys and LinkedIn slugs;\n  - the marker path and URL, aliases, and `pplr://tag/<t>`.\n- **Native commands**: `resolve`, `count`, `about`, `cp`, `open`, `linkedin`, `edit`, `meetings`, `refresh`, `grep`, `help` and `version`.\n  - `open` percent-encodes without `python3`, and probes the CMS without `curl` if that stays simple.\n  - The version tests are re-pointed at `Cargo.toml`.\n- **Deletion**: rewire any legacy caller first (eg `pplr_open` calls `pplr cp`), then delete these commands' bash.\n- **Errors** go to stderr (D10).\n- **`edit`** honours `$VISUAL`, then `$EDITOR`, running the editor in the foreground, and refuses naming both when neither is set (D10).\n\n**Criteria**: AC-04.1.\n",
       "preamble": ""
@@ -113,7 +113,7 @@
       "seq": 12,
       "title": "Doctor and Finder icons",
       "scope": "S",
-      "status": "not-started",
+      "status": "done",
       "objective": "Rebuild `doctor` for the binary, and port the Finder icon commands.",
       "body": "**Scope**\n\n- **`doctor`**, in Cldr's pattern: a pure function returns the checks, and each row says what to fix. It checks:\n  - the data root and its letter folders, and `.index`;\n  - that `vocabulary.yaml` and `cadence.yaml` parse, and that the index files are valid;\n  - legacy `*/Index` folders, and people with no About;\n  - `PPLR_DIR` and `PPLR_DATA` disagreeing (D8), and legacy `~/Library` folders (D5);\n  - the external tools (`claude`, `fileicon`, `mail-recent`, `osascript`) and the sidecar.\n- **`doctor --fix`** creates the letter folders and `.index`, and reindexes. ST0002 adds the rows for the tree, the manifest and the shadow check.\n- **Tests**: the doctor bats tests that check bash internals are rewritten to check behaviour, or withdrawn with the reason recorded.\n- **Icons**: `applyicons`, `setpicfordir` and `setpicsfordirs`, through `fileicon`, with multi-word names fixed. Icons come from `PPLR_ICON_DIR`, else `_pplr/icons`, else the embedded set.\n\n**Criteria**: AC-12.1.\n",
       "preamble": ""
@@ -401,6 +401,34 @@
       ],
       "status": "green",
       "note": "every_golden_of_a_ported_command_replays: 54 cases captured (tests/golden); proved green over all 54 through the fallback from a clean checkout of deebdee, and red on a mutated copy naming both changed cases"
+    },
+    {
+      "id": "AT-04.1",
+      "kind": "test",
+      "file": "tests/cli.rs",
+      "covers": [
+        "AC-04.1"
+      ],
+      "status": "green",
+      "note": "the_read_commands_are_native_and_their_goldens_replay: red at 57de2ad (none native), green with WP04 (12 native; 8 golden cases replay); bats 101/101 against Rust and legacy"
+    },
+    {
+      "id": "AT-12.1",
+      "kind": "test",
+      "file": "tests/pplr_doctor.bats",
+      "covers": [
+        "AC-12.1"
+      ],
+      "status": "green"
+    },
+    {
+      "id": "AT-12.2",
+      "kind": "test",
+      "file": "tests/pplr_icons.bats",
+      "covers": [
+        "AC-12.1"
+      ],
+      "status": "green"
     }
   ],
   "attachments": [

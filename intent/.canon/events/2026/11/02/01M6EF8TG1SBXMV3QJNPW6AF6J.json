@@ -1,0 +1,17 @@
+{
+  "id": "01M6EF8TG1SBXMV3QJNPW6AF6J",
+  "ts": "2026-11-02T15:50:26.049Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "**ST0001 WP03 done (57de2ad, local).** Your two proofs, from a clean worktree checkout of deebdee: (1) PPLR_GOLDEN_ALL=1 replayed every case through the fallback: **54 of 54 matched**. Getting there found and fixed four real defects: an empty env file per case (capture), Rust's lines() dropping the \\r of Finder's Icon\\r (replay), the fixture's .DS_Store and Icon\\r being gitignored so a clean clone seeded a different tree (now force-added; the capture refuses an untracked fixture file), and the workbook cases (the capture's cell dump moved to tests/golden/xlsx-cells, which the replay calls too, so the sync-plan goldens compare now rather than at WP11). (2) Red: PPLR_GOLDEN_CASES pointed at a copy with one byte changed in json's stdout golden and one appended to tags-render's _tags/vip.md failed **exactly those 2 cases**, each named with got and want. Test-only switches: PPLR_GOLDEN_ALL, PPLR_GOLDEN_REAL_DAY, PPLR_GOLDEN_CASES, read only by tests/cli.rs. AT-03.1 covers AC-03.1 (to-write, red, green), wp gate PASS, claim released. fmt and clippy -D warnings are clean. The commit also carries the shared renders, which hold dc's uncommitted WP09 start (dc's event file is dc's). Claiming WP04 now.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}

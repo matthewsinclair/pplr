@@ -117,9 +117,11 @@ fn a_missing_data_directory_is_named_and_fails() -> Result<()> {
 #[test]
 fn the_fallback_runs_the_real_legacy_script() -> Result<()> {
   let sandbox = Sandbox::new()?;
-  let out = run(sandbox.pplr().arg("count"))?;
-  assert!(out.status.success(), "{}", text(&out.stderr));
-  assert_eq!(text(&out.stdout).trim(), "0");
+  // sync stays on the fallback until WP10; with no mode it prints its usage
+  assert!(pplr::cli::native("sync").is_none());
+  let out = run(sandbox.pplr().arg("sync"))?;
+  assert_eq!(out.status.code(), Some(1), "{}", text(&out.stderr));
+  assert!(text(&out.stdout).starts_with("Usage: pplr sync --check"));
   Ok(())
 }
 
@@ -156,8 +158,9 @@ fn the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status() -> Re
 #[test]
 fn a_person_marker_becomes_their_folder_except_for_commands_that_take_urls() -> Result<()> {
   let sandbox = Sandbox::new()?;
-  let about = sandbox.data().join("K/Kemp, Jon/About/Jon Kemp (About).md");
-  sandbox.legacy_script("resolve", &format!("echo '{}'", about.display()))?;
+  let about = sandbox.data().join("K/Kemp, Jon/About");
+  fs::create_dir_all(&about)?;
+  fs::write(about.join("Jon Kemp (About).md"), "# Jon Kemp (About)\n")?;
   sandbox.legacy_script("links", r#"for a in "$@"; do echo "$a"; done"#)?;
   let bin = sandbox.legacy_script("tag", r#"for a in "$@"; do echo "$a"; done"#)?;
 
@@ -181,7 +184,6 @@ fn a_person_marker_becomes_their_folder_except_for_commands_that_take_urls() -> 
 #[test]
 fn a_marker_that_does_not_resolve_stops_the_command() -> Result<()> {
   let sandbox = Sandbox::new()?;
-  sandbox.legacy_script("resolve", "echo 'no one is pplr://x/nobody' >&2; exit 1")?;
   let bin = sandbox.legacy_script("tag", "echo ran")?;
   let out = run(
     sandbox
@@ -191,19 +193,46 @@ fn a_marker_that_does_not_resolve_stops_the_command() -> Result<()> {
   )?;
   assert_eq!(out.status.code(), Some(1));
   assert_eq!(text(&out.stdout), "");
-  assert_eq!(text(&out.stderr), "no one is pplr://x/nobody\n");
+  assert_eq!(
+    text(&out.stderr),
+    "pplr: no one answers to pplr://x/nobody\n"
+  );
   Ok(())
 }
 
 #[test]
-fn version_flags_run_the_legacy_version_script() -> Result<()> {
+fn version_and_its_flags_print_the_version_in_cargo_toml() -> Result<()> {
   let sandbox = Sandbox::new()?;
-  let bin = sandbox.legacy_script("version", "echo v-from-legacy")?;
-  for flag in ["-v", "--version"] {
-    let out = run(sandbox.pplr().env("PPLR_BIN_DIR", &bin).arg(flag))?;
+  for args in [&["version"][..], &["-v"], &["--version"]] {
+    let out = run(sandbox.pplr().args(args))?;
     assert!(out.status.success());
-    assert_eq!(text(&out.stdout), "v-from-legacy\n");
+    assert_eq!(
+      text(&out.stdout),
+      format!("{}\n", env!("CARGO_PKG_VERSION"))
+    );
   }
+  Ok(())
+}
+
+#[test]
+fn help_lists_native_and_fallback_commands_and_details_is_the_readme() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let out = run(sandbox.pplr().arg("help"))?;
+  assert!(out.status.success());
+  let listing = text(&out.stdout);
+  for command in ["count", "meetings", "sync", "tags"] {
+    assert!(
+      listing
+        .lines()
+        .any(|l| l.starts_with(&format!("{command} "))),
+      "{command} is not listed"
+    );
+  }
+  let details = run(sandbox.pplr().args(["help", "--details"]))?;
+  assert_eq!(
+    text(&details.stdout),
+    fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))?
+  );
   Ok(())
 }
 
@@ -449,6 +478,12 @@ fn replay(case: &std::path::Path) -> Result<bool> {
   } else {
     Vec::new()
   };
+  // The capture's fake curl answered for the CMS; the port probes it itself
+  let _cms = if case_env.iter().any(|l| l == "PPLR_GOLDEN_CMS=up") {
+    Some(CmsStub::start()?)
+  } else {
+    None
+  };
 
   for (stem, args) in &argv {
     let mut command = Command::new(env!("CARGO_BIN_EXE_pplr"));
@@ -600,6 +635,44 @@ fn replay(case: &std::path::Path) -> Result<bool> {
   Ok(true)
 }
 
+/// Where the CMS-up scenarios put the CMS (tests/golden/scenarios.zsh).
+const GOLDEN_CMS: &str = "127.0.0.1:47360";
+
+/// A CMS that answers every request with 200, until dropped.
+struct CmsStub {
+  stop: std::sync::Arc<std::sync::atomic::AtomicBool>,
+}
+
+impl CmsStub {
+  fn start() -> Result<Self> {
+    use std::io::{Read, Write};
+    let listener = std::net::TcpListener::bind(GOLDEN_CMS)?;
+    listener.set_nonblocking(true)?;
+    let stop = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let running = stop.clone();
+    std::thread::spawn(move || {
+      while !running.load(Ordering::Relaxed) {
+        match listener.accept() {
+          Ok((mut stream, _)) => {
+            let _ = stream.set_nonblocking(false);
+            let mut request = [0_u8; 1024];
+            let _ = stream.read(&mut request);
+            let _ = stream.write_all(b"HTTP/1.0 200 OK\r\nContent-Length: 0\r\n\r\n");
+          }
+          Err(_) => std::thread::sleep(std::time::Duration::from_millis(5)),
+        }
+      }
+    });
+    Ok(Self { stop })
+  }
+}
+
+impl Drop for CmsStub {
+  fn drop(&mut self) {
+    self.stop.store(true, Ordering::Relaxed);
+  }
+}
+
 /// Ok when `got` is `want`; otherwise an error showing both.
 fn same<T: PartialEq + std::fmt::Debug>(got: T, want: T, what: &str) -> Result<()> {
   if got == want {
@@ -686,5 +759,40 @@ fn live_contacts_round_trip_through_the_sidecar_store() -> pplr::Result<()> {
     "live Contacts: {} cards, read through the store and round-tripped",
     cards.len()
   );
+  Ok(())
+}
+
+/// AT-04.1 (ST0001 AC-04.1): the twelve read commands run natively, and every
+/// golden made of them alone replays; the bats suite (tools/bats-rust) covers
+/// them against the binary too.
+#[test]
+fn the_read_commands_are_native_and_their_goldens_replay() -> Result<()> {
+  const WP04: [&str; 12] = [
+    "resolve", "count", "about", "cp", "open", "linkedin", "edit", "meetings", "refresh", "grep",
+    "help", "version",
+  ];
+  for name in WP04 {
+    assert!(pplr::cli::native(name).is_some(), "{name} is not native");
+  }
+  let cases = golden_dir().join("cases");
+  let mut replayed = Vec::new();
+  for case in fs::read_dir(&cases)? {
+    let case = case?.path();
+    if !case.is_dir() {
+      continue;
+    }
+    let mut commands = Vec::new();
+    for step in fs::read_dir(case.join("steps"))? {
+      let step = step?.path();
+      if step.extension().is_some_and(|x| x == "args") {
+        commands.push(lines_of(&step)?.first().cloned().unwrap_or_default());
+      }
+    }
+    if commands.iter().all(|c| WP04.contains(&c.as_str())) {
+      same(replay(&case)?, true, &format!("{} replays", case.display()))?;
+      replayed.push(case);
+    }
+  }
+  assert!(!replayed.is_empty(), "no golden is made of WP04's commands");
   Ok(())
 }

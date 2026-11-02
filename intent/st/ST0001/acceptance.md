@@ -41,9 +41,9 @@ title: Port Pplr from shell scripts to Rust
 
 - AC-03.1 Goldens exist for every writing and reporting command over the synthetic tree, captured from the legacy code, and a test in tests/cli.rs replays each against the Rust binary, skipping only commands still on the fallback. -- satisfied: yes (computed)
 
-### WP-04 -- Core model and the read commands (status: Not Started)
+### WP-04 -- Core model and the read commands (status: WIP)
 
-- AC-04.1 resolve, count, about, cp, open, linkedin, edit, meetings, refresh, grep, help and version run natively in Rust, and their goldens and bats tests pass. -- satisfied: no (computed)
+- AC-04.1 resolve, count, about, cp, open, linkedin, edit, meetings, refresh, grep, help and version run natively in Rust, and their goldens and bats tests pass. -- satisfied: yes (computed)
 
 ### WP-05 -- Indexes, new person, pictures and search (status: Not Started)
 
@@ -74,9 +74,9 @@ title: Port Pplr from shell scripts to Rust
 
 - AC-11.1 sync --plan and --apply-plan run in Rust. The workbook's four sheets, review columns, Decision list and highlighting match the legacy workbook by content. -- satisfied: no (computed)
 
-### WP-12 -- Doctor and Finder icons (status: Not Started)
+### WP-12 -- Doctor and Finder icons (status: Done)
 
-- AC-12.1 doctor, applyicons, setpicfordir and setpicsfordirs run natively in Rust. doctor reports one row per check, each saying what to fix, and its bats tests test behaviour, not bash internals. -- satisfied: no (computed)
+- AC-12.1 doctor, applyicons, setpicfordir and setpicsfordirs run natively in Rust. doctor reports one row per check, each saying what to fix, and its bats tests test behaviour, not bash internals. -- satisfied: yes (computed)
 
 ### WP-14 -- pplr's own mail reader (status: Not Started)
 
@@ -103,9 +103,9 @@ _(no tests in this group)_
 
 - AT-03.1 `tests/cli.rs` -- covers AC-03.1 -- status: green -- every_golden_of_a_ported_command_replays: 54 cases captured (tests/golden); proved green over all 54 through the fallback from a clean checkout of deebdee, and red on a mutated copy naming both changed cases
 
-### WP-04 -- Core model and the read commands (status: Not Started)
+### WP-04 -- Core model and the read commands (status: WIP)
 
-_(no tests in this group)_
+- AT-04.1 `tests/cli.rs` -- covers AC-04.1 -- status: green -- the_read_commands_are_native_and_their_goldens_replay: red at 57de2ad (none native), green with WP04 (12 native; 8 golden cases replay); bats 101/101 against Rust and legacy
 
 ### WP-05 -- Indexes, new person, pictures and search (status: Not Started)
 
@@ -135,9 +135,10 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-12 -- Doctor and Finder icons (status: Not Started)
+### WP-12 -- Doctor and Finder icons (status: Done)
 
-_(no tests in this group)_
+- AT-12.1 `tests/pplr_doctor.bats` -- covers AC-12.1 -- status: green
+- AT-12.2 `tests/pplr_icons.bats` -- covers AC-12.1 -- status: green
 
 ### WP-14 -- pplr's own mail reader (status: Not Started)
 

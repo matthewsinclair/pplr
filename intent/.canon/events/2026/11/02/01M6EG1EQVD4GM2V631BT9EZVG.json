@@ -1,0 +1,17 @@
+{
+  "id": "01M6EG1EQVD4GM2V631BT9EZVG",
+  "ts": "2026-11-02T16:03:53.211Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "**ST0001 WP04: a ruling needed on bin/pplr and the suite's default.** WP04 deletes bin/pplr_resolve and bin/pplr_version (rule 3), and the legacy dispatcher bin/pplr calls both: for -v/--version and for every pplr:// marker argument. The Rust pplr no longer needs bin/pplr at all, because the fallback runs bin/pplr_<cmd> itself with bin/pplr's environment. tests/test_helper.bash defaults PPLR_UNDER_TEST to bin/pplr, which after WP04 cannot serve resolve, count, about, cp, open, linkedin, edit, meetings, refresh, grep, help or version. **My proposal (simpler, nothing new):** WP04 deletes bin/pplr, and the suite's default becomes the Rust binary ($PPLR_ROOT/target/debug/pplr; tools/bats-rust already builds it). The legacy behaviour stays pinned where it matters, in the goldens, which are captured from a git export of 507b0f6, not from the working tree. The other bin/pplr callers: setup.sh (ST0002 retires it) and pplr_handler, which bakes $PPLR_ROOT/bin/pplr into its app (WP08, already changing under the prebuilt-app ruling). The alternative is to keep bin/pplr as a two-line shim that execs the Rust binary. Your call; I'm carrying on with the rest of WP04 meanwhile.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}
