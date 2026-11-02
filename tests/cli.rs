@@ -676,9 +676,15 @@ fn live_contacts_round_trip_through_the_sidecar_store() -> pplr::Result<()> {
   assert!(dump.status.success(), "the sidecar's dump failed");
   let text = text(&dump.stdout);
   let cards: Vec<Card> = serde_json::from_str(&text)?;
-  assert_eq!(to_swift_json(&serde_json::to_value(&cards)?), text.trim_end_matches('\n'));
+  assert_eq!(
+    to_swift_json(&serde_json::to_value(&cards)?),
+    text.trim_end_matches('\n')
+  );
   let through_store = SidecarStore::new(sidecar)?.cards()?;
   assert_eq!(through_store.len(), cards.len());
-  println!("live Contacts: {} cards, read through the store and round-tripped", cards.len());
+  println!(
+    "live Contacts: {} cards, read through the store and round-tripped",
+    cards.len()
+  );
   Ok(())
 }

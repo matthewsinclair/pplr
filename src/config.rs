@@ -18,6 +18,8 @@ pub struct Config {
   pub cache_dir: PathBuf,
   /// PPLR_CONTACTS_JSON: a Contacts dump file standing in for the live store.
   pub contacts_json: Option<PathBuf>,
+  /// PPLR_ICON_DIR: the Finder icons applyicons sets, over `_pplr/icons` and the embedded set.
+  pub icon_dir: Option<PathBuf>,
 }
 
 impl Config {
@@ -49,12 +51,14 @@ impl Config {
       None => xdg("XDG_CACHE_HOME", ".cache")?.join("pplr"),
     };
     let contacts_json = get("PPLR_CONTACTS_JSON");
+    let icon_dir = get("PPLR_ICON_DIR");
     Ok(Self {
       data,
       data_legacy,
       backup_dir,
       cache_dir,
       contacts_json,
+      icon_dir,
     })
   }
 }

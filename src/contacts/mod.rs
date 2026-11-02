@@ -13,7 +13,7 @@ pub use sidecar::{AccessDenied, SidecarStore};
 
 use crate::Result;
 use crate::config::Config;
-use crate::tree::Tree;
+use crate::layout::Layout;
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
@@ -104,7 +104,7 @@ pub trait Store {
 
 /// The store this run reads: the JSON store when PPLR_CONTACTS_JSON names one,
 /// else the live store, which needs macOS and the sidecar beside the binary.
-pub fn open(config: &Config, tree: &Tree) -> Result<Box<dyn Store>> {
+pub fn open(config: &Config, layout: &Layout) -> Result<Box<dyn Store>> {
   if let Some(path) = &config.contacts_json {
     return Ok(Box::new(JsonStore::open(path)?));
   }
@@ -114,7 +114,7 @@ pub fn open(config: &Config, tree: &Tree) -> Result<Box<dyn Store>> {
         .into(),
     );
   }
-  Ok(Box::new(SidecarStore::new(tree.sidecar())?))
+  Ok(Box::new(SidecarStore::new(layout.sidecar())?))
 }
 
 /// A LinkedIn slug as the URL the engine writes.

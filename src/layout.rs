@@ -8,14 +8,14 @@ use std::path::{Path, PathBuf};
 const SIDECAR: &str = "pplr-contacts";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Tree {
+pub struct Layout {
   /// The directory holding `pplr`: `<root>/bin`, or `target/<profile>` in dev.
   pub bin_dir: PathBuf,
   /// The tree's root: the parent of `bin/`, or the checkout in dev.
   pub root: PathBuf,
 }
 
-impl Tree {
+impl Layout {
   /// The tree of the running binary, from its resolved path.
   pub fn running() -> Result<Self> {
     let exe = std::env::current_exe().map_err(|e| format!("cannot find the running pplr: {e}"))?;
@@ -51,13 +51,13 @@ impl Tree {
 mod tests {
   use super::*;
 
-  fn tree(exe: &str) -> Option<Tree> {
-    Tree::from_exe(Path::new(exe))
+  fn layout(exe: &str) -> Option<Layout> {
+    Layout::from_exe(Path::new(exe))
   }
 
   #[test]
   fn an_installed_tree_is_the_parent_of_bin() {
-    let brew = tree("/opt/homebrew/opt/pplr/libexec/bin/pplr");
+    let brew = layout("/opt/homebrew/opt/pplr/libexec/bin/pplr");
     assert_eq!(
       brew.as_ref().map(|t| t.root.as_path()),
       Some(Path::new("/opt/homebrew/opt/pplr/libexec"))
@@ -72,7 +72,7 @@ mod tests {
 
   #[test]
   fn a_dev_build_belongs_to_the_checkout_above_target() {
-    let dev = tree("/src/Pplr/target/debug/pplr");
+    let dev = layout("/src/Pplr/target/debug/pplr");
     assert_eq!(
       dev.as_ref().map(|t| t.root.as_path()),
       Some(Path::new("/src/Pplr"))
@@ -85,8 +85,8 @@ mod tests {
 
   #[test]
   fn a_loose_binary_is_its_own_tree() {
-    let loose = tree("/tmp/x/pplr");
+    let loose = layout("/tmp/x/pplr");
     assert_eq!(loose.map(|t| t.root), Some(PathBuf::from("/tmp/x")));
-    assert_eq!(tree("/"), None);
+    assert_eq!(layout("/"), None);
   }
 }

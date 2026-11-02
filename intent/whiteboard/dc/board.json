@@ -10,7 +10,8 @@
     "focus": "holding for vc's instructions on ST0001 and ST0002 (hv, 2026-11-02)",
     "claims": [
       "ST0001/02",
-      "ST0001/09"
+      "ST0001/09",
+      "ST0001/12"
     ],
     "recorded_at": "2026-11-02T07:20:46.074Z",
     "migrated_at": "2026-11-02T07:20:46.074Z"

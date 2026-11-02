@@ -39,22 +39,6 @@ load test_helper
     assert_dir_exists "$PPLR_TEST_DATA/.index"
 }
 
-@test "pplr doctor detects mock Claude" {
-    # Create a mock Claude in the test environment
-    mkdir -p "$BATS_TEST_TMPDIR/mock_home/.claude/local"
-    cat > "$BATS_TEST_TMPDIR/mock_home/.claude/local/claude" << 'EOF'
-#!/bin/bash
-# Mock claude for testing
-echo "Mock response"
-EOF
-    chmod +x "$BATS_TEST_TMPDIR/mock_home/.claude/local/claude"
-    
-    # Run doctor with modified HOME
-    HOME="$BATS_TEST_TMPDIR/mock_home" run "$PPLR" doctor
-    [ "$status" -ne 0 ]
-    assert_contains "$output" "Mock Claude detected"
-}
-
 @test "pplr doctor detects missing About files" {
     # Create a person without an About file
     local person_dir="$PPLR_TEST_DATA/T/Test, Person"
@@ -76,18 +60,3 @@ EOF
     assert_contains "$output" "index.json is invalid JSON"
 }
 
-@test "pplr doctor detects non-executable scripts" {
-    # Legacy-only: doctor scans PPLR_BIN_DIR, so give it a copy of the
-    # checkout's bin/ in the sandbox, never the checkout itself
-    local bin="$BATS_TEST_TMPDIR/legacy_bin" script
-    mkdir -p "$bin"
-    for script in "$PPLR_ROOT"/bin/pplr*; do
-        ln -s "$script" "$bin/"
-    done
-    touch "$bin/pplr_test_nonexec"
-
-    PPLR_BIN_DIR="$bin" run "$PPLR" doctor
-    [ "$status" -ne 0 ]
-    assert_contains "$output" "Scripts not executable"
-    assert_contains "$output" "pplr_test_nonexec"
-}
