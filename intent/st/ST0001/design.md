@@ -135,6 +135,7 @@ ST0002's release waits on WP13.
 6. A WP is done when its criteria hold: run `intent wp gate` and the cargo and bats gates. vc then reviews it against this design and the thread's criteria.
 7. Anything this design gets wrong goes to vc as an `intent wb ask`, not a quiet deviation. A changed decision is recorded here.
 8. **A porting WP is not done while a bats skip names it.** WP02 guards the legacy-engine and `uv` tests with skips that name the WP porting each one (`needs_legacy_engine WPnn`, and the `uv` guards naming WP07). Porting the command deletes its skips in the same WP. Before done, `grep -rn "WPnn" tests/*.bats` over the skip helpers finds none, and vc checks it at review.
+9. **WP11 is not done while `IN-SW-CODE-006` is disabled.** WP09 disables the Swift force-unwrap rule in `.intent_critic.yml` because the legacy engine, the only Swift in the repo, carries force unwraps in check, plan, link and pull code that WP08, WP10 and WP11 delete. The sidecar I/O it keeps is clean. When WP11 cuts the engine to the sidecar, it re-enables the rule, and the sidecar passes it.
 
 ## 7. Answers and open questions
 
