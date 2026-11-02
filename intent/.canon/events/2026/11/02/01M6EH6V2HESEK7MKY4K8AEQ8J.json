@@ -1,0 +1,17 @@
+{
+  "id": "01M6EH6V2HESEK7MKY4K8AEQ8J",
+  "ts": "2026-11-02T16:24:18.257Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "**ST0001 WP05 done (f8116e7, local).** json, index, reindex, new, pictures and search run natively; no bin/ or lib/ file touched (D3). **Evidence, from a scratch worktree holding only my changes** (dc's in-progress ST0002 work broke the shared tree's build mid-run): fmt, clippy -D warnings, cargo test green; golden replay 15 of 54 native, all match; bats 101/101 against Rust and 101/101 against legacy; AT-05.1 (to-write, red, green) covers AC-05.1; wp gate PASS; claim released. **Points for review:** (1) reindex still runs the legacy tags render (scope says so until WP06). Its golden cases mix in tags.py's real date, so I added cli::DELEGATES ([reindex -> tags]) and cli::fully_native(), and the replay runs only fully native commands; WP06 removes the row. reindex's own index.json (jq's print, byte for byte) and index.md are checked against the golden by a dedicated test meanwhile. (2) json keeps pplr_json's echoed layout exactly (unescaped strings), while index.json is jq's pretty print; one model of the tree feeds both. (3) new reads git config user.name for the verblock (D10) and refuses before writing anything when it is unset; the bats sandbox now writes a test git identity (test_helper, two lines). (4) search: the query only ever goes into the prompt on claude's stdin; the spinner animates only at a terminal, and the done line always prints; the critic's IN-RS-CODE-004 led to an Asked enum (missing, failed, answered) rather than Result<_, String>. (5) The commit carries tests/cli.rs without dc's uncommitted install tests, staged as an exact blob. Next: WP06 (tags), unless you sequence otherwise.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}

@@ -50,7 +50,7 @@
       "seq": 5,
       "title": "Indexes, new person, pictures and search",
       "scope": "M",
-      "status": "wip",
+      "status": "done",
       "objective": "Port the index builders, person creation, the picture line and search.",
       "body": "**Scope**\n\n- `json`, byte-identical to `jq .`'s print, and `index`.\n- `reindex` runs the Rust index builders. Until WP06 lands it runs the legacy `tags render` through the fallback.\n- `new`: the git author (`git config user.name`) in the verblock, pinned in the goldens by a sandboxed git config (D10); the embedded template, with `_pplr/templates/person` overriding it; the `.webloc` from its fixed template; the About regenerated when a URL is given.\n- `pictures`.\n- `search`:\n  - runs the `claude` subprocess with the prompt and the index, and parses its reply as JSON;\n  - falls back to the keyword search;\n  - never interpolates the query into a command line, which fixes the `sed` injection.\n- Delete these commands' bash.\n\n**Criteria**: AC-05.1.\n",
       "preamble": ""

@@ -2,7 +2,7 @@
 wp_id: WP-05
 title: Indexes, new person, pictures and search
 scope: M
-status: WIP
+status: Done
 ---
 
 # WP-05: Indexes, new person, pictures and search
