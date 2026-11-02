@@ -97,7 +97,7 @@
       "seq": 10,
       "title": "Sync: check, link, pull, photos and backup",
       "scope": "L",
-      "status": "wip",
+      "status": "done",
       "objective": "Port the matching, linking, pulling, photo and backup modes of `pplr sync` to Rust, over the store interface.",
       "body": "**Scope**\n\n- **`check`**: the pplr URL, email, LinkedIn and phone tiers, then the name alone; ambiguity; group orphans; the text report and `--json`.\n- **`link`**: the plan and the dry run; `--apply` with a backup first; `--name`, `--all-names` and `--limit`; stop after three failures; write the `.inetloc`.\n- **`pull`**: `--name`, `--skip` and `--limit`; the doubtful-UK rule; byte-identical About edits; a copy of each About first.\n- **`photos`** and **`backup`**.\n- **Exit codes** match the engine's (recon section 6).\n- Remove these modes from the sidecar's source.\n\n**Criteria**: AC-10.1.\n",
       "preamble": ""
@@ -453,6 +453,16 @@
       ],
       "status": "green",
       "note": "first measure, in the shared tree, was red (replay rc 101) from cc's uncommitted WP10 work, not WP08's; re-measured 2026-11-02 in a clean clone at 0013d4c with its own target/ (slot 01M6EKXYE10RJVNRTE8Q660SV5): cli replay exit 0, handler stable-path test exit 0, bats rename tests ok (two filtered runs exit 0)"
+    },
+    {
+      "id": "AT-10.1",
+      "kind": "test",
+      "file": "tests/cli.rs",
+      "covers": [
+        "AC-10.1"
+      ],
+      "status": "green",
+      "note": "sync_is_native_and_its_goldens_replay; red first (slot 01M6EM6ETPRBA5NTFK20RXXX2Q, only the NFD inetloc name differed), then green in a cold clean clone: cargo test 79 unit and 24 integration passed; bats 101/101 against Rust and legacy (slot 01M6EMBD3APESKVD5EC9RDE16C)"
     },
     {
       "id": "AT-12.1",

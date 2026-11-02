@@ -5,7 +5,7 @@ use crate::Result;
 use crate::config::Config;
 use crate::{
   contact, doctor, fallback, grep, handler, icons, index, install, links, marker, meetings, new,
-  open, pictures, refresh, rename, search, tags,
+  open, pictures, refresh, rename, search, sync, tags,
 };
 use std::io::{IsTerminal, Write};
 use std::process::{Command as Process, ExitCode, Stdio};
@@ -150,6 +150,11 @@ pub const COMMANDS: &[Command] = &[
     name: "setpicsfordirs",
     usage: "setpicsfordirs                 Everyone's picture as their folder's icon",
     run: icons::setpicsfordirs,
+  },
+  Command {
+    name: "sync",
+    usage: "Compare pplr with Apple Contacts, and link matched cards to pplr\n--check          report linked, matched, missing and differing people\n--link           mark matched cards as pplr's (a dry run without --apply)\n--plan           write a review workbook: pplr, Contacts, and a proposed merge\n--apply-plan FILE  write the reviewed plan workbook to Contacts (a dry run without --apply)\n--photos         give linked cards with no photo their pplr picture (a dry run without --apply)\n--pull           copy into pplr what linked cards know and pplr lacks (a dry run without --apply)\n--backup         save every Contacts card to a dated .vcf in $PPLR_BACKUP_DIR",
+    run: sync::run,
   },
   Command {
     name: "tag",

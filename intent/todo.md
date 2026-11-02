@@ -18,7 +18,7 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
   - [x] 07: Contact cadence
   - [-] 08: Rename, links and the pplr:// handler
   - [-] 09: The Contacts store and the Swift I/O sidecar
-  - [-] 10: Sync: check, link, pull, photos and backup
+  - [x] 10: Sync: check, link, pull, photos and backup
   - [ ] 11: The sync plan and its workbook
   - [x] 12: Doctor and Finder icons
   - [ ] 13: Cutover

@@ -158,7 +158,7 @@ fn pplr_url(url: &str) -> LabelledValue {
 }
 
 /// The engine's backup stamp: local time, to the second.
-fn stamp() -> String {
+pub fn stamp() -> String {
   jiff::Zoned::now().strftime("%Y%m%d-%H%M%S").to_string()
 }
 

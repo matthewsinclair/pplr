@@ -1,7 +1,7 @@
 //! The normalisation rules the legacy engine compared people and cards by
 //! (ST0001 recon section 6), as pure functions.
 
-use crate::fold_table::FOLD;
+use crate::fold_table::{DECOMPOSE, FOLD};
 
 /// Case and diacritic folding as Foundation does it
 /// (`folding(options: [.caseInsensitive, .diacriticInsensitive])`), then
@@ -120,6 +120,20 @@ pub fn percent_decode(s: &str) -> Option<String> {
   String::from_utf8(out).ok()
 }
 
+/// Canonical decomposition of Latin letters as Foundation gives it, the form
+/// the legacy engine's file names took on disk: "Zsófia" becomes
+/// "Zso\u{301}fia". Anything outside the table passes through unchanged.
+pub fn decompose(s: &str) -> String {
+  let mut out = String::with_capacity(s.len());
+  for c in s.chars() {
+    match DECOMPOSE.binary_search_by_key(&c, |&(from, _)| from) {
+      Ok(at) => out.push_str(DECOMPOSE[at].1),
+      Err(_) => out.push(c),
+    }
+  }
+  out
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;
@@ -131,6 +145,13 @@ mod tests {
     assert_eq!(fold("Straße"), "strasse");
     assert_eq!(fold("Ødegård"), "ødegard");
     assert_eq!(fold("Łukasz"), "łukasz");
+  }
+
+  #[test]
+  fn decompose_splits_accents_as_foundation_does() {
+    assert_eq!(decompose("Zsófia Varga"), "Zso\u{301}fia Varga");
+    assert_eq!(decompose("\u{1EA4}"), "A\u{302}\u{301}");
+    assert_eq!(decompose("Ødegård"), "Ødega\u{30A}rd");
   }
 
   #[test]

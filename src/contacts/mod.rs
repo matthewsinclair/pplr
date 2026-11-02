@@ -8,7 +8,7 @@ mod json;
 mod scripts;
 mod sidecar;
 
-pub use json::{JsonStore, to_swift_json};
+pub use json::{JsonStore, stamp, to_swift_json};
 pub use sidecar::{AccessDenied, SidecarStore};
 
 use crate::Result;

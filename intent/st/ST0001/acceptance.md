@@ -66,9 +66,9 @@ title: Port Pplr from shell scripts to Rust
 - AC-09.1 Sync reaches Contacts only through the store interface. The JSON store reads and writes the dump format, and the Swift sidecar does only dump, backup and group, built ahead of time and never at run time. -- satisfied: no (computed)
 - AC-09.2 (non-test) On rhadamanth, the sidecar reads the live Contacts store, and the Rust `pplr sync --check --json` matches the legacy engine's report (read-only). -- satisfied: no
 
-### WP-10 -- Sync: check, link, pull, photos and backup (status: WIP)
+### WP-10 -- Sync: check, link, pull, photos and backup (status: Done)
 
-- AC-10.1 sync --check, --link, --pull, --photos and --backup run in Rust against the JSON store, and their goldens and bats tests pass. -- satisfied: no (computed)
+- AC-10.1 sync --check, --link, --pull, --photos and --backup run in Rust against the JSON store, and their goldens and bats tests pass. -- satisfied: yes (computed)
 
 ### WP-11 -- The sync plan and its workbook (status: Not Started)
 
@@ -127,9 +127,9 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-10 -- Sync: check, link, pull, photos and backup (status: WIP)
+### WP-10 -- Sync: check, link, pull, photos and backup (status: Done)
 
-_(no tests in this group)_
+- AT-10.1 `tests/cli.rs` -- covers AC-10.1 -- status: green -- sync_is_native_and_its_goldens_replay; red first (slot 01M6EM6ETPRBA5NTFK20RXXX2Q, only the NFD inetloc name differed), then green in a cold clean clone: cargo test 79 unit and 24 integration passed; bats 101/101 against Rust and legacy (slot 01M6EMBD3APESKVD5EC9RDE16C)
 
 ### WP-11 -- The sync plan and its workbook (status: Not Started)
 

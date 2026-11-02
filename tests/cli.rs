@@ -117,11 +117,16 @@ fn a_missing_data_directory_is_named_and_fails() -> Result<()> {
 #[test]
 fn the_fallback_runs_the_real_legacy_script() -> Result<()> {
   let sandbox = Sandbox::new()?;
-  // sync stays on the fallback until WP10; with no mode it prints its usage
-  assert!(pplr::cli::native("sync").is_none());
-  let out = run(sandbox.pplr().arg("sync"))?;
+  // email stays on the fallback until WP14; an unknown mode prints its usage
+  assert!(pplr::cli::native("email").is_none());
+  let out = run(
+    sandbox
+      .pplr()
+      .env("PPLR_MAIL_RECENT", "/usr/bin/true")
+      .args(["email", "nonsense"]),
+  )?;
   assert_eq!(out.status.code(), Some(1), "{}", text(&out.stderr));
-  assert!(text(&out.stdout).starts_with("Usage: pplr sync --check"));
+  assert!(text(&out.stdout).starts_with("Usage: pplr email "));
   Ok(())
 }
 
@@ -163,14 +168,14 @@ fn a_person_marker_becomes_their_folder_for_a_fallback_command() -> Result<()> {
   let about = sandbox.data().join("K/Kemp, Jon/About");
   fs::create_dir_all(&about)?;
   fs::write(about.join("Jon Kemp (About).md"), "# Jon Kemp (About)\n")?;
-  let bin = sandbox.legacy_script("sync", r#"for a in "$@"; do echo "$a"; done"#)?;
+  let bin = sandbox.legacy_script("email", r#"for a in "$@"; do echo "$a"; done"#)?;
 
-  let sync = run(sandbox.pplr().env("PPLR_BIN_DIR", &bin).args([
-    "sync",
+  let email = run(sandbox.pplr().env("PPLR_BIN_DIR", &bin).args([
+    "email",
     "pplr://k/kemp-jon",
     "pplr://k/kemp-jon/About",
   ]))?;
-  assert_eq!(text(&sync.stdout), "Kemp, Jon\npplr://k/kemp-jon/About\n");
+  assert_eq!(text(&email.stdout), "Kemp, Jon\npplr://k/kemp-jon/About\n");
   Ok(())
 }
 
@@ -253,6 +258,31 @@ const GOLDEN_INPUTS: [&str; 3] = ["home", "mail", "inputs"];
 
 fn golden_dir() -> PathBuf {
   PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/golden")
+}
+
+/// Builds the legacy Swift engine once, before a replay can reach it through
+/// the fallback: its first build says so on stderr, which no golden carries.
+fn warm_legacy_engine() -> Result<()> {
+  static BUILT: std::sync::OnceLock<std::result::Result<(), String>> = std::sync::OnceLock::new();
+  BUILT
+    .get_or_init(|| {
+      let out = Command::new("bash")
+        .args(["-c", "source lib/engine.sh && build_engine"])
+        .env("PPLR_ROOT", env!("CARGO_MANIFEST_DIR"))
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .output()
+        .map_err(|e| e.to_string())?;
+      if out.status.success() {
+        Ok(())
+      } else {
+        Err(format!(
+          "the legacy engine did not build: {}",
+          text(&out.stderr)
+        ))
+      }
+    })
+    .clone()
+    .map_err(Into::into)
 }
 
 /// A sandbox root as long as the capture's, at a real path (no symlink in it).
@@ -439,6 +469,7 @@ fn replay(case: &std::path::Path) -> Result<bool> {
     }
     argv.push((step.with_extension(""), args));
   }
+  warm_legacy_engine()?;
 
   let golden = golden_dir();
   let fixture = golden.join("fixture");
@@ -1187,6 +1218,43 @@ fn contact_is_native_and_its_goldens_replay() -> Result<()> {
     }
   }
   assert!(!replayed.is_empty(), "no golden of contact or tag replayed");
+  Ok(())
+}
+
+/// AT-10.1 (ST0001 AC-10.1): sync runs natively, its --check, --link, --pull,
+/// --photos and --backup against the JSON store (--plan and --apply-plan stay
+/// on the legacy code until WP11), and every golden of sync replays.
+#[test]
+fn sync_is_native_and_its_goldens_replay() -> Result<()> {
+  const WP10: [&str; 5] = ["--check", "--link", "--pull", "--photos", "--backup"];
+  assert!(pplr::cli::native("sync").is_some(), "sync is not native");
+  let mut modes = Vec::new();
+  for case in fs::read_dir(golden_dir().join("cases"))? {
+    let case = case?.path();
+    if !case.is_dir() {
+      continue;
+    }
+    let mut syncs = Vec::new();
+    for step in fs::read_dir(case.join("steps"))? {
+      let step = step?.path();
+      if step.extension().is_some_and(|x| x == "args") {
+        let args = lines_of(&step)?;
+        if args.first().is_some_and(|c| c == "sync") {
+          syncs.extend(args.into_iter().skip(1));
+        }
+      }
+    }
+    if !syncs.is_empty() {
+      same(replay(&case)?, true, &format!("{} replays", case.display()))?;
+      modes.extend(syncs);
+    }
+  }
+  for mode in WP10 {
+    assert!(
+      modes.iter().any(|m| m == mode),
+      "no golden of sync {mode} replayed"
+    );
+  }
   Ok(())
 }
 

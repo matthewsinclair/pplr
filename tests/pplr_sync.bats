@@ -2,6 +2,15 @@
 
 load test_helper
 
+# The legacy Swift engine builds on first use and says so on stderr, which a
+# test's run would mix into the output jq reads; build it once up front.
+setup_file() {
+    [ "$(uname)" = Darwin ] || return 0
+    # shellcheck source=../lib/engine.sh
+    source "$PPLR_ROOT/lib/engine.sh"
+    build_engine
+}
+
 # A person with the real About header format
 make_about() {
     local surname="$1" firstname="$2" body="$3"
@@ -38,7 +47,6 @@ EOF
 }
 
 @test "pplr sync --check reports each category" {
-    needs_legacy_engine WP10
     setup_contacts
     run "$PPLR" sync --check
     [ "$status" -eq 0 ]
@@ -50,7 +58,6 @@ EOF
 }
 
 @test "pplr sync --check normalises phones and LinkedIn before comparing" {
-    needs_legacy_engine WP10
     setup_contacts
     run "$PPLR" sync --check --json
     [ "$status" -eq 0 ]
@@ -59,7 +66,6 @@ EOF
 }
 
 @test "pplr sync --check shows differing fields for a linked person" {
-    needs_legacy_engine WP10
     setup_contacts
     run "$PPLR" sync --check --json
     [ "$status" -eq 0 ]
@@ -68,7 +74,6 @@ EOF
 }
 
 @test "pplr sync --check --verbose lists people only in pplr" {
-    needs_legacy_engine WP10
     setup_contacts
     run "$PPLR" sync --check --verbose
     [ "$status" -eq 0 ]
@@ -76,7 +81,6 @@ EOF
 }
 
 @test "pplr sync --link is a dry run by default" {
-    needs_legacy_engine WP10
     setup_contacts
     before=$(cat "$PPLR_CONTACTS_JSON")
     run "$PPLR" sync --link
@@ -87,7 +91,6 @@ EOF
 }
 
 @test "pplr sync --link --apply adds the marker and group, and backs up first" {
-    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     run "$PPLR" sync --link --apply
@@ -102,7 +105,6 @@ EOF
 }
 
 @test "pplr sync --link --name links a confirmed name-only match" {
-    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     run "$PPLR" sync --link --apply --name "Hopper, Grace"
@@ -112,7 +114,6 @@ EOF
 }
 
 @test "pplr sync --link --apply twice changes nothing the second time" {
-    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     "$PPLR" sync --link --apply
@@ -124,7 +125,6 @@ EOF
 }
 
 @test "pplr sync --link --apply writes a Contacts .inetloc in About" {
-    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     run "$PPLR" sync --link --apply
@@ -135,7 +135,6 @@ EOF
 }
 
 @test "pplr sync --link --apply --limit 1 writes one and reports the rest as still to link" {
-    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     run "$PPLR" sync --link --apply --limit 1
@@ -145,7 +144,6 @@ EOF
 }
 
 @test "pplr sync --link --apply replaces a pplr URL in the old form, rather than adding one" {
-    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     run "$PPLR" sync --link --apply
@@ -155,7 +153,6 @@ EOF
 }
 
 @test "pplr sync --link groups iCloud cards only, and never writes a card with no account" {
-    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     jq '(.[] | select(.id == "c1")).account = "other" | (.[] | select(.id == "c3")).account = "none"' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json"
@@ -272,7 +269,6 @@ setup_plan() {
 }
 
 @test "pplr sync finds a renamed person by their old pplr URL, and replaces it" {
-    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     jq '(.[] | select(.id == "c3")).urls = [{"label": "pplr", "value": "pplr://t/turing-alan"}]' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json"
@@ -431,7 +427,6 @@ setup_plan() {
 }
 
 @test "pplr sync treats Gmail addresses with and without dots as one address" {
-    needs_legacy_engine WP10
     setup_contacts
     jq '(.[] | select(.id == "c2")).emails = ["grace.hopper@gmail.com"]' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
     make_about Hopper Grace "$(printf '%s\n' '- Role:     Rear Admiral' '- Company:  Navy' '- LinkedIn:' '- Email:    [gracehopper+navy@gmail.com](mailto:gracehopper+navy@gmail.com)' '- Phone:')"
@@ -441,7 +436,6 @@ setup_plan() {
 }
 
 @test "pplr sync --photos only picks linked cards that have no photo" {
-    needs_legacy_engine WP10
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     jq '(.[] | select(.id == "c1")).urls = [{"label": "pplr", "value": "pplr://l/lovelace-ada"}] | (.[] | select(.id == "c3")).hasImage = true' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
@@ -463,7 +457,6 @@ setup_pull() {
 }
 
 @test "pplr sync --pull is a dry run by default, and lists what a linked card adds" {
-    needs_legacy_engine WP10
     setup_pull
     about="$PPLR_TEST_DATA/T/Turing, Alan/About/Alan Turing (About).md"
     before=$(cat "$about")
@@ -478,7 +471,6 @@ setup_pull() {
 }
 
 @test "pplr sync --pull --apply fills blanks and appends, removes nothing, and backs up first" {
-    needs_legacy_engine WP10
     setup_pull
     about="$PPLR_TEST_DATA/T/Turing, Alan/About/Alan Turing (About).md"
     run "$PPLR" sync --pull --apply
@@ -494,7 +486,6 @@ setup_pull() {
 }
 
 @test "pplr sync --pull keeps pplr's company and role when it has them" {
-    needs_legacy_engine WP10
     setup_pull
     jq '(.[] | select(.id == "c1")) |= (.organization = "Elsewhere" | .emails += ["ada@other.example"])' \
         "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
@@ -505,7 +496,6 @@ setup_pull() {
 }
 
 @test "pplr sync --pull --skip leaves that person alone" {
-    needs_legacy_engine WP10
     setup_pull
     run "$PPLR" sync --pull --apply --skip "Turing, Alan"
     [ "$status" -eq 0 ]
@@ -513,7 +503,6 @@ setup_pull() {
 }
 
 @test "pplr sync --check says when a linked card is in another account" {
-    needs_legacy_engine WP10
     setup_contacts
     jq '(.[] | select(.id == "c1")) |= (.account = "other" | .groups = [])' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
     run "$PPLR" sync --check
@@ -523,7 +512,6 @@ setup_pull() {
 }
 
 @test "pplr sync --pull leaves out a number that is not a real UK number" {
-    needs_legacy_engine WP10
     setup_pull
     jq '(.[] | select(.id == "c3")).phones = ["+44438901687", "+61438901687"]' "$PPLR_CONTACTS_JSON" > "$PPLR_TEST_DATA/c.json" && mv "$PPLR_TEST_DATA/c.json" "$PPLR_CONTACTS_JSON"
     run "$PPLR" sync --pull --apply
@@ -534,7 +522,6 @@ setup_pull() {
 }
 
 @test "pplr sync --pull reads every copy of a card linked across accounts, so a second pull finds nothing" {
-    needs_legacy_engine WP10
     setup_pull
     jq '. + [{"id": "c3", "given": "Alan", "family": "Turing", "organization": "", "jobTitle": "",
               "emails": ["alan@work.example"], "phones": [], "urls": [], "linkedin": [], "groups": [], "account": "other"}]' \

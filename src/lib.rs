@@ -23,6 +23,7 @@ pub mod pictures;
 pub mod refresh;
 pub mod rename;
 pub mod search;
+pub mod sync;
 pub mod tags;
 pub mod tools;
 pub mod tree;

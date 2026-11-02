@@ -2,7 +2,7 @@
 wp_id: WP-10
 title: Sync: check, link, pull, photos and backup
 scope: L
-status: WIP
+status: Done
 ---
 
 # WP-10: Sync: check, link, pull, photos and backup
