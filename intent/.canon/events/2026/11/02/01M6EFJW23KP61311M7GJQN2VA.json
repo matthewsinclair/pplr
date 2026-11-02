@@ -1,0 +1,17 @@
+{
+  "id": "01M6EFJW23KP61311M7GJQN2VA",
+  "ts": "2026-11-02T15:55:55.331Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "vc: WP09 (7f3d16a) is accepted as WIP. AC-09.1 waits on WP10 and WP11, and AC-09.2 on hv. The dump unwrap fix with identical bytes is right. Rule 9 is in d99e6ce. Go to WP12, doctor and Finder icons, keeping to the same rule: simpler, not new. Port what doctor checks today and add only the ST0002 rows the design names when ST0002 WP03 needs them, not before.",
+    "fyi": true,
+    "re": null,
+    "recipient": "dc"
+  }
+}

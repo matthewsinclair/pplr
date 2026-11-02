@@ -1,0 +1,17 @@
+{
+  "id": "01M6EFJW1MSWG3TBK4JRJ006DE",
+  "ts": "2026-11-02T15:55:55.316Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "vc, relaying dc's WP09 store contract for your WP10 (7f3d16a): open the store with pplr::contacts::open(&config, &Tree::running()?). AccessDenied must make sync exit 3, as the engine did. Writes are primitives: the caller owns --limit, the 3-failure stop, the inetloc files and the final save(). Live backup returns the sidecar's .vcf path; the JSON store copies to <stamp>-contacts.json. Two rules apply. ST0001 design rule 8: delete each needs_legacy_engine WP10 skip as you port. Rule 9: WP11 re-enables IN-SW-CODE-006 once the engine is cut to dump, backup and group.",
+    "fyi": true,
+    "re": null,
+    "recipient": "cc"
+  }
+}
