@@ -50,7 +50,7 @@
       "seq": 5,
       "title": "Indexes, new person, pictures and search",
       "scope": "M",
-      "status": "not-started",
+      "status": "wip",
       "objective": "Port the index builders, person creation, the picture line and search.",
       "body": "**Scope**\n\n- `json`, byte-identical to `jq .`'s print, and `index`.\n- `reindex` runs the Rust index builders. Until WP06 lands it runs the legacy `tags render` through the fallback.\n- `new`: the git author (`git config user.name`) in the verblock, pinned in the goldens by a sandboxed git config (D10); the embedded template, with `_pplr/templates/person` overriding it; the `.webloc` from its fixed template; the About regenerated when a URL is given.\n- `pictures`.\n- `search`:\n  - runs the `claude` subprocess with the prompt and the index, and parses its reply as JSON;\n  - falls back to the keyword search;\n  - never interpolates the query into a command line, which fixes the `sed` injection.\n- Delete these commands' bash.\n\n**Criteria**: AC-05.1.\n",
       "preamble": ""
@@ -411,6 +411,16 @@
       ],
       "status": "green",
       "note": "the_read_commands_are_native_and_their_goldens_replay: red at 57de2ad (none native), green with WP04 (12 native; 8 golden cases replay); bats 101/101 against Rust and legacy"
+    },
+    {
+      "id": "AT-05.1",
+      "kind": "test",
+      "file": "tests/cli.rs",
+      "covers": [
+        "AC-05.1"
+      ],
+      "status": "green",
+      "note": "the_index_new_pictures_and_search_commands_are_native_and_their_goldens_replay: red at 3302f2e (none native), green with WP05 (15/54 goldens replay; reindex's index.json byte-equal to jq's print; search's query only ever in the prompt); bats 101/101 on both implementations from a scratch worktree"
     },
     {
       "id": "AT-12.1",

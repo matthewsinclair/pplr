@@ -45,9 +45,9 @@ title: Port Pplr from shell scripts to Rust
 
 - AC-04.1 resolve, count, about, cp, open, linkedin, edit, meetings, refresh, grep, help and version run natively in Rust, and their goldens and bats tests pass. -- satisfied: yes (computed)
 
-### WP-05 -- Indexes, new person, pictures and search (status: Not Started)
+### WP-05 -- Indexes, new person, pictures and search (status: WIP)
 
-- AC-05.1 json, index, reindex, new, pictures and search run natively in Rust, and their goldens and bats tests pass; a search query is never interpolated into a command line. -- satisfied: no (computed)
+- AC-05.1 json, index, reindex, new, pictures and search run natively in Rust, and their goldens and bats tests pass; a search query is never interpolated into a command line. -- satisfied: yes (computed)
 
 ### WP-06 -- Tags (status: Not Started)
 
@@ -107,9 +107,9 @@ _(no tests in this group)_
 
 - AT-04.1 `tests/cli.rs` -- covers AC-04.1 -- status: green -- the_read_commands_are_native_and_their_goldens_replay: red at 57de2ad (none native), green with WP04 (12 native; 8 golden cases replay); bats 101/101 against Rust and legacy
 
-### WP-05 -- Indexes, new person, pictures and search (status: Not Started)
+### WP-05 -- Indexes, new person, pictures and search (status: WIP)
 
-_(no tests in this group)_
+- AT-05.1 `tests/cli.rs` -- covers AC-05.1 -- status: green -- the_index_new_pictures_and_search_commands_are_native_and_their_goldens_replay: red at 3302f2e (none native), green with WP05 (15/54 goldens replay; reindex's index.json byte-equal to jq's print; search's query only ever in the prompt); bats 101/101 on both implementations from a scratch worktree
 
 ### WP-06 -- Tags (status: Not Started)
 

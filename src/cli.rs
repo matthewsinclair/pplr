@@ -3,7 +3,9 @@
 
 use crate::Result;
 use crate::config::Config;
-use crate::{doctor, fallback, grep, icons, index, marker, meetings, open, refresh};
+use crate::{
+  doctor, fallback, grep, icons, index, marker, meetings, new, open, pictures, refresh, search,
+};
 use std::io::{IsTerminal, Write};
 use std::process::{Command as Process, ExitCode, Stdio};
 
@@ -59,6 +61,16 @@ pub const COMMANDS: &[Command] = &[
     run: run_help,
   },
   Command {
+    name: "index",
+    usage: "generate index.md based on contents of $PPLR_DIR",
+    run: index::run_index,
+  },
+  Command {
+    name: "json",
+    usage: "generate index.json based on contents of $PPLR_DIR",
+    run: index::run_json,
+  },
+  Command {
     name: "linkedin",
     usage: "open a person's LinkedIn URL (if it exists)\n<first>        firstname of person to edit\n<surname>      surname of person to edit",
     run: open::run_linkedin,
@@ -69,9 +81,19 @@ pub const COMMANDS: &[Command] = &[
     run: meetings::run,
   },
   Command {
+    name: "new",
+    usage: "create a new person in $PPLR_DIR\n<first>        firstname of new person\n<surname>      surname of new person\n[linkedin_url] LinkedIn URL of the new person",
+    run: new::run,
+  },
+  Command {
     name: "open",
     usage: "Open the location of a person's file, or a pplr:// URL\n[pplr://...]   a pplr:// URL instead of a name (--print to show where it goes)\n<first>        firstname of person to edit\n<surname>      surname of person to edit\n[--type | -t]  type of file (about | a, linkedin | l, profile | p)",
     run: open::run_open,
+  },
+  Command {
+    name: "pictures",
+    usage: "show each person's photo at the top of their About page\n[--dry-run]         list what would change\n[\"Surname, First\"]  just these people (default everyone)",
+    run: pictures::run,
   },
   Command {
     name: "refresh",
@@ -79,9 +101,19 @@ pub const COMMANDS: &[Command] = &[
     run: refresh::run,
   },
   Command {
+    name: "reindex",
+    usage: "(re)create the indexes in $PPLR_DIR/.index, the tag pages and each About's Tags line",
+    run: index::run_reindex,
+  },
+  Command {
     name: "resolve",
     usage: "print the file or folder a pplr:// URL names\n<pplr://l/surname-first[/path]>   a person (their About file), or a path in their folder",
     run: marker::run_resolve,
+  },
+  Command {
+    name: "search",
+    usage: "Natural language search across people using Claude AI\n<query> natural language query to search for\nUses tags_index.json for fast, intelligent search",
+    run: search::run,
   },
   Command {
     name: "setpicfordir",
@@ -106,6 +138,20 @@ const README: &str = include_str!("../README.md");
 /// The native command called `name`, if it has been ported.
 pub fn native(name: &str) -> Option<&'static Command> {
   COMMANDS.iter().find(|command| command.name == name)
+}
+
+/// Native commands that still run a legacy one through the fallback, and
+/// which: the port of the second takes its row out.
+const DELEGATES: &[(&str, &str)] = &[("reindex", "tags")];
+
+/// Whether `name` runs in Rust throughout: native, and running nothing legacy.
+/// The golden replay runs only these.
+pub fn fully_native(name: &str) -> bool {
+  native(name).is_some()
+    && DELEGATES
+      .iter()
+      .filter(|(command, _)| *command == name)
+      .all(|(_, legacy)| native(legacy).is_some())
 }
 
 pub fn run(args: Vec<String>) -> Result<ExitCode> {
@@ -221,6 +267,13 @@ fn page(text: &str) -> Result<ExitCode> {
 #[cfg(test)]
 mod tests {
   use super::*;
+
+  #[test]
+  fn a_command_that_still_runs_a_legacy_one_is_not_fully_native() {
+    assert!(fully_native("count"));
+    assert_eq!(fully_native("reindex"), native("tags").is_some());
+    assert!(!fully_native("sync"));
+  }
 
   #[test]
   fn the_table_is_sorted_and_names_each_command_once() {

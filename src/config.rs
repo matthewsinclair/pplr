@@ -24,10 +24,15 @@ pub struct Config {
   pub today: Option<jiff::civil::Date>,
   /// PPLR_CMS_URL, default the local CMS; set empty, files only, never the CMS.
   pub cms_url: String,
+  /// PPLR_PICTURE_WIDTH, the width of the picture line `pictures` writes.
+  pub picture_width: String,
 }
 
 /// The CMS that `open` sends a person to when it answers.
 const DEFAULT_CMS: &str = "http://localhost:4360/people";
+
+/// The picture line's width when PPLR_PICTURE_WIDTH does not set it.
+const DEFAULT_PICTURE_WIDTH: &str = "160";
 
 impl Config {
   /// The configuration from the process environment.
@@ -69,6 +74,10 @@ impl Config {
       None => None,
     };
     // `${PPLR_CMS_URL=default}`: empty is a value here, and means files only
+    let picture_width = get("PPLR_PICTURE_WIDTH").map_or_else(
+      || DEFAULT_PICTURE_WIDTH.to_owned(),
+      |w| w.to_string_lossy().into_owned(),
+    );
     let cms_url = lookup("PPLR_CMS_URL").map_or_else(
       || DEFAULT_CMS.to_owned(),
       |u| u.to_string_lossy().into_owned(),
@@ -82,6 +91,7 @@ impl Config {
       icon_dir,
       today,
       cms_url,
+      picture_width,
     })
   }
 

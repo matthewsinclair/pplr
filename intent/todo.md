@@ -13,7 +13,7 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
   - [-] 02: Rust scaffold under devbin, with the fallback
   - [x] 03: Golden capture from the legacy code
   - [x] 04: Core model and the read commands
-  - [ ] 05: Indexes, new person, pictures and search
+  - [-] 05: Indexes, new person, pictures and search
   - [ ] 06: Tags
   - [ ] 07: Contact cadence
   - [ ] 08: Rename, links and the pplr:// handler

@@ -56,6 +56,8 @@ setup() {
   PPLR_TEST_BIN="$sandbox/bin"
 
   mkdir -p "$HOME" "$PPLR_CACHE_DIR" "$PPLR_TEST_BIN" "$PPLR_TEST_DATA/.index"
+  # new writes the git author into a verblock (ST0001 design D10): the sandbox has its own
+  printf '[user]\n\tname = Test Author\n\temail = test@example.invalid\n' > "$HOME/.gitconfig"
   local letter
   for letter in {A..Z}; do
     mkdir -p "$PPLR_TEST_DATA/$letter"

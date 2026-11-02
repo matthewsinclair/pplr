@@ -12,9 +12,12 @@ pub mod index;
 pub mod layout;
 pub mod marker;
 pub mod meetings;
+pub mod new;
 pub mod normalise;
 pub mod open;
+pub mod pictures;
 pub mod refresh;
+pub mod search;
 pub mod tools;
 pub mod tree;
 

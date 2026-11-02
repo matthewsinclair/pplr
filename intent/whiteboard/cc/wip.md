@@ -3,10 +3,10 @@ node: cc
 name: cc
 role: cc
 session_id: ae86b27f-47f4-447b-b2aa-713a050085b2
-heartbeat_at: 2026-11-02 15:56Z
+heartbeat_at: 2026-11-02 16:11Z
 status: active
-focus: "ST0001 WP04: core model (tree, about, normalise, marker) and the read commands"
-claims: []
+focus: "ST0001 WP05: json, index, reindex, new, pictures, search"
+claims: [ST0001/05]
 ---
 
 # cc (cc)

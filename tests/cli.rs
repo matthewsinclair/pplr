@@ -433,7 +433,7 @@ fn replay(case: &std::path::Path) -> Result<bool> {
     if !all
       && args
         .first()
-        .is_none_or(|name| pplr::cli::native(name).is_none())
+        .is_none_or(|name| !pplr::cli::fully_native(name))
     {
       return Ok(false);
     }
@@ -794,5 +794,65 @@ fn the_read_commands_are_native_and_their_goldens_replay() -> Result<()> {
     }
   }
   assert!(!replayed.is_empty(), "no golden is made of WP04's commands");
+  Ok(())
+}
+
+/// reindex's own files against its golden, while its tags step is still the
+/// legacy script (stubbed here): index.json as `jq .` prints it, and index.md.
+#[test]
+fn reindex_writes_index_json_as_jq_prints_it_and_index_md() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  copy_tree(&golden_dir().join("fixture/Career/People"), &sandbox.data())?;
+  let bin = sandbox.legacy_script("tags", "exit 0")?;
+  let out = run(
+    sandbox
+      .pplr()
+      .env("PPLR_BIN_DIR", &bin)
+      .env("PPLR_TODAY", GOLDEN_DAY)
+      .arg("reindex"),
+  )?;
+  assert!(out.status.success(), "{}", text(&out.stderr));
+  let golden = golden_dir().join("cases/reindex/files/Career/People/.index");
+  for file in ["index.json", "index.md"] {
+    assert_eq!(
+      fs::read_to_string(sandbox.data().join(".index").join(file))?,
+      fs::read_to_string(golden.join(file))?,
+      "{file}"
+    );
+  }
+  Ok(())
+}
+
+/// AT-05.1 (ST0001 AC-05.1): json, index, reindex, new, pictures and search
+/// run natively; every golden made of them alone (and of commands already
+/// native) replays, reindex's own files match theirs in the test above, and
+/// search never puts the query on a command line (search::tests).
+#[test]
+fn the_index_new_pictures_and_search_commands_are_native_and_their_goldens_replay() -> Result<()> {
+  const WP05: [&str; 6] = ["json", "index", "reindex", "new", "pictures", "search"];
+  for name in WP05 {
+    assert!(pplr::cli::native(name).is_some(), "{name} is not native");
+  }
+  let mut replayed = 0;
+  for case in fs::read_dir(golden_dir().join("cases"))? {
+    let case = case?.path();
+    if !case.is_dir() {
+      continue;
+    }
+    let mut commands = Vec::new();
+    for step in fs::read_dir(case.join("steps"))? {
+      let step = step?.path();
+      if step.extension().is_some_and(|x| x == "args") {
+        commands.push(lines_of(&step)?.first().cloned().unwrap_or_default());
+      }
+    }
+    if commands.iter().any(|c| WP05.contains(&c.as_str()))
+      && commands.iter().all(|c| pplr::cli::fully_native(c))
+    {
+      same(replay(&case)?, true, &format!("{} replays", case.display()))?;
+      replayed += 1;
+    }
+  }
+  assert!(replayed > 0, "no golden of WP05's commands replayed");
   Ok(())
 }
