@@ -1,0 +1,15 @@
+{
+  "id": "01M6DRBXPBAGMNH71MKBK8W7KM",
+  "ts": "2026-11-02T09:10:10.379Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "Globalfold: intent/wip.md is still the template; write its DOING and TODO from ST0001 and ST0002."
+  }
+}

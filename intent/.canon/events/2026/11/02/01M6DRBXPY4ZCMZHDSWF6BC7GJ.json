@@ -1,0 +1,15 @@
+{
+  "id": "01M6DRBXPY4ZCMZHDSWF6BC7GJ",
+  "ts": "2026-11-02T09:10:10.398Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "ST0001 and ST0002 are elaborated and on main (dc123cd): 14 + 7 WPs, 28 + 16 criteria; hv's rulings of 2026-11-02 are in each thread's design.md section 1 and section 7."
+  }
+}

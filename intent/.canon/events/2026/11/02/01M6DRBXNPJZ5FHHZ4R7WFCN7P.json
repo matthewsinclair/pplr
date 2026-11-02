@@ -1,0 +1,15 @@
+{
+  "id": "01M6DRBXNPJZ5FHHZ4R7WFCN7P",
+  "ts": "2026-11-02T09:10:10.359Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "hold",
+    "text": "Hand out ST0001 and ST0002 to cc and dc, greet them, then release vc's thread claims. Released when hv gives the go-ahead after the move."
+  }
+}
