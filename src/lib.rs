@@ -2,6 +2,7 @@ pub mod about;
 pub mod assets;
 pub mod cli;
 pub mod config;
+pub mod contact;
 pub mod contacts;
 pub mod doctor;
 pub mod fallback;

@@ -3,10 +3,10 @@ node: cc
 name: cc
 role: cc
 session_id: ae86b27f-47f4-447b-b2aa-713a050085b2
-heartbeat_at: 2026-11-02 16:24Z
+heartbeat_at: 2026-11-02 16:40Z
 status: active
-focus: "ST0001 WP06: tags (tag, tags check/show/render/index/apply/edit), PyYAML-matched reading"
-claims: []
+focus: "ST0001 WP07: contact cadence (scan, due, show, log, next, context, render)"
+claims: [ST0001/07]
 ---
 
 # cc (cc)

@@ -7,7 +7,7 @@
 use crate::Result;
 use crate::config::Config;
 use crate::marker::marker_url;
-use crate::tree::{letter_of, names, people};
+use crate::tree::{display_name, letter_of, names, people, person_dirs};
 use crate::yaml::{self, Value};
 use regex::Regex;
 use serde::Serialize;
@@ -140,36 +140,8 @@ impl Tag {
   }
 }
 
-/// Every person folder, `[A-Z]/*, *`, by path.
-fn person_dirs(root: &Path) -> Vec<PathBuf> {
-  let mut out: Vec<PathBuf> = names(root)
-    .into_iter()
-    .filter(|n| n.len() == 1 && n.bytes().all(|b| b.is_ascii_uppercase()))
-    .flat_map(|letter| {
-      names(&root.join(&letter))
-        .into_iter()
-        .filter(|n| n.contains(", ") && !n.starts_with('.'))
-        .map(move |n| root.join(&letter).join(n))
-    })
-    .filter(|d| d.is_dir())
-    .collect();
-  out.sort_by_key(|p| p.to_string_lossy().into_owned());
-  out
-}
-
 fn key_of(root: &Path, dir: &Path) -> String {
   dir.strip_prefix(root).unwrap_or(dir).display().to_string()
-}
-
-fn display_name(dir: &Path) -> String {
-  let name = dir
-    .file_name()
-    .map(|n| n.to_string_lossy().into_owned())
-    .unwrap_or_default();
-  match name.split_once(", ") {
-    Some((surname, first)) => format!("{first} {surname}"),
-    None => name,
-  }
 }
 
 fn tags_file(dir: &Path) -> PathBuf {
@@ -330,7 +302,9 @@ pub fn run_tag(args: &[String], config: &Config) -> Result<ExitCode> {
   if code != ExitCode::SUCCESS {
     return Ok(code);
   }
-  crate::fallback::run_quietly(&["contact".to_owned(), "render".to_owned()], config)
+  // pplr_tag ran `pplr_contact render >/dev/null`: the count goes unshown
+  crate::contact::render_all(&config.data, config.today())?;
+  Ok(ExitCode::SUCCESS)
 }
 
 fn check(root: &Path) -> Result<ExitCode> {

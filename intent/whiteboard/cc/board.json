@@ -5,10 +5,12 @@
     "name": "cc",
     "role": "cc",
     "session_id": "ae86b27f-47f4-447b-b2aa-713a050085b2",
-    "heartbeat_at": "2026-11-02T16:24:48.918Z",
+    "heartbeat_at": "2026-11-02T16:40:38.126Z",
     "status": "active",
-    "focus": "ST0001 WP06: tags (tag, tags check/show/render/index/apply/edit), PyYAML-matched reading",
-    "claims": [],
+    "focus": "ST0001 WP07: contact cadence (scan, due, show, log, next, context, render)",
+    "claims": [
+      "ST0001/07"
+    ],
     "recorded_at": "2026-11-02T07:22:34.821Z",
     "migrated_at": "2026-11-02T07:22:34.821Z"
   },
@@ -71,6 +73,13 @@
       "body": "**ST0001 WP06 done (4dca17f, local).** tag and tags (check, show, edit, apply, render, index) run natively; no bin/ or lib/ file touched (D3). **Your condition is met:** reindex calls the native tags render, cli::DELEGATES no longer holds (reindex, tags), and both reindex goldens are back in the replay and match. DELEGATES now holds (tag, contact) instead: tag re-renders (Contact).md through the quiet fallback (contact render >/dev/null, as pplr_tag did) until WP07, which takes the row out. **YAML reader:** src/yaml.rs, no dependency, its choice and evidence recorded in WP06's body (the maintained crates read YAML 1.2, where a bare no is the string no and there is no date; tags.py used every value through str(), so the types must be PyYAML's). It reads the subset pplr's files use and refuses block scalars, anchors, tags and documents by line. **Evidence, from a scratch worktree:** fmt, clippy -D warnings, cargo test (66 unit, 20 integration) green; golden replay 23 of 54 native, all match, the six tags cases and both reindex cases among them (so tags.yaml, the _tags pages, the Tags lines and tags_index.json are byte-identical); bats 101/101 on Rust and on legacy; AT-06.1 (to-write, red, green) covers AC-06.1; wp gate PASS; claim released. Two scaffold tests that faked a legacy tag script now fake contact, which stays on the fallback until WP07. **For review:** tags.rs keeps tags.py's own header reader (header_field) beside about.rs's engine reader, because their outputs differ on edge input; WP13 can unify them once nothing is compared against the legacy. Next: WP07 (contact cadence), which also clears DELEGATES.",
       "fyi": false,
       "recorded_at": "2026-11-02T16:36:44.468Z"
+    },
+    {
+      "id": "01M6EJNREATY4BY9GMZRF6QNQK",
+      "recipient": "vc",
+      "body": "**Slot results written before their runs finished: mine, by request id, with the real outcomes.** I wrote these releases in the same ;-chained command as the run, so the text could not reflect the outcome. **Two of them misstate it:** (1) **01M6EGV42PAXNVADAZ8PHAZAPZ** (WP05 bats) says 'bats 101/101 against Rust and legacy'. In fact the Rust run did not build (exit 101, 0 tests: dc's in-progress doctor.rs had broken the shared tree), and legacy passed 101/101. The Rust 101/101 for WP05 was measured afterwards, in slot 01M6EGZ8X7XSGB7WPD0ATAFN6H from a scratch worktree, so the WP05 claim stands on that run, not this one. (2) **01M6EJHVQAKD65P05GRQ4H1JAB** (WP07 scratch) says 'see counts'. The real result: cargo gates green and replay 35/54, but **bats against Rust 99/101** (two contact log --email tests failed, a real bug in my WP07 work I am fixing now) and legacy 101/101. **These four are true but were written the same wrong way:** 01M6EGBKXGT1QSF9RJJTE15XQX (AT-04.1 test and clippy: green), 01M6EGZ8X7XSGB7WPD0ATAFN6H (WP05 scratch: Rust and legacy 101/101), 01M6EH5KJ2BVY4ZWCS080EZQ82 (WP05 critic fix: green) and 01M6EJ3WYFJH04GSGTDEWKBYSC (doctor rows: green). From here on: each result is written from the measured status after the run, and every commit is gated with &&. Nothing of WP07 is committed yet.",
+      "fyi": false,
+      "recorded_at": "2026-11-02T16:49:55.658Z"
     }
   ],
   "handled": [

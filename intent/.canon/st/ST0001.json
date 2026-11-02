@@ -68,7 +68,7 @@
       "seq": 7,
       "title": "Contact cadence",
       "scope": "M",
-      "status": "not-started",
+      "status": "wip",
       "objective": "Port contact cadence to Rust and retire `contact.py`. `contact log --email` is finished in WP14, alongside pplr's own mail reader.",
       "body": "**Scope**\n\n- **`contact`**:\n  - the subcommands `scan`, `due`, `show`, `log`, `next`, `context` and `render`;\n  - `contact.yaml` and `(Contact).md` byte-identical, from a port of `contact.py`'s emitter;\n  - `cadence.yaml`'s roster and every-tag defaults;\n  - the booked-meeting rule;\n  - `PPLR_TODAY`.\n- **`log --email`**: `contact log --email N`, and `--email` with a Message-ID, run through the fallback until WP14 brings pplr's own mail reader. WP14 finishes them.\n- Delete `pplr_contact` and `contact.py` once WP14 has landed `log --email`.\n\n**Criteria**: AC-07.1.\n\n**Note**: WP14 deletes `pplr_email` and `email_list.py`.\n",
       "preamble": ""
@@ -77,7 +77,7 @@
       "seq": 8,
       "title": "Rename, links and the pplr:// handler",
       "scope": "M",
-      "status": "not-started",
+      "status": "wip",
       "objective": "Port rename, link rewriting and the `pplr://` handler.",
       "body": "**Scope**\n\n- **`rename`**:\n  - every path form, replaced in one longest-first pass per file;\n  - the include and exclude lists;\n  - refs directories reached through symlinks;\n  - the person's own files and About text, and `.index/aliases`;\n  - the list of prose mentions, then a reindex;\n  - `--dry-run` changes nothing.\n- **`links`**: the engine's conversion. Each real file is rewritten once, with symlinks followed and kept. Paths are relative to the caller's directory. It takes `--apply` and `--json`.\n- **`handler --install|--uninstall|--status`**: the app runs the stable path of the running tree. Under brew that is the opt link, never a Cellar path (ST0002); in dev it is the checkout's build. The `PATH` the app sets no longer needs `swiftc` or `python3`.\n- Delete `pplr_rename`, `pplr_links` and `pplr_handler`, and the sidecar source's `resolve`, `links` and `people` modes.\n\n**Criteria**: AC-08.1.\n",
       "preamble": ""
@@ -431,6 +431,16 @@
       ],
       "status": "green",
       "note": "tag_and_tags_are_native_and_their_goldens_replay: red at b93fc2e (tags on the fallback, reindex delegating), green with WP06 (23/54 goldens replay, the six tags cases and both reindex cases among them); bats 101/101 on both implementations from a scratch worktree"
+    },
+    {
+      "id": "AT-07.1",
+      "kind": "test",
+      "file": "tests/cli.rs",
+      "covers": [
+        "AC-07.1"
+      ],
+      "status": "green",
+      "note": "contact_is_native_and_its_goldens_replay: red at a143133 (contact on the fallback), green with WP07 (35/54 goldens replay, every contact and tag case among them); bats 101/101 on both implementations from a scratch worktree"
     },
     {
       "id": "AT-12.1",

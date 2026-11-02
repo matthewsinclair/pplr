@@ -126,6 +126,36 @@ pub fn about_file(root: &Path, first: &str, surname: &str, suffix: &str) -> Path
     .join(format!("{first} {surname} {suffix}"))
 }
 
+/// Every person folder as the legacy Python helpers globbed them,
+/// `[A-Z]/*, *` (ASCII letters, no dot names), by path.
+pub fn person_dirs(root: &Path) -> Vec<PathBuf> {
+  let mut out: Vec<PathBuf> = names(root)
+    .into_iter()
+    .filter(|n| n.len() == 1 && n.bytes().all(|b| b.is_ascii_uppercase()))
+    .flat_map(|letter| {
+      names(&root.join(&letter))
+        .into_iter()
+        .filter(|n| n.contains(", ") && !n.starts_with('.'))
+        .map(move |n| root.join(&letter).join(n))
+    })
+    .filter(|d| d.is_dir())
+    .collect();
+  out.sort_by_key(|p| p.to_string_lossy().into_owned());
+  out
+}
+
+/// "Surname, First" as "First Surname": the stem of a person's About files.
+pub fn display_name(dir: &Path) -> String {
+  let name = dir
+    .file_name()
+    .map(|n| n.to_string_lossy().into_owned())
+    .unwrap_or_default();
+  match name.split_once(", ") {
+    Some((surname, first)) => format!("{first} {surname}"),
+    None => name,
+  }
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;

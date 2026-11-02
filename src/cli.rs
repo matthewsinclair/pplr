@@ -4,8 +4,8 @@
 use crate::Result;
 use crate::config::Config;
 use crate::{
-  doctor, fallback, grep, icons, index, install, marker, meetings, new, open, pictures, refresh,
-  search, tags,
+  contact, doctor, fallback, grep, icons, index, install, marker, meetings, new, open, pictures,
+  refresh, search, tags,
 };
 use std::io::{IsTerminal, Write};
 use std::process::{Command as Process, ExitCode, Stdio};
@@ -30,6 +30,11 @@ pub const COMMANDS: &[Command] = &[
     name: "applyicons",
     usage: "applyicons <first> <surname>   Finder icons on the About and Meetings folders",
     run: icons::applyicons,
+  },
+  Command {
+    name: "contact",
+    usage: "when you last spoke to each person (About/contact.yaml), and who to get in touch with next\nscan [--dry-run]          last contact from each person's newest meeting; next from the cadence\ndue [DAYS] [--all]        who is due for a note (next on or before today, plus DAYS)\nshow \"Surname, First\"     a person's last contact, next date and cadence\nlog [\"Surname, First\"] [DATE] [--via email|call|message|meeting] [--email N|MESSAGE-ID] [--link URL] [--note TEXT]\nnext \"Surname, First\" WHEN  set the next contact: a date, or +2w, +10d, +3m\ncontext \"Surname, First\"  what to write a note from: role, latest update, last meeting's notes\nrender                   About/<First Surname> (Contact).md, a read-only view of contact.yaml, for everyone",
+    run: contact::run,
   },
   Command {
     name: "count",
@@ -165,20 +170,6 @@ pub fn native(name: &str) -> Option<&'static Command> {
 /// itself (ST0002 WP03), and doctor, which reports a missing tree as a row.
 const WITHOUT_DATA: &[&str] = &["doctor", "help", "install", "use", "version"];
 
-/// Native commands that still run a legacy one through the fallback, and
-/// which: the port of the second takes its row out.
-const DELEGATES: &[(&str, &str)] = &[("tag", "contact")];
-
-/// Whether `name` runs in Rust throughout: native, and running nothing legacy.
-/// The golden replay runs only these.
-pub fn fully_native(name: &str) -> bool {
-  native(name).is_some()
-    && DELEGATES
-      .iter()
-      .filter(|(command, _)| *command == name)
-      .all(|(_, legacy)| native(legacy).is_some())
-}
-
 pub fn run(args: Vec<String>) -> Result<ExitCode> {
   let config = Config::from_env()?;
   if matches!(args.first().map(String::as_str), Some("-v" | "--version")) {
@@ -295,13 +286,6 @@ fn page(text: &str) -> Result<ExitCode> {
 #[cfg(test)]
 mod tests {
   use super::*;
-
-  #[test]
-  fn a_command_that_still_runs_a_legacy_one_is_not_fully_native() {
-    assert!(fully_native("count"));
-    assert_eq!(fully_native("reindex"), native("tags").is_some());
-    assert!(!fully_native("sync"));
-  }
 
   #[test]
   fn the_table_is_sorted_and_names_each_command_once() {
