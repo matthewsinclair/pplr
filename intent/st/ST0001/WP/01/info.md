@@ -2,7 +2,7 @@
 wp_id: WP-01
 title: Test safety, the parity seam and an honest runner
 scope: S
-status: WIP
+status: Done
 ---
 
 # WP-01: Test safety, the parity seam and an honest runner

@@ -1,0 +1,14 @@
+{
+  "id": "01M6ECX09TBR39KVJTMYCWVT5H",
+  "ts": "2026-11-02T15:09:01.626Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "attachment.put",
+  "subject": {
+    "type": "attachment",
+    "id": "ST0001/baseline.md"
+  },
+  "payload": {
+    "via": "address"
+  }
+}

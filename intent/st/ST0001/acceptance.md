@@ -25,19 +25,19 @@ title: Port Pplr from shell scripts to Rust
 - AC-00.8 (non-test) One version, current docs: Cargo.toml is the only version source, and README, usage-rules.md, CHANGELOG and intent/llm/ARCHITECTURE.md describe the Rust binary. -- satisfied: no
 - AC-00.9 Code and data never mix: no name, marker, email or other content from the People tree is in Pplr's tree or history, tests use synthetic data alone, and a leak check that reads PPLR_DATA at run time fails the pre-commit gate on any match. -- satisfied: no (computed)
 
-### WP-01 -- Test safety, the parity seam and an honest runner (status: WIP)
+### WP-01 -- Test safety, the parity seam and an honest runner (status: Done)
 
 - AC-01.1 The bats runner and CI exit non-zero when any test fails. -- satisfied: yes (computed)
 - AC-01.2 No test or runner deletes outside its own temporary directory: an inherited PPLR_TEST_DATA, or any other path from the environment, is never a deletion target. -- satisfied: yes (computed)
 - AC-01.3 One setting points the bats suite at either implementation, and the default is the legacy code. -- satisfied: yes (computed)
-- AC-01.4 (non-test) The baseline against the legacy code is recorded on this thread for rhadamanth and both CI runners, with a one-line triage for each failing test. -- satisfied: no
+- AC-01.4 (non-test) The baseline against the legacy code is recorded on this thread for rhadamanth and both CI runners, with a one-line triage for each failing test. -- evidence: baseline.md on ST0001: rhadamanth slot 01M6EBWZSD9THBN1Q549VEK46T (99/99 legacy); CI run 41467789463 on 1a545a6 (macOS 93 ok / 9 not ok, Ubuntu 61 ok / 41 not ok, 13 skipped each), each failure triaged -- satisfied: yes
 
-### WP-02 -- Rust scaffold under devbin, with the fallback (status: Not Started)
+### WP-02 -- Rust scaffold under devbin, with the fallback (status: WIP)
 
 - AC-02.1 `bin/devbin check all` and `bin/devbin test all` run the cargo gates (fmt; clippy with unsafe forbidden and unwrap and expect denied; test) and the bats suite against the Rust binary, and both pass on macOS and on Linux CI. -- satisfied: no (computed)
 - AC-02.2 Every command not yet ported runs its legacy script through the Rust binary, with the environment bin/pplr sets, so the whole bats suite passes against the Rust binary. -- satisfied: no (computed)
 
-### WP-03 -- Golden capture from the legacy code (status: Not Started)
+### WP-03 -- Golden capture from the legacy code (status: WIP)
 
 - AC-03.1 Goldens exist for every writing and reporting command over the synthetic tree, captured from the legacy code, and a test in tests/cli.rs replays each against the Rust binary, skipping only commands still on the fallback. -- satisfied: no (computed)
 
@@ -89,17 +89,17 @@ title: Port Pplr from shell scripts to Rust
 
 _(no tests in this group)_
 
-### WP-01 -- Test safety, the parity seam and an honest runner (status: WIP)
+### WP-01 -- Test safety, the parity seam and an honest runner (status: Done)
 
 - AT-01.1 `tests/harness.bats` -- covers AC-01.1 -- status: green
 - AT-01.2 `tests/harness.bats` -- covers AC-01.2 -- status: green
 - AT-01.3 `tests/harness.bats` -- covers AC-01.3 -- status: green
 
-### WP-02 -- Rust scaffold under devbin, with the fallback (status: Not Started)
+### WP-02 -- Rust scaffold under devbin, with the fallback (status: WIP)
 
 _(no tests in this group)_
 
-### WP-03 -- Golden capture from the legacy code (status: Not Started)
+### WP-03 -- Golden capture from the legacy code (status: WIP)
 
 _(no tests in this group)_
 
