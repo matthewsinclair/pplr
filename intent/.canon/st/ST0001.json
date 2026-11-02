@@ -59,9 +59,9 @@
       "seq": 6,
       "title": "Tags",
       "scope": "M",
-      "status": "not-started",
+      "status": "wip",
       "objective": "Port tags to Rust and retire `tags.py`.",
-      "body": "**Scope**\n\n- **Choose the YAML reader by evidence.** It must read every `tags.yaml`, `vocabulary.yaml` and `cadence.yaml` shape the goldens hold the way PyYAML does: dates, YAML 1.1 booleans such as a bare `no`, and flow mappings. Record the choice and its evidence in this WP. `serde_yaml` is deprecated.\n- **Subcommands**:\n  - `tags check`, `show`, `edit` and `apply`;\n  - `tags render`: the Tags line, the `_tags/` pages, and unused pages removed;\n  - `tags index`: `tags_index.json` in Python's `indent=1` format;\n  - `tag`, which re-renders `(Contact).md` through the fallback until WP07 lands.\n- **`tags.yaml`** comes from a port of `tags.py`'s emitter, not from a YAML library.\n- Delete `pplr_tags`, `pplr_tag` and `src/pplr-tags/tags.py`.\n\n**Criteria**: AC-06.1.\n",
+      "body": "**Scope**\n\n- **Choose the YAML reader by evidence.** It must read every `tags.yaml`, `vocabulary.yaml` and `cadence.yaml` shape the goldens hold the way PyYAML does: dates, YAML 1.1 booleans such as a bare `no`, and flow mappings. Record the choice and its evidence in this WP. `serde_yaml` is deprecated.\n- **Subcommands**:\n  - `tags check`, `show`, `edit` and `apply`;\n  - `tags render`: the Tags line, the `_tags/` pages, and unused pages removed;\n  - `tags index`: `tags_index.json` in Python's `indent=1` format;\n  - `tag`, which re-renders `(Contact).md` through the fallback until WP07 lands.\n- **`tags.yaml`** comes from a port of `tags.py`'s emitter, not from a YAML library.\n- Delete `pplr_tags`, `pplr_tag` and `src/pplr-tags/tags.py`.\n\n**Criteria**: AC-06.1.\n\n\n**The YAML reader: the choice and its evidence** (cc, as built)\n\n- **Chosen: `src/yaml.rs`, a reader of the subset pplr's files use, resolving plain scalars by PyYAML's YAML 1.1 rules.** No dependency.\n- **Why not a crate.** The legacy code used every value through Python's `str()` and `json.dumps`, so the reading has to match PyYAML's types, not just its text: a bare `no` is the boolean False and prints `False`, `at: 2026-09-25` is a date that prints as itself, `180` is an int. The maintained Rust readers (`yaml-rust2`, `saphyr`) follow YAML 1.2, where `no` is the string \"no\", and have no date type; `serde_yaml` is deprecated.\n- **What it reads:** block mappings and sequences (a list may share its key's indent, as PyYAML allows), flow mappings and sequences, plain, single- and double-quoted scalars with their escapes, and comments; plain scalars resolve to null, bool (the YAML 1.1 set), int (decimal, `0x`, `0b`, octal, `_` separators), float, date, or string. Block scalars, anchors, tags, reserved indicators and multiple documents are refused with the line named, never misread.\n- **Evidence:** every `tags.yaml`, `vocabulary.yaml` and `cadence.yaml` shape in the fixture and goldens reads to the same values PyYAML gave: the six tags goldens (`tags-apply`, `tags-check`, `tags-index`, `tags-render`, `tags-show`, `tags-unknown-sub`) and both `reindex` goldens replay byte for byte; unit tests in `yaml.rs` pin the YAML 1.1 cases (`no`, `On`, `~`, `0x1F`, `1_000`, `010`, `2026-6-5`) and Python's `str()`/`repr()` of each type.\n",
       "preamble": ""
     },
     {
@@ -421,6 +421,16 @@
       ],
       "status": "green",
       "note": "the_index_new_pictures_and_search_commands_are_native_and_their_goldens_replay: red at 3302f2e (none native), green with WP05 (15/54 goldens replay; reindex's index.json byte-equal to jq's print; search's query only ever in the prompt); bats 101/101 on both implementations from a scratch worktree"
+    },
+    {
+      "id": "AT-06.1",
+      "kind": "test",
+      "file": "tests/cli.rs",
+      "covers": [
+        "AC-06.1"
+      ],
+      "status": "green",
+      "note": "tag_and_tags_are_native_and_their_goldens_replay: red at b93fc2e (tags on the fallback, reindex delegating), green with WP06 (23/54 goldens replay, the six tags cases and both reindex cases among them); bats 101/101 on both implementations from a scratch worktree"
     },
     {
       "id": "AT-12.1",

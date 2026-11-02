@@ -18,6 +18,15 @@ const USAGE_PREFIX: &str = "# USAGE: ";
 
 /// Run `args` (a command and its arguments) through the legacy scripts.
 pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
+  run_with(args, config, false)
+}
+
+/// `run`, with the script's stdout discarded (a legacy `>/dev/null`).
+pub fn run_quietly(args: &[String], config: &Config) -> Result<ExitCode> {
+  run_with(args, config, true)
+}
+
+fn run_with(args: &[String], config: &Config, quiet: bool) -> Result<ExitCode> {
   let env = LegacyEnv::new(config)?;
   let Some((name, rest)) = args.split_first() else {
     println!("{USAGE}");
@@ -32,7 +41,11 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
     return Ok(code);
   }
   let pass = rewrite_args(name, rest, config)?;
-  status(env.command(&script).args(&pass).status())
+  let mut command = env.command(&script);
+  if quiet {
+    command.stdout(std::process::Stdio::null());
+  }
+  status(command.args(&pass).status())
 }
 
 /// Each legacy script still in the checkout, with its `# USAGE:` lines, for `help`.

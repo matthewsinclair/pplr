@@ -225,8 +225,7 @@ pub fn markdown(letters: &[Letter], day: &str) -> String {
   out
 }
 
-/// `pplr reindex`: .index/index.json and index.md, then the tags (on the
-/// legacy `tags render` until WP06 ports it).
+/// `pplr reindex`: .index/index.json and index.md, then `tags render`.
 pub fn run_reindex(args: &[String], config: &Config) -> Result<ExitCode> {
   match args.first().map(String::as_str) {
     Some(flag) if flag == "--tags" || flag == "--stale-only" || flag.starts_with("--max-age=") => {
@@ -262,5 +261,5 @@ pub fn run_reindex(args: &[String], config: &Config) -> Result<ExitCode> {
     index.join("tags_index.json").display(),
     root.join("_tags/").display()
   );
-  crate::fallback::run(&["tags".to_owned(), "render".to_owned()], config)
+  crate::tags::run_tags(&["render".to_owned()], config)
 }

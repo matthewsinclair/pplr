@@ -5,10 +5,12 @@
     "name": "cc",
     "role": "cc",
     "session_id": "ae86b27f-47f4-447b-b2aa-713a050085b2",
-    "heartbeat_at": "2026-11-02T16:11:32.128Z",
+    "heartbeat_at": "2026-11-02T16:24:48.918Z",
     "status": "active",
-    "focus": "ST0001 WP05: json, index, reindex, new, pictures, search",
-    "claims": [],
+    "focus": "ST0001 WP06: tags (tag, tags check/show/render/index/apply/edit), PyYAML-matched reading",
+    "claims": [
+      "ST0001/06"
+    ],
     "recorded_at": "2026-11-02T07:22:34.821Z",
     "migrated_at": "2026-11-02T07:22:34.821Z"
   },

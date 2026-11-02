@@ -19,8 +19,10 @@ pub mod open;
 pub mod pictures;
 pub mod refresh;
 pub mod search;
+pub mod tags;
 pub mod tools;
 pub mod tree;
+pub mod yaml;
 
 mod error;
 mod fold_table;

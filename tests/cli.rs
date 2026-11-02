@@ -162,10 +162,10 @@ fn a_person_marker_becomes_their_folder_except_for_commands_that_take_urls() -> 
   fs::create_dir_all(&about)?;
   fs::write(about.join("Jon Kemp (About).md"), "# Jon Kemp (About)\n")?;
   sandbox.legacy_script("links", r#"for a in "$@"; do echo "$a"; done"#)?;
-  let bin = sandbox.legacy_script("tag", r#"for a in "$@"; do echo "$a"; done"#)?;
+  let bin = sandbox.legacy_script("contact", r#"for a in "$@"; do echo "$a"; done"#)?;
 
   let tag = run(sandbox.pplr().env("PPLR_BIN_DIR", &bin).args([
-    "tag",
+    "contact",
     "pplr://k/kemp-jon",
     "pplr://k/kemp-jon/About",
   ]))?;
@@ -184,12 +184,12 @@ fn a_person_marker_becomes_their_folder_except_for_commands_that_take_urls() -> 
 #[test]
 fn a_marker_that_does_not_resolve_stops_the_command() -> Result<()> {
   let sandbox = Sandbox::new()?;
-  let bin = sandbox.legacy_script("tag", "echo ran")?;
+  let bin = sandbox.legacy_script("contact", "echo ran")?;
   let out = run(
     sandbox
       .pplr()
       .env("PPLR_BIN_DIR", &bin)
-      .args(["tag", "pplr://x/nobody"]),
+      .args(["contact", "pplr://x/nobody"]),
   )?;
   assert_eq!(out.status.code(), Some(1));
   assert_eq!(text(&out.stdout), "");
@@ -1084,5 +1084,46 @@ fn the_index_new_pictures_and_search_commands_are_native_and_their_goldens_repla
     }
   }
   assert!(replayed > 0, "no golden of WP05's commands replayed");
+  Ok(())
+}
+
+/// AT-06.1 (ST0001 AC-06.1): tag and tags run natively, every golden of
+/// theirs that is fully native replays (tags.yaml from the ported emitter,
+/// the _tags pages, the Tags lines and tags_index.json in Python's form), and
+/// reindex, its tags step now native, replays too.
+#[test]
+fn tag_and_tags_are_native_and_their_goldens_replay() -> Result<()> {
+  const WP06: [&str; 2] = ["tag", "tags"];
+  for name in WP06 {
+    assert!(pplr::cli::native(name).is_some(), "{name} is not native");
+  }
+  assert!(
+    pplr::cli::fully_native("reindex"),
+    "reindex still delegates"
+  );
+  let mut replayed = Vec::new();
+  for case in fs::read_dir(golden_dir().join("cases"))? {
+    let case = case?.path();
+    if !case.is_dir() {
+      continue;
+    }
+    let mut commands = Vec::new();
+    for step in fs::read_dir(case.join("steps"))? {
+      let step = step?.path();
+      if step.extension().is_some_and(|x| x == "args") {
+        commands.push(lines_of(&step)?.first().cloned().unwrap_or_default());
+      }
+    }
+    if commands.iter().any(|c| c == "tags" || c == "reindex")
+      && commands.iter().all(|c| pplr::cli::fully_native(c))
+    {
+      same(replay(&case)?, true, &format!("{} replays", case.display()))?;
+      replayed.push(case);
+    }
+  }
+  assert!(
+    !replayed.is_empty(),
+    "no golden of tags or reindex replayed"
+  );
   Ok(())
 }

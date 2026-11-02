@@ -2,7 +2,7 @@
 wp_id: WP-06
 title: Tags
 scope: M
-status: Not Started
+status: WIP
 ---
 
 # WP-06: Tags
@@ -23,6 +23,14 @@ Port tags to Rust and retire `tags.py`.
 - Delete `pplr_tags`, `pplr_tag` and `src/pplr-tags/tags.py`.
 
 **Criteria**: AC-06.1.
+
+
+**The YAML reader: the choice and its evidence** (cc, as built)
+
+- **Chosen: `src/yaml.rs`, a reader of the subset pplr's files use, resolving plain scalars by PyYAML's YAML 1.1 rules.** No dependency.
+- **Why not a crate.** The legacy code used every value through Python's `str()` and `json.dumps`, so the reading has to match PyYAML's types, not just its text: a bare `no` is the boolean False and prints `False`, `at: 2026-09-25` is a date that prints as itself, `180` is an int. The maintained Rust readers (`yaml-rust2`, `saphyr`) follow YAML 1.2, where `no` is the string "no", and have no date type; `serde_yaml` is deprecated.
+- **What it reads:** block mappings and sequences (a list may share its key's indent, as PyYAML allows), flow mappings and sequences, plain, single- and double-quoted scalars with their escapes, and comments; plain scalars resolve to null, bool (the YAML 1.1 set), int (decimal, `0x`, `0b`, octal, `_` separators), float, date, or string. Block scalars, anchors, tags, reserved indicators and multiple documents are refused with the line named, never misread.
+- **Evidence:** every `tags.yaml`, `vocabulary.yaml` and `cadence.yaml` shape in the fixture and goldens reads to the same values PyYAML gave: the six tags goldens (`tags-apply`, `tags-check`, `tags-index`, `tags-render`, `tags-show`, `tags-unknown-sub`) and both `reindex` goldens replay byte for byte; unit tests in `yaml.rs` pin the YAML 1.1 cases (`no`, `On`, `~`, `0x1F`, `1_000`, `010`, `2026-6-5`) and Python's `str()`/`repr()` of each type.
 
 ## Acceptance
 

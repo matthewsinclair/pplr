@@ -5,7 +5,7 @@ use crate::Result;
 use crate::config::Config;
 use crate::{
   doctor, fallback, grep, icons, index, install, marker, meetings, new, open, pictures, refresh,
-  search,
+  search, tags,
 };
 use std::io::{IsTerminal, Write};
 use std::process::{Command as Process, ExitCode, Stdio};
@@ -132,6 +132,16 @@ pub const COMMANDS: &[Command] = &[
     run: icons::setpicsfordirs,
   },
   Command {
+    name: "tag",
+    usage: "show or edit one person's tags (About/tags.yaml), checked against the vocabulary\n<\"Surname, First\">            show their tags, by facet\n<\"Surname, First\"> +tag -tag   add or remove tags (an added tag is yours: never overwritten)",
+    run: tags::run_tag,
+  },
+  Command {
+    name: "tags",
+    usage: "each person's tags, from About/tags.yaml, against _pplr/vocabulary.yaml\ncheck                 every tags.yaml against the vocabulary\nshow \"Surname, First\" a person's tags, by facet\nrender [--dry-run]    the generated \"- Tags:\" line in each About\nindex                 .index/tags_index.json: everyone, with marker, role, company, picture, tags\napply FILE [--dry-run] write tags.yaml from a reviewed JSON list (hand tags kept)",
+    run: tags::run_tags,
+  },
+  Command {
     name: "use",
     usage: "point ~/.local/bin/pplr at a tree, or report the one it serves\n[dev|opt|brew]  the tree; brew removes the link so Homebrew's pplr answers",
     run: install::use_tree,
@@ -157,7 +167,7 @@ const WITHOUT_DATA: &[&str] = &["install", "use"];
 
 /// Native commands that still run a legacy one through the fallback, and
 /// which: the port of the second takes its row out.
-const DELEGATES: &[(&str, &str)] = &[("reindex", "tags")];
+const DELEGATES: &[(&str, &str)] = &[("tag", "contact")];
 
 /// Whether `name` runs in Rust throughout: native, and running nothing legacy.
 /// The golden replay runs only these.
