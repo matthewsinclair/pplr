@@ -2,7 +2,7 @@
 wp_id: WP-01
 title: Release and install design for pplr
 scope: S
-status: Not Started
+status: WIP
 ---
 
 # WP-01: Release and install design for pplr

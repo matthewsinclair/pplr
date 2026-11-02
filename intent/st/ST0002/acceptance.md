@@ -19,7 +19,7 @@ title: Create a homebrew distro for the new Rust version of Pplr
 - AC-00.2 (non-test) T10 holds: on rhadamanth, `pplr use dev`, `use opt` and `use brew` each give the right version line, a clean doctor and a passing shadow check, and on a Linux machine brew alone does. -- satisfied: no
 - AC-00.3 (non-test) rhadamanth runs brew's pplr, with no link into the old checkout. The user docs name brew alone (T1), and docs/releasing.md covers dev and opt for the maintainer. -- satisfied: no
 
-### WP-01 -- Release and install design for pplr (status: Not Started)
+### WP-01 -- Release and install design for pplr (status: WIP)
 
 - AC-01.1 (non-test) The release and install design (E1 to E8, the T1 to T10 table, the install layout) is settled on this thread, with hv's answers to its open questions recorded. -- satisfied: no
 
@@ -59,7 +59,7 @@ title: Create a homebrew distro for the new Rust version of Pplr
 
 _(no tests in this group)_
 
-### WP-01 -- Release and install design for pplr (status: Not Started)
+### WP-01 -- Release and install design for pplr (status: WIP)
 
 _(no tests in this group)_
 
