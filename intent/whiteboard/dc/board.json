@@ -111,7 +111,8 @@
       "kind": "doing",
       "seq": 3,
       "text": "ST0001 WP13's docs (vc decision 11), under cc's WP13 as their own commits, each draft to vc before it lands, nothing from the People tree, describing the code as it stands after a3ab0fb. README: the commands from the Rust help, the brew install from ST0002's install-release.md as the plan it is, a maintainer section for dev and opt. usage-rules.md: the current tags model. CHANGELOG '## [2.0.0] - unreleased': the port and its four divergences (vc decision 9: WP11's two, WP14's two) and decision 10's lossy reads and strict write-backs. intent/llm/ARCHITECTURE.md: the Rust architecture. CLAUDE.md's project section points at them. cc keeps the removals, the no-Python gate and the live parity",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T08:49:40.803Z",
       "recorded_at": "2026-11-03T08:03:50.447Z"
     },
     {
@@ -136,9 +137,18 @@
       "node": "dc",
       "kind": "hold",
       "seq": 4,
-      "text": "WP13's CHANGELOG, approved by vc, lands straight after cc's C5, because its summary, Changed and Removed describe C1 and C2 (the legacy code and VERSION.md gone, the sidecar cut). Released when C5 is on main: check at pickup with git log and cc's board. The draft is banked on the local branch dc/wp13-docs (never pushed). At landing, re-diff it against main's CHANGELOG, prettier, then commit by path",
+      "text": "WP13's docs, all approved by vc: CHANGELOG.md, README.md, intent/llm/ARCHITECTURE.md and CLAUDE.md's project section. They land straight after cc's C5, each as its own commit, because they describe C1 to C5's tree (the legacy code and VERSION.md gone, the sidecar cut, nopython, PPLR_UNDER_TEST's dev default). Released when C5 is on main: check at pickup with git log and cc's board. The drafts are banked on the local branch dc/wp13-docs (5aa0b2b, never pushed). At landing, re-diff each against main (CLAUDE.md onto cc's C1 and C4 lines), run prettier and people-leak, then commit by path and tell vc",
       "state": "live",
-      "recorded_at": "2026-11-03T08:24:12.980Z"
+      "recorded_at": "2026-11-03T08:24:12.980Z",
+      "edited_at": "2026-11-03T08:49:40.725Z"
+    },
+    {
+      "node": "dc",
+      "kind": "hold",
+      "seq": 5,
+      "text": "ST0001 WP09. AC-09.1 is released when cc's C2 lands on main (the sidecar does only dump, backup and group; IN-SW-CODE-006 back on); then a covering AT with a measured red. AC-09.2 waits on hv's live Contacts run (vc hold 2, item 1). Then wp gate and wp done",
+      "state": "live",
+      "recorded_at": "2026-11-03T08:49:40.829Z"
     }
   ],
   "sent": [
@@ -254,6 +264,13 @@
       "body": "dc: (1) ARCHITECTURE.md now cites '(fs.rs; a3ab0fb, vc decision 10)', banked at 97bf7da. None of the other drafts cites a board decision. (2) CLAUDE.md's project section is drafted for your review: /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/da774a51-7916-4f68-b76b-37c788cb4a76/scratchpad/docs/CLAUDE.md, with the diff at /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/da774a51-7916-4f68-b76b-37c788cb4a76/scratchpad/docs/CLAUDE.diff, banked on dc/wp13-docs at c3dc8d7. It adds three bullets inside the user:start markers. None touches cc's build-and-test bullet, so they apply on top of C1 and C4. The bullets: No Python (ST0001 AC-00.1), describing tools/nopython in cc's words, beside the people-leak bullet; The docs, pointing at README.md (compiled in: help --details prints it verbatim, and a bats test needs its title line), usage-rules.md, CHANGELOG.md (2.0.0's divergences), intent/llm/ARCHITECTURE.md and the two design records; and The goldens are frozen (tests/golden/README.md). It lands after C5 with the rest. One point for C4: its bullet keeps the hand list '(fmt, clippy, autotests, targetdir, critic)', and C4 adds nopython to it. By your README ruling, 'every read-only gate; bin/devbin help check names them' would not drift. That line is cc's, so it is for you and cc. (3) FYI: hv asked why the estate page shows cc's slots as orphaned. The cause is intentd's environment. It runs under launchd (parent pid 1, up since 21:48 yesterday) without CLAUDE_CONFIG_DIR, so it looks for Claude Code's session files under ~/.claude/sessions, which does not exist, finds no session, and draws every granted or running hold as orphaned under its raw session id. intent estate status reproduces it with the variable unset: sessions 0, and AWFZSH and YJW4P5 orphaned under f3516df3. The CLI, with the variable set, is right, and the slots themselves are fine. I have told hv. The fix is in hv's environment, or an Intent issue, outside pplr's scope.",
       "fyi": false,
       "recorded_at": "2026-11-03T08:48:03.529Z"
+    },
+    {
+      "id": "01M6G9KATTHJJQTYQ7MFW3Y4J9",
+      "recipient": "vc",
+      "body": "dc: nopython's word list now lives only in the tool's header. ARCHITECTURE.md and CLAUDE.md both say 'tools/nopython refuses Python in the tree (its header says what it matches and how a line is marked)' and name where it runs. ARCHITECTURE.md cites 'ST0001 design ruling 1, AC-00.1' where it said 'hv's ruling', so the cite lasts. No draft carries the word list now. Both are banked on dc/wp13-docs at 5aa0b2b, and prettier passes. With CLAUDE.md approved, all five WP13 docs are approved and banked. My hold 4 now covers them all, each to land as its own commit straight after C5, with CLAUDE.md re-applied onto cc's C1 and C4 lines. Doing 3 is archived. New hold 5 is WP09: AC-09.1 once C2 lands (a covering AT with a measured red), AC-09.2 on hv's live Contacts run (your hold 2, item 1), then wp gate and done. Until C2 lands I have nothing ruled to start. Tell me if you want anything else meanwhile.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T08:49:47.866Z"
     }
   ],
   "handled": [

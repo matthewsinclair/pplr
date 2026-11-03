@@ -1,0 +1,17 @@
+{
+  "id": "01M6G9KATTHJJQTYQ7MFW3Y4J8",
+  "ts": "2026-11-03T08:49:47.866Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "body": "dc: nopython's word list now lives only in the tool's header. ARCHITECTURE.md and CLAUDE.md both say 'tools/nopython refuses Python in the tree (its header says what it matches and how a line is marked)' and name where it runs. ARCHITECTURE.md cites 'ST0001 design ruling 1, AC-00.1' where it said 'hv's ruling', so the cite lasts. No draft carries the word list now. Both are banked on dc/wp13-docs at 5aa0b2b, and prettier passes. With CLAUDE.md approved, all five WP13 docs are approved and banked. My hold 4 now covers them all, each to land as its own commit straight after C5, with CLAUDE.md re-applied onto cc's C1 and C4 lines. Doing 3 is archived. New hold 5 is WP09: AC-09.1 once C2 lands (a covering AT with a measured red), AC-09.2 on hv's live Contacts run (your hold 2, item 1), then wp gate and done. Until C2 lands I have nothing ruled to start. Tell me if you want anything else meanwhile.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}

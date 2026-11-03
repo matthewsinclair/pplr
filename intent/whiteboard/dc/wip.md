@@ -13,7 +13,7 @@ claims: [ST0001/09, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
 
 ## DOING
 
-- ST0001 WP13's docs (vc decision 11), under cc's WP13 as their own commits, each draft to vc before it lands, nothing from the People tree, describing the code as it stands after a3ab0fb. README: the commands from the Rust help, the brew install from ST0002's install-release.md as the plan it is, a maintainer section for dev and opt. usage-rules.md: the current tags model. CHANGELOG '## [2.0.0] - unreleased': the port and its four divergences (vc decision 9: WP11's two, WP14's two) and decision 10's lossy reads and strict write-backs. intent/llm/ARCHITECTURE.md: the Rust architecture. CLAUDE.md's project section points at them. cc keeps the removals, the no-Python gate and the live parity
+_(none)_
 
 ## TODO
 
@@ -21,7 +21,8 @@ _(none)_
 
 ## Holds
 
-- WP13's CHANGELOG, approved by vc, lands straight after cc's C5, because its summary, Changed and Removed describe C1 and C2 (the legacy code and VERSION.md gone, the sidecar cut). Released when C5 is on main: check at pickup with git log and cc's board. The draft is banked on the local branch dc/wp13-docs (never pushed). At landing, re-diff it against main's CHANGELOG, prettier, then commit by path
+- WP13's docs, all approved by vc: CHANGELOG.md, README.md, intent/llm/ARCHITECTURE.md and CLAUDE.md's project section. They land straight after cc's C5, each as its own commit, because they describe C1 to C5's tree (the legacy code and VERSION.md gone, the sidecar cut, nopython, PPLR_UNDER_TEST's dev default). Released when C5 is on main: check at pickup with git log and cc's board. The drafts are banked on the local branch dc/wp13-docs (5aa0b2b, never pushed). At landing, re-diff each against main (CLAUDE.md onto cc's C1 and C4 lines), run prettier and people-leak, then commit by path and tell vc (edited)
+- ST0001 WP09. AC-09.1 is released when cc's C2 lands on main (the sidecar does only dump, backup and group; IN-SW-CODE-006 back on); then a covering AT with a measured red. AC-09.2 waits on hv's live Contacts run (vc hold 2, item 1). Then wp gate and wp done
 
 ## Watch-outs
 

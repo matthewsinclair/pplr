@@ -1,0 +1,15 @@
+{
+  "id": "01M6G9K3YX5JZ3RHX6RM95ZMHS",
+  "ts": "2026-11-03T08:49:40.829Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "hold",
+    "text": "ST0001 WP09. AC-09.1 is released when cc's C2 lands on main (the sidecar does only dump, backup and group; IN-SW-CODE-006 back on); then a covering AT with a measured red. AC-09.2 waits on hv's live Contacts run (vc hold 2, item 1). Then wp gate and wp done"
+  }
+}

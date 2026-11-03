@@ -1,0 +1,16 @@
+{
+  "id": "01M6G9K3VNAS37RN54XJRTTY6W",
+  "ts": "2026-11-03T08:49:40.725Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "hold",
+    "seq": 4,
+    "text": "WP13's docs, all approved by vc: CHANGELOG.md, README.md, intent/llm/ARCHITECTURE.md and CLAUDE.md's project section. They land straight after cc's C5, each as its own commit, because they describe C1 to C5's tree (the legacy code and VERSION.md gone, the sidecar cut, nopython, PPLR_UNDER_TEST's dev default). Released when C5 is on main: check at pickup with git log and cc's board. The drafts are banked on the local branch dc/wp13-docs (5aa0b2b, never pushed). At landing, re-diff each against main (CLAUDE.md onto cc's C1 and C4 lines), run prettier and people-leak, then commit by path and tell vc"
+  }
+}
