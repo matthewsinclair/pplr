@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 10:46Z
+heartbeat_at: 2026-11-03 10:54Z
 status: active
-focus: "Holding for hv's compact. ST0001 WP09 done (AT-09.1 fd67819; AC-09.2 on hv's round trip and run 4, aa42c5a). Left: ST0002 WP04 on devbin's manifest-header fix (the issue text on the local branch dc/devbin-issue, hv's to file) and Developer ID signing (hold 6); claims ST0002/04, /05 and /07 wait on hv's signing and brew steps. Nothing ruled to start"
+focus: "After hv's compact; nothing ruled to start. Hold 6 stands: Devbin is at v0.1.19 with lib/cmd/formula:424 unchanged, its issue not yet filed (the text on dc/devbin-issue, 84972b4) and Devbin parked for today; Developer ID signing waits on vc hold 2 item 3, and WP07's last dependency (ST0001 WP09) is done. Claims ST0002/04, /05 and /07 wait on hv"
 claims: [ST0002/07, ST0002/04, ST0002/05]
 ---
 
