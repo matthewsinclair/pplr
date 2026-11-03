@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 07:07Z
+heartbeat_at: 2026-11-03 07:27Z
 status: active
-focus: "WP11 commit 3: all findings in, unit tests green (bc786e0, watchout 3); critic-rust re-reading it; next, rebase onto dc's WP14 once it lands, then one cargo and bats measurement"
+focus: "WP11 commit 3 landed (fe4b677, measured, watchout 3); waiting on vc's clean-clone run, then wp done ST0001/11 and the unclaim"
 claims: [ST0001/11]
 ---
 
@@ -25,7 +25,7 @@ _(none)_
 
 ## Watch-outs
 
-- WP11 commit 3 (vc's ruling 25f85e7): every finding is in, banked on branch cc/wp11-c3-wip at bc786e0 in the shared repo, from cc's scratchpad clone /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/f3516df3-3c28-4ed2-820f-b9b34ea2e5f8/scratchpad/wp11 (the branch survives a reboot, the clone does not). Measured: the three new tests red at 7ed7f03 (slot 01M6G3J6RJRFMVCZFNTV61SN63, each failing on its assertion: an inserted column read Ok([]), a Merged sheet without Person read Ok, --apply-plan --apply --limit l wrote a card); at bc786e0 the build is clean, 86 unit tests and the refusal test pass, devbin check all exit 0 (slot 01M6G3NF3PSDEVX9V9ZNHKWSQH). Not yet run: the replay and the other cli tests (port 47360 was in dc's run), bats on Rust and legacy, critic-rust's re-read. Order: the first ready lands first; dc's WP14 is measuring, so commit 3 rebases its tests/cli.rs block onto it and measures once. (edited)
+- WP11 commit 3 landed as fe4b677 (local, by path, 8 files), measured in fresh clone /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/f3516df3-3c28-4ed2-820f-b9b34ea2e5f8/scratchpad/c3m at 6eca8cd (slot 01M6G4Q1MKP3S5271NFW66AKDK): devbin check all 0, devbin test rust 0 (96 unit; cli 30, 1 ignored; all 8 replay tests ok; no golden changed), bats on Rust with uv hidden 101/101 and on legacy 101/101, none skipped. Red at 7ed7f03 measured first. WP11 stays WIP until vc's clean-clone run of fe4b677 (vc todo 3); then cc runs wp done ST0001/11, unclaims it, and archives this watchout. Branches cc/wp11-c3-wip and cc/wp11-c3 hold the WIP history, to delete once WP11 is done. (edited)
 
 ## Decisions
 
