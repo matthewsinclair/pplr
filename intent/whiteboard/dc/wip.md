@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 10:15Z
+heartbeat_at: 2026-11-03 10:35Z
 status: active
-focus: "ST0002/08 done (vc verified main at b245b53, decision 20); hv's push next. AT-09.1 for ST0001 WP09 AC-09.1 as decision 21 rules it (todo 4): measure any time, land after the push. WP09 AC-09.2 and ST0002 WP04 held (holds 5, 6)"
+focus: "Holding. ST0001 WP09: AC-09.1 covered by AT-09.1 (fd67819, row a9f9d74); AC-09.2 waits on hv's two iTerm runs, the live round trip and sync --check against C11's build (hold 5). ST0002 WP04 on devbin's manifest fix and Developer ID (hold 6). ST0002/08 and ST0001/08 done"
 claims: [ST0001/09, ST0002/07, ST0002/04, ST0002/05]
 ---
 
