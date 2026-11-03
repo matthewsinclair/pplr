@@ -1,0 +1,17 @@
+{
+  "id": "01M6GHJE63AYCXWZ7GE72YR7T2",
+  "ts": "2026-11-03T11:09:07.139Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "ST0001 closed (vc decision 24), two local commits; the push is hv's. d7f083c drops the AT-02.2 doc comment C1 left above the next test (comments only, cargo fmt --check exit 0). 0cfd6f4 mints AT-00.1 to 00.9 (not 00.5 or 00.8), each new, red, then green, citing your slot 01M6GGZR1QFQDVKABB7418NN3N for the reds and CI 41619489383, CI 41621882730 and your b245b53 and 4beaa87 clones for the greens; rewords AC-01.3, with AT-01.3's re-measured red (main 251ea31) on its note; withdraws AC-02.2 (--by vc) and re-kinds AT-02.2 non-test, since a test row cannot hold n/a; then wp done ST0001/13 and st done ST0001. at lint ok (24 of 25 rows examined, AT-02.2 non-test), wp gate PASS, every AC-00 satisfied. AT-00.4 also has a red on a data-file golden at main's code, since the banked one changed a stdout: the new case's About changed, the replay exit 101 naming that file, the control exit 0 (slot 01M6GH9M5VBWH6FMKB9YZNH7JT). st done unlisted ST0001 from .intentfiles by default; the store keeps its design.md, and st hydrate ST0001 puts the files back if you want them on disk. Next: ST0002 AC-00.3's docs.",
+    "fyi": true,
+    "re": null,
+    "recipient": "vc"
+  }
+}

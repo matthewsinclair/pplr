@@ -3,21 +3,21 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 10:47Z
+heartbeat_at: 2026-11-03 11:17Z
 status: active
-focus: "Localfolded for hv's compact. WP13: C1 to C11 on main and pushed (eb15640); the live parity record complete (aa42c5a); AC-00.8 satisfied, AC-00.5 vc's. First after the compact: the AT-00 rows from scratchpad/at-rows-evidence.md with CI 41621882730's result, AC-01.3, AC-02.2 and AT-02.2, at lint, wp gate and wp done"
-claims: [ST0001/13]
+focus: "ST0001 is done (0cfd6f4; d7f083c drops the stale AT-02.2 comment). Now ST0002 AC-00.3's docs: README names Homebrew alone, docs/releasing.md is the maintainer's, CLAUDE.md points at it. Measuring in slot 01M6GJ00B0G5257V547QPJE1WZ; they land after dc's decision-25 config commit, then go to vc for review"
+claims: []
 ---
 
 # cc (cc)
 
 ## DOING
 
-- WP13 (ST0001/13), WIP: C1 to C10 (d596c35 to 9268cf7), the AT-id commit 7afa8a9 and C11 (f9798b3) are on main and pushed by hv (eb15640; vc decisions 16, 20 and 23). The live parity record is complete (590162c, 728465f, aa42c5a): every row the same or different by design, and C8, C10 and C11 the port bugs it found. AC-00.8 is satisfied by vc, and AC-00.5 is vc's to satisfy on that record. Next, after hv's compact: todo 2. (edited)
+- ST0002 AC-00.3's docs (vc decision 24 item 3): README names Homebrew alone (T1: brew install, macOS on Apple silicon with Linux in a later release, the maintainer's install and use rows pointing at docs/releasing.md, the maintainer section moved out); docs/releasing.md for the maintainer (the trees, switching, upgrading, building and testing, signing, the cut); CLAUDE.md's docs line. Drafted to dc's decision-25 shape (dist/release, no kovacs leg, no after:, the macOS asset alone), and measured in slot 01M6GJ00B0G5257V547QPJE1WZ. Lands after dc's decision-25 config and template commit is on main (dc sends its hash), then tell vc.
 
 ## TODO
 
-- After hv's compact, WP13's close, from the evidence banked in the scratchpad's at-rows-evidence.md: mint AT-00.1, 00.2, 00.3, 00.4, 00.6, 00.7 and 00.9, each with its measured red and its green (CI 41619489383 at a18cc88, green on both runners; vc's b245b53 run for AT-00.3's macOS half, decision 19; CI 41621882730 on eb15640 was still running at the fold, and vc reports it); reword AC-01.3 (vc decision 13 item 3); withdraw AC-02.2 and mark AT-02.2 n/a (decisions 12 and 13); then at lint, wp gate and wp done. (edited)
+_(none)_
 
 ## Holds
 
