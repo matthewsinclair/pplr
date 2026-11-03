@@ -1,5 +1,5 @@
 ---
-verblock: "2026-11-03:v0.5: matts - pushed at eb15640; WP13's ATs and close, then ST0002's held steps"
+verblock: "2026-11-03:v0.6: matts - ST0001 closed; ST0002 cut to 2.0.0 on macOS, hv's release sitting next"
 ---
 
 # Work In Progress
@@ -8,24 +8,22 @@ DOING and TODO only; finished work lives in its commit, its closed issue or its 
 
 ## Current Focus
 
-**ST0001: port Pplr to one Rust binary; ST0002 ships it through Homebrew, signed**
+**ST0002: ship pplr 2.0.0 through Homebrew, signed and notarised, macOS first**
 
-- vc holds the pen and slot control (hv's words recorded on the take). Scope rule while it lasts: simpler or easier only, nothing new.
-- Next: cc closes ST0001 WP13, then the thread.
+- vc holds the pen and slot control. Scope rule: simpler or easier only. hv, 2026-11-03: be aggressive and ship asap (vc decisions 24 and 25 record what that cut).
+- Next: hv's one release sitting, from dc's runbook (hold 2 on vc's board).
 
 ## Active Steel Threads
 
-- **ST0001** (21 of 28 criteria):
-  - WP13 (cc): the AT-00 rows for the seven open criteria, each with its measured red and its green (CI runs 41619489383 and 41621882730, vc's local macOS runs at b245b53 and 4beaa87). Then reword AC-01.3, withdraw AC-02.2 with AT-02.2 marked n/a, and run at lint, wp gate and wp done.
-- **ST0002** (7 of 17 criteria):
-  - WP04: AC-04.1 waits on a devbin fix to its generated manifest header and on Developer ID signing; AC-04.2 needs hv's tap edit and push.
-  - WP05: prepared up to `brew install`, held for hv. WP07: Developer ID and notarisation are hv's.
-  - Not started: WP06, the 2.0.0 release and the move to brew, on hv's approval.
+- **ST0002** (7 of 16 criteria; AC-05.1 withdrawn, WP05 cancelled):
+  - 2.0.0 ships the signed macOS asset alone, and the formula declares macOS alone; the Linux tarballs and their workflow come in a later release.
+  - WP07: AT-07.1's green is hv's `bin/devbin macos prepare` at the tag (sign, verify, notarytool Accepted), after the three `geodica.apple.*` keychain entries.
+  - WP06: `bin/devbin release v2.0.0`, then the attach from `dist/release`, then `bin/devbin formula publish` by hand; then rhadamanth moves to brew (AC-00.1 to AC-00.3, AC-06.1, AC-06.2).
+  - WP04: AT-04.1's green is the render plus hv's brew install and `brew test` from the tap; AC-04.2 is the tap's description.
 
 ## Upcoming Work
 
-- hv's held list is hold 2 on vc's board: the keychain entries, Developer ID signing, the Intent fixes, the brew install, and the Devbin issue with the tap's description and CI.
-- Candidates after the cutover, each under the scope rule: todo 6 on vc's board.
+- After the release: devbin's manifest-header fix brings back `brew style`, `brew audit --strict` and the tap's CI (the Devbin issue, hold 2 item 7); the Linux assets with their workflow; todo 6's behaviour-preserving cleanups, in a thread of their own.
 
 ## Notes
 
