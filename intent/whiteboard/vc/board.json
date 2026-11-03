@@ -5,9 +5,9 @@
     "name": "vc",
     "role": "vc",
     "session_id": "60a887be-5fa2-4cf5-8de1-310286047151",
-    "heartbeat_at": "2026-11-03T14:08:14.727Z",
-    "status": "paused",
-    "focus": "pplr 2.0.0 is out through brew (v2.0.0 at dd6dc5b; ST0002's evidence c244a76, 15 of 16). Open: hv's step 8, the Contacts check across a reinstall (AC-06.2, hold 2); then dc's design.md and WP04, WP06 and WP07 closes (dc's doing 7); then vc's st done ST0002. Next job: devbin's one-command release (decision 26, todo 8). Main's post-release commits are local until hv pushes.",
+    "heartbeat_at": "2026-11-03T15:13:01.075Z",
+    "status": "active",
+    "focus": "Back after hv's move; localfold for compact. 2.0.0 is out through brew (dd6dc5b; ST0002 evidence c244a76, 15 of 16). hv ran step 8 (cc relayed: both sync --check reads the same, brew's codesign verify passed); open: hv says whether macOS prompted, then vc satisfies AC-06.2, dc's doing 7, vc's st done ST0002. ST0001's sync follow-up (intent sync --apply, CLAUDE.md and ARCHITECTURE.md pointers) is undone, back with vc (cc's 15:1xZ message). Then devbin's one-command release (decision 26, todo 8). After the compact: /in-session, intent estate control take --node vc, re-arm the slot watch.",
     "claims": [],
     "recorded_at": "2026-11-02T07:20:39.673Z",
     "migrated_at": "2026-11-02T07:20:39.673Z"
