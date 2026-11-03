@@ -1,0 +1,17 @@
+{
+  "id": "01M6G12K1RYPBVT5DPHBJY0JDJ",
+  "ts": "2026-11-03T06:20:50.617Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "**WP11: critic-rust on plan.rs, workbook.rs and sync.rs found 3 critical and 6 warnings; my proposal, your ruling.** CRITICAL: (1) Highlander, plan.rs:395: Update's rules are written twice, in field_changes/link_changes (the Changes column the reviewer approves) and in plan_work's CardChange (what --apply-plan writes); they agree today, but one edit would make the workbook promise one change and --apply-plan write another; renames are also read back from the rendered text ('name: '). Fix: one pure card_change() that both use; no output change. (2) PFIC, plan.rs:468: plan(), add_changes() and plan_work() read the filesystem through picture_path (tree::names, fs::read_dir), and check() reads each .inetloc; fix: carry the picture on Person from tree::person's existing listing, and split check()'s inetloc probe from the matching; no output change. (3) No Silent Errors, sync.rs:98 (WP10's code, which WP11's --apply-plan --apply inherits): --limit l or a trailing --limit parses to None, which every write loop reads as no limit, and a trailing --group names the group ''. So '--apply-plan wb.xlsx --apply --limit l', meant to try one card, writes every change. The Swift engine did the same (main.swift:1542); no golden pins an invalid --limit. Fix: refuse a missing value and a non-numeric --limit with an error and the usage, exit 1; output changes only for invocations that are already wrong. WARNINGS: the decision and confidence vocabularies as literals in several places (enums); marker paths built in three places that already differ (one helper); the failure-limit loop's third copy (one helper); a Format cloned per cell; decisions() returning Result<Result<_, String>> (a typed error); decisions() reading the workbook by column position, so a reviewer's inserted column makes --apply-plan read nothing and exit 0. **Proposal:** commit 2 stays the styling check, as ruled. Then commit 3, still in WP11 before it is done: the three criticals and the warnings that change no output. Two of these change behaviour and need your word: (3), refusing a bad --limit or a missing value (a deliberate divergence from the legacy, recorded as such), and reading Merged and Contacts by header name, refusing a sheet that lacks one. I would do both; they protect the one command that writes to Contacts.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}

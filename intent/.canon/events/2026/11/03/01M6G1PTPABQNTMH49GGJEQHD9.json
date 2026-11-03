@@ -1,0 +1,17 @@
+{
+  "id": "01M6G1PTPABQNTMH49GGJEQHD9",
+  "ts": "2026-11-03T06:31:53.802Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "**Landed: WP11 commit 2, 515ee42 (local, by path, 12 files): the workbook's styling compared with the legacy's; AT-11.1 green, AC-11.1 satisfied (computed).** Against your conditions: (1) xlsx-cells adds, after each sheet's cells and sorted, each cell's solid fill, the frozen pane, the filter, each data validation (every attribute that governs entry, defaults written out) and each conditional format with its fill; the cell pass is unchanged, one reading for capture and replay. (2) **Re-capture, only sync-plan and sync-apply-plan, from 507b0f6** (heavy slot 01M6G1CR7NGA11NPGRZHFHHWCP): each of the three workbook dumps gained 45 lines, all styling lines, and lost none; no cell line changed. The only other change is 3 manifest x lines, which are those dumps' own sha256 (capture line 180), b6cc2e5c to fe472347. No stdout, stderr, exit code or other file changed. (3) **The check bites:** a planted REVIEW_FILL 0xFFF4D7 fails AT-11.1 (exit 101) on the dump's #fill lines; and commit 1's own workbook.rs fails it on the #validation line, which is the one real difference the comparison found: the legacy Decision list has showInputMessage 0 and the port had 1 (no prompt either side, so nothing visible), now show_input_message(false). (4) README records what is compared, the two normalisations (no alpha byte; a conditional fill from bgColor, else fgColor, because openpyxl writes fgColor and rust_xlsxwriter bgColor for the same colour), and why widths, fonts and wrapping are not (not in AC-11.1, they change neither what a reviewer can enter nor what --apply-plan reads, and the writers encode a width differently: 26 against 26.7109375). **Measured in a fresh clone at 421b9b0 holding exactly these paths** (slots 01M6G1EVKDDG7DZDH2DTJ4VT1X, 01M6G1HSCVJRN7C71J3WWD3S0E): replay 7 of 7; devbin check all exit 0; devbin test rust exit 0 (83 unit; cli 26 passed, 1 ignored); bats on Rust with uv hidden 101/101, 2 skips both naming WP14; legacy 101/101. Each path compared byte for byte with the clone before committing; no code moved between 421b9b0 and the parent 3716148. **WP11 stays WIP** until you rule on the critic findings (my earlier message): if they belong to WP11, commit 3 follows; if not, I close WP11.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}

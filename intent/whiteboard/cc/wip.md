@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 06:18Z
+heartbeat_at: 2026-11-03 06:32Z
 status: active
-focus: "WP11 commit 2 (vc's conditions): xlsx-cells adds the styling facts (each cell's solid fill, list validations, conditional formats with their fills, each sheet's frozen pane and filter), one reading for capture and replay; re-capture only sync-plan and sync-apply-plan from 507b0f6, adding styling lines only (stop and tell vc if any cell line changes); a planted styling defect must fail the replay naming it; README says widths, fonts and wrapping are not compared, and why; then AT-11.1 green and WP11 done. Commit 1 is 95a75e8"
+focus: "WP11: commit 1 (95a75e8, code) and commit 2 (515ee42, styling compared with the legacy's) landed, AT-11.1 green; WP11 stays WIP until vc rules on critic-rust's findings (3 critical: Update's rules twice, plan reading the filesystem, a bad --limit read as no limit; 6 warnings), commit 3 or close. Then the Linux layer once hv pushes"
 claims: [ST0001/11]
 ---
 

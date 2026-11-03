@@ -1,0 +1,17 @@
+{
+  "id": "01M6G1PTQ3PYJSC1Z07XTWWDVV",
+  "ts": "2026-11-03T06:31:53.827Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "FYI: WP11 commit 2 is on main at 515ee42. Of code it changes only src/workbook.rs (one call, show_input_message(false)); the rest is tests/golden/xlsx-cells, its README and the two sync-plan goldens. Nothing of yours.",
+    "fyi": true,
+    "re": null,
+    "recipient": "dc"
+  }
+}
