@@ -120,6 +120,20 @@ pub fn percent_decode(s: &str) -> Option<String> {
   String::from_utf8(out).ok()
 }
 
+/// Percent-encoding as Python's `urllib.parse.quote(s, safe)`: every byte but
+/// letters, digits, `_.-~` and the bytes in `safe` becomes `%XX`.
+pub fn percent_encode(s: &str, safe: &[u8]) -> String {
+  let mut out = String::with_capacity(s.len());
+  for b in s.bytes() {
+    if b.is_ascii_alphanumeric() || b"_.-~".contains(&b) || safe.contains(&b) {
+      out.push(char::from(b));
+    } else {
+      out.push_str(&format!("%{b:02X}"));
+    }
+  }
+  out
+}
+
 /// Canonical decomposition of Latin letters as Foundation gives it, the form
 /// the legacy engine's file names took on disk: "Zsófia" becomes
 /// "Zso\u{301}fia". Anything outside the table passes through unchanged.
@@ -201,5 +215,19 @@ mod tests {
     assert_eq!(percent_decode("a%20b%2Cc"), Some("a b,c".to_owned()));
     assert_eq!(percent_decode("50%"), None);
     assert_eq!(percent_decode("%ZZ"), None);
+    assert_eq!(percent_decode("a%2"), None);
+  }
+
+  #[test]
+  fn percent_encoding_matches_urllib_quote_with_its_safe_bytes() {
+    assert_eq!(
+      percent_encode("V/Varga, Zsófia/About/Zsófia Varga (About).md", b"/"),
+      "V/Varga%2C%20Zs%C3%B3fia/About/Zs%C3%B3fia%20Varga%20%28About%29.md"
+    );
+    assert_eq!(percent_encode("a_b.c-d~e/f", b"/"), "a_b.c-d~e/f");
+    assert_eq!(
+      percent_encode("CAL=x+y/z@mail.gmail.com", b"@="),
+      "CAL=x%2By%2Fz@mail.gmail.com"
+    );
   }
 }

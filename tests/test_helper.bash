@@ -319,10 +319,3 @@ needs_uv_for_legacy() {
   [ "$PPLR" = "$PPLR_ROOT/bin/pplr" ] || return 0
   command -v uv >/dev/null 2>&1 || skip "legacy $1 is Python until WP13 removes it"
 }
-
-# Skip when uv is missing and the test runs something still legacy Python in
-# both implementations, naming the work package that ports it: a porting WP
-# is not done while a skip naming it remains (ST0001 rule 8).
-needs_uv_until() {
-  command -v uv >/dev/null 2>&1 || skip "$2 runs the legacy Python until ST0001 $1 ports it"
-}

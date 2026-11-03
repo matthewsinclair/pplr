@@ -295,9 +295,13 @@ pplr contact render                      # About/<First Surname> (Contact).md, a
 pplr contact context "Kemp, Jon"        # role, latest update, last meeting's notes: to write from
 ```
 
-#### `pplr email [recent|inbox] [--account TEXT] [--hours N] [--sent]`
+#### `pplr email [recent|inbox] [--account TEXT] [--hours N] [--sent] [--limit N] [--json]`
 
-Recent mail (the last 24 hours) or what is in the inbox now, numbered, one message per block with its `Message-ID`. The person each message is with is marked with their `pplr://` marker when they are in pplr: the sender, or for mail you sent, the first recipient in pplr. The listing is saved, so `pplr contact log --email 3` logs message 3 with its date and subject, and needs no person when the message is with someone in pplr. `--account work` keeps the accounts whose address contains that text. It reads Mail's index through `mail-recent` (read-only; `PPLR_MAIL_RECENT` sets its path).
+Recent mail (the last 24 hours) or what is in the inbox now, numbered, one message per block with its `Message-ID`. The person each message is with is marked with their `pplr://` marker when they are in pplr: the sender, or for mail you sent, the first recipient in pplr. The listing is saved, so `pplr contact log --email 3` logs message 3 with its date and subject, and needs no person when the message is with someone in pplr. `--account work` keeps the accounts whose address contains that text. Junk, Trash, Deleted, Drafts, Spam and Bin are always left out, and Sent unless `--sent`; a message in two mailboxes is listed once.
+
+pplr reads Mail's own index, `~/Library/Mail/V10/MailData/Envelope Index`, and the accounts store beside it, read-only, so the app it runs in needs Full Disk Access (System Settings > Privacy & Security > Full Disk Access); `pplr doctor` warns when it lacks it. The index's schema is Apple's and unversioned, so pplr checks the tables and columns it reads first, and refuses a store that lacks one, naming it, rather than reading wrong rows.
+
+`--json` prints the messages as a document for other tools, and leaves the saved listing alone. Its `schema` is `1`, and it changes when a field does. Each message has `date` (local time with its offset, RFC 3339), `account` (the address of the account it arrived in), `from` (`Name <address>`, or the address), `address` (the sender's), `to` (every recipient's address: To, then Cc, then Bcc), `subject` and `message_id` (with its angle brackets). `pplr email` exits 0, or 1 with the cause on stderr: no Mail store (naming the path it looked in), no Full Disk Access, or a store whose schema pplr does not read; a usage error prints the usage line and exits 1.
 
 #### `pplr refresh`: `next`, `stamp`, `status`
 

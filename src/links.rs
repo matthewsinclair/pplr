@@ -8,6 +8,7 @@ use crate::Result;
 use crate::config::Config;
 use crate::contacts::to_swift_json;
 use crate::marker::marker_url;
+use crate::normalise::percent_decode;
 use crate::tree::{self, Person};
 use regex::Regex;
 use serde::Serialize;
@@ -210,25 +211,6 @@ pub fn people_link_parts(target: &str) -> Option<(String, String)> {
   ))
 }
 
-/// `%XX` decoded as UTF-8; None when an escape is malformed or the bytes are
-/// not UTF-8, as Foundation's removingPercentEncoding answers.
-fn percent_decode(s: &str) -> Option<String> {
-  let bytes = s.as_bytes();
-  let mut out = Vec::with_capacity(bytes.len());
-  let mut i = 0;
-  while i < bytes.len() {
-    if bytes[i] == b'%' {
-      let hex = std::str::from_utf8(bytes.get(i + 1..i + 3)?).ok()?;
-      out.push(u8::from_str_radix(hex, 16).ok()?);
-      i += 3;
-    } else {
-      out.push(bytes[i]);
-      i += 1;
-    }
-  }
-  String::from_utf8(out).ok()
-}
-
 /// Each real Markdown file once: a symlinked note is followed to its file, so
 /// it is counted once and written in place. A directory is searched for `.md`,
 /// skipping hidden files and folders.
@@ -294,12 +276,5 @@ mod tests {
     );
     assert_eq!(people_link_parts("https://example.org/K/Kemp, Jon"), None);
     assert_eq!(people_link_parts("Career/People/KK/Kemp, Jon"), None);
-  }
-
-  #[test]
-  fn a_malformed_escape_leaves_the_text_as_it_is() {
-    assert_eq!(percent_decode("a%20b"), Some("a b".into()));
-    assert_eq!(percent_decode("a%2"), None);
-    assert_eq!(percent_decode("a%zzb"), None);
   }
 }

@@ -21,6 +21,8 @@ regex = "1"
 rust_xlsxwriter = { version = "0.102.0", default-features = false }
 # The reviewed workbook, read back by sync --apply-plan.
 calamine = { version = "0.38.0", default-features = false }
+# Mail's own index and the accounts store, read-only (pplr email, ST0001 WP14), as Cldr reads BusyCal's.
+rusqlite = { version = "0.32", features = ["bundled"] }
 
 [lints.rust]
 unsafe_code = "forbid"

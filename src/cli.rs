@@ -4,8 +4,8 @@
 use crate::Result;
 use crate::config::Config;
 use crate::{
-  contact, doctor, fallback, grep, handler, icons, index, install, links, marker, meetings, new,
-  open, pictures, refresh, rename, search, sync, tags,
+  contact, doctor, email, fallback, grep, handler, icons, index, install, links, marker, meetings,
+  new, open, pictures, refresh, rename, search, sync, tags,
 };
 use std::io::{IsTerminal, Write};
 use std::process::{Command as Process, ExitCode, Stdio};
@@ -55,6 +55,11 @@ pub const COMMANDS: &[Command] = &[
     name: "edit",
     usage: "edit a person's about file in $VISUAL, else $EDITOR\n<first>        firstname of person to edit\n<surname>      surname of person to edit",
     run: open::run_edit,
+  },
+  Command {
+    name: "email",
+    usage: email::HELP,
+    run: email::run,
   },
   Command {
     name: "grep",

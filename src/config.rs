@@ -27,6 +27,8 @@ pub struct Config {
   /// PPLR_TODAY, which pins the clock (design 3.5): "YYYY-MM-DD", meaning its
   /// midnight, or "YYYY-MM-DD HH:MM:SS", local time.
   pub today: Option<jiff::civil::DateTime>,
+  /// HOME, under which Mail and the system keep the stores `pplr email` reads.
+  pub home: Option<PathBuf>,
   /// PPLR_CMS_URL, default the local CMS; set empty, files only, never the CMS.
   pub cms_url: String,
   /// PPLR_PICTURE_WIDTH, the width of the picture line `pictures` writes.
@@ -97,6 +99,7 @@ impl Config {
       opt_prefix,
       refs_dir,
       today,
+      home: home().ok(),
       cms_url,
       picture_width,
     })

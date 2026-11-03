@@ -7,6 +7,7 @@
 use crate::Result;
 use crate::config::Config;
 use crate::layout::Layout;
+use crate::mail::{self, Access};
 use crate::tools::on_path;
 use serde_json::Value;
 use std::io::IsTerminal;
@@ -80,7 +81,7 @@ pub fn check(config: &Config, fix: bool) -> Result<Vec<Section>> {
     },
     Section {
       title: "Dependencies",
-      rows: tools(),
+      rows: tools(config),
     },
     Section {
       title: "Index Files",
@@ -337,7 +338,7 @@ fn directories(data: &Path, fix: bool) -> Vec<Row> {
   rows
 }
 
-fn tools() -> Vec<Row> {
+fn tools(config: &Config) -> Vec<Row> {
   let mut rows = Vec::new();
   let mut tool = |name: &str, needed_for: &str| match on_path(name) {
     Some(path) => rows.push(row(
@@ -351,10 +352,6 @@ fn tools() -> Vec<Row> {
   };
   tool("jq", "the commands not yet ported to Rust need it");
   tool("claude", "pplr search needs it");
-  tool(
-    "mail-recent",
-    "pplr email needs it until ST0001 WP14; or set PPLR_MAIL_RECENT",
-  );
   if cfg!(target_os = "macos") {
     tool(
       "fileicon",
@@ -363,7 +360,43 @@ fn tools() -> Vec<Row> {
     tool("osascript", "the live Contacts writes need it");
   }
   rows.push(sidecar());
+  rows.push(mail_store(config.home.as_deref()));
   rows
+}
+
+/// Whether `pplr email` can read Mail's stores. It warns and never fails, so
+/// doctor stays clean where pplr has no Full Disk Access (ST0002 T10), and it
+/// passes where there is no Mail store to read.
+fn mail_store(home: Option<&Path>) -> Row {
+  let Some(home) = home else {
+    return row(Status::Warn, "Mail's store not checked: HOME is not set");
+  };
+  let (index, accounts) = mail::stores(home);
+  if mail::access(&index) == Access::Missing {
+    return row(
+      Status::Pass,
+      format!(
+        "No Mail store at {} (pplr email has nothing to read)",
+        index.display()
+      ),
+    );
+  }
+  for store in [&index, &accounts] {
+    let why = match mail::access(store) {
+      Access::Readable => continue,
+      Access::Missing => "it is missing".to_owned(),
+      Access::Denied => mail::FULL_DISK_ACCESS.to_owned(),
+      Access::Failed(e) => e,
+    };
+    return row(
+      Status::Warn,
+      format!("pplr email cannot read {}: {why}", store.display()),
+    );
+  }
+  row(
+    Status::Pass,
+    format!("Mail's store readable: {}", index.display()),
+  )
 }
 
 fn sidecar() -> Row {

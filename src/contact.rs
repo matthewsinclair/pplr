@@ -425,19 +425,20 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
       due(root, days, rest.iter().any(|a| a == "--all"), today)
     }
     ("show", [name, ..]) => show(root, name, today),
-    // --email reads pplr email's listing, which WP14 ports; until then the legacy contact logs it
-    ("log", _) if rest.iter().any(|a| a == "--email") => {
-      let legacy: Vec<String> = std::iter::once("contact".to_owned())
-        .chain(args.iter().cloned())
-        .collect();
-      crate::fallback::run(&legacy, config)
-    }
     ("log", [first, more @ ..]) => {
-      if first.starts_with("--") {
-        log(root, None, rest, today)
+      let (name, args) = if first.starts_with("--") {
+        (None, rest)
       } else {
-        log(root, Some(first), more, today)
-      }
+        (Some(first), more)
+      };
+      let emailed = match emailed(args, &config.cache_dir) {
+        Ok(emailed) => emailed,
+        Err(why) => {
+          eprintln!("{why}");
+          return Ok(ExitCode::FAILURE);
+        }
+      };
+      log(root, name, args, emailed, today)
     }
     ("next", [name, when]) => set_next(root, name, when, today),
     ("context", [name, ..]) => context(root, name, today),
@@ -583,10 +584,94 @@ fn show(root: &Path, name: &str, today: Date) -> Result<ExitCode> {
   Ok(ExitCode::SUCCESS)
 }
 
-fn log(root: &Path, name: Option<&String>, args: &[String], today: Date) -> Result<ExitCode> {
-  let Some(name) = name else {
-    eprintln!("Error: who? Give the person, or --email N from a pplr email listing");
-    return Ok(ExitCode::FAILURE);
+/// What `--email N|MESSAGE-ID` gives `contact log`: the message's link and,
+/// for message N of the last `pplr email` listing, its date, subject and person.
+#[derive(Debug, Default)]
+struct Emailed {
+  link: String,
+  /// N, when the message came from the listing.
+  listed: Option<usize>,
+  date: Option<Date>,
+  subject: Option<String>,
+  person: Option<String>,
+}
+
+/// The message `--email` names, if it names one; an Err is the line to print,
+/// as the legacy contact printed its errors. A contact is one message, so a
+/// second `--email` is refused (vc's ruling B on WP14: the legacy took the
+/// first's date, person and note, and the last's link).
+fn emailed(args: &[String], cache_dir: &Path) -> Result<Option<Emailed>> {
+  let mut references = Vec::new();
+  let mut it = args.iter();
+  while let Some(arg) = it.next() {
+    if arg == "--email" {
+      references.push(it.next().map(|r| r.trim()).unwrap_or_default());
+    }
+  }
+  let reference = match references.as_slice() {
+    [] => return Ok(None),
+    [reference] => *reference,
+    _ => {
+      return Err("Error: --email is given more than once: a contact log links one message".into());
+    }
+  };
+  if reference.is_empty() || !reference.bytes().all(|b| b.is_ascii_digit()) {
+    return Ok(Some(Emailed {
+      link: crate::email::message_link(reference),
+      ..Emailed::default()
+    }));
+  }
+  let n = reference
+    .parse()
+    .map_err(|e| format!("Error: --email {reference}: {e}"))?;
+  let hit = crate::email::listed(cache_dir, n)?;
+  let date = hit.date.parse::<Date>().map_err(|e| {
+    format!(
+      "Error: message {n} of the last pplr email listing has no date ({}): {e}",
+      hit.date
+    )
+  })?;
+  Ok(Some(Emailed {
+    link: crate::email::message_link(&hit.message_id),
+    listed: Some(hit.n),
+    date: Some(date),
+    subject: Some(hit.subject),
+    person: hit.person,
+  }))
+}
+
+/// `contact log`: a contact on a date (today unless given), by `--via`, with
+/// a `--link` and a `--note`; `--email` gives what its message knows, and
+/// what the command line says wins.
+fn log(
+  root: &Path,
+  name: Option<&String>,
+  args: &[String],
+  emailed: Option<Emailed>,
+  today: Date,
+) -> Result<ExitCode> {
+  let name = match (name, &emailed) {
+    (Some(name), _) => name.as_str(),
+    (
+      None,
+      Some(Emailed {
+        person: Some(person),
+        ..
+      }),
+    ) => person.as_str(),
+    (
+      None,
+      Some(Emailed {
+        listed: Some(n), ..
+      }),
+    ) => {
+      eprintln!("Error: message {n} is with no one in pplr: give the person");
+      return Ok(ExitCode::FAILURE);
+    }
+    (None, _) => {
+      eprintln!("Error: who? Give the person, or --email N from a pplr email listing");
+      return Ok(ExitCode::FAILURE);
+    }
   };
   let dir = match find_person(root, name) {
     Ok(dir) => dir,
@@ -594,10 +679,16 @@ fn log(root: &Path, name: Option<&String>, args: &[String], today: Date) -> Resu
   };
   let defaults = Defaults::load(root)?;
   let mut c = read_contact(&dir)?;
-  let (mut date, mut via, mut link, mut note) = (None, "email".to_owned(), None, None);
+  let (mut date, mut via, mut link, mut note) = match emailed {
+    Some(e) => (e.date, "email".to_owned(), Some(e.link), e.subject),
+    None => (None, "email".to_owned(), None, None),
+  };
   let mut it = args.iter();
   while let Some(a) = it.next() {
     match a.as_str() {
+      "--email" => {
+        it.next();
+      }
       "--via" => via = it.next().cloned().unwrap_or_else(|| "email".to_owned()),
       "--link" => link = it.next().cloned(),
       "--note" => note = it.next().cloned(),

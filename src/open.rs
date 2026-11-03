@@ -4,6 +4,7 @@
 use crate::Result;
 use crate::config::Config;
 use crate::marker::target_path;
+use crate::normalise::percent_encode;
 use crate::tree::about_file;
 use std::io::{Read, Write};
 use std::net::{TcpStream, ToSocketAddrs};
@@ -189,7 +190,7 @@ fn cms_page(path: &Path, config: &Config) -> Option<String> {
   Some(format!(
     "{}/{}",
     config.cms_url,
-    quote(&rel.to_string_lossy())
+    percent_encode(&rel.to_string_lossy(), b"/")
   ))
 }
 
@@ -226,20 +227,6 @@ fn answers(cms_url: &str) -> bool {
     && &first == b"HTTP/"
 }
 
-/// Percent-encoding as `urllib.parse.quote(s)`: everything but letters,
-/// digits, `_.-~` and `/`.
-pub fn quote(s: &str) -> String {
-  let mut out = String::with_capacity(s.len());
-  for b in s.bytes() {
-    if b.is_ascii_alphanumeric() || b"_.-~/".contains(&b) {
-      out.push(char::from(b));
-    } else {
-      out.push_str(&format!("%{b:02X}"));
-    }
-  }
-  out
-}
-
 /// Hands a file or URL to macOS's `open`.
 fn open_target(target: &str) -> Result<ExitCode> {
   macos_only("pplr open hands files and URLs to macOS's open")?;
@@ -269,15 +256,6 @@ mod tests {
 
   fn strings(args: &[&str]) -> Vec<String> {
     args.iter().map(|a| (*a).to_owned()).collect()
-  }
-
-  #[test]
-  fn quote_matches_urllib() {
-    assert_eq!(
-      quote("V/Varga, Zsófia/About/Zsófia Varga (About).md"),
-      "V/Varga%2C%20Zs%C3%B3fia/About/Zs%C3%B3fia%20Varga%20%28About%29.md"
-    );
-    assert_eq!(quote("a_b.c-d~e/f"), "a_b.c-d~e/f");
   }
 
   #[test]

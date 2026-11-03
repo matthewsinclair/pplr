@@ -115,22 +115,6 @@ fn a_missing_data_directory_is_named_and_fails() -> Result<()> {
 }
 
 #[test]
-fn the_fallback_runs_the_real_legacy_script() -> Result<()> {
-  let sandbox = Sandbox::new()?;
-  // email stays on the fallback until WP14; an unknown mode prints its usage
-  assert!(pplr::cli::native("email").is_none());
-  let out = run(
-    sandbox
-      .pplr()
-      .env("PPLR_MAIL_RECENT", "/usr/bin/true")
-      .args(["email", "nonsense"]),
-  )?;
-  assert_eq!(out.status.code(), Some(1), "{}", text(&out.stderr));
-  assert!(text(&out.stdout).starts_with("Usage: pplr email "));
-  Ok(())
-}
-
-#[test]
 fn the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status() -> Result<()> {
   let sandbox = Sandbox::new()?;
   let bin = sandbox.legacy_script(
@@ -162,20 +146,21 @@ fn the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status() -> Re
 
 #[test]
 fn a_person_marker_becomes_their_folder_for_a_fallback_command() -> Result<()> {
-  // The URL-taking commands (open, resolve, links, handler) are all native now;
-  // marker::rewrite_args' own tests cover their exemption
+  // Every legacy command is native now, so a stand-in script plays one; the
+  // URL-taking commands' exemption is marker::rewrite_args' own tests'
   let sandbox = Sandbox::new()?;
   let about = sandbox.data().join("K/Kemp, Jon/About");
   fs::create_dir_all(&about)?;
   fs::write(about.join("Jon Kemp (About).md"), "# Jon Kemp (About)\n")?;
-  let bin = sandbox.legacy_script("email", r#"for a in "$@"; do echo "$a"; done"#)?;
+  let bin = sandbox.legacy_script("unported", r#"for a in "$@"; do echo "$a"; done"#)?;
+  assert!(pplr::cli::native("unported").is_none());
 
-  let email = run(sandbox.pplr().env("PPLR_BIN_DIR", &bin).args([
-    "email",
+  let out = run(sandbox.pplr().env("PPLR_BIN_DIR", &bin).args([
+    "unported",
     "pplr://k/kemp-jon",
     "pplr://k/kemp-jon/About",
   ]))?;
-  assert_eq!(text(&email.stdout), "Kemp, Jon\npplr://k/kemp-jon/About\n");
+  assert_eq!(text(&out.stdout), "Kemp, Jon\npplr://k/kemp-jon/About\n");
   Ok(())
 }
 
@@ -471,6 +456,9 @@ fn replay(case: &std::path::Path) -> Result<bool> {
     sb.join("home/.gitconfig"),
     "[user]\n\tname = Matthew Sinclair\n\temail = golden@example.invalid\n",
   )?;
+  // pplr email reads Mail's own stores under HOME, built from the messages the
+  // capture's fake mail-recent served the legacy code
+  mail_stores(&sb.join("home"), &sb.join("mail/messages.json"))?;
 
   let fakes = golden.join("fakes");
   let path = format!(
@@ -791,6 +779,369 @@ fn the_golden_rewrites_mask_what_varies_between_runs() {
   );
   let want = "@SANDBOX@/x and @SANDBOX@/y and @SANDBOX@\n\"generated_at\": \"@GENERATED_AT@\"\n\"generated\" : \"@GENERATED@\"\nsync plan, @GENERATED@\nbackups/@STAMP@-contacts.json\n";
   assert_eq!(golden_normalise(&raw, sb), want);
+}
+
+// pplr's own mail reader (ST0001 WP14). Mail's two stores are built here from
+// the fixture's messages, holding only the tables and columns pplr email
+// reads, so no test touches a real mail store.
+
+/// One message of the fixture's mail/messages.json: its fields as the
+/// capture's fake mail-recent served them, and the mailboxes it is in.
+#[derive(serde::Deserialize)]
+struct FixtureMessage {
+  date: String,
+  account: String,
+  address: String,
+  from: String,
+  to: Vec<String>,
+  subject: String,
+  message_id: String,
+  mailboxes: Vec<String>,
+}
+
+/// Where macOS keeps Mail's index and the accounts store, under a HOME: the
+/// test's own statement of it, so a reader looking elsewhere fails.
+fn mail_store_paths(home: &std::path::Path) -> (PathBuf, PathBuf) {
+  (
+    home.join("Library/Mail/V10/MailData/Envelope Index"),
+    home.join("Library/Accounts/Accounts4.sqlite"),
+  )
+}
+
+/// Mail's Envelope Index and the accounts store under `home`, holding the
+/// messages of `messages_json` in its order, each in its first mailbox and
+/// labelled with the rest, as Gmail's All Mail holds a message labelled INBOX.
+fn mail_stores(home: &std::path::Path, messages_json: &std::path::Path) -> Result<()> {
+  use rusqlite::{Connection, ToSql};
+  let messages: Vec<FixtureMessage> = serde_json::from_slice(&fs::read(messages_json)?)?;
+  let (index_path, accounts_path) = mail_store_paths(home);
+  for path in [&index_path, &accounts_path] {
+    fs::create_dir_all(path.parent().ok_or("a store has no folder")?)?;
+  }
+  let accounts = Connection::open(&accounts_path)?;
+  accounts.execute_batch(
+    "create table ZACCOUNT (Z_PK integer primary key, ZIDENTIFIER, ZUSERNAME, ZPARENTACCOUNT);",
+  )?;
+  let index = Connection::open(&index_path)?;
+  index.execute_batch(
+    "create table messages (date_received, sender, subject, global_message_id, mailbox, deleted);
+     create table subjects (subject);
+     create table addresses (address, comment);
+     create table message_global_data (message_id_header);
+     create table mailboxes (url);
+     create table labels (message_id, mailbox_id);
+     create table recipients (message, address, type, position);",
+  )?;
+  let insert = |db: &Connection, sql: &str, values: &[&dyn ToSql]| -> Result<i64> {
+    db.execute(sql, values)?;
+    Ok(db.last_insert_rowid())
+  };
+  let mut ids = std::collections::HashMap::<String, String>::new();
+  let mut boxes = std::collections::HashMap::<(String, String), i64>::new();
+  for m in &messages {
+    let id = match ids.get(&m.account) {
+      Some(id) => id.clone(),
+      None => {
+        let id = format!("ACCOUNT-{}", ids.len() + 1);
+        insert(
+          &accounts,
+          "insert into ZACCOUNT (ZIDENTIFIER, ZUSERNAME) values (?1, ?2)",
+          &[&id, &m.account],
+        )?;
+        ids.insert(m.account.clone(), id.clone());
+        id
+      }
+    };
+    let mut held = Vec::new();
+    for name in &m.mailboxes {
+      let key = (id.clone(), name.clone());
+      let rowid = match boxes.get(&key) {
+        Some(rowid) => *rowid,
+        None => {
+          // unescaped: decoding an escaped name is mail.rs's own test's
+          let url = format!("imap://{id}/{name}");
+          let rowid = insert(&index, "insert into mailboxes (url) values (?1)", &[&url])?;
+          boxes.insert(key, rowid);
+          rowid
+        }
+      };
+      held.push(rowid);
+    }
+    let (mailbox, labels) = held
+      .split_first()
+      .ok_or("a fixture message is in no mailbox")?;
+    let name = m.from.strip_suffix(&format!(" <{}>", m.address));
+    let sender = insert(
+      &index,
+      "insert into addresses (address, comment) values (?1, ?2)",
+      &[&m.address, &name],
+    )?;
+    let subject = insert(
+      &index,
+      "insert into subjects (subject) values (?1)",
+      &[&m.subject],
+    )?;
+    let global = insert(
+      &index,
+      "insert into message_global_data (message_id_header) values (?1)",
+      &[&m.message_id],
+    )?;
+    let received = m.date.parse::<jiff::Timestamp>()?.as_second();
+    let message = insert(
+      &index,
+      "insert into messages (date_received, sender, subject, global_message_id, mailbox, deleted) \
+       values (?1, ?2, ?3, ?4, ?5, 0)",
+      &[&received, &sender, &subject, &global, mailbox],
+    )?;
+    for label in labels {
+      insert(
+        &index,
+        "insert into labels (message_id, mailbox_id) values (?1, ?2)",
+        &[&message, label],
+      )?;
+    }
+    for (position, to) in m.to.iter().enumerate() {
+      let address = insert(&index, "insert into addresses (address) values (?1)", &[to])?;
+      insert(
+        &index,
+        "insert into recipients (message, address, type, position) values (?1, ?2, 0, ?3)",
+        &[&message, &address, &i64::try_from(position)?],
+      )?;
+    }
+  }
+  Ok(())
+}
+
+/// Stand-ins on PATH for tools a command must never run: each one that runs
+/// leaves `tripped-<name>` in the sandbox, and fails.
+fn tripwires(sandbox: &Sandbox, names: &[&str]) -> Result<PathBuf> {
+  let bin = sandbox.path("tripwires");
+  fs::create_dir_all(&bin)?;
+  for name in names {
+    let script = bin.join(name);
+    let mark = sandbox.path(&format!("tripped-{name}"));
+    fs::write(
+      &script,
+      format!("#!/bin/sh\n/usr/bin/touch '{}'\nexit 1\n", mark.display()),
+    )?;
+    fs::set_permissions(&script, fs::Permissions::from_mode(0o755))?;
+  }
+  Ok(bin)
+}
+
+/// AT-14.1 (ST0001 AC-14.1): pplr reads recent and inbox mail itself, from
+/// Mail's own stores. Every golden of pplr email and of contact log --email
+/// replays against stores built from the fixture's messages; and with
+/// mail-recent, python3 and uv as tripwires on PATH, pplr email lists the inbox
+/// and contact log --email <Message-ID> links a message, running none of them.
+/// The bats contact log --email tests run both forms against the binary.
+#[test]
+fn email_and_contact_log_email_are_native_and_their_goldens_replay() -> Result<()> {
+  assert!(pplr::cli::native("email").is_some(), "email is not native");
+  let (mut listed, mut logged) = (false, false);
+  for case in fs::read_dir(golden_dir().join("cases"))? {
+    let case = case?.path();
+    if !case.is_dir() {
+      continue;
+    }
+    let mut steps = Vec::new();
+    for step in fs::read_dir(case.join("steps"))? {
+      let step = step?.path();
+      if step.extension().is_some_and(|x| x == "args") {
+        steps.push(lines_of(&step)?);
+      }
+    }
+    let lists = steps
+      .iter()
+      .any(|s| s.first().is_some_and(|c| c == "email"));
+    let logs = steps
+      .iter()
+      .any(|s| s.first().is_some_and(|c| c == "contact") && s.iter().any(|a| a == "--email"));
+    if lists || logs {
+      same(replay(&case)?, true, &format!("{} replays", case.display()))?;
+      listed |= lists;
+      logged |= logs;
+    }
+  }
+  assert!(listed, "no golden of pplr email replayed");
+  assert!(logged, "no golden of contact log --email replayed");
+
+  let sandbox = Sandbox::new()?;
+  mail_stores(
+    &sandbox.path("home"),
+    &golden_dir().join("fixture/mail/messages.json"),
+  )?;
+  let about = sandbox.data().join("O/Okafor, Chidi/About");
+  fs::create_dir_all(&about)?;
+  fs::write(
+    about.join("Chidi Okafor (About).md"),
+    "# Chidi Okafor (About)\n",
+  )?;
+  let tools = ["mail-recent", "python3", "uv"];
+  let bin = tripwires(&sandbox, &tools)?;
+  let path = format!("{}:/usr/bin:/bin", bin.display());
+  let inbox = run(
+    sandbox
+      .pplr()
+      .env("PATH", &path)
+      .env("PPLR_MAIL_RECENT", bin.join("mail-recent"))
+      .args(["email", "inbox"]),
+  )?;
+  assert_eq!(inbox.status.code(), Some(0), "{}", text(&inbox.stderr));
+  assert!(
+    text(&inbox.stdout).contains("  ID:   <ledger-1@larkspur.example>\n"),
+    "{}",
+    text(&inbox.stdout)
+  );
+  let log = run(
+    sandbox
+      .pplr()
+      .env("PATH", &path)
+      .env("PPLR_TODAY", GOLDEN_DAY)
+      .args([
+        "contact",
+        "log",
+        "Okafor, Chidi",
+        "--email",
+        "<ledger-1@larkspur.example>",
+      ]),
+  )?;
+  assert_eq!(log.status.code(), Some(0), "{}", text(&log.stderr));
+  let yaml = fs::read_to_string(about.join("contact.yaml"))?;
+  assert!(
+    yaml.contains("link: \"message://%3Cledger-1@larkspur.example%3E\""),
+    "{yaml}"
+  );
+  for tool in tools {
+    assert!(
+      !sandbox.path(&format!("tripped-{tool}")).exists(),
+      "pplr ran {tool}"
+    );
+  }
+  Ok(())
+}
+
+/// AT-14.2 (ST0001 AC-14.2): pplr email --json is a versioned contract. It
+/// prints a document with its schema and the documented fields, read from
+/// Mail's stores, and leaves the saved listing alone. It exits 1 naming the
+/// cause, with nothing on stdout, for a store without a column it reads, a
+/// store it may not read (naming Full Disk Access) and no store at all (naming
+/// the path it looked in).
+#[test]
+fn email_json_is_a_versioned_contract_and_refuses_a_store_it_cannot_trust() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let home = sandbox.path("home");
+  mail_stores(&home, &golden_dir().join("fixture/mail/messages.json"))?;
+  let json = || run(sandbox.pplr().args(["email", "inbox", "--json"]));
+
+  let out = json()?;
+  assert_eq!(out.status.code(), Some(0), "{}", text(&out.stderr));
+  let document: serde_json::Value = serde_json::from_slice(&out.stdout)?;
+  assert!(document["schema"].is_u64(), "no schema version: {document}");
+  let messages = document["messages"].as_array().ok_or("no messages array")?;
+  let ids: Vec<&str> = messages
+    .iter()
+    .filter_map(|m| m["message_id"].as_str())
+    .collect();
+  assert_eq!(
+    ids,
+    ["<seed-9@kestrel.example>", "<ledger-1@larkspur.example>"]
+  );
+  for m in messages {
+    let mut fields: Vec<&str> = m
+      .as_object()
+      .ok_or("a message is not an object")?
+      .keys()
+      .map(String::as_str)
+      .collect();
+    fields.sort_unstable();
+    assert_eq!(
+      fields,
+      [
+        "account",
+        "address",
+        "date",
+        "from",
+        "message_id",
+        "subject",
+        "to"
+      ]
+    );
+    assert!(
+      m["date"]
+        .as_str()
+        .is_some_and(|d| d.parse::<jiff::Timestamp>().is_ok()),
+      "{m}"
+    );
+  }
+  let saved = home.join(".cache/pplr/email-last.json");
+  assert!(!saved.exists(), "--json wrote the saved listing");
+  // The control: the listing without --json saves where that check looks
+  let listing = run(sandbox.pplr().args(["email", "inbox"]))?;
+  assert_eq!(listing.status.code(), Some(0), "{}", text(&listing.stderr));
+  assert!(saved.exists(), "no saved listing at {}", saved.display());
+
+  let (index, _) = mail_store_paths(&home);
+  let shown = index.display().to_string();
+  let refused = |causes: &[&str]| -> Result<()> {
+    let out = json()?;
+    assert_eq!(out.status.code(), Some(1), "{}", text(&out.stderr));
+    assert_eq!(text(&out.stdout), "");
+    let stderr = text(&out.stderr);
+    for cause in causes {
+      assert!(stderr.contains(cause), "{stderr}");
+    }
+    Ok(())
+  };
+  rusqlite::Connection::open(&index)?.execute_batch("alter table messages drop column deleted")?;
+  refused(&["messages.deleted", "not the schema pplr reads"])?;
+  fs::set_permissions(&index, fs::Permissions::from_mode(0o000))?;
+  refused(&["Full Disk Access", &shown])?;
+  fs::remove_file(&index)?;
+  refused(&["no Mail store at", &shown])?;
+  Ok(())
+}
+
+/// vc's ruling B on ST0001 WP14: a contact is one message, so `contact log`
+/// refuses a second --email, exits 1 naming why and writes nothing. The legacy
+/// mixed the two, the first's date, person and note with the last's link;
+/// WP14's body records the divergence for WP13's CHANGELOG.
+#[test]
+fn contact_log_refuses_a_second_email_and_writes_nothing() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let about = sandbox.data().join("O/Okafor, Chidi/About");
+  fs::create_dir_all(&about)?;
+  fs::write(
+    about.join("Chidi Okafor (About).md"),
+    "# Chidi Okafor (About)\n",
+  )?;
+  let contact = about.join("contact.yaml");
+  let log = |emails: &[&str]| {
+    let mut args = vec!["contact", "log", "Okafor, Chidi"];
+    for email in emails {
+      args.extend(["--email", *email]);
+    }
+    run(sandbox.pplr().env("PPLR_TODAY", GOLDEN_DAY).args(args))
+  };
+
+  let twice = log(&["<a-1@larkspur.example>", "<a-2@larkspur.example>"])?;
+  assert_eq!(twice.status.code(), Some(1), "{}", text(&twice.stdout));
+  let stderr = text(&twice.stderr);
+  assert!(
+    stderr.contains("--email") && stderr.contains("more than once"),
+    "{stderr}"
+  );
+  assert!(
+    !contact.exists(),
+    "a refused log wrote {}",
+    contact.display()
+  );
+
+  // The control: one --email writes the file the refusal must not
+  let once = log(&["<a-1@larkspur.example>"])?;
+  assert_eq!(once.status.code(), Some(0), "{}", text(&once.stderr));
+  assert!(contact.exists(), "a log wrote no {}", contact.display());
+  Ok(())
 }
 
 /// ST0001 WP09, read-only and by hand on macOS: `cargo test -- --ignored live`.
@@ -1209,10 +1560,9 @@ fn commands_about_pplr_itself_run_where_there_is_no_people_tree() -> Result<()> 
   Ok(())
 }
 
-/// AT-07.1 (ST0001 AC-07.1): contact runs natively (log --email excepted
-/// until WP14 brings pplr's own mail reader), contact.yaml and (Contact).md
-/// come out byte-identical, and every golden of contact and tag that is
-/// native throughout replays.
+/// AT-07.1 (ST0001 AC-07.1): contact runs natively, contact.yaml and
+/// (Contact).md come out byte-identical, and every golden of contact and tag
+/// that is native throughout replays (log --email's are AT-14.1's too).
 #[test]
 fn contact_is_native_and_its_goldens_replay() -> Result<()> {
   assert!(

@@ -97,7 +97,7 @@ meeting() { mkdir -p "$PPLR_TEST_DATA/$1/Meetings/$2"; echo "# $2" > "$PPLR_TEST
 }
 
 @test "pplr contact writes (Contact).md beside contact.yaml, and log --email links the message" {
-    needs_uv_until WP14 "contact log --email"
+    needs_uv_for_legacy contact
     create_test_person "Adams" "Amy" >/dev/null
     meeting "A/Adams, Amy" "20260301 Catch-up"
     export PPLR_TODAY=2026-09-25
@@ -119,7 +119,7 @@ meeting() { mkdir -p "$PPLR_TEST_DATA/$1/Meetings/$2"; echo "# $2" > "$PPLR_TEST
 }
 
 @test "pplr contact log --email N takes the message, date, subject and person from the last pplr email listing" {
-    needs_uv_until WP14 "contact log --email"
+    needs_uv_for_legacy contact
     create_test_person "Adams" "Amy" >/dev/null
     cat > "$PPLR_CACHE_DIR/email-last.json" <<'JSON'
 [{"n": 1, "date": "2026-09-24T09:00:00+01:00", "message_id": "<a1@x>", "subject": "Hello", "direction": "in", "person": null},
