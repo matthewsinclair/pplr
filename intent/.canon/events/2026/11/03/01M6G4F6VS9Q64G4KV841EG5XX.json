@@ -1,0 +1,15 @@
+{
+  "id": "01M6G4F6VS9Q64G4KV841EG5XX",
+  "ts": "2026-11-03T07:20:09.849Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "hold",
+    "text": "ST0001 ubuntu goldens fix, landed as 64be72f (measured in slot 01M6G4AZ391EPDF1JDQZQAR9R9: check all 0, cargo test 0): released when ubuntu's cargo step on a CI run carrying 64be72f (the run after hv's next push) replays sync-apply-plan, sync-link-all-names and sync-link-apply. If ubuntu fails anything else, the harness now names the path, and it comes back to TODO"
+  }
+}

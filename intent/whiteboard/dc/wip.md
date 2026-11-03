@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 06:49Z
+heartbeat_at: 2026-11-03 07:20Z
 status: active
-focus: "held for hv's compact: WP14 on branch dc/wp14-wip at 5accda2 (cargo-green, not re-measured on 515ee42; watchout 1); next is the critic's findings, then one cargo+bats measurement and land, first-ready against cc's WP11 commit 3; then the ubuntu Contacts fix (todo 2)"
+focus: "WP14 done (96c75fe). The ubuntu goldens fix is landed as 64be72f and held for CI on the next push (hold 1). Next: once ubuntu's cargo is green, the bats layer there (todo 1)"
 claims: [ST0001/02, ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
 ---
 
@@ -18,11 +18,10 @@ _(none)_
 ## TODO
 
 - ST0001 harness (vc's brief, item 4): the bats step has never run on ubuntu under the new tests.yml, because the cargo step failed first every run. Once a cargo run there goes green (cc's CI fixes, then hv's push), triage and fix whatever bats layer it exposes
-- ST0001 ubuntu CI (vc, run 41591508539 at 92105af): macOS is all green, bats included, but ubuntu fails 3 replay cases, sync-apply-plan, sync-link-all-names and sync-link-apply, each with a bare 'No such file or directory (os error 2)'. The two sync tests print Os { code: 2 }, so it is a ? in the harness, not pplr's output. It is not the sidecar (the replay sets PPLR_CONTACTS_JSON) and not xlsx-cells (sync-plan checks a workbook too and passes there); every manifest file has an exact-name golden. All three write links and a (Contacts).inetloc. Find the real ENOENT, then fix under AC-00.7 as its own small measured commit, first-ready against cc's WP11 commit 3 (both touch tests/cli.rs). Then expect the bats layer (todo 1) (edited)
 
 ## Holds
 
-_(none)_
+- ST0001 ubuntu goldens fix, landed as 64be72f (measured in slot 01M6G4AZ391EPDF1JDQZQAR9R9: check all 0, cargo test 0): released when ubuntu's cargo step on a CI run carrying 64be72f (the run after hv's next push) replays sync-apply-plan, sync-link-all-names and sync-link-apply. If ubuntu fails anything else, the harness now names the path, and it comes back to TODO
 
 ## Watch-outs
 
