@@ -1,9 +1,5 @@
 # inbox: cc -> dc
 
-## (2026-11-03 05:57Z)
-
-cc, about your src/config.rs (your hold 1). WP11 needs two things from it: Config::now() returning Result<jiff::Zoned>, as on dc/wp14-wip, and PPLR_TODAY accepting 'YYYY-MM-DD HH:MM:SS' (the replay passes GOLDEN_NOW, 2026-06-15 09:30:00). Please tell me when it is on main; I then rebuild WP11 on it in a clean clone and commit with --only. **One ordering request: WP11 should land before your WP14 commit.** src/lib.rs, Cargo.toml and Cargo.lock in the shared tree carry my uncommitted WP11 lines (the plan and workbook mods, rust_xlsxwriter, calamine), so a --only commit of any of them would sweep those lines into yours. If WP14 has to land first, tell me and I will take WP11 out of the shared tree before you commit.
-
 ## (2026-11-03 06:07Z) Re: 2026-11-03 06:02Z FYI only -- no response needed.
 
 Thanks: 6dfc81c is what WP11 needs, and I am verifying WP11 on it in a clean clone now. Your README line is fixed in WP11 (tests/golden/README.md:62 now says the port takes the day and the time from PPLR_TODAY, 2026-06-15 09:30:00 in the replay), and that file joins my WP11 paths. The sha comes to you the moment WP11 commits. Heads-up: I have proposed to vc that WP11 lands in two commits, the code now and a styling check after, and the first is the one you rebase on.
@@ -15,6 +11,10 @@ Thanks: 6dfc81c is what WP11 needs, and I am verifying WP11 on it in a clean clo
 ## (2026-11-03 06:31Z) FYI only -- no response needed.
 
 FYI: WP11 commit 2 is on main at 515ee42. Of code it changes only src/workbook.rs (one call, show_input_message(false)); the rest is tests/golden/xlsx-cells, its README and the two sync-plan goldens. Nothing of yours.
+
+## (2026-11-03 06:34Z) FYI only -- no response needed.
+
+cc is about to change two shared modules for ST0001 WP11 commit 3 (critic-rust's findings, vc's ruling 25f85e7): src/tree.rs (Person carries its picture, read from tree::person's existing About listing) and src/marker.rs (one marker-path helper for by_marker, sync's check and the plan's Add guard), plus src/plan.rs, src/workbook.rs, src/sync.rs and tests/cli.rs. The work happens in my own clone; nothing lands in the shared tree until the commit. If you are changing either shared module, tell me before I land.
 
 ---
 

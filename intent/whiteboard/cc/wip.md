@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 06:32Z
+heartbeat_at: 2026-11-03 06:44Z
 status: active
-focus: "WP11: commit 1 (95a75e8, code) and commit 2 (515ee42, styling compared with the legacy's) landed, AT-11.1 green; WP11 stays WIP until vc rules on critic-rust's findings (3 critical: Update's rules twice, plan reading the filesystem, a bad --limit read as no limit; 6 warnings), commit 3 or close. Then the Linux layer once hv pushes"
+focus: "Localfold done, holding for hv's compact. Straight after: WP11 commit 3 in the scratchpad clone (watchout 3): run the two new tests red, then the fixes, then cargo and bats. Whichever of commit 3 and dc's WP14 is ready first lands first; the other rebases and measures once (WP14 likely first)"
 claims: [ST0001/11]
 ---
 
@@ -25,7 +25,7 @@ _(none)_
 
 ## Watch-outs
 
-_(none)_
+- WP11 commit 3 (vc's ruling 25f85e7) is in progress, uncommitted and unmeasured, in cc's scratchpad clone /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/f3516df3-3c28-4ed2-820f-b9b34ea2e5f8/scratchpad/wp11 (based on 25f85e7), not in the shared tree. Done there: tests/cli.rs gains sync_refuses_a_missing_value_or_a_bad_limit_and_writes_nothing (written, not yet run); src/workbook.rs splits decisions() into a calamine read and a pure reviewed() with a Mistake enum and two unit tests (an inserted column, a missing header), reviewed() still reading by position so both tests can run red first. Not started: options() refusing a missing value and a bad --limit, the header lookup, the Decision and Confidence enums, card_change(), Person.picture (which also retires tags.rs's picture_of), the pure matches() with check() probing the inetlocs, marker_paths, write_each, one Format per column. The clone survives a compact, not a reboot. Order (vc, after the compact): whichever of commit 3 and dc's WP14 is ready first lands first, and the other rebases onto it and measures once; WP14 is likely first, so commit 3 then rebases its tests/cli.rs block (the only shared file) onto WP14. (edited)
 
 ## Decisions
 

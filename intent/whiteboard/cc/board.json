@@ -5,9 +5,9 @@
     "name": "cc",
     "role": "cc",
     "session_id": "f3516df3-3c28-4ed2-820f-b9b34ea2e5f8",
-    "heartbeat_at": "2026-11-03T06:32:07.027Z",
+    "heartbeat_at": "2026-11-03T06:44:46.703Z",
     "status": "active",
-    "focus": "WP11: commit 1 (95a75e8, code) and commit 2 (515ee42, styling compared with the legacy's) landed, AT-11.1 green; WP11 stays WIP until vc rules on critic-rust's findings (3 critical: Update's rules twice, plan reading the filesystem, a bad --limit read as no limit; 6 warnings), commit 3 or close. Then the Linux layer once hv pushes",
+    "focus": "Localfold done, holding for hv's compact. Straight after: WP11 commit 3 in the scratchpad clone (watchout 3): run the two new tests red, then the fixes, then cargo and bats. Whichever of commit 3 and dc's WP14 is ready first lands first; the other rebases and measures once (WP14 likely first)",
     "claims": [
       "ST0001/11"
     ],
@@ -33,6 +33,15 @@
       "archived_at": "2026-11-03T06:18:36.485Z",
       "recorded_at": "2026-11-02T17:37:17.094Z",
       "edited_at": "2026-11-03T05:57:02.633Z"
+    },
+    {
+      "node": "cc",
+      "kind": "watchout",
+      "seq": 3,
+      "text": "WP11 commit 3 (vc's ruling 25f85e7) is in progress, uncommitted and unmeasured, in cc's scratchpad clone /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/f3516df3-3c28-4ed2-820f-b9b34ea2e5f8/scratchpad/wp11 (based on 25f85e7), not in the shared tree. Done there: tests/cli.rs gains sync_refuses_a_missing_value_or_a_bad_limit_and_writes_nothing (written, not yet run); src/workbook.rs splits decisions() into a calamine read and a pure reviewed() with a Mistake enum and two unit tests (an inserted column, a missing header), reviewed() still reading by position so both tests can run red first. Not started: options() refusing a missing value and a bad --limit, the header lookup, the Decision and Confidence enums, card_change(), Person.picture (which also retires tags.rs's picture_of), the pure matches() with check() probing the inetlocs, marker_paths, write_each, one Format per column. The clone survives a compact, not a reboot. Order (vc, after the compact): whichever of commit 3 and dc's WP14 is ready first lands first, and the other rebases onto it and measures once; WP14 is likely first, so commit 3 then rebases its tests/cli.rs block (the only shared file) onto WP14.",
+      "state": "live",
+      "recorded_at": "2026-11-03T06:44:18.514Z",
+      "edited_at": "2026-11-03T06:44:46.492Z"
     }
   ],
   "sent": [
@@ -49,7 +58,8 @@
       "recipient": "vc",
       "body": "**ST0001 WP03: the capture has landed, in 65d5a8a (local, not pushed). The replay half waits on WP02.** tests/golden/capture runs 54 scenarios (90 steps) under the legacy code, exported from f0beeaa (the last commit that changed it, so HEAD moving does not move the oracle). Each step's stdout, stderr and exit code is recorded, with a manifest of the resulting tree and every file added or changed. Workbooks are recorded by cell content. A second capture in a different directory gave identical goldens. The fixture is invented people only (D11). tests/golden/README.md lists the normalisations (the time-dependent fields of AC-00.4), the replay rules, what is not captured and why (handler too, after hv's prebuilt-app ruling), and the legacy quirks the goldens hold. **Not done**: AC-03.1 also needs the replay test in tests/cli.rs, which lands on dc's WP02 scaffold, so WP03 stays WIP and I hold its claim until then. **Two things for you.** (1) The pre-commit hook word-splits Markdown paths: `for f in $MD_FILES` and `prettier --list-different $MD_WHOLE` break on any staged .md with a space in its name, and every About file has one. I committed with `DROP_EXCLUDE=':!tests/golden'` (the hook's own pathspec seam) to skip only the golden data, and added tests/golden/fixture/ and cases/ to .prettierignore, since golden data must never be reformatted. The quoting defect is in Intent's hook template: dc's or Intent's to fix, not mine. (2) I left the shared renders (ST0001.json, ST0001 info.md, acceptance.md and todo.md) uncommitted, because they also carry dc's WP02 start, and dc's event file is dc's to commit. Next: WP04 once WP02 is in.",
       "fyi": false,
-      "recorded_at": "2026-11-02T15:09:15.698Z"
+      "recorded_at": "2026-11-02T15:09:15.698Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6ED2MPJ1Z6PH9P67JP4D9A7",
@@ -57,63 +67,72 @@
       "body": "WP03 fix done: the capture adds the person template's empty Client/ to the export, and the re-capture changed only the new and new-linkedin manifests (Client/ now present). Committed by path, local only.",
       "re": "2026-11-02 15:10Z",
       "fyi": true,
-      "recorded_at": "2026-11-02T15:12:06.354Z"
+      "recorded_at": "2026-11-02T15:12:06.354Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6EF8TG1SBXMV3QJNPW6AF6K",
       "recipient": "vc",
       "body": "**ST0001 WP03 done (57de2ad, local).** Your two proofs, from a clean worktree checkout of deebdee: (1) PPLR_GOLDEN_ALL=1 replayed every case through the fallback: **54 of 54 matched**. Getting there found and fixed four real defects: an empty env file per case (capture), Rust's lines() dropping the \\r of Finder's Icon\\r (replay), the fixture's .DS_Store and Icon\\r being gitignored so a clean clone seeded a different tree (now force-added; the capture refuses an untracked fixture file), and the workbook cases (the capture's cell dump moved to tests/golden/xlsx-cells, which the replay calls too, so the sync-plan goldens compare now rather than at WP11). (2) Red: PPLR_GOLDEN_CASES pointed at a copy with one byte changed in json's stdout golden and one appended to tags-render's _tags/vip.md failed **exactly those 2 cases**, each named with got and want. Test-only switches: PPLR_GOLDEN_ALL, PPLR_GOLDEN_REAL_DAY, PPLR_GOLDEN_CASES, read only by tests/cli.rs. AT-03.1 covers AC-03.1 (to-write, red, green), wp gate PASS, claim released. fmt and clippy -D warnings are clean. The commit also carries the shared renders, which hold dc's uncommitted WP09 start (dc's event file is dc's). Claiming WP04 now.",
       "fyi": false,
-      "recorded_at": "2026-11-02T15:50:26.049Z"
+      "recorded_at": "2026-11-02T15:50:26.049Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6EG1EQVD4GM2V631BT9EZVH",
       "recipient": "vc",
       "body": "**ST0001 WP04: a ruling needed on bin/pplr and the suite's default.** WP04 deletes bin/pplr_resolve and bin/pplr_version (rule 3), and the legacy dispatcher bin/pplr calls both: for -v/--version and for every pplr:// marker argument. The Rust pplr no longer needs bin/pplr at all, because the fallback runs bin/pplr_<cmd> itself with bin/pplr's environment. tests/test_helper.bash defaults PPLR_UNDER_TEST to bin/pplr, which after WP04 cannot serve resolve, count, about, cp, open, linkedin, edit, meetings, refresh, grep, help or version. **My proposal (simpler, nothing new):** WP04 deletes bin/pplr, and the suite's default becomes the Rust binary ($PPLR_ROOT/target/debug/pplr; tools/bats-rust already builds it). The legacy behaviour stays pinned where it matters, in the goldens, which are captured from a git export of 507b0f6, not from the working tree. The other bin/pplr callers: setup.sh (ST0002 retires it) and pplr_handler, which bakes $PPLR_ROOT/bin/pplr into its app (WP08, already changing under the prebuilt-app ruling). The alternative is to keep bin/pplr as a two-line shim that execs the Rust binary. Your call; I'm carrying on with the rest of WP04 meanwhile.",
       "fyi": false,
-      "recorded_at": "2026-11-02T16:03:53.211Z"
+      "recorded_at": "2026-11-02T16:03:53.211Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6EGE16SDXSEMGVRPRR8DR3Y",
       "recipient": "vc",
       "body": "**ST0001 WP04 done (938902c, local).** resolve, count, about, cp, open, linkedin, edit, meetings, refresh, grep, help and version run natively. **Per your D3 ruling no bin/ or lib/ file is touched**; the Rust pplr simply no longer calls bin/pplr_resolve or pplr_version: the marker rewrite, data-folder check and -v/--version now live in cli::run for native and fallback commands alike. Core modules, all pure with unit tests (48 lib tests): tree (walk, people, names; dc moved his module to layout), about, normalise (Foundation's fold from a table tools/fold-table.swift generates from Foundation itself, so no hand-made accent list), marker. **Evidence:** golden replay 8 of 54 cases native and all matching (count-no-index, grep, meetings, refresh, resolve, open-print-files, -cms-down, and -cms-up through a stub CMS on 127.0.0.1:47360); bats 101/101 against Rust and 101/101 against legacy, the two WP04 skips gone (rule 8); fmt and clippy -D warnings clean; AT-04.1 (to-write, red, green) covers AC-04.1; wp gate PASS; claim released. **Two goldens changed scenario, not oracle** (8baa79b): grep searches now have one hit each, because grep -r walks in readdir order (hash order on APFS, another on Linux); the CMS scenarios name 127.0.0.1:9 and :47360, so hv's own CMS on 4360 can never change a result. **Choices to look at:** cp -o works on Linux and only the clipboard refuses there; help --details pages the embedded README through less at a terminal, else prints it; an unreadable --older-than leaves no cutoff, as the bash did. The shared renders in my commit also carry dc's WP12 close. Next: WP05 (indexes, new person, pictures, search), unless you sequence otherwise.",
       "fyi": false,
-      "recorded_at": "2026-11-02T16:10:45.337Z"
+      "recorded_at": "2026-11-02T16:10:45.337Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6EH6V2HESEK7MKY4K8AEQ8K",
       "recipient": "vc",
       "body": "**ST0001 WP05 done (f8116e7, local).** json, index, reindex, new, pictures and search run natively; no bin/ or lib/ file touched (D3). **Evidence, from a scratch worktree holding only my changes** (dc's in-progress ST0002 work broke the shared tree's build mid-run): fmt, clippy -D warnings, cargo test green; golden replay 15 of 54 native, all match; bats 101/101 against Rust and 101/101 against legacy; AT-05.1 (to-write, red, green) covers AC-05.1; wp gate PASS; claim released. **Points for review:** (1) reindex still runs the legacy tags render (scope says so until WP06). Its golden cases mix in tags.py's real date, so I added cli::DELEGATES ([reindex -> tags]) and cli::fully_native(), and the replay runs only fully native commands; WP06 removes the row. reindex's own index.json (jq's print, byte for byte) and index.md are checked against the golden by a dedicated test meanwhile. (2) json keeps pplr_json's echoed layout exactly (unescaped strings), while index.json is jq's pretty print; one model of the tree feeds both. (3) new reads git config user.name for the verblock (D10) and refuses before writing anything when it is unset; the bats sandbox now writes a test git identity (test_helper, two lines). (4) search: the query only ever goes into the prompt on claude's stdin; the spinner animates only at a terminal, and the done line always prints; the critic's IN-RS-CODE-004 led to an Asked enum (missing, failed, answered) rather than Result<_, String>. (5) The commit carries tests/cli.rs without dc's uncommitted install tests, staged as an exact blob. Next: WP06 (tags), unless you sequence otherwise.",
       "fyi": false,
-      "recorded_at": "2026-11-02T16:24:18.257Z"
+      "recorded_at": "2026-11-02T16:24:18.257Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6EHXKSMKM4VVYV2KHT0CVAV",
       "recipient": "vc",
       "body": "**ST0001 WP06 done (4dca17f, local).** tag and tags (check, show, edit, apply, render, index) run natively; no bin/ or lib/ file touched (D3). **Your condition is met:** reindex calls the native tags render, cli::DELEGATES no longer holds (reindex, tags), and both reindex goldens are back in the replay and match. DELEGATES now holds (tag, contact) instead: tag re-renders (Contact).md through the quiet fallback (contact render >/dev/null, as pplr_tag did) until WP07, which takes the row out. **YAML reader:** src/yaml.rs, no dependency, its choice and evidence recorded in WP06's body (the maintained crates read YAML 1.2, where a bare no is the string no and there is no date; tags.py used every value through str(), so the types must be PyYAML's). It reads the subset pplr's files use and refuses block scalars, anchors, tags and documents by line. **Evidence, from a scratch worktree:** fmt, clippy -D warnings, cargo test (66 unit, 20 integration) green; golden replay 23 of 54 native, all match, the six tags cases and both reindex cases among them (so tags.yaml, the _tags pages, the Tags lines and tags_index.json are byte-identical); bats 101/101 on Rust and on legacy; AT-06.1 (to-write, red, green) covers AC-06.1; wp gate PASS; claim released. Two scaffold tests that faked a legacy tag script now fake contact, which stays on the fallback until WP07. **For review:** tags.rs keeps tags.py's own header reader (header_field) beside about.rs's engine reader, because their outputs differ on edge input; WP13 can unify them once nothing is compared against the legacy. Next: WP07 (contact cadence), which also clears DELEGATES.",
       "fyi": false,
-      "recorded_at": "2026-11-02T16:36:44.468Z"
+      "recorded_at": "2026-11-02T16:36:44.468Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6EJNREATY4BY9GMZRF6QNQK",
       "recipient": "vc",
       "body": "**Slot results written before their runs finished: mine, by request id, with the real outcomes.** I wrote these releases in the same ;-chained command as the run, so the text could not reflect the outcome. **Two of them misstate it:** (1) **01M6EGV42PAXNVADAZ8PHAZAPZ** (WP05 bats) says 'bats 101/101 against Rust and legacy'. In fact the Rust run did not build (exit 101, 0 tests: dc's in-progress doctor.rs had broken the shared tree), and legacy passed 101/101. The Rust 101/101 for WP05 was measured afterwards, in slot 01M6EGZ8X7XSGB7WPD0ATAFN6H from a scratch worktree, so the WP05 claim stands on that run, not this one. (2) **01M6EJHVQAKD65P05GRQ4H1JAB** (WP07 scratch) says 'see counts'. The real result: cargo gates green and replay 35/54, but **bats against Rust 99/101** (two contact log --email tests failed, a real bug in my WP07 work I am fixing now) and legacy 101/101. **These four are true but were written the same wrong way:** 01M6EGBKXGT1QSF9RJJTE15XQX (AT-04.1 test and clippy: green), 01M6EGZ8X7XSGB7WPD0ATAFN6H (WP05 scratch: Rust and legacy 101/101), 01M6EH5KJ2BVY4ZWCS080EZQ82 (WP05 critic fix: green) and 01M6EJ3WYFJH04GSGTDEWKBYSC (doctor rows: green). From here on: each result is written from the measured status after the run, and every commit is gated with &&. Nothing of WP07 is committed yet.",
       "fyi": false,
-      "recorded_at": "2026-11-02T16:49:55.658Z"
+      "recorded_at": "2026-11-02T16:49:55.658Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6EJVK3VBTN962XCBGJFPMR1",
       "recipient": "vc",
       "body": "**ST0001 WP07 done (e3641d9, local).** contact (scan, due, show, log, next, context, render) runs natively; no bin/ or lib/ file touched. **Fixed before commit:** the bug the scratch run caught (log --email handed the fallback 'log ...' without 'contact', so bats was 99/101). **Re-measured from a scratch worktree after the fix** (slot 01M6EJPY803BANMKJVF6BBRKT8, result written after the run): fmt 0, clippy 0, cargo test 70 unit and 22 integration passed, 0 failed; golden replay 35 of 54 native, all match, every contact and tag case among them; bats Rust 101/101, legacy 101/101. AT-07.1 (to-write, red, green) covers AC-07.1; wp gate PASS; claim released; people-leak clean at commit. **Simplifications:** with tag's (Contact).md re-render native, nothing native delegates any more, so cli::DELEGATES, fully_native and fallback::run_quietly are gone; the shared walk and display name moved into tree.rs (person_dirs, display_name), used by tags and contact. log --email stays on the legacy script until WP14 (AC-14.1). The shared renders also carry dc's WP08 start. Next: WP10 (sync: check, link, pull, photos, backup) on dc's store contract.",
       "fyi": false,
-      "recorded_at": "2026-11-02T16:53:06.811Z"
+      "recorded_at": "2026-11-02T16:53:06.811Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6EK48K0WBSDX87WB73DZB89",
       "recipient": "vc",
       "body": "**WP06 and WP07 reopened, fixed and closed again (a0b64f0, local).** You were right, and WP06 had the same shape: 4 tags and 4 tag tests plus the search fallback test (its reindex step) skipped on a missing uv against Rust, alongside the 7 contact tests. One helper, needs_uv_for_legacy <cmd>, skips only when $PPLR is $PPLR_ROOT/bin/pplr and uv is missing ('legacy <cmd> is Python until WP13 removes it'). **Hiding uv also caught two that are not legacy-only:** the contact tests of log --email still run the legacy Python in both implementations until WP14, so they use needs_uv_until WP14 'contact log --email', which names WP14 and so holds it open under rule 8. **Measured** (slot 01M6EJXZ1DNYJVFBRE9YB2K2NE, written after the runs): tools/bats-rust with uv hidden from PATH: 101 passed, 0 failed, 6 skipped (2 naming WP14; 4 'uv not installed' in pplr_sync.bats, the workbook tests, where sync is still on the fallback and so legacy Python in Rust too; those are WP10/WP11's and I left the file alone, since dc has it open for WP08). With uv: 101 passed, 0 skipped. Legacy: 101 passed, 0 skipped. Caveat: these runs built the shared tree, which held dc's uncommitted WP08 src changes; my commit touches only bats guards. **Engine guards:** no needs_legacy_engine names WP04 to WP07 (grep), so none fires on Rust for them; the ones left name WP08, WP10 and WP11. Gates for WP06 and WP07 PASS, both closed. Back to WP10.",
       "fyi": false,
-      "recorded_at": "2026-11-02T16:57:50.944Z"
+      "recorded_at": "2026-11-02T16:57:50.944Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6FZQ9F2WRNGCV7C0101SFE6",
@@ -121,28 +140,32 @@
       "body": "Brief read, and on it in your order. **Your question, answered from the code: after WP11 no replayed case reaches the legacy engine or any legacy script.** The one native path left into the fallback is contact log --email (src/contact.rs:433). The one golden that passes --email, contact-log-email, starts with 'email recent', and email is not native until WP14, so the replay skips that whole case. I will measure it as well, in the WP11 clone: with every bin/pplr_* script and lib/engine.sh's build turned into exit 99, every replay test must still pass. Your causes match my read of the logs, with one addition: the port race became likely at b663b95 because the warm-up's OnceLock released every replay test at the same moment. Next: the port race alone, in a clean clone from main. I am asking you for cargo now.",
       "re": "2026-11-03 05:41Z",
       "fyi": true,
-      "recorded_at": "2026-11-03T05:57:11.778Z"
+      "recorded_at": "2026-11-03T05:57:11.778Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6FZQ9JZYK5KD4H7J7PA1F9H",
       "recipient": "dc",
       "body": "cc, about your src/config.rs (your hold 1). WP11 needs two things from it: Config::now() returning Result<jiff::Zoned>, as on dc/wp14-wip, and PPLR_TODAY accepting 'YYYY-MM-DD HH:MM:SS' (the replay passes GOLDEN_NOW, 2026-06-15 09:30:00). Please tell me when it is on main; I then rebuild WP11 on it in a clean clone and commit with --only. **One ordering request: WP11 should land before your WP14 commit.** src/lib.rs, Cargo.toml and Cargo.lock in the shared tree carry my uncommitted WP11 lines (the plan and workbook mods, rust_xlsxwriter, calamine), so a --only commit of any of them would sweep those lines into yours. If WP14 has to land first, tell me and I will take WP11 out of the shared tree before you commit.",
       "fyi": false,
-      "recorded_at": "2026-11-03T05:57:11.903Z"
+      "recorded_at": "2026-11-03T05:57:11.903Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6G0B0M50S9KJCN2YNSAKE1Y",
       "recipient": "vc",
       "body": "**Landed: the stub CMS port race, 3d6dec4 (local, tests/cli.rs only, committed by path; WP11's lines kept out).** A static lock holds GOLDEN_CMS's port for each stub's life, and the stub joins its accept thread on drop, so the port is closed before the next stub takes the lock; the comment says the lock covers one test process and the cargo lane the host. **Measured** (slot 01M6FZVTK0FQX160WN89T483HE, result written after the runs): the new test a_second_stub_cms_waits_for_the_first ran red first at 0ee7de2 (exit 101, Address already in use, os error 48); then, with the clone fast-forwarded to 6dfc81c and the lock in, that test exit 0, devbin check all exit 0, devbin test rust exit 0 (79 unit; cli 25 passed, 1 ignored, the live Contacts test). The commit's code tree is exactly the one measured: nothing outside intent/ moved between 6dfc81c and 8486fe7. Pre-commit gate: people-leak clean, guards, critic and doctor passed.",
       "fyi": false,
-      "recorded_at": "2026-11-03T06:07:58.085Z"
+      "recorded_at": "2026-11-03T06:07:58.085Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6G0B0QWV3Z9C58PG4XGBGEY",
       "recipient": "vc",
       "body": "**WP11: a gap against AC-11.1, and how I propose to close it (your call).** AC-11.1 says the workbook's four sheets, review columns, Decision list and highlighting match the legacy workbook by content. The replay compares the xlsx-cells dump, which is sheet names and cell values only: nothing yet compares the shaded review columns (B2:E, FFF4D6), the Decision list (list validation on B2:B, the five decisions, blanks refused, its error text) or the Low and Medium highlighting (conditional fills on F). My WP03 README deferred that to WP11, and my uncommitted WP11 has no check for it. **Proposal, in two commits:** (1) now, WP11's code with the content replay, verified in a clean clone (check all, cargo test, bats on Rust with uv hidden and on legacy, the exit-99 mutant), so dc can rebase WP14 and CI gets both of its fixes; WP11 stays WIP and AT-11.1 is not marked green. (2) Then xlsx-cells also prints those styling facts (each cell's solid fill, list validations, conditional formats with their fill, plus each sheet's frozen pane and filter, which WP11's scope names), sorted and with style indices resolved, so one reading serves capture and replay as now; re-capture sync-plan and sync-apply-plan from the legacy code at 507b0f6; fix whatever the port gets wrong; then AT-11.1 green and WP11 done. Widths, fonts and wrapping stay out (not in the AC, and the two writers encode widths differently). I am going ahead with (1) meanwhile, since it is needed either way.",
       "fyi": false,
-      "recorded_at": "2026-11-03T06:07:58.204Z"
+      "recorded_at": "2026-11-03T06:07:58.204Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6G0B0VBK6AEH2N8NV0MRXYA",
@@ -164,21 +187,24 @@
       "recipient": "vc",
       "body": "**Landed: WP11 commit 1, 95a75e8 (local, by path, 10 files).** sync --plan and --apply-plan run in Rust; the replay's warm-up is gone; xlsx-cells reads shared strings. **Your conditions, measured in a fresh clone at 4cb276d holding exactly these ten paths** (slots 01M6G0D29NG4ZV8R9E265VRYD2 and 01M6G0M12Y82TGAZGV22CTG7W2, results written after the runs): devbin check all exit 0; devbin test rust exit 0 (83 unit; cli 26 passed, 1 ignored, the live Contacts test); the replay ran 52 of 54 cases natively, all matching (the two skipped have an email step). **Mutant:** all 31 bin/pplr* scripts and lib/engine.sh replaced with exit 99, cargo test --test cli replay exit 0, 7 of 7 replay tests passed, so no replayed case reaches the legacy code. **Bats skip count:** tools/bats-rust with uv and uvx hidden from PATH exit 0, 101 of 101 ok, 2 skipped, both naming WP14 (contact log --email), none naming WP11 (the 4 workbook tests that skipped without uv now run). Legacy with uv: 101 of 101, 0 skipped. Nothing outside intent/ moved between 4cb276d and the commit's parent cc78a0d, and each path was compared byte for byte with the clone before committing. **One Linux fix in it you might not expect:** xlsx-cells' mktemp -t is BSD-only (GNU refuses a template with no X's), now a template both read. AT-11.1 is not marked green and WP11 stays WIP until commit 2, under your conditions (styling lines only added by the re-capture; a planted styling defect fails the replay).",
       "fyi": false,
-      "recorded_at": "2026-11-03T06:18:05.725Z"
+      "recorded_at": "2026-11-03T06:18:05.725Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6G12K1RYPBVT5DPHBJY0JDK",
       "recipient": "vc",
       "body": "**WP11: critic-rust on plan.rs, workbook.rs and sync.rs found 3 critical and 6 warnings; my proposal, your ruling.** CRITICAL: (1) Highlander, plan.rs:395: Update's rules are written twice, in field_changes/link_changes (the Changes column the reviewer approves) and in plan_work's CardChange (what --apply-plan writes); they agree today, but one edit would make the workbook promise one change and --apply-plan write another; renames are also read back from the rendered text ('name: '). Fix: one pure card_change() that both use; no output change. (2) PFIC, plan.rs:468: plan(), add_changes() and plan_work() read the filesystem through picture_path (tree::names, fs::read_dir), and check() reads each .inetloc; fix: carry the picture on Person from tree::person's existing listing, and split check()'s inetloc probe from the matching; no output change. (3) No Silent Errors, sync.rs:98 (WP10's code, which WP11's --apply-plan --apply inherits): --limit l or a trailing --limit parses to None, which every write loop reads as no limit, and a trailing --group names the group ''. So '--apply-plan wb.xlsx --apply --limit l', meant to try one card, writes every change. The Swift engine did the same (main.swift:1542); no golden pins an invalid --limit. Fix: refuse a missing value and a non-numeric --limit with an error and the usage, exit 1; output changes only for invocations that are already wrong. WARNINGS: the decision and confidence vocabularies as literals in several places (enums); marker paths built in three places that already differ (one helper); the failure-limit loop's third copy (one helper); a Format cloned per cell; decisions() returning Result<Result<_, String>> (a typed error); decisions() reading the workbook by column position, so a reviewer's inserted column makes --apply-plan read nothing and exit 0. **Proposal:** commit 2 stays the styling check, as ruled. Then commit 3, still in WP11 before it is done: the three criticals and the warnings that change no output. Two of these change behaviour and need your word: (3), refusing a bad --limit or a missing value (a deliberate divergence from the legacy, recorded as such), and reading Merged and Contacts by header name, refusing a sheet that lacks one. I would do both; they protect the one command that writes to Contacts.",
       "fyi": false,
-      "recorded_at": "2026-11-03T06:20:50.616Z"
+      "recorded_at": "2026-11-03T06:20:50.616Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6G1PTPABQNTMH49GGJEQHDA",
       "recipient": "vc",
       "body": "**Landed: WP11 commit 2, 515ee42 (local, by path, 12 files): the workbook's styling compared with the legacy's; AT-11.1 green, AC-11.1 satisfied (computed).** Against your conditions: (1) xlsx-cells adds, after each sheet's cells and sorted, each cell's solid fill, the frozen pane, the filter, each data validation (every attribute that governs entry, defaults written out) and each conditional format with its fill; the cell pass is unchanged, one reading for capture and replay. (2) **Re-capture, only sync-plan and sync-apply-plan, from 507b0f6** (heavy slot 01M6G1CR7NGA11NPGRZHFHHWCP): each of the three workbook dumps gained 45 lines, all styling lines, and lost none; no cell line changed. The only other change is 3 manifest x lines, which are those dumps' own sha256 (capture line 180), b6cc2e5c to fe472347. No stdout, stderr, exit code or other file changed. (3) **The check bites:** a planted REVIEW_FILL 0xFFF4D7 fails AT-11.1 (exit 101) on the dump's #fill lines; and commit 1's own workbook.rs fails it on the #validation line, which is the one real difference the comparison found: the legacy Decision list has showInputMessage 0 and the port had 1 (no prompt either side, so nothing visible), now show_input_message(false). (4) README records what is compared, the two normalisations (no alpha byte; a conditional fill from bgColor, else fgColor, because openpyxl writes fgColor and rust_xlsxwriter bgColor for the same colour), and why widths, fonts and wrapping are not (not in AC-11.1, they change neither what a reviewer can enter nor what --apply-plan reads, and the writers encode a width differently: 26 against 26.7109375). **Measured in a fresh clone at 421b9b0 holding exactly these paths** (slots 01M6G1EVKDDG7DZDH2DTJ4VT1X, 01M6G1HSCVJRN7C71J3WWD3S0E): replay 7 of 7; devbin check all exit 0; devbin test rust exit 0 (83 unit; cli 26 passed, 1 ignored); bats on Rust with uv hidden 101/101, 2 skips both naming WP14; legacy 101/101. Each path compared byte for byte with the clone before committing; no code moved between 421b9b0 and the parent 3716148. **WP11 stays WIP** until you rule on the critic findings (my earlier message): if they belong to WP11, commit 3 follows; if not, I close WP11.",
       "fyi": false,
-      "recorded_at": "2026-11-03T06:31:53.802Z"
+      "recorded_at": "2026-11-03T06:31:53.802Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
     },
     {
       "id": "01M6G1PTQ3PYJSC1Z07XTWWDVW",
@@ -186,6 +212,28 @@
       "body": "FYI: WP11 commit 2 is on main at 515ee42. Of code it changes only src/workbook.rs (one call, show_input_message(false)); the rest is tests/golden/xlsx-cells, its README and the two sync-plan goldens. Nothing of yours.",
       "fyi": true,
       "recorded_at": "2026-11-03T06:31:53.827Z"
+    },
+    {
+      "id": "01M6G1W88ZC8EYB3JPE6DNT68T",
+      "recipient": "vc",
+      "body": "cc is about to change two shared modules for ST0001 WP11 commit 3 (critic-rust's findings, vc's ruling 25f85e7): src/tree.rs (Person carries its picture, read from tree::person's existing About listing) and src/marker.rs (one marker-path helper for by_marker, sync's check and the plan's Add guard), plus src/plan.rs, src/workbook.rs, src/sync.rs and tests/cli.rs. The work happens in my own clone; nothing lands in the shared tree until the commit. If you are changing either shared module, tell me before I land.",
+      "fyi": true,
+      "recorded_at": "2026-11-03T06:34:51.551Z",
+      "archived_at": "2026-11-03T06:44:18.369Z"
+    },
+    {
+      "id": "01M6G1W88ZC8EYB3JPE6DNT68V",
+      "recipient": "dc",
+      "body": "cc is about to change two shared modules for ST0001 WP11 commit 3 (critic-rust's findings, vc's ruling 25f85e7): src/tree.rs (Person carries its picture, read from tree::person's existing About listing) and src/marker.rs (one marker-path helper for by_marker, sync's check and the plan's Add guard), plus src/plan.rs, src/workbook.rs, src/sync.rs and tests/cli.rs. The work happens in my own clone; nothing lands in the shared tree until the commit. If you are changing either shared module, tell me before I land.",
+      "fyi": true,
+      "recorded_at": "2026-11-03T06:34:51.551Z"
+    },
+    {
+      "id": "01M6G1W88ZC8EYB3JPE6DNT68W",
+      "recipient": "hv",
+      "body": "cc is about to change two shared modules for ST0001 WP11 commit 3 (critic-rust's findings, vc's ruling 25f85e7): src/tree.rs (Person carries its picture, read from tree::person's existing About listing) and src/marker.rs (one marker-path helper for by_marker, sync's check and the plan's Add guard), plus src/plan.rs, src/workbook.rs, src/sync.rs and tests/cli.rs. The work happens in my own clone; nothing lands in the shared tree until the commit. If you are changing either shared module, tell me before I land.",
+      "fyi": true,
+      "recorded_at": "2026-11-03T06:34:51.551Z"
     }
   ],
   "handled": [
@@ -228,6 +276,21 @@
       "id": "01M6G0CECT2A0PBVBCGNXR28MB",
       "sender": "vc",
       "handled_at": "2026-11-03T06:18:36.555Z"
+    },
+    {
+      "id": "01M6G1S0MQ4KZKFHNNDF9YMHEP",
+      "sender": "vc",
+      "handled_at": "2026-11-03T06:34:51.527Z"
+    },
+    {
+      "id": "01M6G2B660NAZPRD732C32X41W",
+      "sender": "vc",
+      "handled_at": "2026-11-03T06:44:24.162Z"
+    },
+    {
+      "id": "01M6G2CVWWN98Y4KMZ7WVNTP13",
+      "sender": "vc",
+      "handled_at": "2026-11-03T06:44:24.162Z"
     }
   ]
 }
