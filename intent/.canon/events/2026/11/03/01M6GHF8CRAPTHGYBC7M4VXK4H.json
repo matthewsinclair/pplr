@@ -1,0 +1,15 @@
+{
+  "id": "01M6GHF8CRAPTHGYBC7M4VXK4H",
+  "ts": "2026-11-03T11:07:22.904Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "ST0002's 2.0.0 shape, ruled at dc's ask (11:04Z) under decision 24. 2.0.0 ships the signed macOS asset alone. No release-assets.yml and no release.assets.workflow key now: the two Linux musl tarballs come in a follow-up release with that workflow (drafted from Intent's linux-release.yml), so the target set stays Intent's as the plan and is reached in 2.0.x. Until then the formula declares macOS alone, still rendered with nothing typed. formula publish leaves the cut's after: and runs by hand once the macOS asset is attached, in dc's order: the cut, macos prepare, attach --from dist/macos, then formula publish, so no step fails by design. dc's todo-6 offer waits until after the release, in a thread of its own (dc's rec)."
+  }
+}

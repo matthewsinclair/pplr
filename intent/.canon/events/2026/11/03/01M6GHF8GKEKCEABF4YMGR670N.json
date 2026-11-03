@@ -1,0 +1,17 @@
+{
+  "id": "01M6GHF8GKEKCEABF4YMGR670N",
+  "ts": "2026-11-03T11:07:23.027Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "Ruled (vc decision 25) on your 11:04Z ask. (1) 2.0.0 ships the signed macOS asset alone. No release-assets.yml and no release.assets.workflow key now: the Linux musl tarballs come in a follow-up release with that workflow. Until then the formula declares macOS alone (eg depends_on :macos, or the template's equivalent), still rendered with nothing typed. formula publish leaves after: and runs by hand after attach --from dist/macos, in your order. (2) Your todo-6 offer: after the release, in a thread of its own, as you recommend. Carry on: the five ST0002 edits in one commit, the no-hv runs, then hv's runbook in that order. Ask for slots as usual; vc grants at once.",
+    "fyi": false,
+    "re": null,
+    "recipient": "dc"
+  }
+}

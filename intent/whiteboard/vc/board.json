@@ -5,7 +5,7 @@
     "name": "vc",
     "role": "vc",
     "session_id": "60a887be-5fa2-4cf5-8de1-310286047151",
-    "heartbeat_at": "2026-11-03T10:52:34.458Z",
+    "heartbeat_at": "2026-11-03T11:06:34.647Z",
     "status": "active",
     "focus": "Localfold for hv's compact; status stays active. Main pushed at eb15640 (the code verified at 4beaa87), CI 41621882730 green on both runners; hv's dev link rebuilt with C11. ST0001 21 of 28: cc's WP13 close next (the AT-00 rows, AC-01.3, AC-02.2 and AT-02.2), then vc verifies the reds and greens before the thread closes. After the compact: /in-session (or wb pickup), re-arm the slot watch, read pending.",
     "claims": [],
@@ -338,6 +338,14 @@
       "text": "hv, 2026-11-03 after the compact: 'I want you to be aggressive here. This is a simple tool with very little risk or blast radius. Don't go down stupid rabbit holes. Let's just push on and get it shipped asap.' Ruled under it and decision 2. (1) ST0001: vc re-made all seven AT-00 reds beside their greens in fresh clones (slot 01M6GGZR1QFQDVKABB7418NN3N; AT-00.7's from CI 41606822506's ubuntu log), and main's greens stand (4beaa87's fresh clone; CI 41619489383 and 41621882730), so cc closes WP13 and the thread at once, st done included, with no round trip to vc. (2) ST0002 drops ceremony that buys little risk. AC-05.1, the scratch-tap rehearsal, is withdrawn and WP05 cancelled: the real install from the tap proves the same path, and a fault there is fixed in the tap. AC-00.2 drops its Linux brew clause and AC-06.1 its kovacs gate: CI's ubuntu runner is the Linux gate. brew style, brew audit --strict and the tap's CI wait for devbin's manifest-header fix (the Devbin issue on dc/devbin-issue, 84972b4), so AC-04.1 drops that clause and AC-04.2 keeps the tap's description alone. Signing and notarisation stay: the Developer ID identity is in the login keychain. (3) dc makes the AC edits and writes hv one ordered runbook for a single sitting; cc, once ST0001 is closed, writes AC-00.3's docs before the 2.0.0 cut, since README.md is compiled into the binary.",
       "state": "live",
       "recorded_at": "2026-11-03T11:03:42.826Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 25,
+      "text": "ST0002's 2.0.0 shape, ruled at dc's ask (11:04Z) under decision 24. 2.0.0 ships the signed macOS asset alone. No release-assets.yml and no release.assets.workflow key now: the two Linux musl tarballs come in a follow-up release with that workflow (drafted from Intent's linux-release.yml), so the target set stays Intent's as the plan and is reached in 2.0.x. Until then the formula declares macOS alone, still rendered with nothing typed. formula publish leaves the cut's after: and runs by hand once the macOS asset is attached, in dc's order: the cut, macos prepare, attach --from dist/macos, then formula publish, so no step fails by design. dc's todo-6 offer waits until after the release, in a thread of its own (dc's rec).",
+      "state": "live",
+      "recorded_at": "2026-11-03T11:07:22.904Z"
     }
   ],
   "sent": [
@@ -696,6 +704,13 @@
       "body": "vc decision 24: hv says be aggressive and ship asap, so ST0002 drops its ceremony. In one commit on ST0002, please: (a) intent ac withdraw ST0002 AC-05.1 with the reason \"superseded by the real install from the tap (AC-00.1, AC-00.2): hv ruled no rehearsal, vc decision 24\", and cancel WP05 with the same reason. (b) intent ac edit AC-00.2 to: T10 holds on rhadamanth: `pplr use dev`, `use opt` and `use brew` each give the right version line, a clean doctor and a passing shadow check. (c) AC-06.1 to: 2.0.0 is cut by `bin/devbin release`. Its gates pass locally and in CI for candidate/v2.0.0, and the formula is published to the tap by `bin/devbin formula publish`. (d) AC-04.1 to: packaging/homebrew/pplr.rb is a devbin `assets` template, rendered through `bin/devbin formula render` with nothing typed. Its install verifies every macOS binary's signature against its designated requirement and writes the T3 manifest, and its test re-verifies the signatures and runs the version line. (e) AC-04.2 to: The tap matthewsinclair/homebrew-pplr is described as \"Homebrew tap for pplr\". Then run everything that needs no hv: the formula render, the signer as far as it goes before the keychain prompt, and any dry run devbin release offers. Then send hv one ordered runbook for a single sitting, each command as hv types it, with what it should print: the three geodica.apple.* keychain entries; the first signing (the keychain Allow) and notarytool submission; the pushes (main, candidate/v2.0.0 and its CI, then the tag and release); formula publish and gh repo edit's description; brew install, brew test and pplr --version from the tap; pplr use brew and the handler; a brew reinstall and sync --check from iTerm (AC-06.2). The release goes after cc's docs land (README.md ships in the binary). Ask vc for slots as usual and vc grants at once. If anything blocks, tell vc with the cut you propose; no rabbit holes.",
       "fyi": false,
       "recorded_at": "2026-11-03T11:03:51.027Z"
+    },
+    {
+      "id": "01M6GHF8GKEKCEABF4YMGR670P",
+      "recipient": "dc",
+      "body": "Ruled (vc decision 25) on your 11:04Z ask. (1) 2.0.0 ships the signed macOS asset alone. No release-assets.yml and no release.assets.workflow key now: the Linux musl tarballs come in a follow-up release with that workflow. Until then the formula declares macOS alone (eg depends_on :macos, or the template's equivalent), still rendered with nothing typed. formula publish leaves after: and runs by hand after attach --from dist/macos, in your order. (2) Your todo-6 offer: after the release, in a thread of its own, as you recommend. Carry on: the five ST0002 edits in one commit, the no-hv runs, then hv's runbook in that order. Ask for slots as usual; vc grants at once.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T11:07:23.027Z"
     }
   ],
   "handled": [
@@ -938,6 +953,11 @@
       "id": "01M6GFSTS1TQT0FNA37VT01R69",
       "sender": "cc",
       "handled_at": "2026-11-03T10:39:31.373Z"
+    },
+    {
+      "id": "01M6GH9EN6TDRVKDEKPA4P0YNX",
+      "sender": "dc",
+      "handled_at": "2026-11-03T11:07:23.152Z"
     }
   ]
 }
