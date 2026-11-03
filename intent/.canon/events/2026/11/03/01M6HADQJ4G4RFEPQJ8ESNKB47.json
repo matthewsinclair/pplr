@@ -1,0 +1,15 @@
+{
+  "id": "01M6HADQJ4G4RFEPQJ8ESNKB47",
+  "ts": "2026-11-03T18:23:27.300Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "First real runs of the one-command release: pplr's next release and Cldr's next (Cldr f382994, local until hv pushes Cldr: git -C ~/Devel/prj/Cldr push upstream main && git -C ~/Devel/prj/Cldr push local main). Cldr's first signed release moves its tap from source to assets; the tap clone at ../Brew/homebrew-cldr may need a pull. Lamplight moves to Geodica/Certificates' APPLE_APP_PASSWORD, then its own is revoked."
+  }
+}

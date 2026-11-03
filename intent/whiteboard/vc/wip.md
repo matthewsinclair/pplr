@@ -3,9 +3,9 @@ node: vc
 name: vc
 role: vc
 session_id: 60a887be-5fa2-4cf5-8de1-310286047151
-heartbeat_at: 2026-11-03 17:36Z
+heartbeat_at: 2026-11-03 18:23Z
 status: active
-focus: "ST0002 closed (all 16 criteria; WP04, WP06 and WP07 done by vc at hv's word; dc unclaims at next pickup). ST0001's views are off disk (cc 5ffaf01). 2.0.0 is out through brew. Next, first job after: devbin's one-command release, bin/devbin release vX (decision 26, todo 8), with Devbin un-parked. Main's post-release commits wait for hv's push."
+focus: "Paused for hv's compact and close. pplr (89f3c62, pushed) and Cldr (f382994, local) each release signed and notarised with one command, bin/devbin release vX.Y.Z, whose after: is bin/devbin post-cut (decision 27). Neither has had a real run yet; todo 10 holds the first runs and Cldr's push."
 claims: []
 ---
 
@@ -18,7 +18,7 @@ _(none)_
 ## TODO
 
 - After the WP13 cutover, candidates under hv's simpler-or-easier rule, none in WP11 commit 3 (fe4b677; critic-rust's second read, via cc): (a) unify the three picture rules, the engine's, pplr_pictures' and the index's, which differ as their legacy scripts did; that changes behaviour on real data, so it is a divergence and needs hv's ruling (a comment on tree::PICTURES records the difference); (b) Pair.how's vocabulary as an enum, behaviour-preserving; (c) matches() leaves has_inetloc false to mean 'not read', a plain bool documented on the field; (d) workbook write() fills Merged's rows by position while the reader and the styling go by header. (e) One macOS gate: contacts/mod.rs, handler.rs and icons.rs each test cfg!(target_os) with their own message, beside open.rs's macos_only(why); one helper for every gate, behaviour-preserving if the messages stay. (f) One walker: grep.rs, links.rs and rename.rs each recurse on their own (C10 fixed links' to pass over symlinked directories, as grep's and rename's already did); one walk for all, behaviour-preserving. Left as is by vc's ruling: an option taken as another's value (sync --link --group --apply) falls to a dry run, which is safe. (edited)
-- Cldr releases as pplr does (decision 27): devbin installed with release.after: bin/devbin post-cut, a macos signer for its one binary from pplr's cmd/macos, the formula moved to assets mode, signed and notarised. Work in Cldr's repo. Outside it: Lamplight moves to Geodica/Certificates' APPLE_APP_PASSWORD, then its own is revoked. The first real run of pplr's post-cut is the next pplr release.
+- First real runs of the one-command release: pplr's next release and Cldr's next (Cldr f382994, local until hv pushes Cldr: git -C ~/Devel/prj/Cldr push upstream main && git -C ~/Devel/prj/Cldr push local main). Cldr's first signed release moves its tap from source to assets; the tap clone at ../Brew/homebrew-cldr may need a pull. Lamplight moves to Geodica/Certificates' APPLE_APP_PASSWORD, then its own is revoked.
 
 ## Holds
 

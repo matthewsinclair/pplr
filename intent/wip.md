@@ -1,5 +1,5 @@
 ---
-verblock: "2026-11-03:v0.9: matts - pplr's release is one command (post-cut); Cldr next"
+verblock: "2026-11-03:v1.0: matts - pplr and Cldr release in one command, signed and notarised"
 ---
 
 # Work In Progress
@@ -11,8 +11,8 @@ DOING and TODO only; finished work lives in its commit, its closed issue or its 
 **Release: pplr and Cldr, signed and notarised, one command each**
 
 - vc holds the pen and slot control. Scope rule: simpler or easier only (vc decision 2).
-- pplr: `bin/devbin release vX.Y.Z` is the whole release; its `after:` is `bin/devbin post-cut` (vc decision 27). Its first real run is the next pplr release.
-- Cldr: the same shape, in Cldr's repo (todo 9 on vc's board).
+- pplr and Cldr: `bin/devbin release vX.Y.Z` is the whole release; its `after:` is `bin/devbin post-cut` (vc decision 27; Cldr f382994). The first real run of each is its next release (todo 10 on vc's board).
+- Cldr's commit is local until hv pushes Cldr.
 
 ## Active Steel Threads
 

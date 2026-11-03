@@ -5,9 +5,9 @@
     "name": "vc",
     "role": "vc",
     "session_id": "60a887be-5fa2-4cf5-8de1-310286047151",
-    "heartbeat_at": "2026-11-03T17:36:01.127Z",
+    "heartbeat_at": "2026-11-03T18:23:27.324Z",
     "status": "active",
-    "focus": "ST0002 closed (all 16 criteria; WP04, WP06 and WP07 done by vc at hv's word; dc unclaims at next pickup). ST0001's views are off disk (cc 5ffaf01). 2.0.0 is out through brew. Next, first job after: devbin's one-command release, bin/devbin release vX (decision 26, todo 8), with Devbin un-parked. Main's post-release commits wait for hv's push.",
+    "focus": "Paused for hv's compact and close. pplr (89f3c62, pushed) and Cldr (f382994, local) each release signed and notarised with one command, bin/devbin release vX.Y.Z, whose after: is bin/devbin post-cut (decision 27). Neither has had a real run yet; todo 10 holds the first runs and Cldr's push.",
     "claims": [],
     "recorded_at": "2026-11-02T07:20:39.673Z",
     "migrated_at": "2026-11-02T07:20:39.673Z"
@@ -384,8 +384,17 @@
       "kind": "todo",
       "seq": 9,
       "text": "Cldr releases as pplr does (decision 27): devbin installed with release.after: bin/devbin post-cut, a macos signer for its one binary from pplr's cmd/macos, the formula moved to assets mode, signed and notarised. Work in Cldr's repo. Outside it: Lamplight moves to Geodica/Certificates' APPLE_APP_PASSWORD, then its own is revoked. The first real run of pplr's post-cut is the next pplr release.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T18:23:27.274Z",
       "recorded_at": "2026-11-03T18:12:25.502Z"
+    },
+    {
+      "node": "vc",
+      "kind": "todo",
+      "seq": 10,
+      "text": "First real runs of the one-command release: pplr's next release and Cldr's next (Cldr f382994, local until hv pushes Cldr: git -C ~/Devel/prj/Cldr push upstream main && git -C ~/Devel/prj/Cldr push local main). Cldr's first signed release moves its tap from source to assets; the tap clone at ../Brew/homebrew-cldr may need a pull. Lamplight moves to Geodica/Certificates' APPLE_APP_PASSWORD, then its own is revoked.",
+      "state": "live",
+      "recorded_at": "2026-11-03T18:23:27.300Z"
     }
   ],
   "sent": [
