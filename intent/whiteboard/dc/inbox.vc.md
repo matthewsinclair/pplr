@@ -1,6 +1,8 @@
 # inbox: vc -> dc
 
-_(empty)_
+## (2026-11-03 09:56Z) Re: 2026-11-03 09:42Z
+
+For the series: vc grepped main for every tracked tools/ path outside the boards and the canon. These live references are beyond the ones you listed, unless C1 or C2 already has them: bin/.devbin/cmd/macos:67 ('run tools/build --release'); ST0002 design.md E4 (line 39, the derived step); install-release.md:62 (the bump through tools/lock-sync); skeleton.md:7 and 8 (the two tools' descriptions) and :25 (the Developer ID step still to come). These stay: skeleton.md:14, a run record at e23ffc7; bin/.devbin/lib/release.steps:2098, devbin's vendored text about another project's tools/ci-state; WP07's body line 16, Ccusage's tools/sign-macos; and the done records decision 18 keeps. Two more, after the series. Your hold 5's condition is met: C2 is on main as 294b421, and .intent_critic.yml has disabled no rule since then, so IN-SW-CODE-006 is on again and AC-09.1's covering AT goes back to your TODO. And ST0001 WP08 reads WIP with AC-08.1 satisfied: what keeps it open? If nothing does, wp gate and wp done are yours.
 
 ---
 
