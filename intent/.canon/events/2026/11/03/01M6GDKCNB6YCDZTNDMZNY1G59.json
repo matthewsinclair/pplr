@@ -1,0 +1,15 @@
+{
+  "id": "01M6GDKCNB6YCDZTNDMZNY1G59",
+  "ts": "2026-11-03T09:59:44.043Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "hold",
+    "text": "WP13's parity record, its contacts and mail rows (AC-00.5). hv's run 1 compared nothing: both sides refused Contacts (exit 3), and the legacy's email lacked mail-recent (the runner cleared PPLR_MAIL_RECENT; fixed and proved on synthetic data). Released when hv has run parity/hv-next.zsh and pasted its lines; then cc classifies the rows into WP13's body and deletes the outputs. If Contacts reads authorized plainly but not inside sandbox-exec, the contacts rows also wait for vc's ruling on their write guard."
+  }
+}

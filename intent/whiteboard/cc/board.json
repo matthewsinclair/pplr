@@ -5,9 +5,9 @@
     "name": "cc",
     "role": "cc",
     "session_id": "f3516df3-3c28-4ed2-820f-b9b34ea2e5f8",
-    "heartbeat_at": "2026-11-03T09:40:25.733Z",
+    "heartbeat_at": "2026-11-03T09:59:53.288Z",
     "status": "active",
-    "focus": "WP13's AT-id commit landed on main as 7afa8a9 (measured) and went to vc to verify. Waiting on dc's tools/ move and docs, hv's push and main's CI; then WP13's AC and AT rows, wp gate and done. hv's sync and email parity rows still pending",
+    "focus": "WP13's AT-id commit is on main (7afa8a9) for vc to verify. hv's first run of the contacts and mail parity rows compared nothing; the runner is fixed and hv-next.zsh is hv's re-run (hold 2). Then dc's tools/ move and docs, hv's push, main's CI, and WP13's AC and AT rows, wp gate and done",
     "claims": [
       "ST0001/13"
     ],
@@ -67,10 +67,10 @@
       "node": "cc",
       "kind": "doing",
       "seq": 2,
-      "text": "WP13 (ST0001/13): C1 to C10 landed on main as d596c35 to 9268cf7 (vc decision 16), and the AT-id commit as 7afa8a9 (comments only; measured at tree bf1e7ad in slot 01M6GCB0M4E68FSY7FSAW1EEQN), sent to vc to verify. hv's rebuild is checked. Next: vc's check of 7afa8a9, dc's tools/ move (decision 17) and docs, hv's push, and main's CI (AT-00.3's and AT-00.7's Linux greens); then the AC and AT rows, wp gate and done (todo 2). hv's sync and email parity rows still pending (parity/HV-ROWS.md).",
+      "text": "WP13 (ST0001/13): C1 to C10 landed on main as d596c35 to 9268cf7 (vc decision 16), and the AT-id commit as 7afa8a9 (comments only; measured at tree bf1e7ad in slot 01M6GCB0M4E68FSY7FSAW1EEQN), sent to vc to verify. hv's rebuild is checked. Next: vc's check of 7afa8a9, dc's tools/ move (decision 17) and docs, hv's push, and main's CI (AT-00.3's and AT-00.7's Linux greens); then the AC and AT rows, wp gate and done (todo 2). The contacts and mail parity rows: hold 2.",
       "state": "live",
       "recorded_at": "2026-11-03T08:01:46.945Z",
-      "edited_at": "2026-11-03T09:40:25.513Z"
+      "edited_at": "2026-11-03T09:59:53.214Z"
     },
     {
       "node": "cc",
@@ -89,6 +89,14 @@
       "state": "live",
       "recorded_at": "2026-11-03T09:20:08.910Z",
       "edited_at": "2026-11-03T09:40:25.665Z"
+    },
+    {
+      "node": "cc",
+      "kind": "hold",
+      "seq": 2,
+      "text": "WP13's parity record, its contacts and mail rows (AC-00.5). hv's run 1 compared nothing: both sides refused Contacts (exit 3), and the legacy's email lacked mail-recent (the runner cleared PPLR_MAIL_RECENT; fixed and proved on synthetic data). Released when hv has run parity/hv-next.zsh and pasted its lines; then cc classifies the rows into WP13's body and deletes the outputs. If Contacts reads authorized plainly but not inside sandbox-exec, the contacts rows also wait for vc's ruling on their write guard.",
+      "state": "live",
+      "recorded_at": "2026-11-03T09:59:44.043Z"
     }
   ],
   "sent": [
@@ -307,6 +315,13 @@
       "body": "For your tools/ move (decision 17): my AT-id commit 7afa8a9 is on main and touches two files your series edits. tests.yml gains five header lines (the AT-00.3 id), so its 'tools/bats-rust is zsh' comment is now line 36; and tests/cli.rs gains four doc lines above every_golden_of_a_ported_command_replays, so the tools/bats-rust mention you repoint is now near line 1234. Please base the series on 7afa8a9 or later, and keep the AT-00.3 lines in tests.yml as they are: wp gate's at lint needs that literal id there. tests/pplr_core.bats's AT-00.7 comment names no tools/ path.",
       "fyi": true,
       "recorded_at": "2026-11-03T09:40:11.842Z"
+    },
+    {
+      "id": "01M6GDKCH1N2P0P6S5EXCWZX7K",
+      "recipient": "vc",
+      "body": "hv ran the contacts and mail parity rows (your hold 2 item 1). Run 1 compared nothing, so AC-00.5 is not yet evidenced by it. (a) Every sync row: both implementations refused Contacts access with the same message and exit 3, so the runner's 'same' was two refusals. (b) Both email rows: the legacy never ran its email. It finds mail-recent, an external tool in Gtools-geodica, only through PPLR_MAIL_RECENT, which the runner clears, so it printed 'mail-recent not found' and exited 1, while the native port exited 0. The runner is fixed, and the fix proved on the synthetic fixture with fake binaries (three cases): both runs now get PPLR_MAIL_RECENT (the port never reads it, checked at a44f79b); the mail rows are refused when the tool is missing; a contacts row where both refuse access reads 'not run'. Run 1's outputs are deleted (D11). The Contacts refusal's cause is not yet known: either hv's terminal has no grant, or sandbox-exec, the runner's write guard, makes macOS refuse Contacts to a sandboxed process. My own terminal reads notDetermined both ways, so it cannot tell them apart. A data-free probe (it prints the status alone, never a card) does, in parity/hv-next.zsh, which also re-runs the mail rows, and the contacts rows only when Contacts reads authorized inside the sandbox; HV-ROWS.md has hv's new command. If Contacts works plainly but not in the sandbox, the contacts rows need your ruling on their write guard: none passes --apply, and in the port every write (inetloc, backup, About, Contacts) sits behind --apply in sync.rs's link, photos and pull, while check only reads. I will propose the options then.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T09:59:43.905Z"
     }
   ],
   "handled": [

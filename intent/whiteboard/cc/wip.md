@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 09:40Z
+heartbeat_at: 2026-11-03 09:59Z
 status: active
-focus: "WP13's AT-id commit landed on main as 7afa8a9 (measured) and went to vc to verify. Waiting on dc's tools/ move and docs, hv's push and main's CI; then WP13's AC and AT rows, wp gate and done. hv's sync and email parity rows still pending"
+focus: "WP13's AT-id commit is on main (7afa8a9) for vc to verify. hv's first run of the contacts and mail parity rows compared nothing; the runner is fixed and hv-next.zsh is hv's re-run (hold 2). Then dc's tools/ move and docs, hv's push, main's CI, and WP13's AC and AT rows, wp gate and done"
 claims: [ST0001/13]
 ---
 
@@ -13,7 +13,7 @@ claims: [ST0001/13]
 
 ## DOING
 
-- WP13 (ST0001/13): C1 to C10 landed on main as d596c35 to 9268cf7 (vc decision 16), and the AT-id commit as 7afa8a9 (comments only; measured at tree bf1e7ad in slot 01M6GCB0M4E68FSY7FSAW1EEQN), sent to vc to verify. hv's rebuild is checked. Next: vc's check of 7afa8a9, dc's tools/ move (decision 17) and docs, hv's push, and main's CI (AT-00.3's and AT-00.7's Linux greens); then the AC and AT rows, wp gate and done (todo 2). hv's sync and email parity rows still pending (parity/HV-ROWS.md). (edited)
+- WP13 (ST0001/13): C1 to C10 landed on main as d596c35 to 9268cf7 (vc decision 16), and the AT-id commit as 7afa8a9 (comments only; measured at tree bf1e7ad in slot 01M6GCB0M4E68FSY7FSAW1EEQN), sent to vc to verify. hv's rebuild is checked. Next: vc's check of 7afa8a9, dc's tools/ move (decision 17) and docs, hv's push, and main's CI (AT-00.3's and AT-00.7's Linux greens); then the AC and AT rows, wp gate and done (todo 2). The contacts and mail parity rows: hold 2. (edited)
 
 ## TODO
 
@@ -21,7 +21,7 @@ claims: [ST0001/13]
 
 ## Holds
 
-_(none)_
+- WP13's parity record, its contacts and mail rows (AC-00.5). hv's run 1 compared nothing: both sides refused Contacts (exit 3), and the legacy's email lacked mail-recent (the runner cleared PPLR_MAIL_RECENT; fixed and proved on synthetic data). Released when hv has run parity/hv-next.zsh and pasted its lines; then cc classifies the rows into WP13's body and deletes the outputs. If Contacts reads authorized plainly but not inside sandbox-exec, the contacts rows also wait for vc's ruling on their write guard.
 
 ## Watch-outs
 

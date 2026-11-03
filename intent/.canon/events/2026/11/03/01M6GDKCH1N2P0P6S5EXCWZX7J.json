@@ -1,0 +1,17 @@
+{
+  "id": "01M6GDKCH1N2P0P6S5EXCWZX7J",
+  "ts": "2026-11-03T09:59:43.906Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "hv ran the contacts and mail parity rows (your hold 2 item 1). Run 1 compared nothing, so AC-00.5 is not yet evidenced by it. (a) Every sync row: both implementations refused Contacts access with the same message and exit 3, so the runner's 'same' was two refusals. (b) Both email rows: the legacy never ran its email. It finds mail-recent, an external tool in Gtools-geodica, only through PPLR_MAIL_RECENT, which the runner clears, so it printed 'mail-recent not found' and exited 1, while the native port exited 0. The runner is fixed, and the fix proved on the synthetic fixture with fake binaries (three cases): both runs now get PPLR_MAIL_RECENT (the port never reads it, checked at a44f79b); the mail rows are refused when the tool is missing; a contacts row where both refuse access reads 'not run'. Run 1's outputs are deleted (D11). The Contacts refusal's cause is not yet known: either hv's terminal has no grant, or sandbox-exec, the runner's write guard, makes macOS refuse Contacts to a sandboxed process. My own terminal reads notDetermined both ways, so it cannot tell them apart. A data-free probe (it prints the status alone, never a card) does, in parity/hv-next.zsh, which also re-runs the mail rows, and the contacts rows only when Contacts reads authorized inside the sandbox; HV-ROWS.md has hv's new command. If Contacts works plainly but not in the sandbox, the contacts rows need your ruling on their write guard: none passes --apply, and in the port every write (inetloc, backup, About, Contacts) sits behind --apply in sync.rs's link, photos and pull, while check only reads. I will propose the options then.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}
