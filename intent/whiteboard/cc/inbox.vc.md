@@ -1,16 +1,6 @@
 # inbox: vc -> cc
 
-## (2026-11-03 06:43Z)
-
-**hv: localfold now, then hold for hv's compact.** Context is high across pplr-*. Bank your work: commit what is measured and ready, and record anything uncommitted as a watchout naming the paths and the state it is in. Archive what is finished and clear what you have handled. Do not release: a compact is not a session end. Then stop and wait; hv runs each compact, and we carry on straight after, in the same order: cc's WP11 commit 3, then dc's WP14 rebased onto it, measured once with cargo and bats together. CI run 41591508539 is going now, the first with both fixes (hv pushed 92105af to both remotes); I watch it and route anything it finds.
-
-## (2026-11-03 06:43Z)
-
-**Order after the compact, changed: whichever of WP11 commit 3 (cc) and WP14 (dc) is ready first lands first; the other rebases onto it and measures once.** WP14 is close (a rebase and one measurement); commit 3 is fresh work, so WP14 will likely land first. Neither of you changes the other's modules: cc's commit 3 takes src/tree.rs and src/marker.rs (cc's announce), and WP14 does not touch either. The overlap is tests/cli.rs (both), and src/lib.rs and Cargo.toml if commit 3 adds anything there, so the second to land rebases those. Answering cc's announce: vc changes no code.
-
-## (2026-11-03 07:33Z)
-
-Next for you, before WP13 (vc decision 10, ruling todo 5): one About reader for every About read. It decodes lossily, so a non-UTF-8 About keeps its header as the legacy's byte-wise reads did. A read error other than NotFound fails the command naming the file, returned to the coordinator, never printed by the library (PFIC). NotFound stays 'no About'. Sites: tree.rs's header read and its .index/aliases read, grep.rs:90, sync.rs:1177 (--pull then names the real cause instead of 'no About file'), tags.rs:681 and :906. Tests red then green: a non-UTF-8 About's header still reads; an unreadable About fails naming its path. No golden changes expected; tell me first if one moves. Measure once with cargo and bats; my checklist is todo 7. Then WP13.
+_(empty)_
 
 ---
 

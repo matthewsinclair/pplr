@@ -28,7 +28,7 @@ Give pplr its own read-only mail reader, so that `pplr email` and `contact log -
 - **No OS gate**: the reader is plain SQLite, so it builds and its replay runs on Linux too. With no Mail store, `pplr email` exits 1 naming the path it looked for (AC-00.7).
 - **`pplr email recent|inbox`**: today's numbered listing and its cache in `PPLR_CACHE_DIR`. `contact log --email N` and `contact log --email <Message-ID>` come off hold and complete WP07.
 - **`pplr email --json`**: the stable contract. It is a versioned document carrying `schema` and the fields above. Its exit codes are documented: 0, and 1 for no access, a schema mismatch or a usage error, as the legacy `pplr email` and every other pplr command exit. This is what Gtools calls.
-- **Tests** run against a synthetic SQLite fixture built in the test, holding only the tables and columns the module reads. They never touch a real mail store. One `#[ignore]` test reads the live store on rhadamanth on demand, read-only.
+- **Tests** run against a synthetic SQLite fixture built in the test, holding only the tables and columns the module reads. They never touch a real mail store. One `#[ignore]` test reads the live store on rhadamanth on demand, read-only: hv ran it with Full Disk Access on 2026-11-03 (`cargo test --lib mail -- --ignored`, relayed by dc), and it passed.
 - Deleting `bin/pplr_email` and `src/pplr-email/email_list.py` is WP13's (D3): hv's live pplr runs the legacy code until the cutover.
 
 **Deliberate divergences from the legacy** (vc's rulings on critic-rust's findings, under hv's simpler-or-easier rule; WP13's CHANGELOG lists them):
@@ -36,8 +36,9 @@ Give pplr its own read-only mail reader, so that `pplr email` and `contact log -
 - `pplr email` finds each message's person through the About header's Email line, read once by the reader every command shares (`about.rs`), not by a second read of each About with the legacy listing's own mailto pattern. On real data it differs from the legacy only where the two readers disagree:
   - a plain address on the Email line now tags;
   - `mailto:x?subject=...` now tags x;
-  - only the first `- Email:` line counts, so a second one no longer tags;
-  - an About that is not UTF-8 no longer tags.
+  - only the first `- Email:` line counts, so a second one no longer tags.
+
+  A fourth, an About that is not UTF-8, went away with the one About reader (a3ab0fb, vc decision 10), which reads it lossily as the legacy did.
 - `contact log` refuses a second `--email`, exit 1, naming why. The legacy took the date, the person and the note from the first message and the link from the second, so it logged a mix of two messages.
 
 **Criteria**: AC-14.1 and AC-14.2.

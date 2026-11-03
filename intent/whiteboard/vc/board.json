@@ -5,9 +5,9 @@
     "name": "vc",
     "role": "vc",
     "session_id": "60a887be-5fa2-4cf5-8de1-310286047151",
-    "heartbeat_at": "2026-11-03T07:31:56.695Z",
+    "heartbeat_at": "2026-11-03T07:47:10.885Z",
     "status": "active",
-    "focus": "main 3121fb9 (WP11 commit 3, the ubuntu bats fixes) verified in a fresh clone, every gate 0; hv pinged to push. Next: watch that CI run, the first where ubuntu's cargo should go green and its bats step run; cc closes WP11, then WP13 is the last ST0001 WP; vc rules todo 5 (the silent About skip) now commit 3 is in",
+    "focus": "localfold for hv's compact, holding. In flight: vc's clean-clone run of main a3ab0fb (the one About reader), slot 01M6G5YWE8VHKZYS3KDCHXWHTY, background task writing vc's scratchpad verify-summary.txt (clone verify/, logs verify-logs/). On its result: release the slot with it, edit decision 6, archive todo 7 and decision 10, tell cc, ping hv to push. Then: dc closes ST0001 WP02 and drafts WP13's docs for vc's review (decision 11); cc starts WP13 (removals, no-Python gate, live read-only parity); keep the slot desk",
     "claims": [],
     "recorded_at": "2026-11-02T07:20:39.673Z",
     "migrated_at": "2026-11-02T07:20:39.673Z"
@@ -114,7 +114,8 @@
       "kind": "decision",
       "seq": 7,
       "text": "ST0001 WP14 (dc), ruled 2026-11-02: keep mail-recent's real semantics; make the golden fake honest (zsh) and re-capture the two email goldens from legacy at 507b0f6 before the Rust; no PPLR_NOW, PPLR_TODAY takes an optional HH:MM:SS (one clock setting); no mail path settings, the replay builds both DBs under the sandbox HOME; rusqlite 0.32 bundled; deleting bin/pplr_email and email_list.py is WP13's (D3).",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T07:47:01.643Z",
       "recorded_at": "2026-11-02T17:18:46.033Z"
     },
     {
@@ -152,7 +153,8 @@
       "kind": "decision",
       "seq": 8,
       "text": "ST0001 WP14, critic-rust's two calls, ruled 2026-11-03 at dc's ask. (A) Highlander: pplr email builds its address map from person.header.emails, the one About reader every command shares, not a second read of each About with the legacy listing's mailto pattern. No golden changes. The four cases where the two readers disagree are recorded in WP14's body for WP13's CHANGELOG: a plain address now tags, mailto:x?subject tags x, a second '- Email:' line no longer tags, a non-UTF-8 About no longer tags. (B) contact log refuses a second --email, exit 1 naming why, with a test red then green; the legacy logged a mix of two messages, and the port's last-wins dropped the first silently. Recorded in WP14's body. The silent skip of an unreadable About (tree.rs:63, and the same pattern across the crate) predates WP14 and is its own item (todo 5).",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T07:47:01.667Z",
       "recorded_at": "2026-11-03T06:58:22.181Z"
     },
     {
@@ -335,7 +337,8 @@
       "body": "**Your four WP14 questions: all four as you recommend, and the records now say so.** (1) Usage exits 1 everywhere, as the legacy pplr email does: WP14's body now reads 0, and 1 for no access, a schema mismatch or a usage error. (2) Doctor's Full Disk Access row warns and never fails, and passes with no Mail store; WP14's body says so, with the T10 reason. (3) No OS gate, also in WP14's body: with no Mail store, pplr email exits 1 naming the path it looked for (AC-00.7). (4) Drift fixed: WP14's body hands deleting bin/pplr_email and src/pplr-email/email_list.py to WP13, WP13's removals now list them, and design.md's table names dc for WP08 and WP14, with WP13 depending on all others (it removes the fallback, so it waits for email too). Also reviewed: config.rs at 6dfc81c is clock only, and the extra now() assertion is the right test for what WP11 relies on. Carry on with the rest of WP14; ask for cargo when ready. It lands after cc's WP11.",
       "re": "2026-11-03 05:58Z",
       "fyi": false,
-      "recorded_at": "2026-11-03T06:06:05.759Z"
+      "recorded_at": "2026-11-03T06:06:05.759Z",
+      "archived_at": "2026-11-03T07:47:01.691Z"
     },
     {
       "id": "01M6G0CECT2A0PBVBCGNXR28MB",
@@ -360,49 +363,56 @@
       "recipient": "cc",
       "body": "**hv: localfold now, then hold for hv's compact.** Context is high across pplr-*. Bank your work: commit what is measured and ready, and record anything uncommitted as a watchout naming the paths and the state it is in. Archive what is finished and clear what you have handled. Do not release: a compact is not a session end. Then stop and wait; hv runs each compact, and we carry on straight after, in the same order: cc's WP11 commit 3, then dc's WP14 rebased onto it, measured once with cargo and bats together. CI run 41591508539 is going now, the first with both fixes (hv pushed 92105af to both remotes); I watch it and route anything it finds.",
       "fyi": false,
-      "recorded_at": "2026-11-03T06:43:00.928Z"
+      "recorded_at": "2026-11-03T06:43:00.928Z",
+      "archived_at": "2026-11-03T07:47:01.691Z"
     },
     {
       "id": "01M6G2B66PH2TRXBGNY9G99VHX",
       "recipient": "dc",
       "body": "**hv: localfold now, then hold for hv's compact.** Context is high across pplr-*. Bank your work: commit what is measured and ready, and record anything uncommitted as a watchout naming the paths and the state it is in. Archive what is finished and clear what you have handled. Do not release: a compact is not a session end. Then stop and wait; hv runs each compact, and we carry on straight after, in the same order: cc's WP11 commit 3, then dc's WP14 rebased onto it, measured once with cargo and bats together. CI run 41591508539 is going now, the first with both fixes (hv pushed 92105af to both remotes); I watch it and route anything it finds.",
       "fyi": false,
-      "recorded_at": "2026-11-03T06:43:00.950Z"
+      "recorded_at": "2026-11-03T06:43:00.950Z",
+      "archived_at": "2026-11-03T07:47:01.691Z"
     },
     {
       "id": "01M6G2CVWWN98Y4KMZ7WVNTP13",
       "recipient": "cc",
       "body": "**Order after the compact, changed: whichever of WP11 commit 3 (cc) and WP14 (dc) is ready first lands first; the other rebases onto it and measures once.** WP14 is close (a rebase and one measurement); commit 3 is fresh work, so WP14 will likely land first. Neither of you changes the other's modules: cc's commit 3 takes src/tree.rs and src/marker.rs (cc's announce), and WP14 does not touch either. The overlap is tests/cli.rs (both), and src/lib.rs and Cargo.toml if commit 3 adds anything there, so the second to land rebases those. Answering cc's announce: vc changes no code.",
       "fyi": false,
-      "recorded_at": "2026-11-03T06:43:55.932Z"
+      "recorded_at": "2026-11-03T06:43:55.932Z",
+      "archived_at": "2026-11-03T07:47:01.691Z"
     },
     {
       "id": "01M6G2CVXMHE1PK9AYJ839QSRZ",
       "recipient": "dc",
       "body": "**Order after the compact, changed: whichever of WP11 commit 3 (cc) and WP14 (dc) is ready first lands first; the other rebases onto it and measures once.** WP14 is close (a rebase and one measurement); commit 3 is fresh work, so WP14 will likely land first. Neither of you changes the other's modules: cc's commit 3 takes src/tree.rs and src/marker.rs (cc's announce), and WP14 does not touch either. The overlap is tests/cli.rs (both), and src/lib.rs and Cargo.toml if commit 3 adds anything there, so the second to land rebases those. Answering cc's announce: vc changes no code.",
       "fyi": false,
-      "recorded_at": "2026-11-03T06:43:55.956Z"
+      "recorded_at": "2026-11-03T06:43:55.956Z",
+      "archived_at": "2026-11-03T07:47:01.691Z"
     },
     {
       "id": "01M6G2E17T8H3PXJRFW4Q668BE",
       "recipient": "dc",
       "body": "**CI run 41591508539 (92105af, the first with both fixes): macOS all green, bats included; ubuntu fails 3 replay cases. Yours, as the harness and the Contacts sidecar's owner.** ubuntu's Cargo tests: every_golden_of_a_ported_command_replays, sync_is_native_and_its_goldens_replay and sync_plan_and_apply_plan_are_native_and_their_goldens_replay fail on 3 cases, sync-apply-plan, sync-link-all-names and sync-link-apply, each with 'No such file or directory (os error 2)' raised by the harness, not a golden diff. All three write to the Contacts store, and the sidecar is built only on macOS (tests/cli.rs:781 reaches for pplr-contacts beside the binary). The fix should follow AC-00.7: on Linux, a Contacts write exits non-zero naming why, and the replay skips those cases there by name, rather than failing on a missing file. Land it as its own small commit, measured; the first-ready rule applies with cc's commit 3 and your WP14 (all three touch tests/cli.rs). The bats step on ubuntu has still not run, so expect a further layer once cargo passes.",
       "fyi": false,
-      "recorded_at": "2026-11-03T06:44:34.170Z"
+      "recorded_at": "2026-11-03T06:44:34.170Z",
+      "archived_at": "2026-11-03T07:47:01.691Z"
     },
     {
       "id": "01M6G37H5570WBR94JFMTTB69V",
       "recipient": "dc",
       "body": "Rulings on WP14's two calls (vc decision 8). WP14's body now records both as divergences, so leave the body to vc. (A) Yes: build the address map from person.header.emails, one About reader, no golden changes. (B) Yes: refuse a second --email, exit 1 naming why, as contact's other usage errors do, with a test red then green. tree.rs:63's silent skip is vc's todo 5, ruled once WP11 commit 3 lands, so keep it out of WP14. Your five clear fixes and note 1's const are agreed. Committing the three docs first is right. Todo 2: find the real ENOENT before fixing, as you say. Then ask for cargo and bats together.",
       "fyi": false,
-      "recorded_at": "2026-11-03T06:58:29.669Z"
+      "recorded_at": "2026-11-03T06:58:29.669Z",
+      "archived_at": "2026-11-03T07:47:01.691Z"
     },
     {
       "id": "01M6G57425W875654Z9M4704C0",
       "recipient": "cc",
       "body": "Next for you, before WP13 (vc decision 10, ruling todo 5): one About reader for every About read. It decodes lossily, so a non-UTF-8 About keeps its header as the legacy's byte-wise reads did. A read error other than NotFound fails the command naming the file, returned to the coordinator, never printed by the library (PFIC). NotFound stays 'no About'. Sites: tree.rs's header read and its .index/aliases read, grep.rs:90, sync.rs:1177 (--pull then names the real cause instead of 'no About file'), tags.rs:681 and :906. Tests red then green: a non-UTF-8 About's header still reads; an unreadable About fails naming its path. No golden changes expected; tell me first if one moves. Measure once with cargo and bats; my checklist is todo 7. Then WP13.",
       "fyi": false,
-      "recorded_at": "2026-11-03T07:33:13.413Z"
+      "recorded_at": "2026-11-03T07:33:13.413Z",
+      "archived_at": "2026-11-03T07:47:01.691Z"
     },
     {
       "id": "01M6G5Y26K48A610MFGJM7EN8P",
