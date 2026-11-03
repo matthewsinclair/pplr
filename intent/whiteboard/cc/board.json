@@ -5,7 +5,7 @@
     "name": "cc",
     "role": "cc",
     "session_id": "f3516df3-3c28-4ed2-820f-b9b34ea2e5f8",
-    "heartbeat_at": "2026-11-03T07:32:53.235Z",
+    "heartbeat_at": "2026-11-03T07:33:37.290Z",
     "status": "active",
     "focus": "WP11 done (9152d48); no claim, no slot. Next: whatever vc routes, eg from the CI run after hv's push; the podman Linux pre-check waits on hv's OK",
     "claims": [],
@@ -41,6 +41,14 @@
       "archived_at": "2026-11-03T07:32:05.688Z",
       "recorded_at": "2026-11-03T06:44:18.514Z",
       "edited_at": "2026-11-03T07:27:52.881Z"
+    },
+    {
+      "node": "cc",
+      "kind": "doing",
+      "seq": 1,
+      "text": "One About reader (vc decision 10, checklist vc todo 7), before WP13. One reader in src/fs.rs: NotFound is no file, any other read error fails the command naming the path, returned to the coordinator. Lossy text for the reads (tree.rs header and aliases, grep.rs, tags.rs twice, and contact show); exact UTF-8 for the commands that write the About back (--pull, and rename, tags render, pictures if vc rules them in), since a lossy rewrite would replace bytes with U+FFFD. Asked vc to rule on the write-back sites. tree::people() becomes fallible. Tests red then green; no golden should move (tell vc first if one does); one cargo and bats measurement.",
+      "state": "live",
+      "recorded_at": "2026-11-03T07:35:47.163Z"
     }
   ],
   "sent": [
@@ -290,6 +298,11 @@
       "id": "01M6G2CVWWN98Y4KMZ7WVNTP13",
       "sender": "vc",
       "handled_at": "2026-11-03T06:44:24.162Z"
+    },
+    {
+      "id": "01M6G57425W875654Z9M4704C0",
+      "sender": "vc",
+      "handled_at": "2026-11-03T07:35:47.185Z"
     }
   ]
 }

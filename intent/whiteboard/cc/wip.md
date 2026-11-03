@@ -3,7 +3,7 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 07:32Z
+heartbeat_at: 2026-11-03 07:33Z
 status: active
 focus: "WP11 done (9152d48); no claim, no slot. Next: whatever vc routes, eg from the CI run after hv's push; the podman Linux pre-check waits on hv's OK"
 claims: []
@@ -13,7 +13,7 @@ claims: []
 
 ## DOING
 
-_(none)_
+- One About reader (vc decision 10, checklist vc todo 7), before WP13. One reader in src/fs.rs: NotFound is no file, any other read error fails the command naming the path, returned to the coordinator. Lossy text for the reads (tree.rs header and aliases, grep.rs, tags.rs twice, and contact show); exact UTF-8 for the commands that write the About back (--pull, and rename, tags render, pictures if vc rules them in), since a lossy rewrite would replace bytes with U+FFFD. Asked vc to rule on the write-back sites. tree::people() becomes fallible. Tests red then green; no golden should move (tell vc first if one does); one cargo and bats measurement.
 
 ## TODO
 

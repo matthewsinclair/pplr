@@ -1,0 +1,15 @@
+{
+  "id": "01M6G5BT6VDPBX46GVRF2WJBDH",
+  "ts": "2026-11-03T07:35:47.163Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "doing",
+    "text": "One About reader (vc decision 10, checklist vc todo 7), before WP13. One reader in src/fs.rs: NotFound is no file, any other read error fails the command naming the path, returned to the coordinator. Lossy text for the reads (tree.rs header and aliases, grep.rs, tags.rs twice, and contact show); exact UTF-8 for the commands that write the About back (--pull, and rename, tags render, pictures if vc rules them in), since a lossy rewrite would replace bytes with U+FFFD. Asked vc to rule on the write-back sites. tree::people() becomes fallible. Tests red then green; no golden should move (tell vc first if one does); one cargo and bats measurement."
+  }
+}
