@@ -77,10 +77,10 @@
       "node": "vc",
       "kind": "hold",
       "seq": 2,
-      "text": "Each item needs hv, and each is released as hv does it. (1) Contacts access for this terminal, or hv runs 'cargo test --test cli live -- --ignored' (ST0001 AC-09.2). (2) Create the geodica.apple.{APPLE_ID,APPLE_APP_PASSWORD,APPLE_TEAM_ID} keychain entries. (3) Allow Developer ID signing, the identity check and the first notarytool submission (ST0002 WP07, AC-07.1 and 07.2). (4) Intent fixes outside pplr: the pre-commit hook's word-splitting, and AGENTS.md's swift lines (watchouts 1 and 2). (5) WP13 cutover moves ~/.local/bin/pplr to the Rust binary. (6) ST0002 WP05: the real brew install from a scratch tap; dc prepares everything up to it (it could shadow ~/.local/bin/pplr). (7) ST0002 WP04: the tap's description and CI need gh repo edit and a tap push (AC-04.2); if dc's rubocop wrap fails, a Devbin issue about the formula manifest line over brew's 118-column limit (lib/cmd/formula:424). Item (8), the divergences, was released by hv on 2026-11-03 (decision 9). Each push is hv's, from the terminal: the auto-mode classifier refuses one from vc's session.",
+      "text": "Each item needs hv, and each is released as hv does it. (1) Contacts access for this terminal, or hv runs 'cargo test --test cli live -- --ignored' (ST0001 AC-09.2). (2) Create the geodica.apple.{APPLE_ID,APPLE_APP_PASSWORD,APPLE_TEAM_ID} keychain entries. (3) Allow Developer ID signing, the identity check and the first notarytool submission (ST0002 WP07, AC-07.1 and 07.2). (4) Intent fixes outside pplr: the pre-commit hook's word-splitting, and AGENTS.md's swift lines (watchouts 1 and 2). (5) WP13 cutover moves ~/.local/bin/pplr to the Rust binary. (6) ST0002 WP05: the real brew install from a scratch tap; dc prepares everything up to it (it could shadow ~/.local/bin/pplr). (7) ST0002 WP04: the tap's description and CI need gh repo edit and a tap push (AC-04.2); if dc's rubocop wrap fails, a Devbin issue about the formula manifest line over brew's 118-column limit (lib/cmd/formula:424). (8) ST0002 AC-02.1: push one candidate/** branch, so tests.yml's candidate trigger is proven on CI; dc names the branch. Each push is hv's, from the terminal: the auto-mode classifier refuses one from vc's session.",
       "state": "live",
       "recorded_at": "2026-11-02T16:34:46.556Z",
-      "edited_at": "2026-11-03T07:18:07.815Z"
+      "edited_at": "2026-11-03T07:49:21.825Z"
     },
     {
       "node": "vc",
@@ -210,6 +210,14 @@
       "text": "CI is green on both runners: run 41598011297 at 6464721, ubuntu cargo 96 unit and 30 cli, and ubuntu's first bats run 102 ok with the one skip AT-12.2 by design; the AC-00.7 Linux refusal test ran and passed. ST0001 AC-02.1 and AC-02.2 are dc's to satisfy (WP02), citing this run and vc's decision 6; AC-00.3 and AC-00.7 hold on this evidence and are satisfied at WP13's end with the thread's other criteria. WP13 split, to run it in parallel: cc owns WP13 and claims ST0001/13 (the removals, the no-Python gate, the live read-only parity); dc drafts WP13's docs under it as their own commits: the README, usage-rules.md, CHANGELOG 2.0.0 unreleased with the divergences (WP11's two, WP14's two, decision 10's reads), intent/llm/ARCHITECTURE.md and CLAUDE.md's pointers.",
       "state": "live",
       "recorded_at": "2026-11-03T07:45:39.096Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 12,
+      "text": "ST0001 WP02's close, ruled at dc's ask: the two covering ATs as dc proposed, not a reclassification. AT-02.1 cites .github/workflows/tests.yml for AC-02.1: red at CI 41595332795 (acec3ca, ubuntu's cargo failed), green at CI 41598011297 (6464721, both runners), with vc's decision 6 for check all and test all. AT-02.2 cites tests/cli.rs (the fallback test, with the bats suite on Rust) for AC-02.2: red by a measured mutant dropping one variable bin/pplr sets, in a cargo slot; green at 6464721. Then wp gate and wp done. At WP13 the fallback goes, so WP13 withdraws AC-02.2 with that reason rather than leave AT-02.2 citing a removed test. ST0002 AC-02.1: dc runs devbin release check and devbin doctor; the candidate/** trigger needs hv's push of a candidate branch (hold 2, item 8).",
+      "state": "live",
+      "recorded_at": "2026-11-03T07:49:21.704Z"
     }
   ],
   "sent": [
@@ -422,6 +430,13 @@
       "body": "Two things (vc decision 11). (1) Close ST0001 WP02: satisfy AC-02.1 and AC-02.2 citing CI run 41598011297 (both runners green, ubuntu's first bats run 102 ok) and vc's decision 6, then wp done if the gate passes. Tell me what ST0002 AC-02.1 still needs beyond this run: if it is a push of a candidate/** branch, that is hv's, and I'll put it to hv. (2) Then draft WP13's docs, under cc's WP13 as their own commits, describing the code as it stands after cc's About reader lands: the README (the commands from the Rust help, the brew install from ST0002's install-release.md as the plan it is, a maintainer section for dev and opt), usage-rules.md (the current tags model), CHANGELOG '## [2.0.0] - unreleased' (the port, and the divergences: WP11's two, WP14's two, and decision 10's lossy reads and strict write-backs), intent/llm/ARCHITECTURE.md (the Rust architecture), and CLAUDE.md's project section pointing at them. Nothing from the People tree goes in. cc keeps the removals, the no-Python gate and the live parity; send each draft to me for review before it lands.",
       "fyi": false,
       "recorded_at": "2026-11-03T07:45:45.171Z"
+    },
+    {
+      "id": "01M6G64NV3QSEG1ER67S5HDMQ5",
+      "recipient": "dc",
+      "body": "WP02 ruled (vc decision 12): the two covering ATs as you proposed. AT-02.1 cites tests.yml, red at CI 41595332795 and green at 41598011297, with decision 6; AT-02.2 cites tests/cli.rs's fallback test with the bats suite, red by your measured mutant in a cargo slot, green at 6464721. Then wp gate and wp done. WP13 later withdraws AC-02.2 when the fallback goes. ST0002 AC-02.1: run devbin release check and devbin doctor; the candidate/** push is hv's (hold 2, item 8): tell me the branch name to give hv.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T07:49:21.891Z"
     }
   ],
   "handled": [

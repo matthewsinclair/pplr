@@ -1,0 +1,15 @@
+{
+  "id": "01M6G64NN87M707D284TG8Z4YX",
+  "ts": "2026-11-03T07:49:21.704Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "ST0001 WP02's close, ruled at dc's ask: the two covering ATs as dc proposed, not a reclassification. AT-02.1 cites .github/workflows/tests.yml for AC-02.1: red at CI 41595332795 (acec3ca, ubuntu's cargo failed), green at CI 41598011297 (6464721, both runners), with vc's decision 6 for check all and test all. AT-02.2 cites tests/cli.rs (the fallback test, with the bats suite on Rust) for AC-02.2: red by a measured mutant dropping one variable bin/pplr sets, in a cargo slot; green at 6464721. Then wp gate and wp done. At WP13 the fallback goes, so WP13 withdraws AC-02.2 with that reason rather than leave AT-02.2 citing a removed test. ST0002 AC-02.1: dc runs devbin release check and devbin doctor; the candidate/** trigger needs hv's push of a candidate branch (hold 2, item 8)."
+  }
+}

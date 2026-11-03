@@ -1,0 +1,17 @@
+{
+  "id": "01M6G64NV3QSEG1ER67S5HDMQ4",
+  "ts": "2026-11-03T07:49:21.891Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "WP02 ruled (vc decision 12): the two covering ATs as you proposed. AT-02.1 cites tests.yml, red at CI 41595332795 and green at 41598011297, with decision 6; AT-02.2 cites tests/cli.rs's fallback test with the bats suite, red by your measured mutant in a cargo slot, green at 6464721. Then wp gate and wp done. WP13 later withdraws AC-02.2 when the fallback goes. ST0002 AC-02.1: run devbin release check and devbin doctor; the candidate/** push is hv's (hold 2, item 8): tell me the branch name to give hv.",
+    "fyi": false,
+    "re": null,
+    "recipient": "dc"
+  }
+}
