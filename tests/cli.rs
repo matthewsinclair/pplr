@@ -1231,7 +1231,7 @@ fn live_contacts_round_trip_through_the_sidecar_store() -> pplr::Result<()> {
 }
 
 /// AT-04.1 (ST0001 AC-04.1): the twelve read commands run natively, and every
-/// golden made of them alone replays; the bats suite (tools/bats-rust) covers
+/// golden made of them alone replays; the bats suite (bin/devbin test shell) covers
 /// them against the binary too.
 #[test]
 fn the_read_commands_are_native_and_their_goldens_replay() -> Result<()> {

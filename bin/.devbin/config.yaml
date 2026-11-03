@@ -5,7 +5,7 @@
 
 project:
   name: pplr
-  # Cargo.toml is the one version source (ST0001 D7); Cargo.lock follows through tools/lock-sync
+  # Cargo.toml is the one version source (ST0001 D7); Cargo.lock follows through bin/devbin lock-sync
   version_from: Cargo.toml
   languages:
     - rust
@@ -15,21 +15,18 @@ project:
 devbin_version: "^0.1.19"
 
 commands:
-  build:
-    summary: cargo build, then the Contacts sidecar beside the binary on macOS
-    run: tools/build
   check:
     options:
       nopython:
         summary: no Python in what the repository tracks (ST0001 AC-00.1)
-        run: tools/nopython
+        run: bin/.devbin/cmd/nopython
         grammar: generic
         log: NOPYTHON
   test:
     options:
       shell:
         summary: the bats suite against the Rust pplr, built first (ST0001 design D3)
-        run: tools/bats-rust
+        run: bin/.devbin/cmd/bats-rust
         grammar: bats
         log: BATS
   release:
@@ -48,7 +45,7 @@ release:
   notes:
     kind: changelog
   derived:
-    - tools/lock-sync
+    - bin/devbin lock-sync
   gates:
     - check all
     - test all

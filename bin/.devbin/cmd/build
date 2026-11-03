@@ -1,4 +1,7 @@
 #!/usr/bin/env zsh
+# devbin: summary = cargo build, then the Contacts sidecar beside the binary on macOS
+# devbin: group = Build
+#
 # Build pplr, and on macOS its Contacts sidecar beside it, ahead of time
 # (ST0001 design D2 and 3.2): nothing compiles at run time. Arguments go to
 # cargo build, eg --release; the sidecar lands in the same target/<profile>/.
@@ -6,7 +9,7 @@
 emulate -L zsh
 setopt err_exit no_unset pipe_fail
 
-root=${0:A:h:h}
+root=${0:A:h:h:h:h}
 cd $root
 cargo build --quiet "$@"
 

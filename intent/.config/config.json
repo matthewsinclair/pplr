@@ -16,12 +16,14 @@
   "guards": [
     {
       "run": [
-        "tools/people-leak"
+        "bin/devbin",
+        "people-leak"
       ]
     },
     {
       "run": [
-        "tools/nopython"
+        "bin/devbin",
+        "nopython"
       ]
     }
   ]

@@ -1,11 +1,14 @@
 #!/usr/bin/env zsh
+# devbin: summary = the bats suite against the Rust pplr, built first; test shell runs it sealed
+# devbin: group = Test
+#
 # Build the Rust pplr, then run the bats suite against it through the
 # PPLR_UNDER_TEST seam (ST0001 design D3). Arguments go to tests/run_tests.sh.
 
 emulate -L zsh
 setopt err_exit no_unset pipe_fail
 
-root=${0:A:h:h}
+root=${0:A:h:h:h:h}
 cd $root
 cargo build --quiet
 PPLR_UNDER_TEST=$root/target/debug/pplr exec tests/run_tests.sh "$@"

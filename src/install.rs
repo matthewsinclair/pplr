@@ -388,7 +388,7 @@ pub fn use_tree(args: &[String], config: &Config) -> Result<ExitCode> {
       if !target.is_file() {
         return Err(
           format!(
-            "no dev build at {}: run tools/build --release",
+            "no dev build at {}: run bin/devbin build --release",
             target.display()
           )
           .into(),

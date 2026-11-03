@@ -1,6 +1,10 @@
 #!/usr/bin/env zsh
-# tools/lock-sync: bring Cargo.lock in step with Cargo.toml after a version
-# stamp, and print the path it wrote (ST0002 E4; after Gtools' tools/lock-sync).
+# devbin: summary = bring Cargo.lock in step with Cargo.toml after a version stamp, as the release's derived: step (ST0002 E4)
+# devbin: group = Ship
+#
+# bin/devbin lock-sync: bring Cargo.lock in step with Cargo.toml after a
+# version stamp, and print the path it wrote (ST0002 E4; after Gtools'
+# tools/lock-sync).
 #
 # devbin's release core stamps the version into Cargo.toml (version_from) and
 # refuses a lockfile as a sidecar, so the release runs this as `derived:`,
@@ -16,7 +20,7 @@
 emulate -L zsh
 setopt err_exit no_unset pipe_fail
 
-root=${0:A:h:h}
+root=${0:A:h:h:h:h}
 lock=Cargo.lock
 
 die() { print -u2 "lock-sync: $*"; exit 1 }

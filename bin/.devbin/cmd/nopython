@@ -1,4 +1,7 @@
 #!/usr/bin/env zsh
+# devbin: summary = no Python in what the repository tracks (ST0001 AC-00.1); check nopython runs it sealed
+# devbin: group = Check
+#
 # Refuse Python in what this repository commits (ST0001 AC-00.1, and the
 # user-scope rule that no repository ships Python). It reads the files git
 # tracks, as staged, and refuses:
@@ -14,7 +17,7 @@
 emulate -L zsh
 setopt err_exit no_unset pipe_fail
 
-self=tools/nopython
+self=bin/.devbin/cmd/nopython
 words=(python python3 uv uvx)
 
 top=$(git rev-parse --show-toplevel 2>/dev/null) || {

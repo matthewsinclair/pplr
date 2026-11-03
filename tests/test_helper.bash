@@ -7,7 +7,7 @@
 # sandbox, and no path taken from the environment is ever a deletion target.
 #
 # PPLR_UNDER_TEST names the pplr executable the suite tests, and defaults to
-# the checkout's dev build, target/debug/pplr, which tools/bats-rust builds
+# the checkout's dev build, target/debug/pplr, which bin/devbin test shell builds
 # first. Point it at another build to test that, eg an opt tree's:
 #   PPLR_UNDER_TEST="$PPLR_OPT_PREFIX/bin/pplr" bats -r tests/
 

@@ -29,7 +29,7 @@ load test_helper
         mkdir -p "$repo/$(dirname "$path")"
         printf '%s\n' "${row#*|}" > "$repo/$path"
         git -C "$repo" add -- "$path"
-        run bash -c "cd '$repo' && '$PPLR_ROOT/tools/people-leak'"
+        run bash -c "cd '$repo' && '$PPLR_ROOT/bin/.devbin/cmd/people-leak'"
         [ "$status" -ne 0 ] || { echo "$path passed: $output" >&2; return 1; }
         assert_contains "$output" "people-leak: $path:" || { echo "$path refused without naming it" >&2; return 1; }
         git -C "$repo" rm -q --cached -- "$path"
@@ -39,7 +39,7 @@ load test_helper
     mkdir -p "$repo/notes"
     printf '%s\n' "nothing about anyone" > "$repo/notes/clean.md"
     git -C "$repo" add -- notes/clean.md
-    run bash -c "cd '$repo' && '$PPLR_ROOT/tools/people-leak'"
+    run bash -c "cd '$repo' && '$PPLR_ROOT/bin/.devbin/cmd/people-leak'"
     [ "$status" -eq 0 ] || { echo "a clean file was refused: $output" >&2; return 1; }
     assert_contains "$output" "people-leak: clean"
 }

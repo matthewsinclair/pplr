@@ -1,0 +1,34 @@
+#!/usr/bin/env zsh
+# devbin: summary = regenerate src/fold_table.rs from Apple Foundation's answers (macOS only)
+# devbin: group = Build
+#
+# bin/devbin fold-table: regenerate src/fold_table.rs, the two Foundation
+# tables the port folds and decomposes names by (ST0001 WP04, WP10), from the
+# generator swift/fold-table/main.swift. It compiles the generator with swiftc
+# into a scratch directory, runs it, and replaces the file only when both
+# succeed; it prints the path it wrote.
+#
+# IT REFUSES OFF MACOS. The tables are Apple Foundation's answers, the ones the
+# legacy engine compared and wrote names by, and another platform's Foundation
+# need not give the same ones.
+
+emulate -L zsh
+setopt err_exit no_unset pipe_fail
+
+root=${0:A:h:h:h:h}
+src=swift/fold-table/main.swift
+out=src/fold_table.rs
+
+die() { print -u2 "fold-table: $*"; exit 1 }
+
+(( $# == 0 )) || die "takes no arguments, and was given: $*"
+[[ $(uname) == Darwin ]] || die "the tables are Apple Foundation's answers, so they are made on macOS only"
+cd $root
+
+scratch=$(mktemp -d)
+staged=$out.fold-table.$$
+trap 'rm -rf $scratch $staged' EXIT
+swiftc -o $scratch/fold-table $src
+$scratch/fold-table > $staged
+mv $staged $out
+print $out

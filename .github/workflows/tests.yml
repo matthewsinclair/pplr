@@ -33,7 +33,7 @@ jobs:
         with:
           persist-credentials: false
 
-      # devbin needs bash 5 (macOS ships 3.2); tools/bats-rust is zsh
+      # devbin needs bash 5 (macOS ships 3.2); bin/.devbin/cmd/bats-rust is zsh
       - name: Install bats, bash and zsh (macOS)
         if: runner.os == 'macOS'
         run: brew install bats-core bash

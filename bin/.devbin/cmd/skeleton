@@ -1,7 +1,10 @@
 #!/usr/bin/env zsh
-# tools/skeleton: ST0002 WP05's walking skeleton, prepared up to `brew install`.
+# devbin: summary = ST0002 WP05's walking skeleton, prepared up to brew install
+# devbin: group = Ship
 #
-#   tools/skeleton [--adhoc] [<dir>]
+# bin/devbin skeleton: ST0002 WP05's walking skeleton, prepared up to `brew install`.
+#
+#   bin/devbin skeleton [--adhoc] [<dir>]
 #
 # In <dir> (default ~/Devel/scratch/pplr-skeleton), from this checkout's HEAD:
 #   1. a scratch clone, its push URLs dead, so nothing reaches a real remote;
@@ -20,7 +23,7 @@
 emulate -L zsh
 setopt err_exit no_unset pipe_fail
 
-root=${0:A:h:h}
+root=${0:A:h:h:h:h}
 adhoc=()
 if [[ ${1:-} == --adhoc ]]; then adhoc=(--adhoc); shift; fi
 dir=${1:-$HOME/Devel/scratch/pplr-skeleton}
@@ -44,7 +47,7 @@ done
 cd $clone
 version=$(sed -n 's/^version = "\(.*\)"$/\1/p' Cargo.toml | head -1)
 step "release build"
-tools/build --release
+bin/devbin build --release
 step "the macOS asset${adhoc:+ (ad hoc)}"
 bin/devbin macos prepare $adhoc
 asset=dist/macos/pplr-$version-$(rustc -vV | sed -n 's/^host: //p').tar.gz
@@ -78,7 +81,7 @@ Prepared in $dir. The maintainer's steps, which install into Homebrew:
   brew install pplrskeleton/pplr/pplr
   brew test pplrskeleton/pplr/pplr
   PPLR_OPT_PREFIX=$dir/opt $clone/target/release/pplr install
-  PPLR_OPT_PREFIX=$dir/opt $root/tools/t10-probe $clone
+  (cd $root && PPLR_OPT_PREFIX=$dir/opt bin/devbin t10-probe $clone)
 
 and afterwards:
 

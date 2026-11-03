@@ -64,7 +64,7 @@ triple() { rustc -vV | sed -n 's/^host: //p' }
 cmd_stage() {
   local b
   for b in $binaries; do
-    [[ -e target/release/$b ]] || die "no release build of $b: run tools/build --release"
+    [[ -e target/release/$b ]] || die "no release build of $b: run bin/devbin build --release"
   done
   mkdir -p $stage
   for b in $binaries; do

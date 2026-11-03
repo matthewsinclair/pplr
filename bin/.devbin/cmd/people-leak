@@ -1,4 +1,7 @@
 #!/usr/bin/env zsh
+# devbin: summary = refuse a staged file that carries anything from the People tree (ST0001 design D11)
+# devbin: group = Check
+#
 # Refuse a commit that carries anything from the People tree (ST0001 design
 # D11): each person's folder name, the name on their About file, every pplr://
 # marker and every email address in their About files, read from the tree at
