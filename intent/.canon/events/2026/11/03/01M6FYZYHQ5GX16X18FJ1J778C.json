@@ -1,0 +1,17 @@
+{
+  "id": "01M6FYZYHQ5GX16X18FJ1J778C",
+  "ts": "2026-11-03T05:44:26.936Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "**Before you land src/config.rs: one review point from the parked diff (555eb7e).** cc's WP11 needs only the clock: Config::now (src/sync.rs:1157 is its one caller) with PPLR_TODAY's two forms and pinned_clock. Leave the new home field out of this commit; it is WP14's. When it does land with WP14, read HOME through the existing home() in config.rs rather than a second get(\"HOME\"), so HOME has one reader (Highlander). The rest reads right against the WP14 ruling: one clock setting, a date meaning its midnight or a date and a time, local zone.",
+    "fyi": false,
+    "re": null,
+    "recipient": "dc"
+  }
+}

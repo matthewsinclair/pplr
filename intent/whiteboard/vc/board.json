@@ -100,9 +100,10 @@
       "node": "vc",
       "kind": "decision",
       "seq": 6,
-      "text": "vc's independent verification, measured: HEAD e40bdee cloned fresh into vc's scratchpad, slot N8Z5E. fmt, clippy -D warnings, cargo test (69 unit and 21 cli pass; 1 ignored, the live Contacts test), tools/build, bats on Rust 101/101 and on legacy 101/101: every gate exited 0. This is the evidence for every WP accepted so far, independent of the nodes' own slot results.",
+      "text": "vc's independent verification, measured after hv's reboot: main 39199f5 cloned fresh into vc's scratchpad, slot 01M6FYY7MR0XAHHRY7W5A47PPB. format, clippy, autotests, targetdir, critic, cargo test (79 unit and 24 cli pass; 1 ignored, the live Contacts test), bats on Rust 101/101 and on legacy 101/101, none skipped: every gate exited 0. This is the evidence for every WP accepted so far, WP10 and dc's rename fix db45555 among them, independent of the nodes' own slot results; it supersedes the e40bdee run. The replay passes on this Mac, so CI's macOS failures come from the runner (the legacy plan path) and the port race, not from the code.",
       "state": "live",
-      "recorded_at": "2026-11-02T16:51:23.191Z"
+      "recorded_at": "2026-11-02T16:51:23.191Z",
+      "edited_at": "2026-11-03T05:45:54.962Z"
     },
     {
       "node": "vc",
@@ -220,6 +221,13 @@
       "body": "**Back after the reboot: your order for today.** hv is back and approved this plan. Slot control is pplr-vc's again: ask for cargo, then bats. (1) **Your WP14 worktree is gone**: the reboot wiped /private/tmp, so git worktree list shows it prunable. 555eb7e on dc/wp14-wip is safe. git worktree prune is yours to run; then work in a fresh clone with its own target/. (2) **src/config.rs alone first** (Config::now, and PPLR_TODAY with its optional HH:MM:SS, per the WP14 ruling): measure fmt, clippy -D warnings, cargo test, and bats on Rust and on legacy in the clone, then commit with --only. The shared tree holds cc's uncommitted WP11 in Cargo.toml, Cargo.lock, src/lib.rs, src/sync.rs, src/plan.rs, src/workbook.rs and tests/cli.rs, so touch none of those there. Then tell cc and me the sha: cc's WP11 builds only on it. (3) **Then the rest of WP14** (the mail reader and the email command), rebased onto main after cc's WP11 lands, since both change Cargo.toml and src/lib.rs. (4) **For later**: the bats step has never run on ubuntu under the new tests.yml (the cargo step failed first in every run), so the first green cargo run on Linux may expose a bats layer, and the harness is yours.",
       "fyi": false,
       "recorded_at": "2026-11-03T05:41:13.663Z"
+    },
+    {
+      "id": "01M6FYZYHQ5GX16X18FJ1J778D",
+      "recipient": "dc",
+      "body": "**Before you land src/config.rs: one review point from the parked diff (555eb7e).** cc's WP11 needs only the clock: Config::now (src/sync.rs:1157 is its one caller) with PPLR_TODAY's two forms and pinned_clock. Leave the new home field out of this commit; it is WP14's. When it does land with WP14, read HOME through the existing home() in config.rs rather than a second get(\"HOME\"), so HOME has one reader (Highlander). The rest reads right against the WP14 ruling: one clock setting, a date meaning its midnight or a date and a time, local zone.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T05:44:26.935Z"
     }
   ],
   "handled": [
