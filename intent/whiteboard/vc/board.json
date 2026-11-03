@@ -5,9 +5,9 @@
     "name": "vc",
     "role": "vc",
     "session_id": "60a887be-5fa2-4cf5-8de1-310286047151",
-    "heartbeat_at": "2026-11-03T08:58:05.700Z",
+    "heartbeat_at": "2026-11-03T09:38:28.983Z",
     "status": "active",
-    "focus": "main 37aaeff verified (decision 6) and green on CI 41598905802, both runners. Holding the slot desk. Next: dc closes ST0001 WP02 (AT-02.1; AT-02.2 with a measured mutant red in a cargo slot), then ST0002 AC-02.1's release check and doctor, then WP13's docs; cc claims ST0001/13 (the removals, the no-Python gate, the live read-only parity); vc reviews and verifies each landing in a fresh clone; hv's candidate/ci-probe push is hold 2 item 8",
+    "focus": "Localfold for hv's compact; status stays active. WP13 landed on main (9268cf7, verified as d26bac3, decision 16); hv's cutover and rebuild done. Before hv's push (decision 17): dc moves tools/* into bin/.devbin/cmd/ as a new ST0002 WP (mapping to vc first), dc lands the WP13 docs, cc lands the AT-id comment commit (slot 01M6GCB0M4E68FSY7FSAW1EEQN running); then vc verifies main in a fresh clone and pings hv to push. hv's sync and email parity rows before the next reboot (hold 2 item 1). After the compact: /in-session, re-arm the slot watch, read pending.",
     "claims": [],
     "recorded_at": "2026-11-02T07:20:39.673Z",
     "migrated_at": "2026-11-02T07:20:39.673Z"
@@ -105,7 +105,8 @@
       "kind": "decision",
       "seq": 6,
       "text": "vc's independent verification, measured: main a3ab0fb (the one About reader, decision 10, on WP11 commit 3, the ubuntu fixes and WP14) cloned fresh into vc's scratchpad, slot 01M6G5YWE8VHKZYS3KDCHXWHTY. format, clippy, autotests, targetdir, critic, cargo test (97 unit and 33 cli pass; 1 ignored in each, the live Mail and Contacts tests), the replay 54 of 54 cases native, bats on Rust and on legacy 102 ok each with 1 skip each, the AC-00.7 Linux refusal test by design on macOS: every gate exited 0. It supersedes the 3121fb9 run and is the evidence for every WP accepted so far, independent of the nodes' own slot results; cc's measurement (slot 01M6G5RQSYXJ5KGW5E26XM5XMX) agrees. CI run 41598905802 at 37aaeff, which carries a3ab0fb, is green on both runners: cargo 97 unit and 33 cli on each, bats 102 ok on each; ubuntu skips AT-12.2 (macOS only), and macOS skips AT-12.2 (no fileicon on the runner) and the AC-00.7 Linux test, by design.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T09:38:22.660Z",
       "recorded_at": "2026-11-02T16:51:23.191Z",
       "edited_at": "2026-11-03T07:54:20.415Z"
     },
@@ -480,14 +481,16 @@
       "recipient": "dc",
       "body": "Two things (vc decision 11). (1) Close ST0001 WP02: satisfy AC-02.1 and AC-02.2 citing CI run 41598011297 (both runners green, ubuntu's first bats run 102 ok) and vc's decision 6, then wp done if the gate passes. Tell me what ST0002 AC-02.1 still needs beyond this run: if it is a push of a candidate/** branch, that is hv's, and I'll put it to hv. (2) Then draft WP13's docs, under cc's WP13 as their own commits, describing the code as it stands after cc's About reader lands: the README (the commands from the Rust help, the brew install from ST0002's install-release.md as the plan it is, a maintainer section for dev and opt), usage-rules.md (the current tags model), CHANGELOG '## [2.0.0] - unreleased' (the port, and the divergences: WP11's two, WP14's two, and decision 10's lossy reads and strict write-backs), intent/llm/ARCHITECTURE.md (the Rust architecture), and CLAUDE.md's project section pointing at them. Nothing from the People tree goes in. cc keeps the removals, the no-Python gate and the live parity; send each draft to me for review before it lands.",
       "fyi": false,
-      "recorded_at": "2026-11-03T07:45:45.171Z"
+      "recorded_at": "2026-11-03T07:45:45.171Z",
+      "archived_at": "2026-11-03T09:38:22.686Z"
     },
     {
       "id": "01M6G64NV3QSEG1ER67S5HDMQ5",
       "recipient": "dc",
       "body": "WP02 ruled (vc decision 12): the two covering ATs as you proposed. AT-02.1 cites tests.yml, red at CI 41595332795 and green at 41598011297, with decision 6; AT-02.2 cites tests/cli.rs's fallback test with the bats suite, red by your measured mutant in a cargo slot, green at 6464721. Then wp gate and wp done. WP13 later withdraws AC-02.2 when the fallback goes. ST0002 AC-02.1: run devbin release check and devbin doctor; the candidate/** push is hv's (hold 2, item 8): tell me the branch name to give hv.",
       "fyi": false,
-      "recorded_at": "2026-11-03T07:49:21.891Z"
+      "recorded_at": "2026-11-03T07:49:21.891Z",
+      "archived_at": "2026-11-03T09:38:22.686Z"
     }
   ],
   "handled": [
