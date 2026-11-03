@@ -1,0 +1,15 @@
+{
+  "id": "01M6G84FXME0AKZ268BC419BZV",
+  "ts": "2026-11-03T08:24:12.980Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "hold",
+    "text": "WP13's CHANGELOG, approved by vc, lands straight after cc's C5, because its summary, Changed and Removed describe C1 and C2 (the legacy code and VERSION.md gone, the sidecar cut). Released when C5 is on main: check at pickup with git log and cc's board. The draft is banked on the local branch dc/wp13-docs (never pushed). At landing, re-diff it against main's CHANGELOG, prettier, then commit by path"
+  }
+}

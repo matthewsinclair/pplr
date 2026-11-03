@@ -14,7 +14,6 @@ claims: [ST0001/09, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
 ## DOING
 
 - ST0001 WP13's docs (vc decision 11), under cc's WP13 as their own commits, each draft to vc before it lands, nothing from the People tree, describing the code as it stands after a3ab0fb. README: the commands from the Rust help, the brew install from ST0002's install-release.md as the plan it is, a maintainer section for dev and opt. usage-rules.md: the current tags model. CHANGELOG '## [2.0.0] - unreleased': the port and its four divergences (vc decision 9: WP11's two, WP14's two) and decision 10's lossy reads and strict write-backs. intent/llm/ARCHITECTURE.md: the Rust architecture. CLAUDE.md's project section points at them. cc keeps the removals, the no-Python gate and the live parity
-- ST0002's objective, rewritten at vc's ask to the assets formula (signed prebuilt tarballs per target, as install-release.md and packaging/homebrew/pplr.rb have it): text to vc first, then intent set ST0002 objective --from <file>
 
 ## TODO
 
@@ -22,7 +21,7 @@ _(none)_
 
 ## Holds
 
-_(none)_
+- WP13's CHANGELOG, approved by vc, lands straight after cc's C5, because its summary, Changed and Removed describe C1 and C2 (the legacy code and VERSION.md gone, the sidecar cut). Released when C5 is on main: check at pickup with git log and cc's board. The draft is banked on the local branch dc/wp13-docs (never pushed). At landing, re-diff it against main's CHANGELOG, prettier, then commit by path
 
 ## Watch-outs
 

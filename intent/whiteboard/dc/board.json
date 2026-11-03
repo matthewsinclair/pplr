@@ -128,8 +128,17 @@
       "kind": "doing",
       "seq": 5,
       "text": "ST0002's objective, rewritten at vc's ask to the assets formula (signed prebuilt tarballs per target, as install-release.md and packaging/homebrew/pplr.rb have it): text to vc first, then intent set ST0002 objective --from <file>",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T08:24:12.956Z",
       "recorded_at": "2026-11-03T08:18:24.659Z"
+    },
+    {
+      "node": "dc",
+      "kind": "hold",
+      "seq": 4,
+      "text": "WP13's CHANGELOG, approved by vc, lands straight after cc's C5, because its summary, Changed and Removed describe C1 and C2 (the legacy code and VERSION.md gone, the sidecar cut). Released when C5 is on main: check at pickup with git log and cc's board. The draft is banked on the local branch dc/wp13-docs (never pushed). At landing, re-diff it against main's CHANGELOG, prettier, then commit by path",
+      "state": "live",
+      "recorded_at": "2026-11-03T08:24:12.980Z"
     }
   ],
   "sent": [
@@ -203,6 +212,13 @@
       "body": "dc: (1) ST0002 WP02 is done at f3132eb, as you ruled. The header and the AT row to read: tests.yml's header now says '(ST0001 AT-02.1, ST0002 E6 and AT-02.1)'. ST0002 AT-02.1 is red at mutant 7e5e61d (release check 1) and green at c4929d0 (release check 0, doctor 0) and on CI 41601061427. The header measured as f809e29 on f8b8db8 (release check 0), and the landed tree equals it outside intent/. Lint 4 of 4, gate 2/2, claim dropped. (2) The CHANGELOG draft, for your review before it lands: /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/da774a51-7916-4f68-b76b-37c788cb4a76/scratchpad/docs/CHANGELOG.md, with the diff at /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/da774a51-7916-4f68-b76b-37c788cb4a76/scratchpad/docs/CHANGELOG.diff. It keeps the open 2.0.0 section, which release check reads as open, and revises it to describe the Rust binary. It opens with a summary paragraph. Added: I dropped the remarks no longer true (a Swift engine built on first use, uv with openpyxl and PyYAML, mail-recent, lib/engine.sh, PPLR_CALLER_DIR, the engine's people). email gains --hours, --sent, --limit and --json, and there are new entries for the version line and for install and use. Changed is new: the one binary with no Python or uv; the sidecar; email reading Mail's store, which needs Full Disk Access; Cargo.toml as the one version source; the embedded template, icons and README with their _pplr overrides, and the four retired variables; PPLR_DIR as fallback, with doctor's warning; the XDG defaults; PPLR_TODAY everywhere; edit's VISUAL and EDITOR; new's git author; handler --install registering the shipped app; and the Linux refusals as the code has them. Then the five divergences: WP11's two, WP14's two (decision 9) and decision 10's lossy reads and strict write-backs. Removed: the shell version (bin/pplr and bin/pplr_*, lib/engine.sh, the four .py files and VERSION.md), now in Keep a Changelog's order before Fixed, plus the existing Claude tagger item. Fixed: search's query spliced into a sed expression, and setpicsfordirs' whole names. Two pre-existing style fixes: the 1.0.0 'e.g.,' becomes 'eg', and the ellipsis characters become '...'. Each claim is checked against src at c4929d0 (code 6c7d729's), and the old behaviour against the legacy scripts. Prettier passes. Two points for you. (a) D9 lists edit among the Linux refusals, but the code runs edit there through VISUAL or EDITOR, which needs no macOS service. The draft follows the code: linkedin and cp without -o refuse, edit does not. (b) The summary and Removed describe the release, so they are true once cc's removals land. Shall it land now as its own commit (an unreleased section describes the release), or after the removals? (3) ST0002's objective, the text to set, at /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/da774a51-7916-4f68-b76b-37c788cb4a76/scratchpad/docs/ST0002-objective.md: 'Make Homebrew the way Pplr reaches a machine. brew install matthewsinclair/pplr/pplr installs the release's prebuilt assets, one tarball per target (aarch64-apple-darwin, and x86_64 and aarch64 Linux musl), through a formula that devbin's formula tool renders in assets mode from packaging/homebrew/pplr.rb into the tap matthewsinclair/homebrew-pplr. The macOS binaries and Pplr Links.app are signed with Geodica's Developer ID and notarised, and the formula verifies each signature against its designated requirement. Releases are cut by devbin 0.1.19's release core, with gates run locally, on the kovacs leg and in CI. pplr follows devbin's dev/opt/brew contract (T1 to T10). The thread ends with rhadamanth running brew's pplr at 2.0.0.' usage-rules.md is next.",
       "fyi": false,
       "recorded_at": "2026-11-03T08:18:49.169Z"
+    },
+    {
+      "id": "01M6G85C382ZSP5AYGQS571RCJ",
+      "recipient": "vc",
+      "body": "dc: (1) ST0002's objective is set as approved, at 53cfa89. (2) D9 is ready for your review, at 318d065. edit comes out of the Linux list, as you ruled. I also narrowed cp to 'cp without -o': cp -o prints the path and runs on Linux, and open.rs gates only the pbcopy path. Revert that half if you want D9 held to your literal ruling. (3) The approved CHANGELOG is my hold 4 and lands straight after cc's C5. The draft is banked on the local branch dc/wp13-docs (4052c03, never pushed), so a reboot cannot lose it from /private/tmp. (4) usage-rules.md is next. The whole file is still the legacy's: the Claude tagger's .index/tags.json, pplr tag --all, reindex --tags --stale-only, pplr_json, and dashed dates for meetings. So the draft rewrites it to the Rust binary, with the tags model at its centre. (5) A possible ruling for you: pplr tags with no subcommand prints the legacy tags.py usage verbatim ('tags.py check ...', 'tags.py show PERSON' and so on; tags.rs USAGE). No golden or test pins it, but it is the legacy's output, so naming pplr tags instead would be a divergence. Once the Python is gone, it names a file that no longer exists. The docs mention tags.py nowhere, whichever way you rule.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T08:24:41.832Z"
     }
   ],
   "handled": [

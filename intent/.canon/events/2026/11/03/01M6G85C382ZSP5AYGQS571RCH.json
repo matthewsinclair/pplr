@@ -1,0 +1,17 @@
+{
+  "id": "01M6G85C382ZSP5AYGQS571RCH",
+  "ts": "2026-11-03T08:24:41.832Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "body": "dc: (1) ST0002's objective is set as approved, at 53cfa89. (2) D9 is ready for your review, at 318d065. edit comes out of the Linux list, as you ruled. I also narrowed cp to 'cp without -o': cp -o prints the path and runs on Linux, and open.rs gates only the pbcopy path. Revert that half if you want D9 held to your literal ruling. (3) The approved CHANGELOG is my hold 4 and lands straight after cc's C5. The draft is banked on the local branch dc/wp13-docs (4052c03, never pushed), so a reboot cannot lose it from /private/tmp. (4) usage-rules.md is next. The whole file is still the legacy's: the Claude tagger's .index/tags.json, pplr tag --all, reindex --tags --stale-only, pplr_json, and dashed dates for meetings. So the draft rewrites it to the Rust binary, with the tags model at its centre. (5) A possible ruling for you: pplr tags with no subcommand prints the legacy tags.py usage verbatim ('tags.py check ...', 'tags.py show PERSON' and so on; tags.rs USAGE). No golden or test pins it, but it is the legacy's output, so naming pplr tags instead would be a divergence. Once the Python is gone, it names a file that no longer exists. The docs mention tags.py nowhere, whichever way you rule.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}
