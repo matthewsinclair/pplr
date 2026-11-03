@@ -168,6 +168,14 @@
       "text": "hv, 2026-11-03, in vc's session: 'yes, the divergences stand'. All four stand as recorded in WP11's and WP14's bodies, for WP13's CHANGELOG: WP11, sync refuses a bad or missing option value, a non-numeric --limit and a trailing --group, and --apply-plan reads its sheets by header name; WP14, email finds people through the shared About header reader (four edge cases differ), and contact log refuses a second --email. Item (8) of hold 2 is released.",
       "state": "live",
       "recorded_at": "2026-11-03T07:18:07.708Z"
+    },
+    {
+      "node": "vc",
+      "kind": "todo",
+      "seq": 6,
+      "text": "After the WP13 cutover, candidates under hv's simpler-or-easier rule, none in commit 3 (cc, critic-rust's second read of WP11 commit 3): (a) unify the three picture rules, the engine's, pplr_pictures' and the index's, which differ as their legacy scripts did; that changes behaviour on real data, so it is a divergence and needs hv's ruling (a comment on tree::PICTURES records the difference); (b) Pair.how's vocabulary as an enum, behaviour-preserving. Left as is by vc's ruling: an option taken as another's value (sync --link --group --apply) falls to a dry run, which is safe.",
+      "state": "live",
+      "recorded_at": "2026-11-03T07:25:29.430Z"
     }
   ],
   "sent": [

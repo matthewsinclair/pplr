@@ -1,0 +1,15 @@
+{
+  "id": "01M6G4RYYPX7Y9NT4YZADVNMAF",
+  "ts": "2026-11-03T07:25:29.430Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "After the WP13 cutover, candidates under hv's simpler-or-easier rule, none in commit 3 (cc, critic-rust's second read of WP11 commit 3): (a) unify the three picture rules, the engine's, pplr_pictures' and the index's, which differ as their legacy scripts did; that changes behaviour on real data, so it is a divergence and needs hv's ruling (a comment on tree::PICTURES records the difference); (b) Pair.how's vocabulary as an enum, behaviour-preserving. Left as is by vc's ruling: an option taken as another's value (sync --link --group --apply) falls to a dry run, which is safe."
+  }
+}
