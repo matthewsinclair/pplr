@@ -5,9 +5,9 @@
 
 use crate::contacts::{Card, CardChange, MarkerWrite, NewCard};
 use crate::marker::{marker_paths, marker_url};
-use crate::normalise::{email_key, fold};
+use crate::normalise::{decompose, email_key, fold};
 use crate::sync::{
-  card_name, display_name, is_home, marker_write, matches, needs_group, pplr_marker,
+  card_name, display_name, is_home, marker_write, matches, needs_group, pplr_marker, same_text,
 };
 use crate::tree::Person;
 use serde::{Serialize, Serializer};
@@ -377,12 +377,13 @@ fn surname_compatible(a: &str, b: &str) -> bool {
   x.chars().count().min(y.chars().count()) >= 5 && levenshtein(&x, &y) <= 1
 }
 
+/// The email domains, keyed as `same_text` compares, less the generic ones.
 fn domains(emails: &[String]) -> HashSet<String> {
   emails
     .iter()
     .filter_map(|e| e.split('@').next_back())
     .filter(|d| !GENERIC_DOMAINS.contains(d))
-    .map(str::to_owned)
+    .map(decompose)
     .collect()
 }
 
@@ -449,7 +450,11 @@ fn card_change(p: &Person, c: &Card, group: &str) -> CardChange {
     add_emails: h
       .emails
       .iter()
-      .filter(|e| !c.emails.iter().any(|x| email_key(x) == email_key(e)))
+      .filter(|e| {
+        !c.emails
+          .iter()
+          .any(|x| same_text(&email_key(x), &email_key(e)))
+      })
       .cloned()
       .collect(),
     add_phones: h
@@ -458,7 +463,7 @@ fn card_change(p: &Person, c: &Card, group: &str) -> CardChange {
       .filter(|ph| !c.phones.contains(ph))
       .cloned()
       .collect(),
-    add_linkedin: (!h.linkedin.is_empty() && !c.linkedin.contains(&h.linkedin))
+    add_linkedin: (!h.linkedin.is_empty() && !c.linkedin.iter().any(|s| same_text(s, &h.linkedin)))
       .then(|| h.linkedin.clone()),
     marker: marker_write(c, &p.key),
     add_group: needs_group(c, group),
@@ -682,11 +687,19 @@ pub fn plan(people: &[Person], raw_cards: &[Card], group: &str, generated: Strin
     .filter(|c| !strong.contains(c.id.as_str()))
     .collect();
   for p in people.iter().filter(|p| !done.contains(p.key.as_str())) {
-    let mine: HashSet<String> = p.header.emails.iter().map(|e| email_key(e)).collect();
+    let mine: HashSet<String> = p
+      .header
+      .emails
+      .iter()
+      .map(|e| decompose(&email_key(e)))
+      .collect();
     let mut cands: Vec<Scored> = free
       .iter()
       .filter_map(|c| {
-        let shares = c.emails.iter().any(|e| mine.contains(&email_key(e)));
+        let shares = c
+          .emails
+          .iter()
+          .any(|e| mine.contains(&decompose(&email_key(e))));
         match score(p, c) {
           Some((s, why)) if shares => Some(Scored {
             card: c,
@@ -983,7 +996,9 @@ pub fn plan_work<'a>(
   cards: &'a [Card],
   group: &str,
 ) -> (Vec<Work<'a>>, Vec<String>) {
-  let by_key: HashMap<&str, &Person> = people.iter().map(|p| (p.key.as_str(), p)).collect();
+  // A reviewed row names its person as the workbook holds the name: found as
+  // `same_text` compares
+  let by_key: HashMap<String, &Person> = people.iter().map(|p| (decompose(&p.key), p)).collect();
   let mut by_id: HashMap<&str, &Card> = HashMap::new();
   for c in cards {
     by_id.entry(c.id.as_str()).or_insert(c);
@@ -994,7 +1009,7 @@ pub fn plan_work<'a>(
   let mut work = Vec::new();
   let mut problems = Vec::new();
   for d in decisions {
-    let Some(p) = by_key.get(d.person.as_str()).copied() else {
+    let Some(p) = by_key.get(&decompose(&d.person)).copied() else {
       problems.push(format!("{}: no such person in pplr", d.person));
       continue;
     };
@@ -1042,6 +1057,7 @@ pub fn plan_work<'a>(
 #[cfg(test)]
 mod tests {
   use super::*;
+  use crate::sync::tests::{COMPOSED, DECOMPOSED, KEY, KEY_DECOMPOSED, card, person};
 
   #[test]
   fn names_compare_by_nickname_prefix_and_slip() {
@@ -1083,5 +1099,24 @@ mod tests {
       assert_eq!(Decision::named(d.as_str()), Some(d));
     }
     assert_eq!(Decision::named("link only"), None);
+  }
+
+  #[test]
+  fn update_adds_no_slug_the_card_holds_in_the_other_unicode_form() {
+    let change = card_change(&person(KEY, COMPOSED), &card("c1", &[DECOMPOSED]), "PPLR");
+    assert_eq!(change.add_linkedin, None);
+  }
+
+  #[test]
+  fn a_reviewed_row_finds_its_person_named_in_the_other_unicode_form() {
+    let people = [person(KEY, "")];
+    let row = Reviewed {
+      person: KEY_DECOMPOSED.to_owned(),
+      decision: Decision::Add,
+      card: None,
+    };
+    let (work, problems) = plan_work(&[row], &people, &[], "PPLR");
+    assert!(problems.is_empty(), "{problems:?}");
+    assert!(work.iter().any(|w| w.person().key == KEY));
   }
 }

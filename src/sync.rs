@@ -268,9 +268,23 @@ pub fn is_home(c: &Card) -> bool {
   c.account.as_deref().unwrap_or("home") == "home"
 }
 
+/// Whether two values the legacy engine held as Swift Strings are the same
+/// text. Swift's equality is canonical: a letter and its accent written as one
+/// character or as two (é, or e and U+0301) are one value. So each such value
+/// is compared and keyed by its decomposed form, and shown as it was written
+/// (vc decision 22).
+pub(crate) fn same_text(a: &str, b: &str) -> bool {
+  decompose(a) == decompose(b)
+}
+
+/// The card is in the group, its name compared as `same_text` compares.
+pub fn in_group(c: &Card, group: &str) -> bool {
+  c.groups.iter().any(|g| same_text(g, group))
+}
+
 /// Linking puts an iCloud card in the group, if it is not in it yet.
 pub fn needs_group(c: &Card, group: &str) -> bool {
-  is_home(c) && !c.groups.iter().any(|g| g == group)
+  is_home(c) && !in_group(c, group)
 }
 
 /// The pplr URL linking writes on the card: none when it has the person's
@@ -370,11 +384,13 @@ fn write_inetloc(path: &Path, id: &str) -> Result<()> {
   }
 }
 
+/// Values once each, as a Swift Set holds them: spellings `same_text` calls
+/// one value are one, the first kept. Sorted.
 fn sorted_set(values: impl IntoIterator<Item = String>) -> Vec<String> {
+  let mut seen = HashSet::new();
   let mut v: Vec<String> = values
     .into_iter()
-    .collect::<HashSet<_>>()
-    .into_iter()
+    .filter(|s| seen.insert(decompose(s)))
     .collect();
   v.sort();
   v
@@ -399,14 +415,16 @@ fn diffs(p: &Person, c: &Card) -> Vec<FieldDiff> {
   );
   scalar("company", p.header.company.clone(), c.organization.clone());
   scalar("role", p.header.role.clone(), c.job_title.clone());
+  // Each set compared as a Swift Set is (`same_text`), and each side's
+  // differences shown as that side holds them
   let mut set = |field, a: Vec<String>, b: Vec<String>| {
-    let (sa, sb): (HashSet<String>, HashSet<String>) =
-      (a.into_iter().collect(), b.into_iter().collect());
-    if sa != sb {
+    let keys = |v: &[String]| v.iter().map(|s| decompose(s)).collect::<HashSet<_>>();
+    let (ka, kb) = (keys(&a), keys(&b));
+    if ka != kb {
       out.push(FieldDiff {
         field,
-        pplr: sorted_set(sa.difference(&sb).cloned()),
-        contacts: sorted_set(sb.difference(&sa).cloned()),
+        pplr: sorted_set(a.into_iter().filter(|s| !kb.contains(&decompose(s)))),
+        contacts: sorted_set(b.into_iter().filter(|s| !ka.contains(&decompose(s)))),
       });
     }
   };
@@ -425,7 +443,8 @@ fn diffs(p: &Person, c: &Card) -> Vec<FieldDiff> {
   out
 }
 
-/// The cards that share a key (an email key, a slug, a phone or a folded name).
+/// The cards that share a key: an email key or a slug, decomposed as
+/// `same_text` compares them; a phone; or a folded name.
 type CardsBy<'a> = HashMap<String, Vec<&'a Card>>;
 
 /// Cards once each, in their first order.
@@ -454,14 +473,15 @@ pub fn check(people: &[Person], cards: &[Card], group: &str) -> Report {
 /// LinkedIn or phone, then the name alone; ambiguity and orphans reported.
 /// Nothing is read from disk, so no .inetloc is known to open its card.
 pub fn matches(people: &[Person], cards: &[Card], group: &str) -> Report {
-  // A card's pplr URL names a person by a marker path, or by the key itself
+  // A card's pplr URL names a person by a marker path, or by the key itself,
+  // each keyed as `same_text` compares
   let mut marker_keys: HashMap<String, String> = HashMap::new();
   for p in people {
     for path in marker_paths(p) {
-      marker_keys.insert(path, p.key.clone());
+      marker_keys.insert(decompose(&path), p.key.clone());
     }
     for k in p.keys() {
-      marker_keys.insert(k.clone(), p.key.clone());
+      marker_keys.insert(decompose(k), p.key.clone());
     }
   }
   let mut by_marker: HashMap<String, &Card> = HashMap::new();
@@ -472,17 +492,20 @@ pub fn matches(people: &[Person], cards: &[Card], group: &str) -> Report {
   for c in cards {
     if let Some(m) = pplr_marker(c) {
       let key = marker_keys
-        .get(&m)
-        .or_else(|| marker_keys.get(&percent_decode(&m).unwrap_or_else(|| m.clone())));
+        .get(&decompose(&m))
+        .or_else(|| marker_keys.get(&decompose(&percent_decode(&m).unwrap_or_else(|| m.clone()))));
       if let Some(key) = key {
         by_marker.insert(key.clone(), c);
       }
     }
     for e in &c.emails {
-      by_email.entry(email_key(e)).or_default().push(c);
+      by_email
+        .entry(decompose(&email_key(e)))
+        .or_default()
+        .push(c);
     }
     for s in &c.linkedin {
-      by_slug.entry(s.clone()).or_default().push(c);
+      by_slug.entry(decompose(s)).or_default().push(c);
     }
     let phones: HashSet<&String> = c.phones.iter().collect();
     for ph in phones
@@ -500,10 +523,7 @@ pub fn matches(people: &[Person], cards: &[Card], group: &str) -> Report {
     group: group.to_owned(),
     people: people.len(),
     contacts: cards.len(),
-    group_members: cards
-      .iter()
-      .filter(|c| c.groups.iter().any(|g| g == group))
-      .count(),
+    group_members: cards.iter().filter(|c| in_group(c, group)).count(),
     linked: Vec::new(),
     matched: Vec::new(),
     name_only: Vec::new(),
@@ -521,7 +541,7 @@ pub fn matches(people: &[Person], cards: &[Card], group: &str) -> Report {
       contact: c.id.clone(),
       contact_name: display_name(c),
       how,
-      in_group: c.groups.iter().any(|g| g == group),
+      in_group: in_group(c, group),
       needs_group: needs_group(c, group),
       no_account: account == Some("none"),
       other_account: account == Some("other"),
@@ -546,13 +566,23 @@ pub fn matches(people: &[Person], cards: &[Card], group: &str) -> Report {
       p.header
         .emails
         .iter()
-        .flat_map(|e| by_email.get(&email_key(e)).cloned().unwrap_or_default())
+        .flat_map(|e| {
+          by_email
+            .get(&decompose(&email_key(e)))
+            .cloned()
+            .unwrap_or_default()
+        })
         .collect(),
     );
     let via_slug = if p.header.linkedin.is_empty() {
       Vec::new()
     } else {
-      uniq(by_slug.get(&p.header.linkedin).cloned().unwrap_or_default())
+      uniq(
+        by_slug
+          .get(&decompose(&p.header.linkedin))
+          .cloned()
+          .unwrap_or_default(),
+      )
     };
     let via_phone = uniq(
       p.header
@@ -584,7 +614,7 @@ pub fn matches(people: &[Person], cards: &[Card], group: &str) -> Report {
   r.ambiguous.sort_by(|a, b| a.0.cmp(&b.0));
   let mut orphans: Vec<String> = cards
     .iter()
-    .filter(|c| c.groups.iter().any(|g| g == group) && !claimed.contains(&c.id))
+    .filter(|c| in_group(c, group) && !claimed.contains(&c.id))
     .map(display_name)
     .collect();
   orphans.sort();
@@ -702,6 +732,12 @@ fn person_key(name: &str) -> String {
   }
 }
 
+/// Each --name or --skip value as a person's key, keyed as `same_text`
+/// compares.
+fn key_set(names: &[String]) -> HashSet<String> {
+  names.iter().map(|n| decompose(&person_key(n))).collect()
+}
+
 // --link
 
 struct LinkPlan {
@@ -714,24 +750,27 @@ struct LinkPlan {
 }
 
 fn plan_link(r: &Report, names: &[String], all_names: bool) -> LinkPlan {
-  let wanted: HashSet<String> = names.iter().map(|n| person_key(n)).collect();
-  let name_keys: HashSet<&String> = r.name_only.iter().map(|p| &p.person).collect();
-  let confirmed = r
-    .name_only
-    .iter()
-    .filter(|p| all_names || wanted.contains(&p.person));
+  // Each --name as a person's key, keyed as `same_text` compares and shown as
+  // typed; of two spellings of one name the first is kept, as a Swift Set does
+  let mut wanted: HashMap<String, String> = HashMap::new();
+  for k in names.iter().map(|n| person_key(n)) {
+    wanted.entry(decompose(&k)).or_insert(k);
+  }
+  let named = |p: &Pair| wanted.contains_key(&decompose(&p.person));
+  let name_keys: HashSet<String> = r.name_only.iter().map(|p| decompose(&p.person)).collect();
+  let confirmed = r.name_only.iter().filter(|p| all_names || named(p));
   let all: Vec<&Pair> = r.linked.iter().chain(&r.matched).chain(confirmed).collect();
   let done = |p: &Pair| p.has_marker && !p.needs_group && p.has_inetloc;
-  let strict: HashSet<&String> = r
+  let strict: HashSet<String> = r
     .linked
     .iter()
     .chain(&r.matched)
-    .map(|p| &p.person)
+    .map(|p| decompose(&p.person))
     .collect();
   let mut unknown: Vec<String> = wanted
     .iter()
-    .filter(|w| !name_keys.contains(w) && !strict.contains(w))
-    .cloned()
+    .filter(|(k, _)| !name_keys.contains(*k) && !strict.contains(*k))
+    .map(|(_, typed)| typed.clone())
     .collect();
   unknown.sort();
   LinkPlan {
@@ -744,7 +783,7 @@ fn plan_link(r: &Report, names: &[String], all_names: bool) -> LinkPlan {
     names_skipped: r
       .name_only
       .iter()
-      .filter(|p| !(all_names || wanted.contains(&p.person)))
+      .filter(|p| !(all_names || named(p)))
       .map(|p| p.person.clone())
       .collect(),
     unknown_names: unknown,
@@ -1049,12 +1088,20 @@ fn pull_work<'a>(r: &Report, everyone: &'a [Person], cards: &[Card]) -> Vec<Pull
     ) else {
       continue;
     };
-    let mine: HashSet<String> = p.header.emails.iter().map(|e| email_key(e)).collect();
+    let mine: HashSet<String> = p
+      .header
+      .emails
+      .iter()
+      .map(|e| decompose(&email_key(e)))
+      .collect();
     let mut seen_email = HashSet::new();
     let emails = c
       .emails
       .iter()
-      .filter(|e| !mine.contains(&email_key(e)) && seen_email.insert(email_key(e)))
+      .filter(|e| {
+        let k = decompose(&email_key(e));
+        !mine.contains(&k) && seen_email.insert(k)
+      })
       .cloned()
       .collect();
     let mut seen_phone: HashSet<String> = p.header.phones.iter().cloned().collect();
@@ -1154,11 +1201,13 @@ fn pull(store: &mut dyn Store, o: &Options, group: &str, config: &Config) -> Res
   let everyone = people(&config.data)?;
   let cards = store.cards()?;
   let report = matches(&everyone, &cards, group);
-  let only: HashSet<String> = o.names.iter().map(|n| person_key(n)).collect();
-  let skip: HashSet<String> = o.skips.iter().map(|n| person_key(n)).collect();
+  let (only, skip) = (key_set(&o.names), key_set(&o.skips));
   let work: Vec<PullWork> = pull_work(&report, &everyone, &cards)
     .into_iter()
-    .filter(|w| (only.is_empty() || only.contains(&w.person.key)) && !skip.contains(&w.person.key))
+    .filter(|w| {
+      let k = decompose(&w.person.key);
+      (only.is_empty() || only.contains(&k)) && !skip.contains(&k)
+    })
     .collect();
   if !(o.apply && !work.is_empty()) {
     print_pull(&work.iter().collect::<Vec<_>>(), None, None);
@@ -1277,10 +1326,10 @@ fn apply_plan(
     read => read?,
   };
   // --name: only these people (eg to try one card first)
-  let only: HashSet<String> = o.names.iter().map(|n| person_key(n)).collect();
+  let only = key_set(&o.names);
   let chosen: Vec<Reviewed> = decisions
     .into_iter()
-    .filter(|d| only.is_empty() || only.contains(&d.person))
+    .filter(|d| only.is_empty() || only.contains(&decompose(&d.person)))
     .collect();
   let everyone = people(&config.data)?;
   let cards = store.cards()?;
@@ -1387,8 +1436,160 @@ fn print_work(
 }
 
 #[cfg(test)]
-mod tests {
+pub(crate) mod tests {
   use super::*;
+  use crate::about::Header;
+  use crate::contacts::LabelledValue;
+
+  // The fixture's Zsófia Varga, her accent one character (as an About file
+  // holds it) or an o and a combining acute (as a card can): one value to
+  // Swift's String equality, two to Rust's (vc decision 22)
+  pub(crate) const KEY: &str = "V/Varga, Zs\u{f3}fia";
+  pub(crate) const KEY_DECOMPOSED: &str = "V/Varga, Zso\u{301}fia";
+  pub(crate) const COMPOSED: &str = "zs\u{f3}fia-varga";
+  pub(crate) const DECOMPOSED: &str = "zso\u{301}fia-varga";
+
+  /// A person with this key and LinkedIn slug, and nothing else.
+  pub(crate) fn person(key: &str, linkedin: &str) -> Person {
+    let name = key.split_once('/').map_or(key, |(_, n)| n);
+    let (family, given) = name.split_once(", ").unwrap_or((name, ""));
+    Person {
+      key: key.to_owned(),
+      given: given.to_owned(),
+      family: family.to_owned(),
+      dir: PathBuf::from(key),
+      about: None,
+      picture: None,
+      aliases: Vec::new(),
+      header: Header {
+        linkedin: linkedin.to_owned(),
+        ..Header::default()
+      },
+    }
+  }
+
+  /// A card with this id and these slugs, and nothing else.
+  pub(crate) fn card(id: &str, linkedin: &[&str]) -> Card {
+    Card {
+      id: id.to_owned(),
+      given: String::new(),
+      family: String::new(),
+      organization: String::new(),
+      job_title: String::new(),
+      emails: Vec::new(),
+      phones: Vec::new(),
+      urls: Vec::new(),
+      linkedin: linkedin.iter().map(|s| (*s).to_owned()).collect(),
+      groups: Vec::new(),
+      account: None,
+      has_image: None,
+    }
+  }
+
+  #[test]
+  fn a_slug_in_either_unicode_form_is_one_value_in_a_field_diff() -> Result<()> {
+    let p = person(KEY, COMPOSED);
+    assert!(
+      diffs(&p, &card("c1", &[DECOMPOSED]))
+        .iter()
+        .all(|d| d.field != "linkedin"),
+      "the card's slug, decomposed, differed from the About file's"
+    );
+    // A slug that differs still does, each side shown as it holds it
+    let other = format!("{DECOMPOSED}-2");
+    let differs = diffs(&p, &card("c2", &[&other]));
+    let linkedin = differs
+      .iter()
+      .find(|d| d.field == "linkedin")
+      .ok_or("a different slug was not a difference")?;
+    assert_eq!(linkedin.pplr, [COMPOSED]);
+    assert_eq!(linkedin.contacts, [other]);
+    Ok(())
+  }
+
+  #[test]
+  fn a_card_is_matched_by_a_slug_in_either_unicode_form() {
+    let p = person(KEY, COMPOSED);
+    let c = card("c1", &[DECOMPOSED]);
+    let r = matches(
+      std::slice::from_ref(&p),
+      std::slice::from_ref(&c),
+      DEFAULT_GROUP,
+    );
+    assert!(
+      r.matched
+        .iter()
+        .any(|m| m.person == p.key && m.contact == c.id && m.how == "linkedin"),
+      "no match by the slug in its other form: {r:?}"
+    );
+  }
+
+  #[test]
+  fn a_group_named_in_either_unicode_form_is_the_group() {
+    let mut c = card("c1", &[]);
+    c.groups.push("\u{c9}quipe".to_owned());
+    assert!(in_group(&c, "E\u{301}quipe"));
+    assert!(!needs_group(&c, "E\u{301}quipe"));
+  }
+
+  #[test]
+  fn a_pplr_url_naming_the_key_in_the_other_unicode_form_links_the_card() {
+    // A pplr URL's first form names the key itself, percent-encoded
+    let p = person(KEY, "");
+    let mut c = card("c1", &[]);
+    c.urls.push(LabelledValue {
+      label: "pplr".to_owned(),
+      value: "pplr://V/Varga,%20Zso%CC%81fia".to_owned(),
+    });
+    let r = matches(
+      std::slice::from_ref(&p),
+      std::slice::from_ref(&c),
+      DEFAULT_GROUP,
+    );
+    assert!(
+      r.linked
+        .iter()
+        .any(|l| l.person == p.key && l.contact == c.id),
+      "the card was not linked: {r:?}"
+    );
+  }
+
+  #[test]
+  fn a_name_typed_in_the_other_unicode_form_confirms_a_name_only_match() {
+    let p = person(KEY, "");
+    let mut c = card("c1", &[]);
+    c.given = "Zs\u{f3}fia".to_owned();
+    c.family = "Varga".to_owned();
+    let r = matches(
+      std::slice::from_ref(&p),
+      std::slice::from_ref(&c),
+      DEFAULT_GROUP,
+    );
+    let typed = KEY_DECOMPOSED
+      .split_once('/')
+      .map_or(KEY_DECOMPOSED, |(_, n)| n);
+    let plan = plan_link(&r, &[typed.to_owned()], false);
+    assert!(
+      plan.to_link.iter().any(|l| l.person == p.key),
+      "the name, typed decomposed, confirmed nothing; unknown: {:?}",
+      plan.unknown_names
+    );
+    assert!(plan.unknown_names.is_empty(), "{:?}", plan.unknown_names);
+  }
+
+  #[test]
+  fn a_name_to_pull_or_skip_is_found_in_either_unicode_form() {
+    let typed = KEY.split_once('/').map_or(KEY, |(_, n)| n);
+    assert!(key_set(&[typed.to_owned()]).contains(&decompose(KEY_DECOMPOSED)));
+  }
+
+  #[test]
+  fn a_set_keeps_one_spelling_of_each_value() {
+    assert_eq!(
+      sorted_set([DECOMPOSED, COMPOSED].map(str::to_owned)),
+      [DECOMPOSED]
+    );
+  }
 
   #[test]
   fn a_uk_number_has_ten_digits_and_never_starts_with_four() {
