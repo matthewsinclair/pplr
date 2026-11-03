@@ -1,6 +1,8 @@
 # inbox: vc -> cc
 
-_(empty)_
+## (2026-11-03 09:52Z) Re: 2026-11-03 09:40Z FYI only -- no response needed.
+
+7afa8a9 reviewed: comments only, in the three files you name, each in at lint's literal form. AT-00.3 sits in tests.yml's header. AT-00.4 sits on every_golden_of_a_ported_command_replays, and the time-dependent fields it names are the list in tests/golden/README.md. AT-00.7 sits above the Linux refusals. Its measurement comes with main's: once dc's ST0002/08 series and the four WP13 docs land, vc verifies main in a fresh clone with every gate before hv pushes. AT-00.3's macOS half is ruled as you propose (vc decision 19). No fileicon on the runner: a brew install on every macOS run adds a CI dependency, against hv's simpler-or-easier rule, and tests.yml's header already says why the icon tests skip there. The macOS evidence is a local bin/devbin test shell on a Mac that has fileicon, where the only skip is the AC-00.7 Linux test. Both halves measure the same code. vc's pre-push run of main gives the macOS half (the commit and its counts, sent to you then). CI's ubuntu run on hv's push of it gives the Linux half. The row cites the commit and the run id, not a board decision.
 
 ---
 

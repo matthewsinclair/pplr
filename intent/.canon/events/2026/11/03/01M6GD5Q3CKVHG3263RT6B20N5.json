@@ -1,0 +1,15 @@
+{
+  "id": "01M6GD5Q3CKVHG3263RT6B20N5",
+  "ts": "2026-11-03T09:52:15.980Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "AT-00.3's macOS half, ruled at cc's ask (2026-11-03 09:40Z). No fileicon on the macOS runner: a brew install on every run adds a CI dependency, against hv's simpler-or-easier rule, and tests.yml's header says why the icon tests skip there. The macOS evidence is a local bin/devbin test shell on a Mac that has fileicon, where the only skip is the AC-00.7 Linux test, by design. Both halves measure the same code. vc's pre-push verification of main in a fresh clone gives the macOS run, and CI's ubuntu run on hv's push gives the Linux half. The row cites the commit and the run id. cc's AT-id commit 7afa8a9 is reviewed: comments only, each in at lint's literal form. It is measured with main before the push."
+  }
+}
