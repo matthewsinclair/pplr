@@ -63,7 +63,7 @@ title: Port Pplr from shell scripts to Rust
 
 ### WP-09 -- The Contacts store and the Swift I/O sidecar (status: WIP)
 
-- AC-09.1 Sync reaches Contacts only through the store interface. The JSON store reads and writes the dump format, and the Swift sidecar does only dump, backup and group, built ahead of time and never at run time. -- satisfied: no (computed)
+- AC-09.1 Sync reaches Contacts only through the store interface. The JSON store reads and writes the dump format, and the Swift sidecar does only dump, backup and group, built ahead of time and never at run time. -- satisfied: yes (computed)
 - AC-09.2 (non-test) On rhadamanth, the sidecar reads the live Contacts store, and the Rust `pplr sync --check --json` matches the legacy engine's report (read-only). -- satisfied: no
 
 ### WP-10 -- Sync: check, link, pull, photos and backup (status: Done)
@@ -126,7 +126,7 @@ _(no tests in this group)_
 
 ### WP-09 -- The Contacts store and the Swift I/O sidecar (status: WIP)
 
-_(no tests in this group)_
+- AT-09.1 `src/contacts/sidecar.rs` -- covers AC-09.1 -- status: green -- src/contacts/sidecar.rs, the_live_store_asks_the_sidecar_for_dump_backup_and_group_only: a missing sidecar is refused naming bin/devbin build, and its path stays absent; a stand-in sidecar is asked for each of dump, backup and group, and for nothing else; and swift/pplr-contacts/main.swift's mode switch names exactly those three, read from the source. That sync reaches Contacts only through the store rests on AT-10.1 and AT-11.1, and the dump format on json.rs's unit tests; red at C2's parent d596c35, the test copied in: exit 101, its mode switch naming 12 modes; and two mutants of the test, the allowed set without group and the group read dropped, each exit 101 (slot 01M6GEPWF6PRWBMHFBTKH6APNQ); green at e96c9b8 in the same slot: the test exit 0, and devbin check all and test all exit 0 (cargo 98 unit and 39 cli pass, 1 ignored in each; bats 106 of 106, 1 skip); on main as fd67819, the same tree outside intent/
 
 ### WP-10 -- Sync: check, link, pull, photos and backup (status: Done)
 
