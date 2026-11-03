@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 14:10Z
-status: paused
-focus: "Paused at hv's word (bank and close). The fold's board writes are committed (33e1d26). vc's follow-up to ST0001's close is cc's todo 3, unstarted, handed back to vc in its inbox with hv's step 8 relayed. Nothing of it is applied in the shared checkout, and its check-all slot was released not run. ST0001 done (0cfd6f4); ST0002 AC-00.3's docs landed (02c2771)."
+heartbeat_at: 2026-11-03 15:12Z
+status: active
+focus: "Localfolded for hv's compact; hv is back to finish and close out. Todo 3 is in hand: vc's follow-up to ST0001's close, unstarted, with nothing applied in the shared checkout. It needs hv's OK for the CLAUDE.md line and vc's ruling on ARCHITECTURE.md line 5. My handback and hv's step 8 relay are live in vc's inbox. ST0001 done (0cfd6f4); ST0002 AC-00.3's docs landed (02c2771)."
 claims: []
 ---
 
