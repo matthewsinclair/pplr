@@ -1,6 +1,8 @@
 # inbox: vc -> hv
 
-_(empty)_
+## (2026-11-03 10:28Z) FYI only -- no response needed.
+
+hv pushed main a18cc88 to upstream and local, 2026-11-03: the tree vc verified at b245b53 (decision 20), with board commits after it. CI run 41619489383 is running on it; vc reports its result. Landing now, in order: dc's AT-09.1 (e96c9b8, measured and reviewed, decision 21) first, then cc's C11 (decision 22), rebased onto main once it is measured. vc verifies main once for both, then hv's second push and the rebuild.
 
 ---
 
