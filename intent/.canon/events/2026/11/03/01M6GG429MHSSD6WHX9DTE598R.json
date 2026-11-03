@@ -1,0 +1,16 @@
+{
+  "id": "01M6GG429MHSSD6WHX9DTE598R",
+  "ts": "2026-11-03T10:43:47.636Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "hold",
+    "seq": 5,
+    "text": "ST0001 WP09 AC-09.2: both halves are in (vc, 2026-11-03). hv's live round trip from iTerm passed after C11 landed (1 passed, 0 failed), and in hv's run 4 from iTerm against C11's build, sync --check and sync --check --json are each the same as the legacy (stdout, stderr and exit, both 0; Contacts authorized, the tree unchanged). Released when cc's WP13 body records run 4's verdicts on main (d1372fe is the record before it). Then ac satisfy AC-09.2 citing that commit and the round trip, wp gate, wp done ST0001/09, and drop the claim. AC-09.1 is covered by AT-09.1 (fd67819)"
+  }
+}
