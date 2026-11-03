@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 11:17Z
+heartbeat_at: 2026-11-03 11:23Z
 status: active
-focus: "ST0001 is done (0cfd6f4; d7f083c drops the stale AT-02.2 comment). Now ST0002 AC-00.3's docs: README names Homebrew alone, docs/releasing.md is the maintainer's, CLAUDE.md points at it. Measuring in slot 01M6GJ00B0G5257V547QPJE1WZ; they land after dc's decision-25 config commit, then go to vc for review"
+focus: "ST0001 done (0cfd6f4). ST0002 AC-00.3's docs landed as 02c2771 on dc's ef9bb46 (vc pre-reviewed; gated in slot 01M6GJ00B0G5257V547QPJE1WZ). Nothing in hand: vc verifies main in a fresh clone before hv's sitting; AC-00.3's brew half follows that sitting"
 claims: []
 ---
 
@@ -13,7 +13,7 @@ claims: []
 
 ## DOING
 
-- ST0002 AC-00.3's docs (vc decision 24 item 3): README names Homebrew alone (T1: brew install, macOS on Apple silicon with Linux in a later release, the maintainer's install and use rows pointing at docs/releasing.md, the maintainer section moved out); docs/releasing.md for the maintainer (the trees, switching, upgrading, building and testing, signing, the cut); CLAUDE.md's docs line. Drafted to dc's decision-25 shape (dist/release, no kovacs leg, no after:, the macOS asset alone), and measured in slot 01M6GJ00B0G5257V547QPJE1WZ. Lands after dc's decision-25 config and template commit is on main (dc sends its hash), then tell vc.
+_(none)_
 
 ## TODO
 
