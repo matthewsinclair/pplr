@@ -669,19 +669,33 @@ fn replay(case: &std::path::Path) -> Result<bool> {
 /// Where the CMS-up scenarios put the CMS (tests/golden/scenarios.zsh).
 const GOLDEN_CMS: &str = "127.0.0.1:47360";
 
-/// A CMS that answers every request with 200, until dropped.
+/// GOLDEN_CMS's port, one stub at a time. This lock covers one test process,
+/// whose tests replay CMS-up cases at once; the estate's cargo lane covers the
+/// host, where another process's tests would bind the same port.
+static CMS_PORT: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
+/// A CMS that answers every request with 200, until dropped. It holds the
+/// port for its whole life and frees it before the next stub can take it.
 struct CmsStub {
   stop: std::sync::Arc<std::sync::atomic::AtomicBool>,
+  serving: Option<std::thread::JoinHandle<()>>,
+  // Released last, once the listener has closed
+  _port: std::sync::MutexGuard<'static, ()>,
 }
 
 impl CmsStub {
   fn start() -> Result<Self> {
     use std::io::{Read, Write};
+    // A test that failed while holding the port poisoned the lock, but its
+    // stub still closed the port on the way out
+    let port = CMS_PORT
+      .lock()
+      .unwrap_or_else(std::sync::PoisonError::into_inner);
     let listener = std::net::TcpListener::bind(GOLDEN_CMS)?;
     listener.set_nonblocking(true)?;
     let stop = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
     let running = stop.clone();
-    std::thread::spawn(move || {
+    let serving = std::thread::spawn(move || {
       while !running.load(Ordering::Relaxed) {
         match listener.accept() {
           Ok((mut stream, _)) => {
@@ -694,14 +708,48 @@ impl CmsStub {
         }
       }
     });
-    Ok(Self { stop })
+    Ok(Self {
+      stop,
+      serving: Some(serving),
+      _port: port,
+    })
   }
 }
 
 impl Drop for CmsStub {
   fn drop(&mut self) {
     self.stop.store(true, Ordering::Relaxed);
+    // The listener closes as its thread ends, so wait for that before the
+    // port's lock goes; the loop has nothing in it that can panic
+    if let Some(serving) = self.serving.take() {
+      let _ = serving.join();
+    }
   }
+}
+
+/// Every CMS-up case names GOLDEN_CMS, and the tests that replay those cases
+/// run at once: a second stub waits for the first to go, rather than failing
+/// to bind the port (CI run 41491091725, open-print-cms-up).
+#[test]
+fn a_second_stub_cms_waits_for_the_first() -> Result<()> {
+  let first = CmsStub::start()?;
+  let (asking, asked) = std::sync::mpsc::channel();
+  let second = std::thread::spawn(move || -> std::result::Result<(), String> {
+    asking.send(()).map_err(|e| e.to_string())?;
+    CmsStub::start().map(drop).map_err(|e| e.to_string())
+  });
+  asked.recv()?;
+  // Long enough for the second stub to reach the port while the first holds it
+  std::thread::sleep(std::time::Duration::from_millis(100));
+  drop(first);
+  let second = second
+    .join()
+    .map_err(|_| "the second stub's thread panicked")?;
+  same(
+    second,
+    Ok(()),
+    "the second stub, started while the first ran",
+  )
 }
 
 /// Ok when `got` is `want`; otherwise an error showing both.
