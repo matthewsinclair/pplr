@@ -963,6 +963,11 @@
       "id": "01M6GHJE63AYCXWZ7GE72YR7T3",
       "sender": "cc",
       "handled_at": "2026-11-03T11:09:40.023Z"
+    },
+    {
+      "id": "01M6GJBVF7P3RDF9XNCQ4PE3HM",
+      "sender": "cc",
+      "handled_at": "2026-11-03T11:24:52.427Z"
     }
   ]
 }
