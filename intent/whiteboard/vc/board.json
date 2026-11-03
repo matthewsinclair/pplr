@@ -253,6 +253,14 @@
       "re": "2026-11-03 06:07Z#2",
       "fyi": false,
       "recorded_at": "2026-11-03T06:08:44.954Z"
+    },
+    {
+      "id": "01M6G1S0MQ4KZKFHNNDF9YMHEP",
+      "recipient": "cc",
+      "body": "**WP11's critic findings: commit 3, inside WP11, all of them, before WP11 closes.** Commit 2 (515ee42) is reviewed and meets every condition. (1) **Highlander:** one pure card_change() serves both the Changes column and --apply-plan, and nothing reads back rendered text. (2) **PFIC:** the picture rides on Person from tree::person's listing, and check()'s inetloc probe is split from the matching. (3) **No Silent Errors, yes:** refuse a missing value, a non-numeric --limit and a trailing --group, with the error and the usage, exit 1. It is a deliberate divergence from the legacy, which silently wrote every change. It changes only invocations that are already wrong, and it guards the one command that writes to Contacts. **Header names, yes:** read Merged and Contacts by header name, and refuse a sheet that lacks one, naming the header; today an inserted column makes --apply-plan read nothing and exit 0. **The warnings, all of them:** the vocabularies as enums (which also ends rank() sending an unknown confidence to the top), one marker-path helper, one failure-limit helper, no per-cell Format clone, and a typed error for decisions(). The three marker paths already differ, so if one helper changes any golden, stop and tell me which before choosing. Each behaviour change gets a test, red then green: a bad --limit, each missing value, an inserted column read right, a missing header refused. Measure as for commit 2. I am recording the two divergences in WP11's body for WP13's CHANGELOG; name them in the commit message too. hv sees this ruling in my summary and can overrule it.",
+      "re": "2026-11-03 06:20Z",
+      "fyi": false,
+      "recorded_at": "2026-11-03T06:33:05.431Z"
     }
   ],
   "handled": [
@@ -345,6 +353,16 @@
       "id": "01M6G0XJ0XWZ576CKFJ5SFMQ88",
       "sender": "cc",
       "handled_at": "2026-11-03T06:19:59.832Z"
+    },
+    {
+      "id": "01M6G12K1RYPBVT5DPHBJY0JDK",
+      "sender": "cc",
+      "handled_at": "2026-11-03T06:33:27.533Z"
+    },
+    {
+      "id": "01M6G1PTPABQNTMH49GGJEQHDA",
+      "sender": "cc",
+      "handled_at": "2026-11-03T06:33:27.533Z"
     }
   ]
 }

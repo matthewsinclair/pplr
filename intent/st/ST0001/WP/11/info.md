@@ -25,7 +25,12 @@ Port `sync --plan` and `--apply-plan`, including the review workbook, and retire
   - reads the reviewed workbook with `calamine`, validating Decision and Card as `workbook.py` does;
   - then applies Add, Update and Link only through the store, with photos as TIFF and a backup first;
   - takes `--limit` and `--name`.
-- Delete `workbook.py`, the bash `pplr_sync`, and the plan modes from the sidecar's source.
+- Deleting `workbook.py`, the bash `pplr_sync` and the plan modes from the sidecar's source is WP13's (D3): hv's live pplr runs the legacy code until the cutover.
+
+**Deliberate divergences from the legacy** (vc's ruling on critic-rust's findings, under hv's simpler-or-easier rule; WP13's CHANGELOG lists them):
+
+- `sync` refuses a missing option value, a non-numeric `--limit` and a trailing `--group`, with the error and the usage, exit 1. The legacy took them as no limit or an empty group, so `--apply-plan wb.xlsx --apply --limit l` wrote every change.
+- `--apply-plan` reads the Merged and Contacts sheets by header name and refuses a sheet that lacks one, naming it. The legacy read by column position, so a column the reviewer inserted made it read nothing and exit 0.
 
 **Criteria**: AC-11.1.
 
