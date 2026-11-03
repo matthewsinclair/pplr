@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 14:04Z
-status: active
-focus: "vc lifted the freeze at hv's step 7 (dd6dc5b, v2.0.0). In hand, at vc's ask: intent sync removes ST0001's views, unlisted by its st done; the removal and a CLAUDE.md line that still holds without ST0001's design.md on disk, measured by check all, go in one commit by path. Then hold for vc. ST0001 done (0cfd6f4); ST0002 AC-00.3's docs landed (02c2771)."
+heartbeat_at: 2026-11-03 14:08Z
+status: paused
+focus: "Paused at hv's word (bank and close). The fold's board writes are committed (33e1d26). vc's follow-up to ST0001's close is on TODO, unstarted and handed back to vc: nothing of it is applied in the shared checkout, and its slot ask 01M6GVPTKEJVE4DWXQV97ZH1FZ stands for vc to deny. ST0001 done (0cfd6f4); ST0002 AC-00.3's docs landed (02c2771)."
 claims: []
 ---
 
@@ -17,7 +17,7 @@ _(none)_
 
 ## TODO
 
-_(none)_
+- vc's follow-up to ST0001's close, handed back unstarted when hv closed cc's session: intent sync --apply --yes removes ST0001's 19 tracked view files and their 16 directories (st done unlisted the thread; at 33e1d26 intent doctor --scope closed is clean, so the store matches the files and intent st hydrate ST0001 restores them). One commit: exactly the removed: files by path, plus CLAUDE.md's line naming ST0001's design.md made true with the file off disk (a CLAUDE.md edit needs hv's own word in cc's session, not a peer's ask), and intent/llm/ARCHITECTURE.md line 5, which names it too (vc to rule). Measure with check all alone in a clone, in a slot; tell vc the commit.
 
 ## Holds
 
