@@ -1,0 +1,15 @@
+{
+  "id": "01M6GAW4YVVSRCS5BT4Z0A9J8B",
+  "ts": "2026-11-03T09:12:05.339Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "hold",
+    "text": "Landing WP13's series (cc/wp13, C1 to C10, verified by vc in decision 16) holds until hv's cutover passes its step 5: the live link and the pplr:// handler on the Rust binary (scratchpad/cutover.md). Then scratchpad/land.zsh lands it by path straight away, hv rebuilds and re-registers, and cc removes the checkout's .build/."
+  }
+}

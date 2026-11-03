@@ -1,0 +1,16 @@
+{
+  "id": "01M6GAW52X3KK8E35HN1Q1EY2N",
+  "ts": "2026-11-03T09:12:05.469Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "doing",
+    "seq": 2,
+    "text": "WP13 (ST0001/13): the series C1 to C10 is measured commit by commit and verified by vc (decision 16) as cc/wp13 d26bac3; reds measured for AT-00.1/2/3/4/6/9 and C2 C6 C7 C8 C9 C10, AT-00.7's on CI 41606822506. The live parity is recorded in WP13's body (590162c), verdicts only: every grant-free row same or different by design, none unexplained; the sync and email rows wait for hv's terminal (parity/HV-ROWS.md). Next: hv's cutover (hold), landing, then dc's docs, hv's push and main's CI, then the AC and AT rows and WP13's close."
+  }
+}

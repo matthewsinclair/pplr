@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 08:56Z
+heartbeat_at: 2026-11-03 09:12Z
 status: active
-focus: "WP13: series C1-C8 measured; parity running (verdicts only); two grep differences with vc for a ruling; next cc/wp13 for vc's verification, then hv's cutover, then landing"
+focus: "WP13: verified (vc decision 16) and parity recorded (590162c); holding the landing for hv's cutover (scratchpad/cutover.md); hv's sync and email parity rows pending"
 claims: [ST0001/13]
 ---
 
@@ -13,7 +13,7 @@ claims: [ST0001/13]
 
 ## DOING
 
-- WP13 (ST0001/13): the series C1 C2 C3 C4 C6 C5 C7 C8 is built and each commit measured in its own slot, in scratch clone wp13 (banked as local branch wp13); reds measured for AT-00.1/2/3/4/6/9 and C6 C7 C8; AT-00.7's Linux red is candidate/wp13-at007-red, for hv's push (vc's hold 2 item 9). Live read-only parity (AC-00.5) running: verdicts only (D11); two grep differences put to vc for a ruling. Then: rebase onto main as cc/wp13 for vc's fresh-clone verification, hv's cutover (steps and rollback ready), then landing. (edited)
+- WP13 (ST0001/13): the series C1 to C10 is measured commit by commit and verified by vc (decision 16) as cc/wp13 d26bac3; reds measured for AT-00.1/2/3/4/6/9 and C2 C6 C7 C8 C9 C10, AT-00.7's on CI 41606822506. The live parity is recorded in WP13's body (590162c), verdicts only: every grant-free row same or different by design, none unexplained; the sync and email rows wait for hv's terminal (parity/HV-ROWS.md). Next: hv's cutover (hold), landing, then dc's docs, hv's push and main's CI, then the AC and AT rows and WP13's close. (edited)
 
 ## TODO
 
@@ -21,7 +21,7 @@ _(none)_
 
 ## Holds
 
-_(none)_
+- Landing WP13's series (cc/wp13, C1 to C10, verified by vc in decision 16) holds until hv's cutover passes its step 5: the live link and the pplr:// handler on the Rust binary (scratchpad/cutover.md). Then scratchpad/land.zsh lands it by path straight away, hv rebuilds and re-registers, and cc removes the checkout's .build/.
 
 ## Watch-outs
 
