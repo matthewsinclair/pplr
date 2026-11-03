@@ -2,7 +2,7 @@
 wp_id: WP-08
 title: tools/ becomes devbin project commands: bin/devbin the one entry point
 scope: S
-status: WIP
+status: Done
 ---
 
 # WP-08: tools/ becomes devbin project commands: bin/devbin the one entry point

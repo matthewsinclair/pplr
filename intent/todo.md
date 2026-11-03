@@ -31,7 +31,7 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
   - [-] 05: Walking skeleton through a scratch tap
   - [ ] 06: Release 2.0.0 and move rhadamanth to brew
   - [-] 07: Developer ID signing and notarisation
-  - [-] 08: tools/ becomes devbin project commands: bin/devbin the one entry point
+  - [x] 08: tools/ becomes devbin project commands: bin/devbin the one entry point
 
 ## TODO
 

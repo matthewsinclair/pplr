@@ -3,21 +3,21 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 10:07Z
+heartbeat_at: 2026-11-03 10:15Z
 status: active
-focus: "ST0002/08 landed (492df0e to 0305cb0, AT-08.1 green, gate PASS); wp done after vc verifies main, then hv's push. Next: ST0001 WP08's close and WP09 AC-09.1's AT (todo 4, 5); WP09 AC-09.2 and ST0002 WP04 held (holds 5, 6)"
-claims: [ST0001/09, ST0002/07, ST0002/04, ST0002/05, ST0002/08]
+focus: "ST0002/08 done (vc verified main at b245b53, decision 20); hv's push next. AT-09.1 for ST0001 WP09 AC-09.1 as decision 21 rules it (todo 4): measure any time, land after the push. WP09 AC-09.2 and ST0002 WP04 held (holds 5, 6)"
+claims: [ST0001/09, ST0002/07, ST0002/04, ST0002/05]
 ---
 
 # dc (dc)
 
 ## DOING
 
-- ST0002/08 (vc decisions 17 and 18): landed on main by path through the gate. 492df0e is the move, then WP13's four docs on the new paths (2eaf790, 099293f, 9417743 and 3cd9879), then 0305cb0, ST0002's docs through st attach. The blobs equal the measured a5dbb50 outside intent/ (slot 01M6GDHWBFZ8K4KW8FK93DP20B, every gate exit as expected). AT-08.1 is red at f15ccf8 and green at a5dbb50, and wp gate passes. Its body records the behaviour as unchanged. wp done follows vc's verification of main; then hv pushes (edited)
+_(none)_
 
 ## TODO
 
-- ST0001 WP09 AC-09.1: a covering AT with a measured red, now that C2 (294b421) has the sidecar doing only dump, backup and group and IN-SW-CODE-006 is on again (vc, 2026-11-03)
+- ST0001 WP09 AC-09.1: AT-09.1 as vc decision 21 rules it. A new test in tests/cli.rs, the_live_store_asks_the_sidecar_for_dump_backup_and_group_only. (1) SidecarStore::new on a missing sidecar refuses, naming bin/devbin build, and the path is still absent after. (2) A stand-in sidecar is asked for each of dump, backup and group and for nothing else, with one measured mutant in the same cargo ask, eg the allowed set without group, going red. (3) It reads only main.swift's mode switch, fails naming why when there is no switch or no case label, and compares the labels as a set with AC-09.1's three names. The note names AT-10.1, AT-11.1 and json.rs's unit tests. Red in a worktree of 294b421's parent, green at main. Measure any time; land only after hv's push of main as vc verified it (b245b53, decision 20) (edited)
 
 ## Holds
 

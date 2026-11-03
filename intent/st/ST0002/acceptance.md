@@ -53,7 +53,7 @@ title: Create a homebrew distro for the new Rust version of Pplr
 - AC-07.1 Every macOS binary pplr ships (`pplr`, `pplr-contacts` and the `Pplr Links.app` from `pplr handler`) is signed with Developer ID Application: Geodica Pty Ltd (76BQL8L47U), with the hardened runtime and a secure timestamp, and passes `codesign --verify --strict -R <requirement>` and `spctl`. -- satisfied: no (computed)
 - AC-07.2 (non-test) The signer is project code in bash or zsh (`bin/.devbin/cmd/macos`, no Python). It runs on rhadamanth only, notarises every release build with `notarytool`, and the release cannot attach an unsigned macOS asset. -- satisfied: no
 
-### WP-08 -- tools/ becomes devbin project commands: bin/devbin the one entry point (status: WIP)
+### WP-08 -- tools/ becomes devbin project commands: bin/devbin the one entry point (status: Done)
 
 - AC-08.1 Every script that was in tools/ is a devbin project command in bin/.devbin/cmd/, reached through bin/devbin, and tools/ is gone. -- satisfied: yes (computed)
 
@@ -93,7 +93,7 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-08 -- tools/ becomes devbin project commands: bin/devbin the one entry point (status: WIP)
+### WP-08 -- tools/ becomes devbin project commands: bin/devbin the one entry point (status: Done)
 
 - AT-08.1 `tests/project_commands.bats` -- covers AC-08.1 -- status: green -- tests/project_commands.bats: tools/ is gone, and every command in bin/.devbin/cmd/, the list read from the directory, resolves through bin/devbin from its project handler, by bin/devbin help --why; red at the series' base f15ccf8, the test copied into a worktree of it: bats exit 1, tools/ still there (slot 01M6GDHWBFZ8K4KW8FK93DP20B); green at a5dbb50 in the same slot: bats exit 0, and in devbin test all, bats 106 of 106 with 1 skip, the AC-00.7 Linux test; on main as 492df0e, which equals a5dbb50 outside intent/ at 3cd9879
 
