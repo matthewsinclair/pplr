@@ -12,7 +12,6 @@ DOING and TODO only; finished work lives in its commit, its closed issue or its 
 
 - vc holds the pen and slot control. Scope rule: simpler or easier only (vc decision 2).
 - pplr and Cldr: `bin/devbin release vX.Y.Z` is the whole release; its `after:` is `bin/devbin post-cut` (vc decision 27; Cldr f382994). The first real run of each is its next release (todo 10 on vc's board).
-- Cldr's commit is local until hv pushes Cldr.
 
 ## Active Steel Threads
 
