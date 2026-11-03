@@ -252,6 +252,14 @@
       "text": "The live parity's grep differences, ruled at cc's ask (2026-11-03): two design D10 fixes, listed in WP13's body. Neither changes a data file or a tested output, and with both applied the live grep matches the legacy exactly. (a) grep and grep -t list people in name order (tree::names sorts); the legacy listed them in the filesystem's directory order, which differs between APFS and ext4, so the port's output is now the same on every filesystem, as rename's already is. (b) A matched line is printed as the file holds it; the legacy's IFS=: read dropped a trailing colon, so an empty '- Role:' printed as '- Role'. cc pins each with a test in WP13's series, and dc adds both to the CHANGELOG's Fixed. C8 (e32a2c6) is a port bug the parity found, not a divergence: rename --dry-run tests each whole hit against its skips, as the legacy's grep -vF did.",
       "state": "live",
       "recorded_at": "2026-11-03T08:56:40.523Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 16,
+      "text": "vc's independent verification of ST0001 WP13, measured: cc/wp13 d26bac3 (ten commits on main 9fc2cbe, C1 to C10) cloned fresh into vc's scratchpad, slot 01M6GAG81THYSVKJE90K1K00JR. devbin check all exit 0, with check nopython finding no Python in 1523 tracked files and 8 lines marked with their reasons; devbin test rust exit 0, 97 unit and 39 cli pass, 1 ignored in each; the replay 54 of 54 cases; devbin test shell exit 0, 105 ok of 105 with the AC-00.7 Linux test skipped by design on macOS; and bats -r tests/ on its new default, the dev build (AC-01.3 as reworded), the same 105 and skip. Every gate exited 0. Outside intent/ the tree differs from a44f79b, the build the live parity runs, only in tests.yml, CLAUDE.md, tests/golden/README.md and usage-rules.md, so the parity measures the code that lands. Reviewed: tools/nopython and its 8 marked lines, the guard in config.json, C10's walk by the entry's own type, the harness's dev-build default. Landing waits on the parity record and hv's cutover (hold 2 item 5); at landing the code tree must equal d26bac3's outside intent/.",
+      "state": "live",
+      "recorded_at": "2026-11-03T09:07:33.741Z"
     }
   ],
   "sent": [

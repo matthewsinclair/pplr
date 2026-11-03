@@ -1,0 +1,15 @@
+{
+  "id": "01M6GAKVQCZQ2RT769ZJGXGNHQ",
+  "ts": "2026-11-03T09:07:33.741Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "vc's independent verification of ST0001 WP13, measured: cc/wp13 d26bac3 (ten commits on main 9fc2cbe, C1 to C10) cloned fresh into vc's scratchpad, slot 01M6GAG81THYSVKJE90K1K00JR. devbin check all exit 0, with check nopython finding no Python in 1523 tracked files and 8 lines marked with their reasons; devbin test rust exit 0, 97 unit and 39 cli pass, 1 ignored in each; the replay 54 of 54 cases; devbin test shell exit 0, 105 ok of 105 with the AC-00.7 Linux test skipped by design on macOS; and bats -r tests/ on its new default, the dev build (AC-01.3 as reworded), the same 105 and skip. Every gate exited 0. Outside intent/ the tree differs from a44f79b, the build the live parity runs, only in tests.yml, CLAUDE.md, tests/golden/README.md and usage-rules.md, so the parity measures the code that lands. Reviewed: tools/nopython and its 8 marked lines, the guard in config.json, C10's walk by the entry's own type, the harness's dev-build default. Landing waits on the parity record and hv's cutover (hold 2 item 5); at landing the code tree must equal d26bac3's outside intent/."
+  }
+}
