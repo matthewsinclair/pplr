@@ -34,11 +34,11 @@ commands:
   formula:
     enabled: true
 
-# The release core (ST0002 E3 and install-release.md section 5). Outward steps
-# (tag, push, release, tap) run only in ST0002 WP06, with hv's approval (E8).
-# No after: a cut runs it before the macOS asset is attached, so formula
-# publish runs by hand once bin/devbin release attach --from dist/release has
-# added it.
+# The release core (ST0002 E3). bin/devbin release vX.Y.Z is the whole release:
+# after: is one line, bin/devbin post-cut, which builds, signs, notarises and
+# attaches the macOS asset and then publishes the formula, stopping at the
+# first failure (one line, since the core runs every after: line even when one
+# before it failed).
 release:
   repo: matthewsinclair/pplr
   remotes:
@@ -56,6 +56,8 @@ release:
   ci:
     workflow: tests.yml
   object: local
+  after:
+    - bin/devbin post-cut
 
 # The Homebrew formula: the signed macOS release asset (ST0002 E1), from the
 # template packaging/homebrew/pplr.rb. The Linux tarballs join it in a later

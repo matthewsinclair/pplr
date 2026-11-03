@@ -358,7 +358,8 @@
       "kind": "decision",
       "seq": 26,
       "text": "hv, 2026-11-03 during the 2.0.0 sitting, after the release runbook's manual steps and a dead notary password (Intent's app-specific password, 401; Conflab's, which Apple accepts, is now Geodica/Certificates' APPLE_APP_PASSWORD and the keychain's): 'agreed, finish 2.0.0 then devbin one-command release'. 2.0.0 finishes on dc's runbook. Then, first job after: one command, bin/devbin release vX, runs the gates, CI, the tag, the Mac's signing and notarisation, attach and formula publish. That is two devbin changes: a cut step for an asset built and signed locally, before attach and before after:; and bare-binary signing in devbin's built-in macos (Intent's signer already does it). Devbin is un-parked for it, and every Geodica project releases the same way.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T18:12:25.455Z",
       "recorded_at": "2026-11-03T12:35:23.622Z"
     },
     {
@@ -366,8 +367,25 @@
       "kind": "todo",
       "seq": 8,
       "text": "Decision 26's one-command devbin release, the first job after 2.0.0: bin/devbin release vX runs the gates, CI, the tag, the Mac's signing and notarisation, attach and formula publish. Fold in: (a) a cut step for an asset built and signed locally, before attach and before after:; (b) bare-binary signing in devbin's built-in macos (Intent's signer does it); (c) one keychain prefix for the estate (pplr reads geodica.apple.*, devbin's built-in devbin.apple.*); (d) deterministic asset tarballs, as ccusage-dc packs them (COPYFILE_DISABLE=1, --no-mac-metadata, --no-xattrs, --uid 0 --gid 0 --uname '' --gname ''); pplr's plain tar -czf asset, extracted the way brew does, has no AppleDouble and verifies strictly, so 2.0.0 is not blocked; (e) require_identity captures security's output before matching, since grep -q under pipe_fail can lose to SIGPIPE; (f) lock-sync as a devbin built-in for Cargo projects (it is in Gtools, Pplr and Ccusage); (g) the cut's closing 'use brew' note only where a project has the dev/opt/brew switch. Outside devbin: Lamplight moves to Geodica/Certificates' APPLE_APP_PASSWORD (Conflab's, which Apple accepts), then its own is revoked.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T18:12:25.478Z",
       "recorded_at": "2026-11-03T12:57:56.213Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 27,
+      "text": "hv, 2026-11-03 after ST0002's close: a release is one command, and pplr and cldr both release signed and notarised the same way. Utilz already does (its after: runs tools/post-cut), so this is pplr's config, not devbin's: release.after: is one line, bin/devbin post-cut, which in a detached worktree at the tag builds, runs macos prepare, attaches with release attach --from dist/release, then formula publish, and pulls this machine's tap, stopping at the first failure; a re-run skips what is done. Reverses decision 25's by-hand formula publish and supersedes decision 26's devbin changes. Next: Cldr gets the same (devbin installed, a signer and a post-cut), in Cldr's repo.",
+      "state": "live",
+      "recorded_at": "2026-11-03T18:12:25.405Z"
+    },
+    {
+      "node": "vc",
+      "kind": "todo",
+      "seq": 9,
+      "text": "Cldr releases as pplr does (decision 27): devbin installed with release.after: bin/devbin post-cut, a macos signer for its one binary from pplr's cmd/macos, the formula moved to assets mode, signed and notarised. Work in Cldr's repo. Outside it: Lamplight moves to Geodica/Certificates' APPLE_APP_PASSWORD, then its own is revoked. The first real run of pplr's post-cut is the next pplr release.",
+      "state": "live",
+      "recorded_at": "2026-11-03T18:12:25.502Z"
     }
   ],
   "sent": [

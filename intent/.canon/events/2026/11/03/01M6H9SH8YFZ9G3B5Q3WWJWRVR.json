@@ -1,0 +1,15 @@
+{
+  "id": "01M6H9SH8YFZ9G3B5Q3WWJWRVR",
+  "ts": "2026-11-03T18:12:25.502Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "Cldr releases as pplr does (decision 27): devbin installed with release.after: bin/devbin post-cut, a macos signer for its one binary from pplr's cmd/macos, the formula moved to assets mode, signed and notarised. Work in Cldr's repo. Outside it: Lamplight moves to Geodica/Certificates' APPLE_APP_PASSWORD, then its own is revoked. The first real run of pplr's post-cut is the next pplr release."
+  }
+}

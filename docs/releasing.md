@@ -57,13 +57,10 @@ bin/devbin macos prepare    # stage, sign, verify, notarise, then pack the asset
 
 ## Cutting a release
 
-devbin's release core cuts every release, and `bin/devbin help release` describes it. The `release` block of `bin/.devbin/config.yaml` names the gates it runs and CI's workflow.
+A release is one command, on the maintainer's Mac, with the Developer ID identity and the notary credentials in the login keychain:
 
 1. Open the release's section in `CHANGELOG.md` as `## [X.Y.Z] - unreleased`. The cut dates it, and its text is the release's notes.
-2. `bin/devbin release vX.Y.Z` asks once, then sets the version (`Cargo.lock` follows through `bin/devbin lock-sync`), commits, and runs the gates here and CI on `candidate/vX.Y.Z`. Once every one is green, it tags, pushes and makes the release on GitHub.
-3. `bin/devbin build --release`, then `bin/devbin macos prepare`: the signed, notarised macOS asset, alone in `dist/release`.
-4. `bin/devbin release attach vX.Y.Z --from dist/release` attaches it to the release, with `SHA256SUMS`. It uploads every file under the folder, which is why the asset is packed there alone.
-5. `bin/devbin formula publish` renders the formula from `packaging/homebrew/pplr.rb`, with the release's version and sums, and pushes it to the tap, `matthewsinclair/homebrew-pplr`, once you say yes.
-6. On the maintainer's Mac: `brew upgrade pplr` (`brew install matthewsinclair/pplr/pplr` the first time), `pplr use brew`, then `pplr version`, which must read brew at the new version, and `pplr doctor`.
+2. `bin/devbin release vX.Y.Z` (`--dry-run` first shows each step). It asks once, then sets the version (`Cargo.lock` follows through `bin/devbin lock-sync`), commits, and runs the gates here and CI on `candidate/vX.Y.Z`. Once every one is green, it tags, pushes and makes the release on GitHub. Its `after:` step, `bin/devbin post-cut`, then builds the release at the tag, signs and notarises `pplr`, `pplr-contacts` and `Pplr Links.app` (`bin/devbin macos prepare`), attaches the asset with `SHA256SUMS`, and publishes the formula to the tap, `matthewsinclair/homebrew-pplr`, under the same yes.
+3. `brew upgrade pplr` (`brew install matthewsinclair/pplr/pplr` the first time), `pplr use brew`, then `pplr version`, which must read brew at the new version.
 
-The formula installs the macOS asset alone for now; the Linux binaries come in a later release, with the workflow that builds them. Prefix each brew command in a script with `HOMEBREW_NO_AUTO_UPDATE=1`.
+A step that fails stops everything after it and names the command that resumes: `bin/devbin release vX.Y.Z` again before the tag, `bin/devbin post-cut vX.Y.Z` after it. `bin/devbin help release` and `bin/devbin post-cut --help` describe both. The formula installs the macOS asset alone for now; the Linux binaries come in a later release, with the workflow that builds them.

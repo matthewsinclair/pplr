@@ -1,0 +1,15 @@
+{
+  "id": "01M6H9SH5XS9C83P0N73MMQFTT",
+  "ts": "2026-11-03T18:12:25.405Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "hv, 2026-11-03 after ST0002's close: a release is one command, and pplr and cldr both release signed and notarised the same way. Utilz already does (its after: runs tools/post-cut), so this is pplr's config, not devbin's: release.after: is one line, bin/devbin post-cut, which in a detached worktree at the tag builds, runs macos prepare, attaches with release attach --from dist/release, then formula publish, and pulls this machine's tap, stopping at the first failure; a re-run skips what is done. Reverses decision 25's by-hand formula publish and supersedes decision 26's devbin changes. Next: Cldr gets the same (devbin installed, a signer and a post-cut), in Cldr's repo."
+  }
+}

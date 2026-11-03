@@ -1,5 +1,5 @@
 ---
-verblock: "2026-11-03:v0.8: matts - ST0002 closed; next, the one-command devbin release"
+verblock: "2026-11-03:v0.9: matts - pplr's release is one command (post-cut); Cldr next"
 ---
 
 # Work In Progress
@@ -8,19 +8,18 @@ DOING and TODO only; finished work lives in its commit, its closed issue or its 
 
 ## Current Focus
 
-**Devbin: make a release one command**
+**Release: pplr and Cldr, signed and notarised, one command each**
 
 - vc holds the pen and slot control. Scope rule: simpler or easier only (vc decision 2).
-- `bin/devbin release vX` as the one release command (vc decision 26, todo 8; ST0002 design.md ruling 10). Devbin is un-parked for it.
-- Main's commits after the release (dd6dc5b) are local until hv pushes.
+- pplr: `bin/devbin release vX.Y.Z` is the whole release; its `after:` is `bin/devbin post-cut` (vc decision 27). Its first real run is the next pplr release.
+- Cldr: the same shape, in Cldr's repo (todo 9 on vc's board).
 
 ## Active Steel Threads
 
-- None in Pplr. The devbin work lands in Devbin, shared by every Geodica project.
+- None in Pplr.
 
 ## Upcoming Work
 
-- Devbin's one-command release (todo 8 on vc's board): a cut step for an asset built and signed locally, bare-binary signing in devbin's built-in `macos`, one keychain prefix for the estate, deterministic asset tarballs, `require_identity` capturing its output before matching, and `lock-sync` as a built-in.
 - Credentials: Lamplight moves to `Geodica/Certificates`' `APPLE_APP_PASSWORD` (the one Conflab's CI already uses), then its own password is revoked.
 - The Linux release assets and their workflow, in a later release; todo 6's behaviour-preserving cleanups, in a thread of their own.
 - dc unclaims ST0002/04 and ST0002/07 at its next pickup.
