@@ -3,9 +3,9 @@ node: vc
 name: vc
 role: vc
 session_id: 60a887be-5fa2-4cf5-8de1-310286047151
-heartbeat_at: 2026-11-03 06:43Z
+heartbeat_at: 2026-11-03 06:50Z
 status: active
-focus: "localfold for hv's compact, holding. After it: watch CI run 41591508539 (the first with both fixes) and route what it finds; review cc's WP11 commit 3 and dc's WP14 landing against todos 3 and 4, verifying each in a fresh clone; keep the slot desk"
+focus: "Slot desk re-armed after the compact, nothing pending. Waiting on dc's WP14 (critic's findings, then one cargo+bats measurement) and cc's WP11 commit 3: first ready lands first, the other rebases. WP14 pre-read at 5accda2 against todo 4, no blocker so far. Each landing then gets vc's fresh-clone run, then hv's push"
 claims: []
 ---
 
