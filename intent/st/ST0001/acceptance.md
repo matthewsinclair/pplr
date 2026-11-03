@@ -142,7 +142,8 @@ _(no tests in this group)_
 
 ### WP-14 -- pplr's own mail reader (status: WIP)
 
-_(no tests in this group)_
+- AT-14.1 `tests/cli.rs` -- covers AC-14.1 -- status: red -- email_and_contact_log_email_are_native_and_their_goldens_replay: red at 95a75e8 with only WP14's tests and Cargo.toml applied, in a worktree with its own target/ (slot 01M6G1A0RZHCG1VD4YBCGK1JZR): cargo test exit 101, 'email is not native'
+- AT-14.2 `tests/cli.rs` -- covers AC-14.2 -- status: red -- email_json_is_a_versioned_contract_and_refuses_a_store_it_cannot_trust: red at 95a75e8 with only WP14's tests and Cargo.toml applied, in a worktree with its own target/ (slot 01M6G1A0RZHCG1VD4YBCGK1JZR): cargo test exit 101, email --json exited 1 (the legacy usage), not 0
 
 ---
 
