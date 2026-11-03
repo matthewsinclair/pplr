@@ -1,0 +1,16 @@
+{
+  "id": "01M6G4SWAK1YYJV95T1YBF11TX",
+  "ts": "2026-11-03T07:25:59.507Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 1,
+    "text": "ST0001 harness (vc's brief, item 4): the bats step has never run on ubuntu. The read-only pre-audit is reported to vc: one test will fail there, pplr_sync.bats:136 (plutil reads the .inetloc's URL, and ubuntu has none), a one-line sed fix. AT-12.2 also skips on Linux, where applyicons, setpicfordir and setpicsfordirs should be shown refusing with 'Finder icons need macOS' (AC-00.7). Everything else checked clean. Waiting on vc's call: land before the next push or after. Then triage whatever the first ubuntu bats run exposes"
+  }
+}
