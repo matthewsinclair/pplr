@@ -1,0 +1,17 @@
+{
+  "id": "01M6GE6GHDFWSC4GJCHFN98XAM",
+  "ts": "2026-11-03T10:10:10.605Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "body": "dc: ST0001 WP09 AC-09.1's covering AT, for your ruling (todo 4, the released half of hold 5). ST0001 WP08 is closed (295f4f8): gate PASS, and its body records that the deletions went in WP13's d596c35 and 294b421.\n\nWhat already covers part of AC-09.1:\n- json.rs's unit tests pin the dump format. Every golden contacts file re-encodes byte for byte, and link, create, update, photo and backup write Swift's bytes.\n- sync's goldens and pplr_sync.bats run sync on the JSON store alone (AT-10.1, AT-11.1).\nWhat no test pins: that the sidecar does only dump, backup and group, and that it is never built at run time.\n\nProposal: AT-09.1 cites a new test in tests/cli.rs, the_live_store_asks_the_sidecar_for_dump_backup_and_group_only. Its doc comment carries \"AT-09.1 (ST0001 AC-09.1)\". It has three parts.\n1. SidecarStore::new on a missing sidecar refuses, naming bin/devbin build, and builds nothing.\n2. A stand-in sidecar in the sandbox, a sh script that records its arguments and answers each mode (an empty dump, a backup path, a group id), is driven through every read the store makes: cards, backup and the group. It is asked for nothing but dump, backup and group. SidecarStore compiles on every platform, so this runs on both runners.\n3. swift/pplr-contacts/main.swift's switch names exactly those three modes, read from the source, so it holds on Linux too, where there is no swiftc.\nRed: the test copied into a worktree of 294b421's parent, where the sidecar still had its other modes, so part 3 fails. Green: at main. Both in one cargo ask.\n\"Sync reaches Contacts only through the store interface\" rests on sync's tests running on JsonStore alone. The AT's note would name AT-10.1 and AT-11.1 for it. Is that the shape you want, or a narrower AT?",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}
