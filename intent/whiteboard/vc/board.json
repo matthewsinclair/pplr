@@ -261,6 +261,14 @@
       "state": "live",
       "recorded_at": "2026-11-03T09:07:33.741Z",
       "edited_at": "2026-11-03T09:30:33.962Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 17,
+      "text": "hv, 2026-11-03, in vc's session: 'this tools/* dir needs to move to use devbin properly', and before the push. Ruled with hv: every script in tools/ (build, bats-rust, nopython, people-leak, lock-sync, fold-table.swift, skeleton, t10-probe) becomes a devbin project command in bin/.devbin/cmd/<name>, which devbin picks up with no config entry, so bin/devbin is pplr's one entry point and tools/ goes. dc owns it, as a new ST0002 work package. Behaviour is unchanged; every reference follows in the same series: bin/.devbin/config.yaml, the pre-commit guards in intent/.config/config.json, tests.yml, the tests and test_helper, nopython's own self-exemption, src doc comments, tests/golden/README.md, and the live docs (CLAUDE.md, README.md, intent/llm/ARCHITECTURE.md, usage-rules.md). Done WPs' bodies are history and keep their paths. dc proposes the mapping first, script by script, for vc's ruling, then measures the series in a clone (check all, test all, a commit through the gate). The push of main waits for it, for dc's docs and for cc's AT-id commit, and vc verifies main once before hv pushes.",
+      "state": "live",
+      "recorded_at": "2026-11-03T09:34:13.699Z"
     }
   ],
   "sent": [
