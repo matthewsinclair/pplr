@@ -1,0 +1,15 @@
+{
+  "id": "01M6G7SVRKH93E9XAWJCR1BHSC",
+  "ts": "2026-11-03T08:18:24.659Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "doing",
+    "text": "ST0002's objective, rewritten at vc's ask to the assets formula (signed prebuilt tarballs per target, as install-release.md and packaging/homebrew/pplr.rb have it): text to vc first, then intent set ST0002 objective --from <file>"
+  }
+}

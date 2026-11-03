@@ -10,7 +10,6 @@
     "focus": "Drafting ST0001 WP13's docs (doing 3, vc decision 11), each draft to vc before it lands. WP02 done at 6c7d729. Hold 3: ST0002 AC-02.1's candidate/** half, until hv's push of candidate/ci-probe runs on CI",
     "claims": [
       "ST0001/09",
-      "ST0002/02",
       "ST0002/07",
       "ST0002/04",
       "ST0002/05",
@@ -120,8 +119,17 @@
       "kind": "doing",
       "seq": 4,
       "text": "ST0002 AT-02.1, proposed to vc (hold 3 released: CI 41601061427 on hv's push of candidate/ci-probe at e589c45, read by dc, green on both runners). It covers AC-02.1 and cites tests.yml, whose header would name ST0002's AT-02.1 beside ST0001's. Red by a measured mutant: tests.yml's push branches without candidate/**, committed in dc's scratch clone (7e5e61d on c4929d0), devbin release check exit 1, the candidate push starts no run. Green: c4929d0 unmutated in the same clone, release check 0 and doctor 0, and the CI run. At vc's ruling: at new, red and green, then ST0002 wp gate and wp done (AC-02.2 already satisfied)",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T08:18:24.613Z",
       "recorded_at": "2026-11-03T08:13:27.227Z"
+    },
+    {
+      "node": "dc",
+      "kind": "doing",
+      "seq": 5,
+      "text": "ST0002's objective, rewritten at vc's ask to the assets formula (signed prebuilt tarballs per target, as install-release.md and packaging/homebrew/pplr.rb have it): text to vc first, then intent set ST0002 objective --from <file>",
+      "state": "live",
+      "recorded_at": "2026-11-03T08:18:24.659Z"
     }
   ],
   "sent": [
@@ -188,6 +196,13 @@
       "body": "dc: hold 3 is released. I read CI 41601061427 myself: workflow Tests, the push of candidate/ci-probe at e589c45 (on main's line, its code 6c7d729's), success on both runners, with only each OS's install step skipped. My proposal for ST0002's AT-02.1, covering AC-02.1: (1) It cites .github/workflows/tests.yml. The file already carries the literal 'AT-02.1', but only as ST0001's, so I would make its header read '(ST0001 AT-02.1, ST0002 E6 and AT-02.1)', a one-comment change that release check reads. (2) Red by a measured mutant: tests.yml's push branches without 'candidate/**', committed in my scratch clone (7e5e61d on c4929d0). devbin release check exits 1: 'a push of candidate/v2.0.0 at 7e5e61dafca9 starts no run the cut could read: ci-state --fires answers quiet ... its push branches (main) match no candidate/v2.0.0'. It runs no cargo, so it took no slot. (3) Green: the unmutated control at c4929d0 in the same clone, where release check exits 0 (candidate/** matches candidate/v2.0.0) and doctor exits 0 (16 checks, 0 failed), as both did at 251ea31 in the shared checkout. Plus CI 41601061427, where hv's push started tests.yml through candidate/** and the cargo gates and the bats suite passed on macOS and Linux. (4) Then intent wp gate ST0002/02 and wp done, since its AC-02.2 is already satisfied. Two observations. ST0002's objective calls the formula source-built, but install-release.md and packaging/homebrew/pplr.rb are the assets variant (signed prebuilt tarballs), so the objective is stale there; the README will describe the assets formula. And for AC-00.8: VERSION.md is still read by bin/pplr_version, by the legacy branch of tests/pplr_core.bats' version test and by tests/golden/capture. It has to go with cc's removals for 'Cargo.toml is the only version source'. Back to the CHANGELOG draft meanwhile.",
       "fyi": false,
       "recorded_at": "2026-11-03T08:13:39.063Z"
+    },
+    {
+      "id": "01M6G7TKPHVEKSDTQX8BZZ1QGY",
+      "recipient": "vc",
+      "body": "dc: (1) ST0002 WP02 is done at f3132eb, as you ruled. The header and the AT row to read: tests.yml's header now says '(ST0001 AT-02.1, ST0002 E6 and AT-02.1)'. ST0002 AT-02.1 is red at mutant 7e5e61d (release check 1) and green at c4929d0 (release check 0, doctor 0) and on CI 41601061427. The header measured as f809e29 on f8b8db8 (release check 0), and the landed tree equals it outside intent/. Lint 4 of 4, gate 2/2, claim dropped. (2) The CHANGELOG draft, for your review before it lands: /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/da774a51-7916-4f68-b76b-37c788cb4a76/scratchpad/docs/CHANGELOG.md, with the diff at /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/da774a51-7916-4f68-b76b-37c788cb4a76/scratchpad/docs/CHANGELOG.diff. It keeps the open 2.0.0 section, which release check reads as open, and revises it to describe the Rust binary. It opens with a summary paragraph. Added: I dropped the remarks no longer true (a Swift engine built on first use, uv with openpyxl and PyYAML, mail-recent, lib/engine.sh, PPLR_CALLER_DIR, the engine's people). email gains --hours, --sent, --limit and --json, and there are new entries for the version line and for install and use. Changed is new: the one binary with no Python or uv; the sidecar; email reading Mail's store, which needs Full Disk Access; Cargo.toml as the one version source; the embedded template, icons and README with their _pplr overrides, and the four retired variables; PPLR_DIR as fallback, with doctor's warning; the XDG defaults; PPLR_TODAY everywhere; edit's VISUAL and EDITOR; new's git author; handler --install registering the shipped app; and the Linux refusals as the code has them. Then the five divergences: WP11's two, WP14's two (decision 9) and decision 10's lossy reads and strict write-backs. Removed: the shell version (bin/pplr and bin/pplr_*, lib/engine.sh, the four .py files and VERSION.md), now in Keep a Changelog's order before Fixed, plus the existing Claude tagger item. Fixed: search's query spliced into a sed expression, and setpicsfordirs' whole names. Two pre-existing style fixes: the 1.0.0 'e.g.,' becomes 'eg', and the ellipsis characters become '...'. Each claim is checked against src at c4929d0 (code 6c7d729's), and the old behaviour against the legacy scripts. Prettier passes. Two points for you. (a) D9 lists edit among the Linux refusals, but the code runs edit there through VISUAL or EDITOR, which needs no macOS service. The draft follows the code: linkedin and cp without -o refuse, edit does not. (b) The summary and Removed describe the release, so they are true once cc's removals land. Shall it land now as its own commit (an unreleased section describes the release), or after the removals? (3) ST0002's objective, the text to set, at /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/da774a51-7916-4f68-b76b-37c788cb4a76/scratchpad/docs/ST0002-objective.md: 'Make Homebrew the way Pplr reaches a machine. brew install matthewsinclair/pplr/pplr installs the release's prebuilt assets, one tarball per target (aarch64-apple-darwin, and x86_64 and aarch64 Linux musl), through a formula that devbin's formula tool renders in assets mode from packaging/homebrew/pplr.rb into the tap matthewsinclair/homebrew-pplr. The macOS binaries and Pplr Links.app are signed with Geodica's Developer ID and notarised, and the formula verifies each signature against its designated requirement. Releases are cut by devbin 0.1.19's release core, with gates run locally, on the kovacs leg and in CI. pplr follows devbin's dev/opt/brew contract (T1 to T10). The thread ends with rhadamanth running brew's pplr at 2.0.0.' usage-rules.md is next.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T08:18:49.169Z"
     }
   ],
   "handled": [

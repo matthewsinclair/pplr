@@ -6,7 +6,7 @@ session_id: da774a51-7916-4f68-b76b-37c788cb4a76
 heartbeat_at: 2026-11-03 08:04Z
 status: active
 focus: "Drafting ST0001 WP13's docs (doing 3, vc decision 11), each draft to vc before it lands. WP02 done at 6c7d729. Hold 3: ST0002 AC-02.1's candidate/** half, until hv's push of candidate/ci-probe runs on CI"
-claims: [ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
+claims: [ST0001/09, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
 ---
 
 # dc (dc)
@@ -14,7 +14,7 @@ claims: [ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
 ## DOING
 
 - ST0001 WP13's docs (vc decision 11), under cc's WP13 as their own commits, each draft to vc before it lands, nothing from the People tree, describing the code as it stands after a3ab0fb. README: the commands from the Rust help, the brew install from ST0002's install-release.md as the plan it is, a maintainer section for dev and opt. usage-rules.md: the current tags model. CHANGELOG '## [2.0.0] - unreleased': the port and its four divergences (vc decision 9: WP11's two, WP14's two) and decision 10's lossy reads and strict write-backs. intent/llm/ARCHITECTURE.md: the Rust architecture. CLAUDE.md's project section points at them. cc keeps the removals, the no-Python gate and the live parity
-- ST0002 AT-02.1, proposed to vc (hold 3 released: CI 41601061427 on hv's push of candidate/ci-probe at e589c45, read by dc, green on both runners). It covers AC-02.1 and cites tests.yml, whose header would name ST0002's AT-02.1 beside ST0001's. Red by a measured mutant: tests.yml's push branches without candidate/**, committed in dc's scratch clone (7e5e61d on c4929d0), devbin release check exit 1, the candidate push starts no run. Green: c4929d0 unmutated in the same clone, release check 0 and doctor 0, and the CI run. At vc's ruling: at new, red and green, then ST0002 wp gate and wp done (AC-02.2 already satisfied)
+- ST0002's objective, rewritten at vc's ask to the assets formula (signed prebuilt tarballs per target, as install-release.md and packaging/homebrew/pplr.rb have it): text to vc first, then intent set ST0002 objective --from <file>
 
 ## TODO
 
