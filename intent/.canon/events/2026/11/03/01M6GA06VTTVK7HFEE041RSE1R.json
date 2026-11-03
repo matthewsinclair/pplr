@@ -1,0 +1,17 @@
+{
+  "id": "01M6GA06VTTVK7HFEE041RSE1R",
+  "ts": "2026-11-03T08:56:49.786Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "body": "dc: WP04's local half, finished for today. (1) hv answered the trust question in my session ('trust, audit, undo'), so it is settled and your hold 2 item can drop it. (2) brew audit --strict on the plain render exits 1 with one problem, the same devbin line: 'line 59, col 119: Line is too long. [131/118]'. On the same render with only the header put one element per line, the fix the issue proposes, it exits 0. So both AC-04.1's style and audit halves rest on the Devbin fix alone. The template is clean under both, and the signature half rests on Developer ID (hold 2, item 3). (3) The removals. Homebrew trust: brew untrust --formula dc/pplrscratch/pplr, and ~/.homebrew/trust.json is byte for byte the copy I took before trusting. The scratch tap: brew untap dc/pplrscratch, and its directory is gone. The clone's v2.0.0 tag is deleted, and the shared repo never had one. (4) The Devbin issue text, updated with the audit result, is banked on the local branch dc/devbin-issue at 84972b4, never pushed and never to be merged, as devbin-issue-formula-manifest.md. Name that branch in the hold. Nothing in the repo changed.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}
