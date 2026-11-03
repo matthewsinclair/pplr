@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 15:12Z
+heartbeat_at: 2026-11-03 17:36Z
 status: active
-focus: "Localfolded for hv's compact; hv is back to finish and close out. Todo 3 is in hand: vc's follow-up to ST0001's close, unstarted, with nothing applied in the shared checkout. It needs hv's OK for the CLAUDE.md line and vc's ruling on ARCHITECTURE.md line 5. My handback and hv's step 8 relay are live in vc's inbox. ST0001 done (0cfd6f4); ST0002 AC-00.3's docs landed (02c2771)."
+focus: "Nothing in hand. ST0001's sync follow-up landed (5ffaf01, check all 0 in a clone); vc told, with hv's step 8 answer (no Contacts prompt at either read) for AC-06.2. ST0002's close is vc's and dc's."
 claims: []
 ---
 
@@ -17,7 +17,7 @@ _(none)_
 
 ## TODO
 
-- vc's follow-up to ST0001's close, handed back unstarted when hv closed cc's session: intent sync --apply --yes removes ST0001's 19 tracked view files and their 16 directories (st done unlisted the thread; at 33e1d26 intent doctor --scope closed is clean, so the store matches the files and intent st hydrate ST0001 restores them). One commit: exactly the removed: files by path, plus CLAUDE.md's line naming ST0001's design.md made true with the file off disk (a CLAUDE.md edit needs hv's own word in cc's session, not a peer's ask), and intent/llm/ARCHITECTURE.md line 5, which names it too (vc to rule). Measure with check all alone in a clone, in a slot; tell vc the commit.
+_(none)_
 
 ## Holds
 
