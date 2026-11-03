@@ -23,7 +23,7 @@
       "seq": 2,
       "title": "Rust scaffold under devbin, with the fallback",
       "scope": "M",
-      "status": "wip",
+      "status": "done",
       "objective": "Stand up the Rust crate in house style, with devbin's gates and CI on macOS and Linux. Build a `pplr` binary that runs every command, natively once ported and through the fallback until then, so the whole bats suite passes against it from this WP on.",
       "body": "**Scope**\n\n- **The crate** (design D5 and 3.1):\n  - `Cargo.toml` at the root: package `pplr`, version 2.0.0, edition 2024, `rust-version`. rhadamanth has Homebrew's Rust and no rustup, so there is no `rust-toolchain.toml`. `[lints]` sets `unsafe_code = \"forbid\"` and denies `unwrap_used` and `expect_used`.\n  - `rustfmt.toml` with `edition = \"2024\"` and `tab_spaces = 2`.\n  - A thin `src/main.rs`, plus `src/lib.rs`, `src/cli.rs` (the command table, the argument helpers, help generated from the table), `src/error.rs`, and `src/config.rs` (the data root per D8, the XDG defaults per D5).\n  - `tests/cli.rs` with a `Sandbox`, after Ccusage's.\n- **The fallback** (design 3.3). This WP ports no command: every command, `version` and `help` included, runs through the fallback until its own WP.\n- **devbin**:\n  - Make the vendored devbin 0.1.19 (`bin/devbin`, `bin/.devbin/`) ready to commit, with its config declaring `rust`, and `shell` for the suite.\n  - `check all` and `test all` run the cargo gates (fmt, clippy with the house lints, test, autotests, targetdir) and the bats suite against the Rust binary, through WP01's seam.\n- **Hygiene**: rewrite `.gitignore` for Rust and Swift (`target/`, `tmp/`, `.build/`) and drop the Mix entries; fence `bin/.devbin/lib/` in `.prettierignore`; remove the tracked Finder `Icon\\r`.\n- **CI**: `.github/workflows/tests.yml` on macOS and Linux, hardened as in ST0002 E6, running the cargo gates and the bats suite against the Rust binary. Retire `test.yml`. ST0002 WP02 adds the `candidate/**` trigger.\n- **The install-layout seam** (design 3.4), agreed with ST0002 WP01: one function returns the binary's resolved root and the sidecar's path beside it.\n- **Languages**: with hv's agreement, run `intent lang init rust shell swift` so the critic gate arms.\n\n**Criteria**: AC-02.1 and AC-02.2.\n\n**Heavy runs** go through `intent estate slots`: cargo and bats each have one heavy lane, shared with Devbin and Utilz.\n\n**The People leak check** (D11): a check in the gate, eg `bin/devbin check people-leak` called from the pre-commit hook. It reads the folder names, their `pplr://` markers and the About emails from `PPLR_DATA` at run time and fails on any match in the staged tree. The names are never written into the repo. Skip it with a stated reason when `PPLR_DATA` is absent (eg on CI).\n\n**AGENTS.md**: `intent claude upgrade` generated build and test lines for a SwiftPM package (`swift build`, `swift test`, `Package.swift`), but the sidecar is a single file compiled with `swiftc`. Correct them through Intent's generator, never by hand-editing `AGENTS.md`.\n",
       "preamble": ""
@@ -393,6 +393,26 @@
         "AC-01.3"
       ],
       "status": "green"
+    },
+    {
+      "id": "AT-02.1",
+      "kind": "test",
+      "file": ".github/workflows/tests.yml",
+      "covers": [
+        "AC-02.1"
+      ],
+      "status": "green",
+      "note": "tests.yml's test job on ubuntu-latest and macos-latest, fail-fast off: devbin check format, clippy, autotests and targetdir, then devbin test rust and devbin test shell (the bats suite against the Rust pplr); red at acec3ca on CI 41595332795: ubuntu-latest's Cargo tests step failed (the replay's goldens: a name the manifest gives decomposed missed the precomposed file git checks out, which ext4 tells apart), macos-latest success; green at 6464721 on CI 41598011297 (the fix 64be72f, with 3121fb9's bats fixes) and at 37aaeff on CI 41598905802, every step success on both runners; devbin check all and test all exit 0 at a3ab0fb in vc's fresh clone (vc decision 6)"
+    },
+    {
+      "id": "AT-02.2",
+      "kind": "test",
+      "file": "tests/cli.rs",
+      "covers": [
+        "AC-02.2"
+      ],
+      "status": "green",
+      "note": "the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status, with the bats suite against the Rust pplr: an unported command runs its legacy script from the data root, with bin/pplr's variables, its arguments and its exit status; red by a measured mutant of c3450c9 (code tree a3ab0fb's) dropping PPLR_CALLER_DIR, the variable bin/pplr exports, from src/fallback.rs, in dc's scratch clone with its own target/ (slot 01M6G6G8XJVAKJ0Z67R7SPVF4R): cargo test exit 101, the assertion at tests/cli.rs:155 found caller= empty; green at c3450c9 unmutated in the same slot (the control, exit 0), and at 6464721 on CI 41598011297 and 37aaeff on CI 41598905802: cargo tests and the bats suite against the Rust pplr success on both runners"
     },
     {
       "id": "AT-03.1",

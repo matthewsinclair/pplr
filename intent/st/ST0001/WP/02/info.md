@@ -2,7 +2,7 @@
 wp_id: WP-02
 title: Rust scaffold under devbin, with the fallback
 scope: M
-status: WIP
+status: Done
 ---
 
 # WP-02: Rust scaffold under devbin, with the fallback

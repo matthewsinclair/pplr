@@ -44,7 +44,7 @@ Replace Pplr's bash scripts, Python helpers and run-time-compiled Swift engine w
 | WP    | Title                                             | Size | Status      |
 | ----- | ------------------------------------------------- | ---- | ----------- |
 | WP-01 | Test safety, the parity seam and an honest runner | S    | Done        |
-| WP-02 | Rust scaffold under devbin, with the fallback     | M    | WIP         |
+| WP-02 | Rust scaffold under devbin, with the fallback     | M    | Done        |
 | WP-03 | Golden capture from the legacy code               | M    | Done        |
 | WP-04 | Core model and the read commands                  | M    | Done        |
 | WP-05 | Indexes, new person, pictures and search          | M    | Done        |

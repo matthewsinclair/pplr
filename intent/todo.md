@@ -10,7 +10,7 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
 
 - [-] ST0001: Port Pplr from shell scripts to Rust
   - [x] 01: Test safety, the parity seam and an honest runner
-  - [-] 02: Rust scaffold under devbin, with the fallback
+  - [x] 02: Rust scaffold under devbin, with the fallback
   - [x] 03: Golden capture from the legacy code
   - [x] 04: Core model and the read commands
   - [x] 05: Indexes, new person, pictures and search

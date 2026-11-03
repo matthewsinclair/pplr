@@ -32,10 +32,10 @@ title: Port Pplr from shell scripts to Rust
 - AC-01.3 One setting points the bats suite at either implementation, and the default is the legacy code. -- satisfied: yes (computed)
 - AC-01.4 (non-test) The baseline against the legacy code is recorded on this thread for rhadamanth and both CI runners, with a one-line triage for each failing test. -- evidence: baseline.md on ST0001: rhadamanth slot 01M6EBWZSD9THBN1Q549VEK46T (99/99 legacy); CI run 41467789463 on 1a545a6 (macOS 93 ok / 9 not ok, Ubuntu 61 ok / 41 not ok, 13 skipped each), each failure triaged -- satisfied: yes
 
-### WP-02 -- Rust scaffold under devbin, with the fallback (status: WIP)
+### WP-02 -- Rust scaffold under devbin, with the fallback (status: Done)
 
-- AC-02.1 `bin/devbin check all` and `bin/devbin test all` run the cargo gates (fmt; clippy with unsafe forbidden and unwrap and expect denied; test) and the bats suite against the Rust binary, and both pass on macOS and on Linux CI. -- satisfied: no (computed)
-- AC-02.2 Every command not yet ported runs its legacy script through the Rust binary, with the environment bin/pplr sets, so the whole bats suite passes against the Rust binary. -- satisfied: no (computed)
+- AC-02.1 `bin/devbin check all` and `bin/devbin test all` run the cargo gates (fmt; clippy with unsafe forbidden and unwrap and expect denied; test) and the bats suite against the Rust binary, and both pass on macOS and on Linux CI. -- satisfied: yes (computed)
+- AC-02.2 Every command not yet ported runs its legacy script through the Rust binary, with the environment bin/pplr sets, so the whole bats suite passes against the Rust binary. -- satisfied: yes (computed)
 
 ### WP-03 -- Golden capture from the legacy code (status: Done)
 
@@ -95,9 +95,10 @@ _(no tests in this group)_
 - AT-01.2 `tests/harness.bats` -- covers AC-01.2 -- status: green
 - AT-01.3 `tests/harness.bats` -- covers AC-01.3 -- status: green
 
-### WP-02 -- Rust scaffold under devbin, with the fallback (status: WIP)
+### WP-02 -- Rust scaffold under devbin, with the fallback (status: Done)
 
-_(no tests in this group)_
+- AT-02.1 `.github/workflows/tests.yml` -- covers AC-02.1 -- status: green -- tests.yml's test job on ubuntu-latest and macos-latest, fail-fast off: devbin check format, clippy, autotests and targetdir, then devbin test rust and devbin test shell (the bats suite against the Rust pplr); red at acec3ca on CI 41595332795: ubuntu-latest's Cargo tests step failed (the replay's goldens: a name the manifest gives decomposed missed the precomposed file git checks out, which ext4 tells apart), macos-latest success; green at 6464721 on CI 41598011297 (the fix 64be72f, with 3121fb9's bats fixes) and at 37aaeff on CI 41598905802, every step success on both runners; devbin check all and test all exit 0 at a3ab0fb in vc's fresh clone (vc decision 6)
+- AT-02.2 `tests/cli.rs` -- covers AC-02.2 -- status: green -- the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status, with the bats suite against the Rust pplr: an unported command runs its legacy script from the data root, with bin/pplr's variables, its arguments and its exit status; red by a measured mutant of c3450c9 (code tree a3ab0fb's) dropping PPLR_CALLER_DIR, the variable bin/pplr exports, from src/fallback.rs, in dc's scratch clone with its own target/ (slot 01M6G6G8XJVAKJ0Z67R7SPVF4R): cargo test exit 101, the assertion at tests/cli.rs:155 found caller= empty; green at c3450c9 unmutated in the same slot (the control, exit 0), and at 6464721 on CI 41598011297 and 37aaeff on CI 41598905802: cargo tests and the bats suite against the Rust pplr success on both runners
 
 ### WP-03 -- Golden capture from the legacy code (status: Done)
 

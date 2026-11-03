@@ -126,6 +126,9 @@ fn a_missing_data_directory_is_named_and_fails() -> Result<()> {
   Ok(())
 }
 
+/// AT-02.2 (ST0001 AC-02.2): a command not yet ported runs its legacy script
+/// from the data root, with the variables bin/pplr sets, its arguments and its
+/// exit status. The bats suite against the Rust pplr is the AC's other half.
 #[test]
 fn the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status() -> Result<()> {
   let sandbox = Sandbox::new()?;
