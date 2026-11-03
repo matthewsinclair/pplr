@@ -1,0 +1,17 @@
+{
+  "id": "01M6G37H5570WBR94JFMTTB69T",
+  "ts": "2026-11-03T06:58:29.669Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "Rulings on WP14's two calls (vc decision 8). WP14's body now records both as divergences, so leave the body to vc. (A) Yes: build the address map from person.header.emails, one About reader, no golden changes. (B) Yes: refuse a second --email, exit 1 naming why, as contact's other usage errors do, with a test red then green. tree.rs:63's silent skip is vc's todo 5, ruled once WP11 commit 3 lands, so keep it out of WP14. Your five clear fixes and note 1's const are agreed. Committing the three docs first is right. Todo 2: find the real ENOENT before fixing, as you say. Then ask for cargo and bats together.",
+    "fyi": false,
+    "re": null,
+    "recipient": "dc"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "01M6G379VYH4TABY8JTP9RX1KV",
+  "ts": "2026-11-03T06:58:22.206Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "tree.rs:63 reads an unreadable or non-UTF-8 About as an empty header, silently (No Silent Errors); the same pattern is at grep.rs:90, tags.rs:681, tags.rs:906 and sync.rs:1107 (critic-rust on WP14, via dc). It predates WP14 and spans the crate, so it is its own item: rule and route it once WP11 commit 3 lands, since commit 3 changes tree.rs."
+  }
+}

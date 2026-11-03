@@ -1,0 +1,16 @@
+{
+  "id": "01M6G37H2M2MXB9GYKJMQMQP5C",
+  "ts": "2026-11-03T06:58:29.589Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "hold",
+    "seq": 2,
+    "text": "Each item needs hv, and each is released as hv does it. (1) Contacts access for this terminal, or hv runs 'cargo test --test cli live -- --ignored' (ST0001 AC-09.2). (2) Create the geodica.apple.{APPLE_ID,APPLE_APP_PASSWORD,APPLE_TEAM_ID} keychain entries. (3) Allow Developer ID signing, the identity check and the first notarytool submission (ST0002 WP07, AC-07.1 and 07.2). (4) Intent fixes outside pplr: the pre-commit hook's word-splitting, and AGENTS.md's swift lines (watchouts 1 and 2). (5) WP13 cutover moves ~/.local/bin/pplr to the Rust binary. (6) ST0002 WP05: the real brew install from a scratch tap; dc prepares everything up to it (it could shadow ~/.local/bin/pplr). (7) ST0002 WP04: the tap's description and CI need gh repo edit and a tap push (AC-04.2); if dc's rubocop wrap fails, a Devbin issue about the formula manifest line over brew's 118-column limit (lib/cmd/formula:424). (8) Let stand or overrule vc's divergences from the legacy, recorded in WP11's and WP14's bodies: WP11's sync refuses a bad or missing --limit and a trailing --group, and its --apply-plan reads the sheets by header name; WP14's email finds people through the shared About header reader (four edge cases differ), and contact log refuses a second --email. Each push is hv's, from the terminal: the auto-mode classifier refuses one from vc's session."
+  }
+}

@@ -31,6 +31,15 @@ Give pplr its own read-only mail reader, so that `pplr email` and `contact log -
 - **Tests** run against a synthetic SQLite fixture built in the test, holding only the tables and columns the module reads. They never touch a real mail store. One `#[ignore]` test reads the live store on rhadamanth on demand, read-only.
 - Deleting `bin/pplr_email` and `src/pplr-email/email_list.py` is WP13's (D3): hv's live pplr runs the legacy code until the cutover.
 
+**Deliberate divergences from the legacy** (vc's rulings on critic-rust's findings, under hv's simpler-or-easier rule; WP13's CHANGELOG lists them):
+
+- `pplr email` finds each message's person through the About header's Email line, read once by the reader every command shares (`about.rs`), not by a second read of each About with the legacy listing's own mailto pattern. On real data it differs from the legacy only where the two readers disagree:
+  - a plain address on the Email line now tags;
+  - `mailto:x?subject=...` now tags x;
+  - only the first `- Email:` line counts, so a second one no longer tags;
+  - an About that is not UTF-8 no longer tags.
+- `contact log` refuses a second `--email`, exit 1, naming why. The legacy took the date, the person and the note from the first message and the link from the second, so it logged a mix of two messages.
+
 **Criteria**: AC-14.1 and AC-14.2.
 
 **Depends on**: WP04 and WP07.

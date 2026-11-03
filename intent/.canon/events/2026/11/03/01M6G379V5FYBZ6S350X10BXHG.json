@@ -1,0 +1,15 @@
+{
+  "id": "01M6G379V5FYBZ6S350X10BXHG",
+  "ts": "2026-11-03T06:58:22.181Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "ST0001 WP14, critic-rust's two calls, ruled 2026-11-03 at dc's ask. (A) Highlander: pplr email builds its address map from person.header.emails, the one About reader every command shares, not a second read of each About with the legacy listing's mailto pattern. No golden changes. The four cases where the two readers disagree are recorded in WP14's body for WP13's CHANGELOG: a plain address now tags, mailto:x?subject tags x, a second '- Email:' line no longer tags, a non-UTF-8 About no longer tags. (B) contact log refuses a second --email, exit 1 naming why, with a test red then green; the legacy logged a mix of two messages, and the port's last-wins dropped the first silently. Recorded in WP14's body. The silent skip of an unreadable About (tree.rs:63, and the same pattern across the crate) predates WP14 and is its own item (todo 5)."
+  }
+}
