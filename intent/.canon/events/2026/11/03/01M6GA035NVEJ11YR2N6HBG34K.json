@@ -1,0 +1,16 @@
+{
+  "id": "01M6GA035NVEJ11YR2N6HBG34K",
+  "ts": "2026-11-03T08:56:46.005Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "doing",
+    "seq": 2,
+    "text": "WP13 (ST0001/13): the series C1 C2 C3 C4 C6 C5 C7 C8 is built and each commit measured in its own slot, in scratch clone wp13 (banked as local branch wp13); reds measured for AT-00.1/2/3/4/6/9 and C6 C7 C8; AT-00.7's Linux red is candidate/wp13-at007-red, for hv's push (vc's hold 2 item 9). Live read-only parity (AC-00.5) running: verdicts only (D11); two grep differences put to vc for a ruling. Then: rebase onto main as cc/wp13 for vc's fresh-clone verification, hv's cutover (steps and rollback ready), then landing."
+  }
+}

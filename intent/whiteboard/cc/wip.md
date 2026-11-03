@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 08:01Z
+heartbeat_at: 2026-11-03 08:56Z
 status: active
-focus: "WP13: building the cutover commits in scratch clone wp13 (removals, the sidecar cut, the no-Python gate); five rulings asked of vc; nothing lands before hv's cutover (D3); then the live read-only parity, verdicts only"
+focus: "WP13: series C1-C8 measured; parity running (verdicts only); two grep differences with vc for a ruling; next cc/wp13 for vc's verification, then hv's cutover, then landing"
 claims: [ST0001/13]
 ---
 
@@ -13,7 +13,7 @@ claims: [ST0001/13]
 
 ## DOING
 
-- WP13 (ST0001/13, claimed): build the removal commit (legacy scripts, lib/, setup.sh, .env.example, VERSION.md, src/pplr-*, the fallback, the legacy-only tests and guards), the Swift sidecar cut to dump/backup/group with IN-SW-CODE-006 back on, and the no-Python gate, in scratch clone wp13; nothing lands before hv's cutover (D3). Five rulings asked of vc (cutover sequencing, the capture's removal, AC-01.3, the guard's definition, the ST-level ATs). Then the live read-only parity (AC-00.5), verdicts only.
+- WP13 (ST0001/13): the series C1 C2 C3 C4 C6 C5 C7 C8 is built and each commit measured in its own slot, in scratch clone wp13 (banked as local branch wp13); reds measured for AT-00.1/2/3/4/6/9 and C6 C7 C8; AT-00.7's Linux red is candidate/wp13-at007-red, for hv's push (vc's hold 2 item 9). Live read-only parity (AC-00.5) running: verdicts only (D11); two grep differences put to vc for a ruling. Then: rebase onto main as cc/wp13 for vc's fresh-clone verification, hv's cutover (steps and rollback ready), then landing. (edited)
 
 ## TODO
 
