@@ -10,7 +10,7 @@ completed:
 
 ## Objective
 
-Make Homebrew the way Pplr reaches a machine. `brew install matthewsinclair/pplr/pplr` installs a source-built formula, rendered by devbin's formula tool into the tap `matthewsinclair/homebrew-pplr`. Releases are cut by devbin 0.1.19's release core, with gates run locally, on the kovacs leg and in CI. pplr follows devbin's dev/opt/brew contract (T1 to T10). The thread ends with rhadamanth running brew's pplr at 2.0.0.
+Make Homebrew the way Pplr reaches a machine. `brew install matthewsinclair/pplr/pplr` installs the release's prebuilt assets, one tarball per target (`aarch64-apple-darwin`, and `x86_64` and `aarch64` Linux musl), through a formula that devbin's formula tool renders in assets mode from `packaging/homebrew/pplr.rb` into the tap `matthewsinclair/homebrew-pplr`. The macOS binaries and `Pplr Links.app` are signed with Geodica's Developer ID and notarised, and the formula verifies each signature against its designated requirement. Releases are cut by devbin 0.1.19's release core, with gates run locally, on the kovacs leg and in CI. pplr follows devbin's dev/opt/brew contract (T1 to T10). The thread ends with rhadamanth running brew's pplr at 2.0.0.
 
 ## Context
 
