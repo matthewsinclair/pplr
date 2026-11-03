@@ -1,0 +1,14 @@
+{
+  "id": "01M6H7D1M7ZMY0C1T3JSTDP4MR",
+  "ts": "2026-11-03T17:30:39.111Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.satisfy",
+  "subject": {
+    "type": "ac",
+    "id": "ST0002/AC-06.2"
+  },
+  "payload": {
+    "evidence": "hv's 2.0.0 release sitting on 2026-11-03, step 8, from iTerm: pplr sync --check, then brew reinstall pplr (codesign --verify ran on pplr, pplr-contacts and Pplr Links.app; the 2.0.0 keg installed), then pplr sync --check: macOS showed no Contacts prompt at either read, both reads returned the same report line for line, and pplr resolved to brew's (pplr 2.0.0 (brew, dd6dc5b96a2f)). A pplr:// link clicked opened in brew's pplr."
+  }
+}

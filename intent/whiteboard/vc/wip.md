@@ -3,9 +3,9 @@ node: vc
 name: vc
 role: vc
 session_id: 60a887be-5fa2-4cf5-8de1-310286047151
-heartbeat_at: 2026-11-03 15:13Z
+heartbeat_at: 2026-11-03 17:36Z
 status: active
-focus: "Back after hv's move; localfold for compact. 2.0.0 is out through brew (dd6dc5b; ST0002 evidence c244a76, 15 of 16). hv ran step 8 (cc relayed: both sync --check reads the same, brew's codesign verify passed); open: hv says whether macOS prompted, then vc satisfies AC-06.2, dc's doing 7, vc's st done ST0002. ST0001's sync follow-up (intent sync --apply, CLAUDE.md and ARCHITECTURE.md pointers) is undone, back with vc (cc's 15:1xZ message). Then devbin's one-command release (decision 26, todo 8). After the compact: /in-session, intent estate control take --node vc, re-arm the slot watch."
+focus: "ST0002 closed (all 16 criteria; WP04, WP06 and WP07 done by vc at hv's word; dc unclaims at next pickup). ST0001's views are off disk (cc 5ffaf01). 2.0.0 is out through brew. Next, first job after: devbin's one-command release, bin/devbin release vX (decision 26, todo 8), with Devbin un-parked. Main's post-release commits wait for hv's push."
 claims: []
 ---
 
@@ -22,7 +22,7 @@ _(none)_
 
 ## Holds
 
-- hv's step 8 from iTerm, the last step of the 2.0.0 sitting (ST0002 AC-06.2): pplr sync --check; brew reinstall pplr; pplr sync --check, reporting only whether each prompted, the prompt's words and the two exit codes (the check's body names people). Released when hv reports it: vc satisfies AC-06.2, dc closes WP06 beside WP04 and WP07 (dc's doing 7), and vc runs st done ST0002. Also left from step 7: one pplr:// link clicked, which should open in brew's pplr. (edited)
+_(none)_
 
 ## Watch-outs
 

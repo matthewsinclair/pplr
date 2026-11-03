@@ -1,9 +1,9 @@
 ---
 st_id: ST0002
 title: Create a homebrew distro for the new Rust version of Pplr
-status: WIP
+status: Completed
 created: 2026-11-02
-completed:
+completed: 2026-11-03
 ---
 
 # ST0002: Create a homebrew distro for the new Rust version of Pplr
@@ -38,16 +38,16 @@ Make Homebrew the way Pplr reaches a machine. `brew install matthewsinclair/pplr
 
 ## Work Packages
 
-| WP    | Title                                                                  | Size | Status      |
-| ----- | ---------------------------------------------------------------------- | ---- | ----------- |
-| WP-01 | Release and install design for pplr                                    | S    | Done        |
-| WP-02 | devbin release core and CI candidates                                  | M    | Done        |
-| WP-03 | Install, manifest, tree identity, version line and use                 | L    | Done        |
-| WP-04 | Assets formula, tap and tap CI                                         | M    | WIP         |
-| WP-05 | Walking skeleton through a scratch tap                                 | M    | Cancelled   |
-| WP-06 | Release 2.0.0 and move rhadamanth to brew                              | M    | Not Started |
-| WP-07 | Developer ID signing and notarisation                                  | M    | WIP         |
-| WP-08 | tools/ becomes devbin project commands: bin/devbin the one entry point | S    | Done        |
+| WP    | Title                                                                  | Size | Status    |
+| ----- | ---------------------------------------------------------------------- | ---- | --------- |
+| WP-01 | Release and install design for pplr                                    | S    | Done      |
+| WP-02 | devbin release core and CI candidates                                  | M    | Done      |
+| WP-03 | Install, manifest, tree identity, version line and use                 | L    | Done      |
+| WP-04 | Assets formula, tap and tap CI                                         | M    | Done      |
+| WP-05 | Walking skeleton through a scratch tap                                 | M    | Cancelled |
+| WP-06 | Release 2.0.0 and move rhadamanth to brew                              | M    | Done      |
+| WP-07 | Developer ID signing and notarisation                                  | M    | Done      |
+| WP-08 | tools/ becomes devbin project commands: bin/devbin the one entry point | S    | Done      |
 
 ## Acceptance
 

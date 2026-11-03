@@ -2,7 +2,7 @@
 wp_id: WP-06
 title: Release 2.0.0 and move rhadamanth to brew
 scope: M
-status: Not Started
+status: Done
 ---
 
 # WP-06: Release 2.0.0 and move rhadamanth to brew

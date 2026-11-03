@@ -8,15 +8,7 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
 
 ## DOING
 
-- [-] ST0002: Create a homebrew distro for the new Rust version of Pplr
-  - [x] 01: Release and install design for pplr
-  - [x] 02: devbin release core and CI candidates
-  - [x] 03: Install, manifest, tree identity, version line and use
-  - [-] 04: Assets formula, tap and tap CI
-  - [~] 05: Walking skeleton through a scratch tap
-  - [ ] 06: Release 2.0.0 and move rhadamanth to brew
-  - [-] 07: Developer ID signing and notarisation
-  - [x] 08: tools/ becomes devbin project commands: bin/devbin the one entry point
+_(none)_
 
 ## TODO
 
@@ -39,6 +31,15 @@ _(none)_
   - [x] 12: Doctor and Finder icons
   - [x] 13: Cutover
   - [x] 14: pplr's own mail reader
+- [x] ST0002: Create a homebrew distro for the new Rust version of Pplr
+  - [x] 01: Release and install design for pplr
+  - [x] 02: devbin release core and CI candidates
+  - [x] 03: Install, manifest, tree identity, version line and use
+  - [x] 04: Assets formula, tap and tap CI
+  - [~] 05: Walking skeleton through a scratch tap
+  - [x] 06: Release 2.0.0 and move rhadamanth to brew
+  - [x] 07: Developer ID signing and notarisation
+  - [x] 08: tools/ becomes devbin project commands: bin/devbin the one entry point
 
 ---
 

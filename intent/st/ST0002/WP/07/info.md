@@ -2,7 +2,7 @@
 wp_id: WP-07
 title: Developer ID signing and notarisation
 scope: M
-status: WIP
+status: Done
 ---
 
 # WP-07: Developer ID signing and notarisation

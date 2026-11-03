@@ -57,6 +57,8 @@ Ruling 1 signs every binary, and only rhadamanth holds the identity. So `Pplr Li
 
 ## 5. The release order
 
+As built, the release is documented in `docs/releasing.md` ("Cutting a release"), which is the one place to read it. 2.0.0 shipped the signed macOS asset alone, with `formula publish` run by hand after the attach (design.md rulings 9 and 10). What follows is the order as designed, with the Linux leg still to come.
+
 Under devbin's release core, with `release.assets.workflow: release-assets.yml`:
 
 1. **Local:** `bin/devbin release`, after the gates `check all`, `test all` and `doctor`, the kovacs leg and CI on `candidate/<tag>`. It bumps through `bin/devbin lock-sync` (E4), commits, tags, pushes `local` then `upstream`, and creates the GitHub release.

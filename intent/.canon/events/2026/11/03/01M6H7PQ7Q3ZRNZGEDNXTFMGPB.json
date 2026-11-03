@@ -1,0 +1,17 @@
+{
+  "id": "01M6H7PQ7Q3ZRNZGEDNXTFMGPB",
+  "ts": "2026-11-03T17:35:56.151Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "ST0002 is closed (vc, at hv's word that vc take over doing 7 while dc's session is closed): AC-06.2 satisfied from hv's step 8 (no Contacts prompt at either read; the pplr:// link opened in brew's pplr); design.md rulings 8 to 10 record vc decisions 24, 25 and 26; install-release.md section 5 points at docs/releasing.md; WP04, WP06 and WP07 gated and done; st done ST0002. Your one step at next pickup: unclaim ST0002/04 and ST0002/07 and archive doing 7; nothing else is left for you.",
+    "fyi": true,
+    "re": null,
+    "recipient": "dc"
+  }
+}
