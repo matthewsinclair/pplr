@@ -2182,3 +2182,55 @@ fn rename_lists_running_text_outside_the_persons_own_files() -> Result<()> {
   );
   Ok(())
 }
+
+/// ST0001 WP13, vc decision 15 (a D10 fix the live parity found): grep and
+/// grep -t list people in name order, the same on every filesystem, where the
+/// legacy's grep -r and find gave the filesystem's own directory order.
+#[test]
+fn grep_lists_people_in_name_order() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  for (letter, folder, name) in [
+    ("Z", "Zeal, Zara", "Zara Zeal"),
+    ("A", "Abbott, Ann", "Ann Abbott"),
+  ] {
+    let about = sandbox.data().join(format!("{letter}/{folder}/About"));
+    fs::create_dir_all(&about)?;
+    fs::write(
+      about.join(format!("{name} (About).md")),
+      format!("# {name} (About)\n\n- Role:     Engineer\n"),
+    )?;
+    fs::write(about.join("tags.yaml"), "tags:\n  - engineer\n")?;
+  }
+  for args in [&["grep", "Engineer"][..], &["grep", "-t", "engineer"]] {
+    let out = run(sandbox.pplr().args(args))?;
+    let listing = text(&out.stdout);
+    let first = listing.find("[Abbott, Ann]");
+    let last = listing.find("[Zeal, Zara]");
+    assert!(
+      matches!((first, last), (Some(a), Some(z)) if a < z),
+      "pplr {args:?} is not in name order: {listing}"
+    );
+  }
+  Ok(())
+}
+
+/// ST0001 WP13, vc decision 15 (a D10 fix the live parity found): grep prints
+/// a matched line as the file holds it, so an empty "- Role:" keeps its colon,
+/// which the legacy's `IFS=: read` dropped when it was the line's only one.
+#[test]
+fn grep_prints_a_matched_line_as_the_file_holds_it() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let about = sandbox.data().join("P/Pemberton, Rufus/About");
+  fs::create_dir_all(&about)?;
+  fs::write(
+    about.join("Rufus Pemberton (About).md"),
+    "# Rufus Pemberton (About)\n\n- Role:\n",
+  )?;
+  let out = run(sandbox.pplr().args(["grep", "Role"]))?;
+  let listing = text(&out.stdout);
+  assert!(
+    listing.lines().any(|line| line == "   \u{2192} - Role:"),
+    "{listing}"
+  );
+  Ok(())
+}
