@@ -37,19 +37,20 @@ const SEEN_WITH: usize = 20;
 /// The width `show` pads a facet's name to.
 const FACET_WIDTH: usize = 13;
 const SOURCES: [&str; 3] = ["hand", "auto", "inferred"];
-/// What `pplr tags` with no command prints: the usage tags.py printed.
+/// What `pplr tags` with no command prints: tags.py's usage, laid out as it
+/// was, naming `pplr tags` (ST0001 WP13, vc decision 14).
 const USAGE: &str = "
-    tags.py check                 every tags.yaml against the vocabulary
-    tags.py show PERSON           a person's tags, by facet
-    tags.py render [--dry-run]    the \"- Tags:\" line in each About, linking each tag to
-                                  its page, and the tag pages in $PPLR_DATA/_tags/
-    tags.py index                 .index/tags_index.json: everyone with name, marker,
-                                  role, company, picture and tags by facet
-    tags.py edit PERSON +tag -tag add or remove hand tags, checked against the vocabulary
-    tags.py apply FILE [--dry-run]
-                                  write tags.yaml from a JSON list of
-                                  {person, auto: [tag], inferred: [{tag, evidence}], hand: [tag]};
-                                  hand tags already in the file are kept
+    pplr tags check                 every tags.yaml against the vocabulary
+    pplr tags show PERSON           a person's tags, by facet
+    pplr tags render [--dry-run]    the \"- Tags:\" line in each About, linking each tag to
+                                    its page, and the tag pages in $PPLR_DATA/_tags/
+    pplr tags index                 .index/tags_index.json: everyone with name, marker,
+                                    role, company, picture and tags by facet
+    pplr tags edit PERSON +tag -tag add or remove hand tags, checked against the vocabulary
+    pplr tags apply FILE [--dry-run]
+                                    write tags.yaml from a JSON list of
+                                    {person, auto: [tag], inferred: [{tag, evidence}], hand: [tag]};
+                                    hand tags already in the file are kept
 ";
 
 /// The vocabulary: each tag's facet, what each old or folded word becomes,

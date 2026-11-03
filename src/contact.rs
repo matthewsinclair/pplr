@@ -31,21 +31,22 @@ const VIAS: [&str; 4] = ["meeting", "email", "call", "message"];
 const CONTEXT_LINES: usize = 80;
 /// Days in each unit of `next +N[dwm]`.
 const DAYS_PER: [(&str, i64); 3] = [("d", 1), ("w", 7), ("m", 30)];
-/// What `pplr contact` with no command prints: the usage contact.py printed.
+/// What `pplr contact` with no command prints: contact.py's usage, laid out
+/// as it was, naming `pplr contact` (ST0001 WP13, vc decision 14).
 const USAGE: &str = "
-    contact.py scan [--dry-run]     last from each person's newest meeting, and next from the cadence
-    contact.py due [DAYS] [--all]   who to get in touch with: next on or before today (plus DAYS);
-                                    --all lists everyone with a next date
-    contact.py show PERSON          a person's contact.yaml, with their cadence
-    contact.py log [PERSON] [DATE] [--via email|call|message|meeting] [--email N|MESSAGE-ID]
-                   [--link URL] [--note TEXT]
-                                    record a contact (DATE defaults to today); next moves on;
-                                    --email links the message: N is its number in the last
-                                    pplr email listing, which also gives the date, subject and
-                                    person (the sender, or who you sent it to), so PERSON can go
-    contact.py render               About/<First Surname> (Contact).md from contact.yaml, for everyone
-    contact.py next PERSON WHEN     set next: a date (2026-11-01) or from today (+2w, +10d, +3m)
-    contact.py context PERSON       what to write from: role, latest update, last contact and its notes
+    pplr contact scan [--dry-run]     last from each person's newest meeting, and next from the cadence
+    pplr contact due [DAYS] [--all]   who to get in touch with: next on or before today (plus DAYS);
+                                      --all lists everyone with a next date
+    pplr contact show PERSON          a person's contact.yaml, with their cadence
+    pplr contact log [PERSON] [DATE] [--via email|call|message|meeting] [--email N|MESSAGE-ID]
+                     [--link URL] [--note TEXT]
+                                      record a contact (DATE defaults to today); next moves on;
+                                      --email links the message: N is its number in the last
+                                      pplr email listing, which also gives the date, subject and
+                                      person (the sender, or who you sent it to), so PERSON can go
+    pplr contact render               About/<First Surname> (Contact).md from contact.yaml, for everyone
+    pplr contact next PERSON WHEN     set next: a date (2026-11-01) or from today (+2w, +10d, +3m)
+    pplr contact context PERSON       what to write from: role, latest update, last contact and its notes
 ";
 
 /// A person's contact.yaml as contact.py held it.

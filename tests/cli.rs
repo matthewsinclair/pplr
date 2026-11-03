@@ -1964,3 +1964,45 @@ fn publish_lays_out_an_app_bundle_file_by_file_with_each_mode_kept() -> Result<(
   );
   Ok(())
 }
+
+/// ST0001 WP13, vc decision 14 (a D10 fix): `pplr tags` and `pplr contact`
+/// with no command print their usage naming the pplr command, where the port
+/// had kept the legacy helper's name, in its layout, and exit 0 as it did.
+#[test]
+fn tags_and_contact_with_no_command_print_their_usage_naming_pplr() -> Result<()> {
+  let tags = "
+    pplr tags check                 every tags.yaml against the vocabulary
+    pplr tags show PERSON           a person's tags, by facet
+    pplr tags render [--dry-run]    the \"- Tags:\" line in each About, linking each tag to
+                                    its page, and the tag pages in $PPLR_DATA/_tags/
+    pplr tags index                 .index/tags_index.json: everyone with name, marker,
+                                    role, company, picture and tags by facet
+    pplr tags edit PERSON +tag -tag add or remove hand tags, checked against the vocabulary
+    pplr tags apply FILE [--dry-run]
+                                    write tags.yaml from a JSON list of
+                                    {person, auto: [tag], inferred: [{tag, evidence}], hand: [tag]};
+                                    hand tags already in the file are kept
+";
+  let contact = "
+    pplr contact scan [--dry-run]     last from each person's newest meeting, and next from the cadence
+    pplr contact due [DAYS] [--all]   who to get in touch with: next on or before today (plus DAYS);
+                                      --all lists everyone with a next date
+    pplr contact show PERSON          a person's contact.yaml, with their cadence
+    pplr contact log [PERSON] [DATE] [--via email|call|message|meeting] [--email N|MESSAGE-ID]
+                     [--link URL] [--note TEXT]
+                                      record a contact (DATE defaults to today); next moves on;
+                                      --email links the message: N is its number in the last
+                                      pplr email listing, which also gives the date, subject and
+                                      person (the sender, or who you sent it to), so PERSON can go
+    pplr contact render               About/<First Surname> (Contact).md from contact.yaml, for everyone
+    pplr contact next PERSON WHEN     set next: a date (2026-11-01) or from today (+2w, +10d, +3m)
+    pplr contact context PERSON       what to write from: role, latest update, last contact and its notes
+";
+  let sandbox = Sandbox::new()?;
+  for (command, usage) in [("tags", tags), ("contact", contact)] {
+    let out = run(sandbox.pplr().arg(command))?;
+    assert_eq!(out.status.code(), Some(0), "pplr {command}");
+    assert_eq!(text(&out.stdout), format!("{usage}\n"), "pplr {command}");
+  }
+  Ok(())
+}
