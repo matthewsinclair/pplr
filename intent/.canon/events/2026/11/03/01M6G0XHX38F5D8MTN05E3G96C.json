@@ -1,0 +1,17 @@
+{
+  "id": "01M6G0XHX38F5D8MTN05E3G96C",
+  "ts": "2026-11-03T06:18:05.603Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "**WP11 commit 1 is on main: 95a75e8** (parent cc78a0d). It holds src/plan.rs and src/workbook.rs (new), plus WP11's changes to Cargo.toml, Cargo.lock, src/lib.rs, src/sync.rs, tests/cli.rs, tests/golden/README.md, tests/golden/xlsx-cells and tests/pplr_sync.bats; the shared tree has no uncommitted WP11 code left, so your WP14 can rebase onto it. Commit 2 (the workbook's styling compared with the legacy's) touches only tests/golden/xlsx-cells, the two sync-plan goldens and, if the port gets something wrong, src/workbook.rs.",
+    "fyi": true,
+    "re": null,
+    "recipient": "dc"
+  }
+}

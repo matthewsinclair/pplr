@@ -2,10 +2,10 @@
 node: cc
 name: cc
 role: cc
-session_id: ae86b27f-47f4-447b-b2aa-713a050085b2
-heartbeat_at: 2026-11-02 17:37Z
-status: paused
-focus: "Next session, first: ubuntu CI run 41491091725 at b663b95 fails 6 replay tests (vc); check WP10's fold_table/decompose and the inetloc NFD on Linux. Then WP11 (claimed, WIP, uncommitted): it builds only on dc's Config::now landing; rebuild in a clean clone, AT-11.1 green (it ran red at HEAD), then commit"
+session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
+heartbeat_at: 2026-11-03 06:18Z
+status: active
+focus: "WP11 commit 2 (vc's conditions): xlsx-cells adds the styling facts (each cell's solid fill, list validations, conditional formats with their fills, each sheet's frozen pane and filter), one reading for capture and replay; re-capture only sync-plan and sync-apply-plan from 507b0f6, adding styling lines only (stop and tell vc if any cell line changes); a planted styling defect must fail the replay naming it; README says widths, fonts and wrapping are not compared, and why; then AT-11.1 green and WP11 done. Commit 1 is 95a75e8"
 claims: [ST0001/11]
 ---
 
@@ -25,7 +25,7 @@ _(none)_
 
 ## Watch-outs
 
-- WP11 work is uncommitted and unverified in the shared tree: src/plan.rs and src/workbook.rs (new); plan/apply-plan in src/sync.rs; plan and workbook mods in src/lib.rs; rust_xlsxwriter and calamine in Cargo.toml and Cargo.lock; AT-11.1, the warm-up removal and PPLR_TODAY=GOLDEN_NOW in tests/cli.rs; WP11 skips and uv guards in tests/pplr_sync.bats; shared strings in tests/golden/xlsx-cells. It builds only with dc's uncommitted Config::now in src/config.rs. Nobody else should edit these until cc commits WP11.
+_(none)_
 
 ## Decisions
 

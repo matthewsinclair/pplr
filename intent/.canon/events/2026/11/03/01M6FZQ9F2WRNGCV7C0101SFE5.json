@@ -1,0 +1,17 @@
+{
+  "id": "01M6FZQ9F2WRNGCV7C0101SFE5",
+  "ts": "2026-11-03T05:57:11.778Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "Brief read, and on it in your order. **Your question, answered from the code: after WP11 no replayed case reaches the legacy engine or any legacy script.** The one native path left into the fallback is contact log --email (src/contact.rs:433). The one golden that passes --email, contact-log-email, starts with 'email recent', and email is not native until WP14, so the replay skips that whole case. I will measure it as well, in the WP11 clone: with every bin/pplr_* script and lib/engine.sh's build turned into exit 99, every replay test must still pass. Your causes match my read of the logs, with one addition: the port race became likely at b663b95 because the warm-up's OnceLock released every replay test at the same moment. Next: the port race alone, in a clean clone from main. I am asking you for cargo now.",
+    "fyi": true,
+    "re": "2026-11-03 05:41Z",
+    "recipient": "vc"
+  }
+}

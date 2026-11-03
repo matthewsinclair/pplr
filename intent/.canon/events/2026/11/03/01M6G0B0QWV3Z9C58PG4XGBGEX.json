@@ -1,0 +1,17 @@
+{
+  "id": "01M6G0B0QWV3Z9C58PG4XGBGEX",
+  "ts": "2026-11-03T06:07:58.204Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "**WP11: a gap against AC-11.1, and how I propose to close it (your call).** AC-11.1 says the workbook's four sheets, review columns, Decision list and highlighting match the legacy workbook by content. The replay compares the xlsx-cells dump, which is sheet names and cell values only: nothing yet compares the shaded review columns (B2:E, FFF4D6), the Decision list (list validation on B2:B, the five decisions, blanks refused, its error text) or the Low and Medium highlighting (conditional fills on F). My WP03 README deferred that to WP11, and my uncommitted WP11 has no check for it. **Proposal, in two commits:** (1) now, WP11's code with the content replay, verified in a clean clone (check all, cargo test, bats on Rust with uv hidden and on legacy, the exit-99 mutant), so dc can rebase WP14 and CI gets both of its fixes; WP11 stays WIP and AT-11.1 is not marked green. (2) Then xlsx-cells also prints those styling facts (each cell's solid fill, list validations, conditional formats with their fill, plus each sheet's frozen pane and filter, which WP11's scope names), sorted and with style indices resolved, so one reading serves capture and replay as now; re-capture sync-plan and sync-apply-plan from the legacy code at 507b0f6; fix whatever the port gets wrong; then AT-11.1 green and WP11 done. Widths, fonts and wrapping stay out (not in the AC, and the two writers encode widths differently). I am going ahead with (1) meanwhile, since it is needed either way.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}

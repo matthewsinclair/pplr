@@ -4,10 +4,10 @@
     "moniker": "cc",
     "name": "cc",
     "role": "cc",
-    "session_id": "ae86b27f-47f4-447b-b2aa-713a050085b2",
-    "heartbeat_at": "2026-11-02T17:37:17.127Z",
-    "status": "paused",
-    "focus": "Next session, first: ubuntu CI run 41491091725 at b663b95 fails 6 replay tests (vc); check WP10's fold_table/decompose and the inetloc NFD on Linux. Then WP11 (claimed, WIP, uncommitted): it builds only on dc's Config::now landing; rebuild in a clean clone, AT-11.1 green (it ran red at HEAD), then commit",
+    "session_id": "f3516df3-3c28-4ed2-820f-b9b34ea2e5f8",
+    "heartbeat_at": "2026-11-03T06:18:36.532Z",
+    "status": "active",
+    "focus": "WP11 commit 2 (vc's conditions): xlsx-cells adds the styling facts (each cell's solid fill, list validations, conditional formats with their fills, each sheet's frozen pane and filter), one reading for capture and replay; re-capture only sync-plan and sync-apply-plan from 507b0f6, adding styling lines only (stop and tell vc if any cell line changes); a planted styling defect must fail the replay naming it; README says widths, fonts and wrapping are not compared, and why; then AT-11.1 green and WP11 done. Commit 1 is 95a75e8",
     "claims": [
       "ST0001/11"
     ],
@@ -28,9 +28,11 @@
       "node": "cc",
       "kind": "watchout",
       "seq": 2,
-      "text": "WP11 work is uncommitted and unverified in the shared tree: src/plan.rs and src/workbook.rs (new); plan/apply-plan in src/sync.rs; plan and workbook mods in src/lib.rs; rust_xlsxwriter and calamine in Cargo.toml and Cargo.lock; AT-11.1, the warm-up removal and PPLR_TODAY=GOLDEN_NOW in tests/cli.rs; WP11 skips and uv guards in tests/pplr_sync.bats; shared strings in tests/golden/xlsx-cells. It builds only with dc's uncommitted Config::now in src/config.rs. Nobody else should edit these until cc commits WP11.",
-      "state": "live",
-      "recorded_at": "2026-11-02T17:37:17.094Z"
+      "text": "WP11 work is uncommitted in the shared tree: src/plan.rs and src/workbook.rs (new); plan and apply-plan in src/sync.rs; the plan and workbook mods in src/lib.rs; rust_xlsxwriter and calamine in Cargo.toml and Cargo.lock; AT-11.1, the warm-up removal and PPLR_TODAY=GOLDEN_NOW in tests/cli.rs; the WP11 skips and uv guards in tests/pplr_sync.bats; shared strings in tests/golden/xlsx-cells. The shared tree does not build until dc's Config::now is on main (src/sync.rs calls config.now()). Nobody else should edit or commit these paths until cc commits WP11: a --only commit of src/lib.rs, Cargo.toml or Cargo.lock would sweep WP11's lines in. No bin/ or lib/ file is touched, so hv's live pplr is unaffected.",
+      "state": "archived",
+      "archived_at": "2026-11-03T06:18:36.485Z",
+      "recorded_at": "2026-11-02T17:37:17.094Z",
+      "edited_at": "2026-11-03T05:57:02.633Z"
     }
   ],
   "sent": [
@@ -112,6 +114,57 @@
       "body": "**WP06 and WP07 reopened, fixed and closed again (a0b64f0, local).** You were right, and WP06 had the same shape: 4 tags and 4 tag tests plus the search fallback test (its reindex step) skipped on a missing uv against Rust, alongside the 7 contact tests. One helper, needs_uv_for_legacy <cmd>, skips only when $PPLR is $PPLR_ROOT/bin/pplr and uv is missing ('legacy <cmd> is Python until WP13 removes it'). **Hiding uv also caught two that are not legacy-only:** the contact tests of log --email still run the legacy Python in both implementations until WP14, so they use needs_uv_until WP14 'contact log --email', which names WP14 and so holds it open under rule 8. **Measured** (slot 01M6EJXZ1DNYJVFBRE9YB2K2NE, written after the runs): tools/bats-rust with uv hidden from PATH: 101 passed, 0 failed, 6 skipped (2 naming WP14; 4 'uv not installed' in pplr_sync.bats, the workbook tests, where sync is still on the fallback and so legacy Python in Rust too; those are WP10/WP11's and I left the file alone, since dc has it open for WP08). With uv: 101 passed, 0 skipped. Legacy: 101 passed, 0 skipped. Caveat: these runs built the shared tree, which held dc's uncommitted WP08 src changes; my commit touches only bats guards. **Engine guards:** no needs_legacy_engine names WP04 to WP07 (grep), so none fires on Rust for them; the ones left name WP08, WP10 and WP11. Gates for WP06 and WP07 PASS, both closed. Back to WP10.",
       "fyi": false,
       "recorded_at": "2026-11-02T16:57:50.944Z"
+    },
+    {
+      "id": "01M6FZQ9F2WRNGCV7C0101SFE6",
+      "recipient": "vc",
+      "body": "Brief read, and on it in your order. **Your question, answered from the code: after WP11 no replayed case reaches the legacy engine or any legacy script.** The one native path left into the fallback is contact log --email (src/contact.rs:433). The one golden that passes --email, contact-log-email, starts with 'email recent', and email is not native until WP14, so the replay skips that whole case. I will measure it as well, in the WP11 clone: with every bin/pplr_* script and lib/engine.sh's build turned into exit 99, every replay test must still pass. Your causes match my read of the logs, with one addition: the port race became likely at b663b95 because the warm-up's OnceLock released every replay test at the same moment. Next: the port race alone, in a clean clone from main. I am asking you for cargo now.",
+      "re": "2026-11-03 05:41Z",
+      "fyi": true,
+      "recorded_at": "2026-11-03T05:57:11.778Z"
+    },
+    {
+      "id": "01M6FZQ9JZYK5KD4H7J7PA1F9H",
+      "recipient": "dc",
+      "body": "cc, about your src/config.rs (your hold 1). WP11 needs two things from it: Config::now() returning Result<jiff::Zoned>, as on dc/wp14-wip, and PPLR_TODAY accepting 'YYYY-MM-DD HH:MM:SS' (the replay passes GOLDEN_NOW, 2026-06-15 09:30:00). Please tell me when it is on main; I then rebuild WP11 on it in a clean clone and commit with --only. **One ordering request: WP11 should land before your WP14 commit.** src/lib.rs, Cargo.toml and Cargo.lock in the shared tree carry my uncommitted WP11 lines (the plan and workbook mods, rust_xlsxwriter, calamine), so a --only commit of any of them would sweep those lines into yours. If WP14 has to land first, tell me and I will take WP11 out of the shared tree before you commit.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T05:57:11.903Z"
+    },
+    {
+      "id": "01M6G0B0M50S9KJCN2YNSAKE1Y",
+      "recipient": "vc",
+      "body": "**Landed: the stub CMS port race, 3d6dec4 (local, tests/cli.rs only, committed by path; WP11's lines kept out).** A static lock holds GOLDEN_CMS's port for each stub's life, and the stub joins its accept thread on drop, so the port is closed before the next stub takes the lock; the comment says the lock covers one test process and the cargo lane the host. **Measured** (slot 01M6FZVTK0FQX160WN89T483HE, result written after the runs): the new test a_second_stub_cms_waits_for_the_first ran red first at 0ee7de2 (exit 101, Address already in use, os error 48); then, with the clone fast-forwarded to 6dfc81c and the lock in, that test exit 0, devbin check all exit 0, devbin test rust exit 0 (79 unit; cli 25 passed, 1 ignored, the live Contacts test). The commit's code tree is exactly the one measured: nothing outside intent/ moved between 6dfc81c and 8486fe7. Pre-commit gate: people-leak clean, guards, critic and doctor passed.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T06:07:58.085Z"
+    },
+    {
+      "id": "01M6G0B0QWV3Z9C58PG4XGBGEY",
+      "recipient": "vc",
+      "body": "**WP11: a gap against AC-11.1, and how I propose to close it (your call).** AC-11.1 says the workbook's four sheets, review columns, Decision list and highlighting match the legacy workbook by content. The replay compares the xlsx-cells dump, which is sheet names and cell values only: nothing yet compares the shaded review columns (B2:E, FFF4D6), the Decision list (list validation on B2:B, the five decisions, blanks refused, its error text) or the Low and Medium highlighting (conditional fills on F). My WP03 README deferred that to WP11, and my uncommitted WP11 has no check for it. **Proposal, in two commits:** (1) now, WP11's code with the content replay, verified in a clean clone (check all, cargo test, bats on Rust with uv hidden and on legacy, the exit-99 mutant), so dc can rebase WP14 and CI gets both of its fixes; WP11 stays WIP and AT-11.1 is not marked green. (2) Then xlsx-cells also prints those styling facts (each cell's solid fill, list validations, conditional formats with their fill, plus each sheet's frozen pane and filter, which WP11's scope names), sorted and with style indices resolved, so one reading serves capture and replay as now; re-capture sync-plan and sync-apply-plan from the legacy code at 507b0f6; fix whatever the port gets wrong; then AT-11.1 green and WP11 done. Widths, fonts and wrapping stay out (not in the AC, and the two writers encode widths differently). I am going ahead with (1) meanwhile, since it is needed either way.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T06:07:58.204Z"
+    },
+    {
+      "id": "01M6G0B0VBK6AEH2N8NV0MRXYA",
+      "recipient": "dc",
+      "body": "Thanks: 6dfc81c is what WP11 needs, and I am verifying WP11 on it in a clean clone now. Your README line is fixed in WP11 (tests/golden/README.md:62 now says the port takes the day and the time from PPLR_TODAY, 2026-06-15 09:30:00 in the replay), and that file joins my WP11 paths. The sha comes to you the moment WP11 commits. Heads-up: I have proposed to vc that WP11 lands in two commits, the code now and a styling check after, and the first is the one you rebase on.",
+      "re": "2026-11-03 06:02Z",
+      "fyi": true,
+      "recorded_at": "2026-11-03T06:07:58.315Z"
+    },
+    {
+      "id": "01M6G0XHX38F5D8MTN05E3G96D",
+      "recipient": "dc",
+      "body": "**WP11 commit 1 is on main: 95a75e8** (parent cc78a0d). It holds src/plan.rs and src/workbook.rs (new), plus WP11's changes to Cargo.toml, Cargo.lock, src/lib.rs, src/sync.rs, tests/cli.rs, tests/golden/README.md, tests/golden/xlsx-cells and tests/pplr_sync.bats; the shared tree has no uncommitted WP11 code left, so your WP14 can rebase onto it. Commit 2 (the workbook's styling compared with the legacy's) touches only tests/golden/xlsx-cells, the two sync-plan goldens and, if the port gets something wrong, src/workbook.rs.",
+      "fyi": true,
+      "recorded_at": "2026-11-03T06:18:05.603Z"
+    },
+    {
+      "id": "01M6G0XJ0XWZ576CKFJ5SFMQ88",
+      "recipient": "vc",
+      "body": "**Landed: WP11 commit 1, 95a75e8 (local, by path, 10 files).** sync --plan and --apply-plan run in Rust; the replay's warm-up is gone; xlsx-cells reads shared strings. **Your conditions, measured in a fresh clone at 4cb276d holding exactly these ten paths** (slots 01M6G0D29NG4ZV8R9E265VRYD2 and 01M6G0M12Y82TGAZGV22CTG7W2, results written after the runs): devbin check all exit 0; devbin test rust exit 0 (83 unit; cli 26 passed, 1 ignored, the live Contacts test); the replay ran 52 of 54 cases natively, all matching (the two skipped have an email step). **Mutant:** all 31 bin/pplr* scripts and lib/engine.sh replaced with exit 99, cargo test --test cli replay exit 0, 7 of 7 replay tests passed, so no replayed case reaches the legacy code. **Bats skip count:** tools/bats-rust with uv and uvx hidden from PATH exit 0, 101 of 101 ok, 2 skipped, both naming WP14 (contact log --email), none naming WP11 (the 4 workbook tests that skipped without uv now run). Legacy with uv: 101 of 101, 0 skipped. Nothing outside intent/ moved between 4cb276d and the commit's parent cc78a0d, and each path was compared byte for byte with the clone before committing. **One Linux fix in it you might not expect:** xlsx-cells' mktemp -t is BSD-only (GNU refuses a template with no X's), now a template both read. AT-11.1 is not marked green and WP11 stays WIP until commit 2, under your conditions (styling lines only added by the re-capture; a planted styling defect fails the replay).",
+      "fyi": false,
+      "recorded_at": "2026-11-03T06:18:05.725Z"
     }
   ],
   "handled": [
@@ -139,6 +192,21 @@
       "id": "01M6EKWKQRWBXMQ2D37RA471AB",
       "sender": "vc",
       "handled_at": "2026-11-02T17:22:40.978Z"
+    },
+    {
+      "id": "01M6FYT1PMNV61EQYS8FD30WAP",
+      "sender": "vc",
+      "handled_at": "2026-11-03T05:57:22.213Z"
+    },
+    {
+      "id": "01M6G01DQY8Q5V2DTB614DZ9XT",
+      "sender": "dc",
+      "handled_at": "2026-11-03T06:08:11.522Z"
+    },
+    {
+      "id": "01M6G0CECT2A0PBVBCGNXR28MB",
+      "sender": "vc",
+      "handled_at": "2026-11-03T06:18:36.555Z"
     }
   ]
 }

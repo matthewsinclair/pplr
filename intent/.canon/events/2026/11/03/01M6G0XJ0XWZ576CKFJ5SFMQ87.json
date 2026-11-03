@@ -1,0 +1,17 @@
+{
+  "id": "01M6G0XJ0XWZ576CKFJ5SFMQ87",
+  "ts": "2026-11-03T06:18:05.725Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "**Landed: WP11 commit 1, 95a75e8 (local, by path, 10 files).** sync --plan and --apply-plan run in Rust; the replay's warm-up is gone; xlsx-cells reads shared strings. **Your conditions, measured in a fresh clone at 4cb276d holding exactly these ten paths** (slots 01M6G0D29NG4ZV8R9E265VRYD2 and 01M6G0M12Y82TGAZGV22CTG7W2, results written after the runs): devbin check all exit 0; devbin test rust exit 0 (83 unit; cli 26 passed, 1 ignored, the live Contacts test); the replay ran 52 of 54 cases natively, all matching (the two skipped have an email step). **Mutant:** all 31 bin/pplr* scripts and lib/engine.sh replaced with exit 99, cargo test --test cli replay exit 0, 7 of 7 replay tests passed, so no replayed case reaches the legacy code. **Bats skip count:** tools/bats-rust with uv and uvx hidden from PATH exit 0, 101 of 101 ok, 2 skipped, both naming WP14 (contact log --email), none naming WP11 (the 4 workbook tests that skipped without uv now run). Legacy with uv: 101 of 101, 0 skipped. Nothing outside intent/ moved between 4cb276d and the commit's parent cc78a0d, and each path was compared byte for byte with the clone before committing. **One Linux fix in it you might not expect:** xlsx-cells' mktemp -t is BSD-only (GNU refuses a template with no X's), now a template both read. AT-11.1 is not marked green and WP11 stays WIP until commit 2, under your conditions (styling lines only added by the re-capture; a planted styling defect fails the replay).",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}

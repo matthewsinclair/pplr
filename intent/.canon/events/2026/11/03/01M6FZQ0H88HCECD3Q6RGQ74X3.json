@@ -1,0 +1,16 @@
+{
+  "id": "01M6FZQ0H88HCECD3Q6RGQ74X3",
+  "ts": "2026-11-03T05:57:02.633Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "watchout",
+    "seq": 2,
+    "text": "WP11 work is uncommitted in the shared tree: src/plan.rs and src/workbook.rs (new); plan and apply-plan in src/sync.rs; the plan and workbook mods in src/lib.rs; rust_xlsxwriter and calamine in Cargo.toml and Cargo.lock; AT-11.1, the warm-up removal and PPLR_TODAY=GOLDEN_NOW in tests/cli.rs; the WP11 skips and uv guards in tests/pplr_sync.bats; shared strings in tests/golden/xlsx-cells. The shared tree does not build until dc's Config::now is on main (src/sync.rs calls config.now()). Nobody else should edit or commit these paths until cc commits WP11: a --only commit of src/lib.rs, Cargo.toml or Cargo.lock would sweep WP11's lines in. No bin/ or lib/ file is touched, so hv's live pplr is unaffected."
+  }
+}

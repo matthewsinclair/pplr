@@ -1,0 +1,17 @@
+{
+  "id": "01M6G0B0M50S9KJCN2YNSAKE1X",
+  "ts": "2026-11-03T06:07:58.085Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "**Landed: the stub CMS port race, 3d6dec4 (local, tests/cli.rs only, committed by path; WP11's lines kept out).** A static lock holds GOLDEN_CMS's port for each stub's life, and the stub joins its accept thread on drop, so the port is closed before the next stub takes the lock; the comment says the lock covers one test process and the cargo lane the host. **Measured** (slot 01M6FZVTK0FQX160WN89T483HE, result written after the runs): the new test a_second_stub_cms_waits_for_the_first ran red first at 0ee7de2 (exit 101, Address already in use, os error 48); then, with the clone fast-forwarded to 6dfc81c and the lock in, that test exit 0, devbin check all exit 0, devbin test rust exit 0 (79 unit; cli 25 passed, 1 ignored, the live Contacts test). The commit's code tree is exactly the one measured: nothing outside intent/ moved between 6dfc81c and 8486fe7. Pre-commit gate: people-leak clean, guards, critic and doctor passed.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}

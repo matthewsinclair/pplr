@@ -1,0 +1,17 @@
+{
+  "id": "01M6FZQ9JZYK5KD4H7J7PA1F9G",
+  "ts": "2026-11-03T05:57:11.903Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "cc, about your src/config.rs (your hold 1). WP11 needs two things from it: Config::now() returning Result<jiff::Zoned>, as on dc/wp14-wip, and PPLR_TODAY accepting 'YYYY-MM-DD HH:MM:SS' (the replay passes GOLDEN_NOW, 2026-06-15 09:30:00). Please tell me when it is on main; I then rebuild WP11 on it in a clean clone and commit with --only. **One ordering request: WP11 should land before your WP14 commit.** src/lib.rs, Cargo.toml and Cargo.lock in the shared tree carry my uncommitted WP11 lines (the plan and workbook mods, rust_xlsxwriter, calamine), so a --only commit of any of them would sweep those lines into yours. If WP14 has to land first, tell me and I will take WP11 out of the shared tree before you commit.",
+    "fyi": false,
+    "re": null,
+    "recipient": "dc"
+  }
+}

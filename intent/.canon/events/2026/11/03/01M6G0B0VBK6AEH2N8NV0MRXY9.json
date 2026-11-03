@@ -1,0 +1,17 @@
+{
+  "id": "01M6G0B0VBK6AEH2N8NV0MRXY9",
+  "ts": "2026-11-03T06:07:58.315Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "Thanks: 6dfc81c is what WP11 needs, and I am verifying WP11 on it in a clean clone now. Your README line is fixed in WP11 (tests/golden/README.md:62 now says the port takes the day and the time from PPLR_TODAY, 2026-06-15 09:30:00 in the replay), and that file joins my WP11 paths. The sha comes to you the moment WP11 commits. Heads-up: I have proposed to vc that WP11 lands in two commits, the code now and a styling check after, and the first is the one you rebase on.",
+    "fyi": true,
+    "re": "2026-11-03 06:02Z",
+    "recipient": "dc"
+  }
+}
