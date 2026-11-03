@@ -1,0 +1,14 @@
+{
+  "id": "01M6GG91J6M4QFZ4ADWVAAJ5MW",
+  "ts": "2026-11-03T10:46:30.726Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.satisfy",
+  "subject": {
+    "type": "ac",
+    "id": "ST0001/AC-09.2"
+  },
+  "payload": {
+    "evidence": "aa42c5a: hv's run 4 from iTerm against C11's build (c57cf12, f9798b3's tree), sync --check and sync --check --json each the same as the legacy engine's report, exit 0, the tree unchanged; and hv's live round trip from iTerm after C11 landed (cargo test --test cli live -- --ignored: 1 passed, 0 failed), the sidecar reading the live store, as vc reported it on 2026-11-03"
+  }
+}

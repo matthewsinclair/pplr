@@ -3,10 +3,10 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 10:35Z
+heartbeat_at: 2026-11-03 10:46Z
 status: active
-focus: "Holding. ST0001 WP09: AC-09.1 covered by AT-09.1 (fd67819, row a9f9d74); AC-09.2 waits on hv's two iTerm runs, the live round trip and sync --check against C11's build (hold 5). ST0002 WP04 on devbin's manifest fix and Developer ID (hold 6). ST0002/08 and ST0001/08 done"
-claims: [ST0001/09, ST0002/07, ST0002/04, ST0002/05]
+focus: "Holding for hv's compact. ST0001 WP09 done (AT-09.1 fd67819; AC-09.2 on hv's round trip and run 4, aa42c5a). Left: ST0002 WP04 on devbin's manifest-header fix (the issue text on the local branch dc/devbin-issue, hv's to file) and Developer ID signing (hold 6); claims ST0002/04, /05 and /07 wait on hv's signing and brew steps. Nothing ruled to start"
+claims: [ST0002/07, ST0002/04, ST0002/05]
 ---
 
 # dc (dc)
@@ -21,7 +21,6 @@ _(none)_
 
 ## Holds
 
-- ST0001 WP09 AC-09.2: both halves are in (vc, 2026-11-03). hv's live round trip from iTerm passed after C11 landed (1 passed, 0 failed), and in hv's run 4 from iTerm against C11's build, sync --check and sync --check --json are each the same as the legacy (stdout, stderr and exit, both 0; Contacts authorized, the tree unchanged). Released when cc's WP13 body records run 4's verdicts on main (d1372fe is the record before it). Then ac satisfy AC-09.2 citing that commit and the round trip, wp gate, wp done ST0001/09, and drop the claim. AC-09.1 is covered by AT-09.1 (fd67819) (edited)
 - ST0002 WP04. AC-04.1's local half is measured and accepted by vc. bin/devbin formula render exits 0 with nothing typed (a local tag in the scratch clone, stand-in sums). brew style and brew audit --strict each fail on one line only, devbin's generated manifest header (lib/cmd/formula:424, 131 of 118 columns), and both pass with that header one element per line. Released in parts. The style and audit halves are released when devbin ships that fix: the issue text for hv is on the local branch dc/devbin-issue (84972b4), vc hold 2 item 7. The signature half is released when Developer ID signing exists, vc hold 2 item 3. Then the AT, citing each half's evidence. AC-04.2 (the tap's description and CI) needs hv's gh repo edit and a tap push
 
 ## Watch-outs

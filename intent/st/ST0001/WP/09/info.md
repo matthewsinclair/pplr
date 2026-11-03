@@ -2,7 +2,7 @@
 wp_id: WP-09
 title: The Contacts store and the Swift I/O sidecar
 scope: M
-status: WIP
+status: Done
 ---
 
 # WP-09: The Contacts store and the Swift I/O sidecar
@@ -33,6 +33,8 @@ Put every Contacts read and write behind one store interface: a JSON store for t
 - The live check (AC-09.2) is read-only: no `--apply`.
 
 **Criteria**: AC-09.1 and AC-09.2.
+
+**As built**: AC-09.1 is covered by AT-09.1 (fd67819, `src/contacts/sidecar.rs`), red at C2's parent d596c35. AC-09.2 rests on hv's live round trip after C11 and the live parity's run 4 (aa42c5a). The sidecar was cut to dump, backup and group in WP13's C2 (294b421).
 
 ## Acceptance
 
