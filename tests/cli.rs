@@ -2234,3 +2234,35 @@ fn grep_prints_a_matched_line_as_the_file_holds_it() -> Result<()> {
   );
   Ok(())
 }
+
+/// ST0001 WP13, found by the live parity: links searches a directory through
+/// its real subdirectories and never through a symlinked one, as the legacy's
+/// FileManager enumerator walked, so a link out of the tree, or one back up
+/// it that a following walk would go round and round, is never followed.
+#[test]
+fn links_searches_no_symlinked_directory() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let people = sandbox.path("Career/People");
+  let about = people.join("K/Kemp, Jon/About");
+  fs::create_dir_all(&about)?;
+  fs::write(about.join("Jon Kemp (About).md"), "# Jon Kemp (About)\n")?;
+  let link = "[Jon](<../Career/People/K/Kemp, Jon/About/Jon Kemp (About).md>)\n";
+  let (notes, outside) = (sandbox.path("notes"), sandbox.path("outside"));
+  fs::create_dir_all(&notes)?;
+  fs::create_dir_all(&outside)?;
+  fs::write(notes.join("inside.md"), link)?;
+  fs::write(outside.join("away.md"), link)?;
+  std::os::unix::fs::symlink(&outside, notes.join("elsewhere"))?;
+  std::os::unix::fs::symlink(&notes, notes.join("loop"))?;
+
+  let out = run(sandbox.pplr().env("PPLR_DATA", &people).args([
+    "links",
+    "--json",
+    &notes.to_string_lossy(),
+  ]))?;
+  assert!(out.status.success(), "{}", text(&out.stderr));
+  let listing = text(&out.stdout);
+  assert!(listing.contains("inside.md"), "{listing}");
+  assert!(!listing.contains("away.md"), "{listing}");
+  Ok(())
+}

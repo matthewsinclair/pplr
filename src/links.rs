@@ -212,8 +212,10 @@ pub fn people_link_parts(target: &str) -> Option<(String, String)> {
 }
 
 /// Each real Markdown file once: a symlinked note is followed to its file, so
-/// it is counted once and written in place. A directory is searched for `.md`,
-/// skipping hidden files and folders.
+/// it is counted once and written in place. A directory is searched for `.md`
+/// through its real subdirectories, skipping hidden files and folders, and
+/// never through a symlinked one, as the legacy's FileManager enumerator
+/// walked: so a link out of the tree, or back up it, is never followed.
 pub fn markdown_files(roots: &[PathBuf]) -> Vec<PathBuf> {
   let mut raw = Vec::new();
   for root in roots {
@@ -247,7 +249,11 @@ fn walk(dir: &Path, out: &mut Vec<PathBuf>) {
     if entry.file_name().to_string_lossy().starts_with('.') {
       continue;
     }
-    if path.is_dir() {
+    // The entry's own type: a symlink is never a directory here
+    let Ok(kind) = entry.file_type() else {
+      continue;
+    };
+    if kind.is_dir() {
       walk(&path, out);
     } else if path.extension().is_some_and(|e| e == "md") {
       out.push(path);
