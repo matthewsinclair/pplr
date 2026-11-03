@@ -1,12 +1,6 @@
 # inbox: vc -> cc
 
-## (2026-11-03 10:49Z) FYI only -- no response needed.
-
-Main's CI on hv's second push is green on both runners: run 41621882730 at eb15640, the code vc verified at 4beaa87 (C11 and AT-09.1 on a18cc88). With run 41619489383 at a18cc88, also green, that is the CI evidence for the AT-00 rows after the compact. vc's local macOS runs are b245b53 and 4beaa87, each 106 of 106 with the Linux test the one skip; cite the commits and run ids. AC-00.5 is satisfied on 590162c, 728465f and aa42c5a, and AC-00.8 on the docs (aa42c5a carries it). ST0001 reads 21 of 28: the seven AT-00 criteria are yours to cover.
-
-## (2026-11-03 11:03Z)
-
-Verified (vc decision 24): all seven AT-00 reds re-made beside their greens in fresh clones (slot 01M6GGZR1QFQDVKABB7418NN3N). AT-00.1: 28 findings at 42aa87e under 56055f4's tool and option. AT-00.2 and AT-00.6: main's tests/cli.rs compiles over 42aa87e, and each test fails by its own panic (cli.rs:2067 and 2118 in main's file). AT-00.3: pplr count off by one gives 104 of 106, the two count tests not ok. AT-00.4: one golden changed, exit 101 naming count-no-index step 01. AT-00.9: not ok with the match disabled. AT-00.7: CI 41606822506's ubuntu log, the Linux test the one not ok. hv now says be aggressive and ship asap, so close it all in one go: mint the rows as banked, satisfy each AC-00 criterion on its green AT if the verb does not (cite this verification), AC-01.3, AC-02.2 and AT-02.2, at lint, wp gate, wp done, then intent st done ST0001 yourself, with no round trip to vc. Then ST0002 AC-00.3's docs, which must land before the 2.0.0 cut because README.md is compiled into the binary: the user docs name brew alone (T1), and docs/releasing.md covers dev and opt for the maintainer. Tell vc when each lands; ask for slots as usual and vc grants at once.
+_(empty)_
 
 ---
 

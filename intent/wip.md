@@ -1,5 +1,5 @@
 ---
-verblock: "2026-11-03:v0.6: matts - ST0001 closed; ST0002 cut to 2.0.0 on macOS, hv's release sitting next"
+verblock: "2026-11-03:v0.7: matts - 2.0.0 shipped via brew; ST0002 closes, then one-command devbin release"
 ---
 
 # Work In Progress
@@ -8,22 +8,23 @@ DOING and TODO only; finished work lives in its commit, its closed issue or its 
 
 ## Current Focus
 
-**ST0002: ship pplr 2.0.0 through Homebrew, signed and notarised, macOS first**
+**ST0002: close the Homebrew thread, then make a release one command**
 
-- vc holds the pen and slot control. Scope rule: simpler or easier only. hv, 2026-11-03: be aggressive and ship asap (vc decisions 24 and 25 record what that cut).
-- Next: hv's one release sitting, from dc's runbook (hold 2 on vc's board).
+- vc holds the pen and slot control. Scope rule: simpler or easier only (vc decision 2).
+- Next: hv's step 8 from iTerm, the Contacts check across a reinstall (AC-06.2, hold 2 on vc's board). Then dc closes WP04, WP06 and WP07 with design.md's record (dc's doing 7), and vc runs `intent st done ST0002`.
+- Then the first job after: `bin/devbin release vX` as the one release command (vc decision 26, todo 8).
 
 ## Active Steel Threads
 
-- **ST0002** (7 of 16 criteria; AC-05.1 withdrawn, WP05 cancelled):
-  - 2.0.0 ships the signed macOS asset alone, and the formula declares macOS alone; the Linux tarballs and their workflow come in a later release.
-  - WP07: AT-07.1's green is hv's `bin/devbin macos prepare` at the tag (sign, verify, notarytool Accepted), after the three `geodica.apple.*` keychain entries.
-  - WP06: `bin/devbin release v2.0.0`, then the attach from `dist/release`, then `bin/devbin formula publish` by hand; then rhadamanth moves to brew (AC-00.1 to AC-00.3, AC-06.1, AC-06.2).
-  - WP04: AT-04.1's green is the render plus hv's brew install and `brew test` from the tap; AC-04.2 is the tap's description.
+- **ST0002** (15 of 16 criteria; AC-05.1 withdrawn): AC-06.2 waits for step 8. WP04 and WP07 close at dc's next pickup; WP06 once AC-06.2 is satisfied.
 
 ## Upcoming Work
 
-- After the release: devbin's manifest-header fix brings back `brew style`, `brew audit --strict` and the tap's CI (the Devbin issue, hold 2 item 7); the Linux assets with their workflow; todo 6's behaviour-preserving cleanups, in a thread of their own.
+- Devbin's one-command release (todo 8 on vc's board): a cut step for an asset built and signed locally, bare-binary signing in devbin's built-in `macos`, one keychain prefix for the estate, deterministic asset tarballs, and `lock-sync` as a built-in.
+- Credentials: Lamplight moves to `Geodica/Certificates`' `APPLE_APP_PASSWORD` (the one Conflab's CI already uses), then its own password is revoked.
+- cc: ST0001's views leave the disk (`intent sync --apply`), with `CLAUDE.md`'s pointer to its `design.md` reworded.
+- The Linux release assets and their workflow, in a later release; todo 6's behaviour-preserving cleanups, in a thread of their own.
+- Main's commits after the release (dd6dc5b) are local until hv pushes.
 
 ## Notes
 

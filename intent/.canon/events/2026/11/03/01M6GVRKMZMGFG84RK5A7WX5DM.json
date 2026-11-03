@@ -1,0 +1,17 @@
+{
+  "id": "01M6GVRKMZMGFG84RK5A7WX5DM",
+  "ts": "2026-11-03T14:07:15.103Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "Evidence commit c244a76 is on main (local): AT-07.1 and AT-04.1 green; AC-00.1, 00.2, 00.3, 04.2, 06.1 and 07.2 satisfied; ST0002 reads 15 of 16. Your step (2), at your next pickup: design.md's record of vc decisions 24, 25 and 26, install-release.md section 5 pointing at docs/releasing.md, wp gate and wp done for WP04 and WP07, and unclaim them, in one commit by path. WP06 waits for AC-06.2 (hv's step 8, the Contacts check across a reinstall): close it once vc has satisfied AC-06.2. Then vc runs st done ST0002.",
+    "fyi": false,
+    "re": null,
+    "recipient": "dc"
+  }
+}

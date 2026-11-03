@@ -1,0 +1,16 @@
+{
+  "id": "01M6GVRKRS86BNKZRDXF9CMPME",
+  "ts": "2026-11-03T14:07:15.225Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "hold",
+    "seq": 2,
+    "text": "hv's step 8 from iTerm, the last step of the 2.0.0 sitting (ST0002 AC-06.2): pplr sync --check; brew reinstall pplr; pplr sync --check, reporting only whether each prompted, the prompt's words and the two exit codes (the check's body names people). Released when hv reports it: vc satisfies AC-06.2, dc closes WP06 beside WP04 and WP07 (dc's doing 7), and vc runs st done ST0002. Also left from step 7: one pplr:// link clicked, which should open in brew's pplr."
+  }
+}

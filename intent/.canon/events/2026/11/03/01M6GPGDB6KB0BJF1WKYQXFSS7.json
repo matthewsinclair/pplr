@@ -1,0 +1,15 @@
+{
+  "id": "01M6GPGDB6KB0BJF1WKYQXFSS7",
+  "ts": "2026-11-03T12:35:23.622Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "hv, 2026-11-03 during the 2.0.0 sitting, after the release runbook's manual steps and a dead notary password (Intent's app-specific password, 401; Conflab's, which Apple accepts, is now Geodica/Certificates' APPLE_APP_PASSWORD and the keychain's): 'agreed, finish 2.0.0 then devbin one-command release'. 2.0.0 finishes on dc's runbook. Then, first job after: one command, bin/devbin release vX, runs the gates, CI, the tag, the Mac's signing and notarisation, attach and formula publish. That is two devbin changes: a cut step for an asset built and signed locally, before attach and before after:; and bare-binary signing in devbin's built-in macos (Intent's signer already does it). Devbin is un-parked for it, and every Geodica project releases the same way."
+  }
+}

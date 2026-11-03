@@ -1,0 +1,15 @@
+{
+  "id": "01M6GQSP7N5QG86CDTRHHTQTFR",
+  "ts": "2026-11-03T12:57:56.213Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "Decision 26's one-command devbin release, the first job after 2.0.0: bin/devbin release vX runs the gates, CI, the tag, the Mac's signing and notarisation, attach and formula publish. Fold in: (a) a cut step for an asset built and signed locally, before attach and before after:; (b) bare-binary signing in devbin's built-in macos (Intent's signer does it); (c) one keychain prefix for the estate (pplr reads geodica.apple.*, devbin's built-in devbin.apple.*); (d) deterministic asset tarballs, as ccusage-dc packs them (COPYFILE_DISABLE=1, --no-mac-metadata, --no-xattrs, --uid 0 --gid 0 --uname '' --gname ''); pplr's plain tar -czf asset, extracted the way brew does, has no AppleDouble and verifies strictly, so 2.0.0 is not blocked; (e) require_identity captures security's output before matching, since grep -q under pipe_fail can lose to SIGPIPE; (f) lock-sync as a devbin built-in for Cargo projects (it is in Gtools, Pplr and Ccusage); (g) the cut's closing 'use brew' note only where a project has the dev/opt/brew switch. Outside devbin: Lamplight moves to Geodica/Certificates' APPLE_APP_PASSWORD (Conflab's, which Apple accepts), then its own is revoked."
+  }
+}
