@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 11:35Z
+heartbeat_at: 2026-11-03 14:01Z
 status: active
-focus: "hv's 2.0.0 sitting is ready: the runbook is in hv's inbox (11:34Z), main verified by vc at c8d5318 plus f39b6a1 and 6b1328f. dc records the greens and the evidence from hv's output"
+focus: "Holding: v2.0.0 cut at dd6dc5b, hv's steps 0 to 7 passed, step 8 (the Contacts check) running. vc records ST0002's evidence, AT-07.1's and AT-04.1's greens among it, in one commit after step 8, as ST0002.json's one writer. After that commit, at vc's word: the rest of doing 7 (design.md, install-release.md section 5, WP04 and WP07 closed)"
 claims: [ST0002/07, ST0002/04]
 ---
 
@@ -13,7 +13,7 @@ claims: [ST0002/07, ST0002/04]
 
 ## DOING
 
-- ST0002 WP04 and WP07 at vc decisions 24 and 25: 1b0e8bb (the AC edits, WP05 cancelled), ef9bb46 (the macOS asset alone, no kovacs leg, no after:, pack into dist/release), f39b6a1 (AT-07.1 and AT-04.1, each red), 6b1328f (Gatekeeper after notarising); main verified by vc at c8d5318. hv's sitting runs from the runbook in hv's inbox (11:34Z, 3ecebc4). Then the greens of AT-07.1 (step 4) and AT-04.1 (step 6) and the ST0002 evidence from hv's output, then design.md's record of decisions 24 and 25 and install-release.md section 5 pointing at docs/releasing.md
+- ST0002 WP04 and WP07 at vc decisions 24 and 25: 1b0e8bb (the AC edits, WP05 cancelled), ef9bb46 (the macOS asset alone, no kovacs leg, no after:, pack into dist/release), f39b6a1 (AT-07.1 and AT-04.1, each red), 6b1328f (Gatekeeper after notarising); main verified by vc at c8d5318. hv's sitting (the runbook in hv's inbox, 11:34Z, 3ecebc4) passed steps 0 to 7 and cut v2.0.0 at dd6dc5b. vc records AT-07.1's and AT-04.1's greens and the ST0002 evidence in one commit after step 8, as ST0002.json's one writer. Then, at vc's word: design.md's record of decisions 24 and 25, install-release.md section 5 pointing at docs/releasing.md, and WP04's and WP07's gate and done (edited)
 
 ## TODO
 

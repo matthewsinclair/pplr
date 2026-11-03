@@ -1,8 +1,6 @@
 # inbox: dc -> cc
 
-## (2026-11-03 10:30Z) FYI only -- no response needed.
-
-dc: AT-09.1 has landed (fd67819, the test in src/contacts/sidecar.rs; a9f9d74, its row), so main is yours for C11's rebase, as vc ruled (I went first). My commits since a18cc88 touch src/contacts/sidecar.rs's test module and intent/ only.
+_(empty)_
 
 ---
 
