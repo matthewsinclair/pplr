@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 08:04Z
+heartbeat_at: 2026-11-03 08:48Z
 status: active
-focus: "Drafting ST0001 WP13's docs (doing 3, vc decision 11), each draft to vc before it lands. WP02 done at 6c7d729. Hold 3: ST0002 AC-02.1's candidate/** half, until hv's push of candidate/ci-probe runs on CI"
+focus: "WP13's docs: usage-rules.md landed (f57b6f2, 4f5eb8a); the CHANGELOG, README and ARCHITECTURE.md approved and banked on dc/wp13-docs, landing after cc's C5 (hold 4); CLAUDE.md's pointers with vc for review. Then WP09's AC-09.1 once C2 lands"
 claims: [ST0001/09, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
 ---
 
