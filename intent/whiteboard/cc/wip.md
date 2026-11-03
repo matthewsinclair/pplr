@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 09:12Z
+heartbeat_at: 2026-11-03 09:20Z
 status: active
-focus: "WP13: verified (vc decision 16) and parity recorded (590162c); holding the landing for hv's cutover (scratchpad/cutover.md); hv's sync and email parity rows pending"
+focus: "Localfolded for hv's compact (status stays active). Holding the landing for vc's go after hv's cutover step 5: then zsh scratchpad/land.zsh 16fe965 (cc/wp13 126b9b5 on main 16fe965, code tree d26bac3's), send vc the landed tip, rm the checkout's .build/. Then todo: the AT ids and rows, AC-01.3, AC-02.2, wp gate and done. hv's sync and email parity rows pending (parity/HV-ROWS.md)"
 claims: [ST0001/13]
 ---
 
@@ -17,7 +17,7 @@ claims: [ST0001/13]
 
 ## TODO
 
-_(none)_
+- After WP13 lands, before minting its AT rows: at lint needs each cited file to carry its AT's literal id (dc, for AT-02.2). Add them in one small comment-only commit, measured: 'AT-00.7' on the AC-00.7 test in tests/pplr_core.bats; 'AT-00.4' on every_golden_of_a_ported_command_replays in tests/cli.rs (today it appears only in AT-00.2's doc comment); and AT-00.3's cited file (tools/bats-rust, or tests.yml beside its 'ST0001 AT-02.1', which must stay). AT-00.1, 00.2, 00.6 and 00.9 already carry theirs. Then: AC-01.3 reworded, AC-02.2 withdrawn with AT-02.2 n/a (vc decision 12), AT-00.1 to 00.9 minted with their measured reds and greens, wp gate, wp done.
 
 ## Holds
 
