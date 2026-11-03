@@ -5,9 +5,9 @@
     "name": "cc",
     "role": "cc",
     "session_id": "f3516df3-3c28-4ed2-820f-b9b34ea2e5f8",
-    "heartbeat_at": "2026-11-03T07:45:43.695Z",
+    "heartbeat_at": "2026-11-03T07:48:29.259Z",
     "status": "active",
-    "focus": "About reader landed (a3ab0fb, doing 1); waiting on vc's clean-clone run; WP13 next",
+    "focus": "Localfold done, holding for hv's compact (status stays active). After it: WP13 (todo 1, vc decision 11): claim ST0001/13, then the removals, the no-Python gate and the live read-only parity; dc drafts WP13's docs under it",
     "claims": [],
     "recorded_at": "2026-11-02T07:22:34.821Z",
     "migrated_at": "2026-11-02T07:22:34.821Z"
@@ -46,10 +46,19 @@
       "node": "cc",
       "kind": "doing",
       "seq": 1,
-      "text": "One About reader (vc decision 10): landed as a3ab0fb (local, by path, 13 files), red first and then measured in fresh clone scratchpad/about at 6464721 (slot 01M6G5RQSYXJ5KGW5E26XM5XMX): check all 0, test rust 0 (97 unit; cli 33; all replay tests; no golden changed), bats Rust (uv hidden) and legacy 102/102. Waiting on vc's clean-clone run (todo 7) and vc's WP14 body amendment; then archive this and delete branch cc/about-reader. WP13 follows.",
-      "state": "live",
+      "text": "One About reader (vc decision 10): landed as a3ab0fb (local, by path, 13 files), red first, then measured in fresh clone scratchpad/about at 6464721 (slot 01M6G5RQSYXJ5KGW5E26XM5XMX): check all 0, test rust 0 (97 unit; cli 33; all replay tests; no golden changed), bats on Rust (uv hidden) and on legacy 102/102. vc's clean-clone run of it is slot 01M6G5YWE8VHKZYS3KDCHXWHTY (todo 7), reported after hv's compact if not before; WP14's body amendment is vc's. When it passes: archive this and delete branch cc/about-reader.",
+      "state": "archived",
+      "archived_at": "2026-11-03T07:48:18.548Z",
       "recorded_at": "2026-11-03T07:35:47.163Z",
-      "edited_at": "2026-11-03T07:45:43.628Z"
+      "edited_at": "2026-11-03T07:47:47.330Z"
+    },
+    {
+      "node": "cc",
+      "kind": "todo",
+      "seq": 1,
+      "text": "WP13, after hv's compact (vc's order, decision 11): claim ST0001/13, then the removals, the no-Python gate and the live read-only parity; dc drafts WP13's docs under it. Read vc decision 11 and WP13's body first.",
+      "state": "live",
+      "recorded_at": "2026-11-03T07:47:47.398Z"
     }
   ],
   "sent": [
@@ -181,14 +190,16 @@
       "body": "Thanks: 6dfc81c is what WP11 needs, and I am verifying WP11 on it in a clean clone now. Your README line is fixed in WP11 (tests/golden/README.md:62 now says the port takes the day and the time from PPLR_TODAY, 2026-06-15 09:30:00 in the replay), and that file joins my WP11 paths. The sha comes to you the moment WP11 commits. Heads-up: I have proposed to vc that WP11 lands in two commits, the code now and a styling check after, and the first is the one you rebase on.",
       "re": "2026-11-03 06:02Z",
       "fyi": true,
-      "recorded_at": "2026-11-03T06:07:58.315Z"
+      "recorded_at": "2026-11-03T06:07:58.315Z",
+      "archived_at": "2026-11-03T07:47:47.420Z"
     },
     {
       "id": "01M6G0XHX38F5D8MTN05E3G96D",
       "recipient": "dc",
       "body": "**WP11 commit 1 is on main: 95a75e8** (parent cc78a0d). It holds src/plan.rs and src/workbook.rs (new), plus WP11's changes to Cargo.toml, Cargo.lock, src/lib.rs, src/sync.rs, tests/cli.rs, tests/golden/README.md, tests/golden/xlsx-cells and tests/pplr_sync.bats; the shared tree has no uncommitted WP11 code left, so your WP14 can rebase onto it. Commit 2 (the workbook's styling compared with the legacy's) touches only tests/golden/xlsx-cells, the two sync-plan goldens and, if the port gets something wrong, src/workbook.rs.",
       "fyi": true,
-      "recorded_at": "2026-11-03T06:18:05.603Z"
+      "recorded_at": "2026-11-03T06:18:05.603Z",
+      "archived_at": "2026-11-03T07:47:47.420Z"
     },
     {
       "id": "01M6G0XJ0XWZ576CKFJ5SFMQ88",
@@ -219,7 +230,8 @@
       "recipient": "dc",
       "body": "FYI: WP11 commit 2 is on main at 515ee42. Of code it changes only src/workbook.rs (one call, show_input_message(false)); the rest is tests/golden/xlsx-cells, its README and the two sync-plan goldens. Nothing of yours.",
       "fyi": true,
-      "recorded_at": "2026-11-03T06:31:53.827Z"
+      "recorded_at": "2026-11-03T06:31:53.827Z",
+      "archived_at": "2026-11-03T07:47:47.420Z"
     },
     {
       "id": "01M6G1W88ZC8EYB3JPE6DNT68T",
@@ -234,7 +246,8 @@
       "recipient": "dc",
       "body": "cc is about to change two shared modules for ST0001 WP11 commit 3 (critic-rust's findings, vc's ruling 25f85e7): src/tree.rs (Person carries its picture, read from tree::person's existing About listing) and src/marker.rs (one marker-path helper for by_marker, sync's check and the plan's Add guard), plus src/plan.rs, src/workbook.rs, src/sync.rs and tests/cli.rs. The work happens in my own clone; nothing lands in the shared tree until the commit. If you are changing either shared module, tell me before I land.",
       "fyi": true,
-      "recorded_at": "2026-11-03T06:34:51.551Z"
+      "recorded_at": "2026-11-03T06:34:51.551Z",
+      "archived_at": "2026-11-03T07:47:47.420Z"
     },
     {
       "id": "01M6G1W88ZC8EYB3JPE6DNT68W",

@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 07:45Z
+heartbeat_at: 2026-11-03 07:48Z
 status: active
-focus: "About reader landed (a3ab0fb, doing 1); waiting on vc's clean-clone run; WP13 next"
+focus: "Localfold done, holding for hv's compact (status stays active). After it: WP13 (todo 1, vc decision 11): claim ST0001/13, then the removals, the no-Python gate and the live read-only parity; dc drafts WP13's docs under it"
 claims: []
 ---
 
@@ -13,11 +13,11 @@ claims: []
 
 ## DOING
 
-- One About reader (vc decision 10): landed as a3ab0fb (local, by path, 13 files), red first and then measured in fresh clone scratchpad/about at 6464721 (slot 01M6G5RQSYXJ5KGW5E26XM5XMX): check all 0, test rust 0 (97 unit; cli 33; all replay tests; no golden changed), bats Rust (uv hidden) and legacy 102/102. Waiting on vc's clean-clone run (todo 7) and vc's WP14 body amendment; then archive this and delete branch cc/about-reader. WP13 follows. (edited)
+_(none)_
 
 ## TODO
 
-_(none)_
+- WP13, after hv's compact (vc's order, decision 11): claim ST0001/13, then the removals, the no-Python gate and the live read-only parity; dc drafts WP13's docs under it. Read vc decision 11 and WP13's body first.
 
 ## Holds
 
