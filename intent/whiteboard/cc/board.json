@@ -5,9 +5,9 @@
     "name": "cc",
     "role": "cc",
     "session_id": "f3516df3-3c28-4ed2-820f-b9b34ea2e5f8",
-    "heartbeat_at": "2026-11-03T10:18:47.397Z",
+    "heartbeat_at": "2026-11-03T10:38:30.345Z",
     "status": "active",
-    "focus": "WP13 is WIP. hv's iTerm run of the sync rows: link, pull and photos the same; sync --check and --json differ by a port bug (bytes against Swift's canonical equivalence), fix C11 proposed to vc with the push sequencing. Main b245b53 is verified for hv's push (vc decision 20)",
+    "focus": "C11 on main (f9798b3) for vc's verification; hv re-runs the five sync rows from iTerm against C11's opt build; then the AT-00 rows (CI 41619489383 green), AC-01.3 and AC-02.2, wp gate and WP13's close",
     "claims": [
       "ST0001/13"
     ],
@@ -104,9 +104,10 @@
       "node": "cc",
       "kind": "doing",
       "seq": 3,
-      "text": "WP13 C11, a port bug the live parity found (hv's iTerm run): sync compares and keys email, phone and LinkedIn values as bytes, where the legacy's Swift sets and dictionaries compare by canonical equivalence, so sync --check and --check --json list extra people whose card holds a slug decomposed and whose About file holds it precomposed. Link, pull and photos dry runs are the same, the sandbox held, and the tree was unchanged. Fix: key and compare by normalise::decompose, displaying each original value; tests on synthetic values, red then green in a slot; landing on vc's go (asked, with sequencing against hv's push of b245b53). Then an opt build of C11, hv's iTerm re-run of the two check rows, and the sync rows into WP13's body.",
+      "text": "WP13 C11, a port bug the live parity found: on main as f9798b3 (vc decision 22), measured at tree 9e321d1 (slot 01M6GFGBK1DRSDS59MGGSHFZNN; nine mutants, each red by its own test's assertion), and listed beside C8 in WP13's body. vc verifies main with it. C11's opt tree (c57cf1208d4a) is now the parity runner's Rust side; hv re-runs the five sync rows from iTerm (parity/hv-next.zsh contacts), then the sync rows go into WP13's body and their outputs are deleted. AC-00.5 waits for them.",
       "state": "live",
-      "recorded_at": "2026-11-03T10:18:39.463Z"
+      "recorded_at": "2026-11-03T10:18:39.463Z",
+      "edited_at": "2026-11-03T10:38:30.268Z"
     }
   ],
   "sent": [
@@ -346,6 +347,20 @@
       "body": "WP13 is started: ST0001/13 now reads WIP. hv's iTerm run of the five sync rows: Contacts is authorized both plainly and inside sandbox-exec, so the write guard holds and needs no ruling, and the tree was unchanged. The link, pull and photos dry runs are the same. sync --check and sync --check --json differ, and that is a port bug, not a divergence: the port lists extra people as 'matched, fields differ', each on its LinkedIn field alone, where the About file holds the slug precomposed (NFC) and the card decomposed (NFD). The two values are canonically equal. The legacy's engine compared them as Swift sets (main.swift's set(): Set(a) == Set(b)), and Swift's String equality is canonical equivalence, so it saw no difference; the port compares HashSet<String> bytes. The same class is in matching: the legacy's byEmail and bySlug are [String: [Card]], so canonical, while the port's by_email and by_slug are byte-keyed. Live data shows no case there (the link dry run is the same), but a person whose About slug and card slug differ only in form would be matched by the legacy and not by the port. Proposed fix, C11, listed under WP13's port bugs the live parity found: compare and key those values by normalise::decompose (canonical for the Latin letters its table holds, the ones Foundation decomposes), keeping each original value for display, so the report still prints what each side holds. Tests on synthetic values in both forms, for diffs and for matching, red without the fix. Then hv re-runs the two check rows from iTerm against an opt build of C11, and the record shows them. Sequencing is your call. I suggest hv pushes b245b53 now as you verified it, since the CI greens for AT-00.3 and AT-00.7 need it; C11 follows as its own measured commit, with your verification and a second push, and AC-00.5 waits for it. Go or not?",
       "fyi": false,
       "recorded_at": "2026-11-03T10:17:56.634Z"
+    },
+    {
+      "id": "01M6GFPGH33GXX62KT2D3B1ND7",
+      "recipient": "vc",
+      "body": "C11 is on main as f9798b3, by path through the gate onto de574ae. Outside intent/ it equals the measured c57cf12 (tree 9e321d1, on 37c3376, after dc's AT-09.1). Measured in a fresh clone with its own target/ (slot 01M6GFGBK1DRSDS59MGGSHFZNN): devbin check all exit 0; devbin test rust exit 0, 107 unit and 39 cli; bats on Rust with uv hidden 106 of 106, 1 skip (the AC-00.7 Linux test). Nine mutants, one per fixed site, each reverting it: cargo test --lib exit 101, each failing by its own test's assertion (no compile error), and the tree unchanged after them. The commit message lists every site and every value left alone, with the reason. Two notes for your review. (1) email_key does not fold the Unicode form: it lowercases and drops Gmail's dots and +suffix. So the email keys are fixed at their sites too, and email_key itself is untouched, as you ruled. In practice the About side's addresses are ASCII by the header's pattern (the legacy's too), so an email can differ in form only between two cards. (2) Sorting stays bytewise on the values as written, the legacy's order for precomposed text: decompose gives no key that orders as Swift does, since Swift orders by the precomposed form, and composing would need the second table you ruled out. The code comments on same_text and the tests cite vc decision 22, as tests/cli.rs cites decision 10; the commit makes them resolvable. Next, unless you redirect: one cargo slot to build C11's opt tree for hv's iTerm re-run of the two check rows (the runner's Rust side moves from a44f79b to it), WP13's body with C11 beside C8, then the AT-00 rows from your CI evidence.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T10:36:23.459Z"
+    },
+    {
+      "id": "01M6GFSTS1TQT0FNA37VT01R69",
+      "recipient": "vc",
+      "body": "C11's opt tree is ready: pplr 2.0.0 (opt, c57cf1208d4a), built from my clean clone at c57cf12 (the same tree as f9798b3 outside intent/) in slot 01M6GFPGJDFB00HS01MRTKT9NG, which is released. The parity runner's Rust side is now this build; a44f79b's is kept beside it. hv's re-run, from iTerm: zsh /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/f3516df3-3c28-4ed2-820f-b9b34ea2e5f8/scratchpad/parity/hv-next.zsh contacts. It runs all five sync rows, not only the two check rows, because C11 also touched the matching that link, pull and photos use. HV-ROWS.md says the same. hv is in my session too, so I give hv the command there as well.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T10:38:12.257Z"
     }
   ],
   "handled": [

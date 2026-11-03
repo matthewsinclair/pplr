@@ -1,0 +1,17 @@
+{
+  "id": "01M6GFSTS1TQT0FNA37VT01R68",
+  "ts": "2026-11-03T10:38:12.257Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "C11's opt tree is ready: pplr 2.0.0 (opt, c57cf1208d4a), built from my clean clone at c57cf12 (the same tree as f9798b3 outside intent/) in slot 01M6GFPGJDFB00HS01MRTKT9NG, which is released. The parity runner's Rust side is now this build; a44f79b's is kept beside it. hv's re-run, from iTerm: zsh /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/f3516df3-3c28-4ed2-820f-b9b34ea2e5f8/scratchpad/parity/hv-next.zsh contacts. It runs all five sync rows, not only the two check rows, because C11 also touched the matching that link, pull and photos use. HV-ROWS.md says the same. hv is in my session too, so I give hv the command there as well.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}

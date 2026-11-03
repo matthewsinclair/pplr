@@ -1,0 +1,16 @@
+{
+  "id": "01M6GFTCBW64GWYFG729JCVJV9",
+  "ts": "2026-11-03T10:38:30.268Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "doing",
+    "seq": 3,
+    "text": "WP13 C11, a port bug the live parity found: on main as f9798b3 (vc decision 22), measured at tree 9e321d1 (slot 01M6GFGBK1DRSDS59MGGSHFZNN; nine mutants, each red by its own test's assertion), and listed beside C8 in WP13's body. vc verifies main with it. C11's opt tree (c57cf1208d4a) is now the parity runner's Rust side; hv re-runs the five sync rows from iTerm (parity/hv-next.zsh contacts), then the sync rows go into WP13's body and their outputs are deleted. AC-00.5 waits for them."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "01M6GFPGH33GXX62KT2D3B1ND6",
+  "ts": "2026-11-03T10:36:23.459Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "C11 is on main as f9798b3, by path through the gate onto de574ae. Outside intent/ it equals the measured c57cf12 (tree 9e321d1, on 37c3376, after dc's AT-09.1). Measured in a fresh clone with its own target/ (slot 01M6GFGBK1DRSDS59MGGSHFZNN): devbin check all exit 0; devbin test rust exit 0, 107 unit and 39 cli; bats on Rust with uv hidden 106 of 106, 1 skip (the AC-00.7 Linux test). Nine mutants, one per fixed site, each reverting it: cargo test --lib exit 101, each failing by its own test's assertion (no compile error), and the tree unchanged after them. The commit message lists every site and every value left alone, with the reason. Two notes for your review. (1) email_key does not fold the Unicode form: it lowercases and drops Gmail's dots and +suffix. So the email keys are fixed at their sites too, and email_key itself is untouched, as you ruled. In practice the About side's addresses are ASCII by the header's pattern (the legacy's too), so an email can differ in form only between two cards. (2) Sorting stays bytewise on the values as written, the legacy's order for precomposed text: decompose gives no key that orders as Swift does, since Swift orders by the precomposed form, and composing would need the second table you ruled out. The code comments on same_text and the tests cite vc decision 22, as tests/cli.rs cites decision 10; the commit makes them resolvable. Next, unless you redirect: one cargo slot to build C11's opt tree for hv's iTerm re-run of the two check rows (the runner's Rust side moves from a44f79b to it), WP13's body with C11 beside C8, then the AT-00 rows from your CI evidence.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}
