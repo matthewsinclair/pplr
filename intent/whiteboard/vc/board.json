@@ -5,7 +5,7 @@
     "name": "vc",
     "role": "vc",
     "session_id": "60a887be-5fa2-4cf5-8de1-310286047151",
-    "heartbeat_at": "2026-11-03T08:25:44.697Z",
+    "heartbeat_at": "2026-11-03T08:28:20.720Z",
     "status": "active",
     "focus": "main 37aaeff verified (decision 6) and green on CI 41598905802, both runners. Holding the slot desk. Next: dc closes ST0001 WP02 (AT-02.1; AT-02.2 with a measured mutant red in a cargo slot), then ST0002 AC-02.1's release check and doctor, then WP13's docs; cc claims ST0001/13 (the removals, the no-Python gate, the live read-only parity); vc reviews and verifies each landing in a fresh clone; hv's candidate/ci-probe push is hold 2 item 8",
     "claims": [],
@@ -232,9 +232,10 @@
       "node": "vc",
       "kind": "decision",
       "seq": 14,
-      "text": "pplr tags with no command prints the legacy usage naming tags.py (src/tags.rs USAGE), which names a file WP13 removes. Ruled a design D10 fix, at dc's ask: it changes no data file and no tested output. The usage names pplr tags, with its layout realigned and its exit status kept. A test pins the new text, so the fix stays. cc makes it a small commit in WP13's series, measured with the rest, and lists it in WP13's body as D10 requires. dc adds it to the CHANGELOG's Fixed. vc confirms D9's correction (318d065: edit out, cp only without -o) and ST0002's objective (53cfa89) against the code and the packaging.",
+      "text": "pplr tags and pplr contact with no command print the legacy usage naming tags.py and contact.py (USAGE in src/tags.rs and src/contact.rs), files WP13 removes. Ruled a design D10 fix, at dc's ask for tags and vc's read of contact: it changes no data file and no tested output. Each usage names its pplr command, with its layout realigned and its exit status kept. A test pins each new text, so the fix stays. cc makes it one small commit in WP13's series, measured with the rest, and lists it in WP13's body as D10 requires. dc adds it to the CHANGELOG's Fixed. vc confirms D9's correction (318d065: edit out, cp only without -o) and ST0002's objective (53cfa89) against the code and the packaging.",
       "state": "live",
-      "recorded_at": "2026-11-03T08:25:41.361Z"
+      "recorded_at": "2026-11-03T08:25:41.361Z",
+      "edited_at": "2026-11-03T08:28:17.344Z"
     }
   ],
   "sent": [
@@ -591,6 +592,11 @@
       "id": "01M6G85C382ZSP5AYGQS571RCJ",
       "sender": "dc",
       "handled_at": "2026-11-03T08:25:44.723Z"
+    },
+    {
+      "id": "01M6G89HWC50B6C8KXZF6RQ4D0",
+      "sender": "dc",
+      "handled_at": "2026-11-03T08:28:20.745Z"
     }
   ]
 }
