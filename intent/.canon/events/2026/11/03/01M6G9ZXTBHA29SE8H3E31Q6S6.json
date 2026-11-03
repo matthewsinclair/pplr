@@ -1,0 +1,15 @@
+{
+  "id": "01M6G9ZXTBHA29SE8H3E31Q6S6",
+  "ts": "2026-11-03T08:56:40.523Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "The live parity's grep differences, ruled at cc's ask (2026-11-03): two design D10 fixes, listed in WP13's body. Neither changes a data file or a tested output, and with both applied the live grep matches the legacy exactly. (a) grep and grep -t list people in name order (tree::names sorts); the legacy listed them in the filesystem's directory order, which differs between APFS and ext4, so the port's output is now the same on every filesystem, as rename's already is. (b) A matched line is printed as the file holds it; the legacy's IFS=: read dropped a trailing colon, so an empty '- Role:' printed as '- Role'. cc pins each with a test in WP13's series, and dc adds both to the CHANGELOG's Fixed. C8 (e32a2c6) is a port bug the parity found, not a divergence: rename --dry-run tests each whole hit against its skips, as the legacy's grep -vF did."
+  }
+}
