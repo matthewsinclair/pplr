@@ -5,18 +5,31 @@
 #
 # One line per non-empty cell, sheet<TAB>cell<TAB>value, sheets in workbook
 # order, with the five XML entities decoded and each newline in a value
-# written as \n. Styles and the zip's own bytes are not content. A value is an
-# inline string (the legacy workbook's), a shared string (the port's) or a
-# number. The capture and the replay in tests/cli.rs both call it, so a
-# workbook has one reading.
+# written as \n. A value is an inline string (the legacy workbook's), a
+# shared string (the port's) or a number.
+#
+# After each sheet's cells come its styling facts, sorted, as
+# sheet<TAB>#kind<TAB>where[<TAB>what]: #fill, a cell's solid fill; #frozen,
+# the frozen pane's first scrolling cell; #filter, the autofilter's range;
+# #validation, a data validation with every attribute that governs what a
+# reviewer can enter, defaults written out; #conditional, a conditional
+# format's rule and its fill. A colour is its last six hex digits, so the
+# writers' alpha bytes do not count, and a conditional fill is its bgColor,
+# as Excel and rust_xlsxwriter write it, else its fgColor, as openpyxl does.
+# Widths, fonts, alignment and the zip's own bytes are not content
+# (README.md says why). The capture and the replay in tests/cli.rs both call
+# this, so a workbook has one reading.
 
 emulate -L zsh
 setopt err_exit no_unset pipe_fail
 xlsx=${1:?usage: xlsx-cells WORKBOOK.xlsx}
-# The shared strings, one per line in table order, each newline written as \n
 # (a template mktemp reads alike on macOS and on Linux, unlike -t)
-shared=$(mktemp "${TMPDIR:-/tmp}/xlsx-cells.XXXXXX")
-trap 'rm -f -- "$shared"' EXIT
+tmp=$(mktemp -d "${TMPDIR:-/tmp}/xlsx-cells.XXXXXX")
+trap 'rm -rf -- "$tmp"' EXIT
+
+# The shared strings, one per line in table order, each newline written as \n
+shared=$tmp/shared
+: > "$shared"
 if unzip -l -- "$xlsx" xl/sharedStrings.xml >/dev/null 2>&1; then
   unzip -p -- "$xlsx" xl/sharedStrings.xml | LC_ALL=C awk '
     BEGIN { RS = "<si>" }
@@ -31,6 +44,59 @@ if unzip -l -- "$xlsx" xl/sharedStrings.xml >/dev/null 2>&1; then
       print s
     }' > "$shared"
 fi
+
+# What the styling passes share: one tag per record (RS is "<"), the five
+# XML entities decoded, an attribute's value, a flag as 0 or 1, a colour, an
+# element's text
+helpers='
+  function decode(v) {
+    gsub(/&lt;/, "<", v); gsub(/&gt;/, ">", v); gsub(/&quot;/, "\"", v); gsub(/&apos;/, "\047", v); gsub(/&amp;/, "\\&", v)
+    return v
+  }
+  function attr(s, name) {
+    if (match(s, " " name "=\"[^\"]*\"")) return decode(substr(s, RSTART + length(name) + 3, RLENGTH - length(name) - 4))
+    return ""
+  }
+  function flag(v) { return (v == "1" || v == "true") ? 1 : 0 }
+  function colour(s,    v) {
+    v = attr(s, "rgb"); if (v != "") return toupper(substr(v, length(v) - 5))
+    v = attr(s, "theme"); if (v != "") return "theme" v
+    v = attr(s, "indexed"); if (v != "") return "indexed" v
+    return ""
+  }
+  function text(s,    v) {
+    v = substr(s, index(s, ">") + 1)
+    sub(/[ \t\r\n]+$/, "", v)
+    return decode(v)
+  }
+'
+
+# Each cell format's solid fill ("xf N RRGGBB") and each conditional
+# format's fill ("dxf N RRGGBB"), by index
+styles=$tmp/styles
+: > "$styles"
+if unzip -l -- "$xlsx" xl/styles.xml >/dev/null 2>&1; then
+  unzip -p -- "$xlsx" xl/styles.xml | LC_ALL=C awk "$helpers"'
+    BEGIN { RS = "<"; nf = -1; nx = -1; nd = -1 }
+    /^fills[ >]/ { part = "fills"; next }
+    /^cellXfs[ >]/ { part = "xfs"; next }
+    /^dxfs[ >]/ { part = "dxfs"; next }
+    /^\/(fills|cellXfs|dxfs)>/ { part = ""; next }
+    part == "fills" && /^fill[ >\/]/ { nf++; next }
+    part == "fills" && /^patternFill/ { solid[nf] = (attr($0, "patternType") == "solid"); next }
+    part == "fills" && /^fgColor/ { fg[nf] = colour($0); next }
+    part == "xfs" && /^xf[ >\/]/ {
+      nx++; id = attr($0, "fillId")
+      if (id != "" && solid[id] && fg[id] != "") print "xf", nx, fg[id]
+      next
+    }
+    part == "dxfs" && /^dxf[ >\/]/ { nd++; dbg = ""; dfg = ""; next }
+    part == "dxfs" && /^bgColor/ { dbg = colour($0); next }
+    part == "dxfs" && /^fgColor/ { dfg = colour($0); next }
+    part == "dxfs" && /^\/dxf>/ { print "dxf", nd, (dbg != "" ? dbg : dfg); next }
+  ' > "$styles"
+fi
+
 i=0
 for sheet in ${(f)"$(unzip -p -- "$xlsx" xl/workbook.xml | grep -o '<sheet name="[^"]*"' | sed 's/<sheet name="//; s/"$//')"}; do
   i=$(( i + 1 ))
@@ -49,4 +115,34 @@ for sheet in ${(f)"$(unzip -p -- "$xlsx" xl/workbook.xml | grep -o '<sheet name=
       gsub(/&lt;/, "<", v); gsub(/&gt;/, ">", v); gsub(/&quot;/, "\"", v); gsub(/&apos;/, "\047", v); gsub(/&amp;/, "\\&", v)
       printf "%s\t%s\t%s\n", sheet, cell, v
     }'
+  unzip -p -- "$xlsx" "xl/worksheets/sheet$i.xml" | LC_ALL=C awk -v sheet="$sheet" -v styles="$styles" "$helpers"'
+    function validation() {
+      print sheet "\t#validation\t" attr(dv, "sqref") "\ttype=" (attr(dv, "type") == "" ? "none" : attr(dv, "type")) \
+        " formula1=" f1 " formula2=" f2 " operator=" (attr(dv, "operator") == "" ? "between" : attr(dv, "operator")) \
+        " allowBlank=" flag(attr(dv, "allowBlank")) " showDropDown=" flag(attr(dv, "showDropDown")) \
+        " showInputMessage=" flag(attr(dv, "showInputMessage")) " promptTitle=" attr(dv, "promptTitle") " prompt=" attr(dv, "prompt") \
+        " showErrorMessage=" flag(attr(dv, "showErrorMessage")) " errorStyle=" (attr(dv, "errorStyle") == "" ? "stop" : attr(dv, "errorStyle")) \
+        " errorTitle=" attr(dv, "errorTitle") " error=" attr(dv, "error")
+    }
+    function conditional(    d) {
+      d = attr(rule, "dxfId")
+      print sheet "\t#conditional\t" sqref "\ttype=" attr(rule, "type") " priority=" attr(rule, "priority") \
+        " stopIfTrue=" flag(attr(rule, "stopIfTrue")) " formula=" formula " fill=" ((d != "" && (d in dxf)) ? dxf[d] : "")
+    }
+    BEGIN {
+      while ((getline line < styles) > 0) { split(line, f, " "); if (f[1] == "xf") xf[f[2]] = f[3]; else dxf[f[2]] = f[3] }
+      RS = "<"
+    }
+    /^c / { s = attr($0, "s"); if (s != "" && (s in xf)) print sheet "\t#fill\t" attr($0, "r") "\t" xf[s]; next }
+    /^pane / { if (attr($0, "state") == "frozen") print sheet "\t#frozen\t" attr($0, "topLeftCell") "\txSplit=" attr($0, "xSplit") " ySplit=" attr($0, "ySplit"); next }
+    /^autoFilter / { print sheet "\t#filter\t" attr($0, "ref"); next }
+    /^dataValidation / { dv = $0; f1 = ""; f2 = ""; if ($0 ~ /\/>/) validation(); next }
+    /^formula1>/ { f1 = text($0); next }
+    /^formula2>/ { f2 = text($0); next }
+    /^\/dataValidation>/ { validation(); next }
+    /^conditionalFormatting / { sqref = attr($0, "sqref"); next }
+    /^cfRule / { rule = $0; formula = ""; if ($0 ~ /\/>/) conditional(); next }
+    /^formula>/ { formula = text($0); next }
+    /^\/cfRule>/ { conditional(); next }
+  ' | LC_ALL=C sort
 done

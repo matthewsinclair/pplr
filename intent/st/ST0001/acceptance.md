@@ -72,7 +72,7 @@ title: Port Pplr from shell scripts to Rust
 
 ### WP-11 -- The sync plan and its workbook (status: WIP)
 
-- AC-11.1 sync --plan and --apply-plan run in Rust. The workbook's four sheets, review columns, Decision list and highlighting match the legacy workbook by content. -- satisfied: no (computed)
+- AC-11.1 sync --plan and --apply-plan run in Rust. The workbook's four sheets, review columns, Decision list and highlighting match the legacy workbook by content. -- satisfied: yes (computed)
 
 ### WP-12 -- Doctor and Finder icons (status: Done)
 
@@ -133,7 +133,7 @@ _(no tests in this group)_
 
 ### WP-11 -- The sync plan and its workbook (status: WIP)
 
-- AT-11.1 `tests/cli.rs` -- covers AC-11.1 -- status: red -- sync_plan_and_apply_plan_are_native_and_their_goldens_replay; to-write until it runs red
+- AT-11.1 `tests/cli.rs` -- covers AC-11.1 -- status: green -- sync_plan_and_apply_plan_are_native_and_their_goldens_replay; red first, before WP11's code was in the tree (the stand-in legacy sync was reached); green in a fresh clone at 421b9b0 holding WP11's two commits (slot 01M6G1EVKDDG7DZDH2DTJ4VT1X): the replay 7 of 7, with the workbook's styling compared against the legacy's re-captured from 507b0f6; a planted wrong review fill and commit 1's workbook.rs (input message on) each fail it; cargo test 83 unit and 26 cli passed; bats on Rust with uv hidden 101/101, 2 skips both naming WP14, and on legacy 101/101 (slot 01M6G1HSCVJRN7C71J3WWD3S0E)
 
 ### WP-12 -- Doctor and Finder icons (status: Done)
 

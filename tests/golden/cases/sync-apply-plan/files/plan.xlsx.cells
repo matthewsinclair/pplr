@@ -126,6 +126,47 @@ Merged	H10	new iCloud card: name, company, role, email, photo\n+ pplr URL\n+ PPL
 Merged	J10	Tarnhelm Labs
 Merged	L10	Principal Engineer
 Merged	N10	imogen@tarnhelm.example
+Merged	#conditional	F2:F10	type=expression priority=1 stopIfTrue=0 formula=$F2="Low" fill=F9D9A8
+Merged	#conditional	F2:F10	type=expression priority=2 stopIfTrue=0 formula=$F2="Medium" fill=FDF1C4
+Merged	#fill	B10	FFF4D6
+Merged	#fill	B2	FFF4D6
+Merged	#fill	B3	FFF4D6
+Merged	#fill	B4	FFF4D6
+Merged	#fill	B5	FFF4D6
+Merged	#fill	B6	FFF4D6
+Merged	#fill	B7	FFF4D6
+Merged	#fill	B8	FFF4D6
+Merged	#fill	B9	FFF4D6
+Merged	#fill	C10	FFF4D6
+Merged	#fill	C2	FFF4D6
+Merged	#fill	C3	FFF4D6
+Merged	#fill	C4	FFF4D6
+Merged	#fill	C5	FFF4D6
+Merged	#fill	C6	FFF4D6
+Merged	#fill	C7	FFF4D6
+Merged	#fill	C8	FFF4D6
+Merged	#fill	C9	FFF4D6
+Merged	#fill	D10	FFF4D6
+Merged	#fill	D2	FFF4D6
+Merged	#fill	D3	FFF4D6
+Merged	#fill	D4	FFF4D6
+Merged	#fill	D5	FFF4D6
+Merged	#fill	D6	FFF4D6
+Merged	#fill	D7	FFF4D6
+Merged	#fill	D8	FFF4D6
+Merged	#fill	D9	FFF4D6
+Merged	#fill	E10	FFF4D6
+Merged	#fill	E2	FFF4D6
+Merged	#fill	E3	FFF4D6
+Merged	#fill	E4	FFF4D6
+Merged	#fill	E5	FFF4D6
+Merged	#fill	E6	FFF4D6
+Merged	#fill	E7	FFF4D6
+Merged	#fill	E8	FFF4D6
+Merged	#fill	E9	FFF4D6
+Merged	#filter	A1:U10
+Merged	#frozen	B2	xSplit=1 ySplit=1
+Merged	#validation	B2:B10	type=list formula1="Add,Update,Link only,No change,Skip" formula2= operator=between allowBlank=0 showDropDown=0 showInputMessage=0 promptTitle= prompt= showErrorMessage=1 errorStyle=stop errorTitle=Decision error=One of: Add, Update, Link only, No change, Skip
 pplr	A1	Person
 pplr	B1	Given
 pplr	C1	Family
@@ -212,6 +253,8 @@ pplr	H10	zsofia-varga
 pplr	I10	pplr://v/varga-zsofia
 pplr	J10	yes
 pplr	K10	@SANDBOX@/Career/People/V/Varga, Zsófia
+pplr	#filter	A1:K10
+pplr	#frozen	B2	xSplit=1 ySplit=1
 Contacts	A1	Card
 Contacts	B1	Name
 Contacts	C1	Company
@@ -301,6 +344,8 @@ Contacts	E12	zsofiavarga+news@gmail.com
 Contacts	H12	other
 Contacts	K12	V/Varga, Zsófia
 Contacts	L12	c-varga:ABPerson
+Contacts	#filter	A1:L12
+Contacts	#frozen	B2	xSplit=1 ySplit=1
 How to review	A1	pplr and Apple Contacts: sync plan, @GENERATED@
 How to review	A3	Review the Merged sheet. Change only the four shaded columns; leave the rest as they are.
 How to review	A4	  Decision: Add (a new iCloud card), Update (bring the card up to date from pplr), Link only (the pplr URL and group, no field changes), No change, or Skip (leave this person out of Contacts).

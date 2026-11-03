@@ -191,6 +191,8 @@ pub fn write(plan: &Plan, out: &Path) -> Result<()> {
     let dv = DataValidation::new()
       .allow_list_strings(&DECISIONS)?
       .ignore_blank(false)
+      // workbook.py's list sets no prompt and shows none
+      .show_input_message(false)
       .set_error_title("Decision")?
       .set_error_message(format!("One of: {}", DECISIONS.join(", ")))?;
     ws.add_data_validation(1, DECISION_COL, last, DECISION_COL, &dv)?;

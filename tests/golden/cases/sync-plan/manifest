@@ -104,7 +104,7 @@ f 6092e5e11228109f7484015e0e3ca3a040d6c3d857477064bb03f1ea52d21ae4 Career/People
 d - Career/People/_archive
 f ffeab788628f33512abe2645d478577a3dac59e8bb84ac2dc2c1631247ec4aa1 Career/People/_archive/README.md
 d - Career/People/_out
-x b6cc2e5c2d50c7c0276af8162ea0fec2400ea5395841b5bb742efc3bf415d516 Career/People/_out/contacts-plan-20260615-0930.xlsx
+x fe47234721c47fe5f57cfe496a5746d1030bf9105d5a3214b48d415ff7b5cbcc Career/People/_out/contacts-plan-20260615-0930.xlsx
 d - Career/People/_pplr
 f 08b755716abd41d25a4f59d7d88c7f1addea67b51d36cd0b3e6ff67c01fc99f5 Career/People/_pplr/cadence.yaml
 f 595ed04637386ddbd83cfb998674127b4be2c69ffcacfd2c5cecac2992d37b42 Career/People/_pplr/vocabulary.yaml
@@ -113,7 +113,7 @@ f 28dc4e34ee49d13a4af866b194d2560f1a15200d16fcf4443cce503629e3867e Career/People
 d - backups
 d - cache
 f dae5ef20e7ac67e056b2ee4eb6fc33401cf4ef2ac08c06d2bf1484bb01c98ad9 contacts.json
-x b6cc2e5c2d50c7c0276af8162ea0fec2400ea5395841b5bb742efc3bf415d516 plan.xlsx
+x fe47234721c47fe5f57cfe496a5746d1030bf9105d5a3214b48d415ff7b5cbcc plan.xlsx
 d - refs
 l refs refs-link
 d - refs/Notes
