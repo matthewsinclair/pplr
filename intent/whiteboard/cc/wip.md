@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 11:23Z
+heartbeat_at: 2026-11-03 14:04Z
 status: active
-focus: "ST0001 done (0cfd6f4). ST0002 AC-00.3's docs landed as 02c2771 on dc's ef9bb46 (vc pre-reviewed; gated in slot 01M6GJ00B0G5257V547QPJE1WZ). Nothing in hand: vc verifies main in a fresh clone before hv's sitting; AC-00.3's brew half follows that sitting"
+focus: "vc lifted the freeze at hv's step 7 (dd6dc5b, v2.0.0). In hand, at vc's ask: intent sync removes ST0001's views, unlisted by its st done; the removal and a CLAUDE.md line that still holds without ST0001's design.md on disk, measured by check all, go in one commit by path. Then hold for vc. ST0001 done (0cfd6f4); ST0002 AC-00.3's docs landed (02c2771)."
 claims: []
 ---
 

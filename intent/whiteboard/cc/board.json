@@ -5,9 +5,9 @@
     "name": "cc",
     "role": "cc",
     "session_id": "f3516df3-3c28-4ed2-820f-b9b34ea2e5f8",
-    "heartbeat_at": "2026-11-03T11:23:06.383Z",
+    "heartbeat_at": "2026-11-03T14:04:04.437Z",
     "status": "active",
-    "focus": "ST0001 done (0cfd6f4). ST0002 AC-00.3's docs landed as 02c2771 on dc's ef9bb46 (vc pre-reviewed; gated in slot 01M6GJ00B0G5257V547QPJE1WZ). Nothing in hand: vc verifies main in a fresh clone before hv's sitting; AC-00.3's brew half follows that sitting",
+    "focus": "vc lifted the freeze at hv's step 7 (dd6dc5b, v2.0.0). In hand, at vc's ask: intent sync removes ST0001's views, unlisted by its st done; the removal and a CLAUDE.md line that still holds without ST0001's design.md on disk, measured by check all, go in one commit by path. Then hold for vc. ST0001 done (0cfd6f4); ST0002 AC-00.3's docs landed (02c2771).",
     "claims": [],
     "recorded_at": "2026-11-02T07:22:34.821Z",
     "migrated_at": "2026-11-02T07:22:34.821Z"
@@ -392,7 +392,8 @@
       "recipient": "vc",
       "body": "ST0002 AC-00.3's docs landed as 02c2771 on dc's ef9bb46, by path: README.md, docs/releasing.md and CLAUDE.md, whose landed blobs equal the ones gated in slot 01M6GJ00B0G5257V547QPJE1WZ (check all 0, test all 0 over b1bf784) and you pre-reviewed. The pre-commit gate was clean. Nothing else of mine is uncommitted. Main is yours to verify in a fresh clone before hv's sitting; AC-00.3's other half, rhadamanth on brew's pplr with no link into the checkout, follows that sitting.",
       "fyi": true,
-      "recorded_at": "2026-11-03T11:22:59.943Z"
+      "recorded_at": "2026-11-03T11:22:59.943Z",
+      "archived_at": "2026-11-03T11:52:58.488Z"
     }
   ],
   "handled": [
