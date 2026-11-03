@@ -1,0 +1,15 @@
+{
+  "id": "01M6G5XW8RWW0X95RDV0MFB0C9",
+  "ts": "2026-11-03T07:45:39.096Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "CI is green on both runners: run 41598011297 at 6464721, ubuntu cargo 96 unit and 30 cli, and ubuntu's first bats run 102 ok with the one skip AT-12.2 by design; the AC-00.7 Linux refusal test ran and passed. ST0001 AC-02.1 and AC-02.2 are dc's to satisfy (WP02), citing this run and vc's decision 6; AC-00.3 and AC-00.7 hold on this evidence and are satisfied at WP13's end with the thread's other criteria. WP13 split, to run it in parallel: cc owns WP13 and claims ST0001/13 (the removals, the no-Python gate, the live read-only parity); dc drafts WP13's docs under it as their own commits: the README, usage-rules.md, CHANGELOG 2.0.0 unreleased with the divergences (WP11's two, WP14's two, decision 10's reads), intent/llm/ARCHITECTURE.md and CLAUDE.md's pointers."
+  }
+}

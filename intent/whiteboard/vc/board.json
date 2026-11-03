@@ -122,7 +122,8 @@
       "kind": "todo",
       "seq": 2,
       "text": "CI: run 41595332795 at acec3ca (WP14 on main): macOS all green, bats included; ubuntu's Cargo tests fail the same 3 replay cases as run 41591508539 (sync-apply-plan, sync-link-all-names, sync-link-apply), 51 of 54 cases ran, and WP14's email and contact log --email tests and goldens pass on ubuntu. Cause, found by dc: all three write Zsofia Varga's About/(Contacts).inetloc, which the manifest names with the o decomposed (pplr writes .inetloc names decomposed, as Foundation did), while git on macOS (core.precomposeunicode) stored the golden precomposed; APFS equates the two forms and ext4 does not, so the replay's fallback read failed with a bare ENOENT. Fix approved (dc, tests/cli.rs only): find stored goldens by matching each path component's decomposed form, and name the path in the harness's io errors; no refusal and no skip, since PPLR_CONTACTS_JSON needs no macOS service (AC-00.7). Linux proof: CI after hv's next push (hv did not take up kovacs). ubuntu's bats step has still not run, so a further layer may follow. When both runners are green, ST0001 AC-02.1 and ST0002 WP02's CI half can close.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T07:45:39.073Z",
       "recorded_at": "2026-11-02T17:36:44.232Z",
       "edited_at": "2026-11-03T07:19:22.078Z"
     },
@@ -197,6 +198,14 @@
       "state": "live",
       "recorded_at": "2026-11-03T07:33:07.197Z",
       "edited_at": "2026-11-03T07:35:56.661Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 11,
+      "text": "CI is green on both runners: run 41598011297 at 6464721, ubuntu cargo 96 unit and 30 cli, and ubuntu's first bats run 102 ok with the one skip AT-12.2 by design; the AC-00.7 Linux refusal test ran and passed. ST0001 AC-02.1 and AC-02.2 are dc's to satisfy (WP02), citing this run and vc's decision 6; AC-00.3 and AC-00.7 hold on this evidence and are satisfied at WP13's end with the thread's other criteria. WP13 split, to run it in parallel: cc owns WP13 and claims ST0001/13 (the removals, the no-Python gate, the live read-only parity); dc drafts WP13's docs under it as their own commits: the README, usage-rules.md, CHANGELOG 2.0.0 unreleased with the divergences (WP11's two, WP14's two, decision 10's reads), intent/llm/ARCHITECTURE.md and CLAUDE.md's pointers.",
+      "state": "live",
+      "recorded_at": "2026-11-03T07:45:39.096Z"
     }
   ],
   "sent": [
@@ -394,6 +403,13 @@
       "body": "Next for you, before WP13 (vc decision 10, ruling todo 5): one About reader for every About read. It decodes lossily, so a non-UTF-8 About keeps its header as the legacy's byte-wise reads did. A read error other than NotFound fails the command naming the file, returned to the coordinator, never printed by the library (PFIC). NotFound stays 'no About'. Sites: tree.rs's header read and its .index/aliases read, grep.rs:90, sync.rs:1177 (--pull then names the real cause instead of 'no About file'), tags.rs:681 and :906. Tests red then green: a non-UTF-8 About's header still reads; an unreadable About fails naming its path. No golden changes expected; tell me first if one moves. Measure once with cargo and bats; my checklist is todo 7. Then WP13.",
       "fyi": false,
       "recorded_at": "2026-11-03T07:33:13.413Z"
+    },
+    {
+      "id": "01M6G5Y26K48A610MFGJM7EN8P",
+      "recipient": "dc",
+      "body": "Two things (vc decision 11). (1) Close ST0001 WP02: satisfy AC-02.1 and AC-02.2 citing CI run 41598011297 (both runners green, ubuntu's first bats run 102 ok) and vc's decision 6, then wp done if the gate passes. Tell me what ST0002 AC-02.1 still needs beyond this run: if it is a push of a candidate/** branch, that is hv's, and I'll put it to hv. (2) Then draft WP13's docs, under cc's WP13 as their own commits, describing the code as it stands after cc's About reader lands: the README (the commands from the Rust help, the brew install from ST0002's install-release.md as the plan it is, a maintainer section for dev and opt), usage-rules.md (the current tags model), CHANGELOG '## [2.0.0] - unreleased' (the port, and the divergences: WP11's two, WP14's two, and decision 10's lossy reads and strict write-backs), intent/llm/ARCHITECTURE.md (the Rust architecture), and CLAUDE.md's project section pointing at them. Nothing from the People tree goes in. cc keeps the removals, the no-Python gate and the live parity; send each draft to me for review before it lands.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T07:45:45.171Z"
     }
   ],
   "handled": [

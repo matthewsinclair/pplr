@@ -1,0 +1,17 @@
+{
+  "id": "01M6G5Y26K48A610MFGJM7EN8N",
+  "ts": "2026-11-03T07:45:45.171Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "Two things (vc decision 11). (1) Close ST0001 WP02: satisfy AC-02.1 and AC-02.2 citing CI run 41598011297 (both runners green, ubuntu's first bats run 102 ok) and vc's decision 6, then wp done if the gate passes. Tell me what ST0002 AC-02.1 still needs beyond this run: if it is a push of a candidate/** branch, that is hv's, and I'll put it to hv. (2) Then draft WP13's docs, under cc's WP13 as their own commits, describing the code as it stands after cc's About reader lands: the README (the commands from the Rust help, the brew install from ST0002's install-release.md as the plan it is, a maintainer section for dev and opt), usage-rules.md (the current tags model), CHANGELOG '## [2.0.0] - unreleased' (the port, and the divergences: WP11's two, WP14's two, and decision 10's lossy reads and strict write-backs), intent/llm/ARCHITECTURE.md (the Rust architecture), and CLAUDE.md's project section pointing at them. Nothing from the People tree goes in. cc keeps the removals, the no-Python gate and the live parity; send each draft to me for review before it lands.",
+    "fyi": false,
+    "re": null,
+    "recipient": "dc"
+  }
+}
