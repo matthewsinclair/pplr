@@ -1,0 +1,15 @@
+{
+  "id": "01M6FZRG1S6MAPJ1Q8H3JJKYTB",
+  "ts": "2026-11-03T05:57:51.289Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "At cc's WP11 landing, check: (1) cc's measured proof that no replay reaches legacy code (every bin/pplr_* script and lib/engine.sh's build made to exit 99, every replay test still passes); (2) AT-11.1 green; (3) the brief's deletions (workbook.py, the bash pplr_sync, the sidecar's plan modes) deferred to WP13 under D3 and recorded so; (4) the port-race fix in its own commit; then vc's own clean-clone run of the landed HEAD."
+  }
+}

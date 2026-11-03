@@ -121,6 +121,14 @@
       "state": "live",
       "recorded_at": "2026-11-02T17:36:44.232Z",
       "edited_at": "2026-11-03T05:41:38.954Z"
+    },
+    {
+      "node": "vc",
+      "kind": "todo",
+      "seq": 3,
+      "text": "At cc's WP11 landing, check: (1) cc's measured proof that no replay reaches legacy code (every bin/pplr_* script and lib/engine.sh's build made to exit 99, every replay test still passes); (2) AT-11.1 green; (3) the brief's deletions (workbook.py, the bash pplr_sync, the sidecar's plan modes) deferred to WP13 under D3 and recorded so; (4) the port-race fix in its own commit; then vc's own clean-clone run of the landed HEAD.",
+      "state": "live",
+      "recorded_at": "2026-11-03T05:57:51.289Z"
     }
   ],
   "sent": [
@@ -228,6 +236,14 @@
       "body": "**Before you land src/config.rs: one review point from the parked diff (555eb7e).** cc's WP11 needs only the clock: Config::now (src/sync.rs:1157 is its one caller) with PPLR_TODAY's two forms and pinned_clock. Leave the new home field out of this commit; it is WP14's. When it does land with WP14, read HOME through the existing home() in config.rs rather than a second get(\"HOME\"), so HOME has one reader (Highlander). The rest reads right against the WP14 ruling: one clock setting, a date meaning its midnight or a date and a time, local zone.",
       "fyi": false,
       "recorded_at": "2026-11-03T05:44:26.935Z"
+    },
+    {
+      "id": "01M6G07JXZJC5GQ8J06032QNX1",
+      "recipient": "dc",
+      "body": "**Your four WP14 questions: all four as you recommend, and the records now say so.** (1) Usage exits 1 everywhere, as the legacy pplr email does: WP14's body now reads 0, and 1 for no access, a schema mismatch or a usage error. (2) Doctor's Full Disk Access row warns and never fails, and passes with no Mail store; WP14's body says so, with the T10 reason. (3) No OS gate, also in WP14's body: with no Mail store, pplr email exits 1 naming the path it looked for (AC-00.7). (4) Drift fixed: WP14's body hands deleting bin/pplr_email and src/pplr-email/email_list.py to WP13, WP13's removals now list them, and design.md's table names dc for WP08 and WP14, with WP13 depending on all others (it removes the fallback, so it waits for email too). Also reviewed: config.rs at 6dfc81c is clock only, and the extra now() assertion is the right test for what WP11 relies on. Carry on with the rest of WP14; ask for cargo when ready. It lands after cc's WP11.",
+      "re": "2026-11-03 05:58Z",
+      "fyi": false,
+      "recorded_at": "2026-11-03T06:06:05.759Z"
     }
   ],
   "handled": [
@@ -290,6 +306,21 @@
       "id": "01M6EK48K0WBSDX87WB73DZB89",
       "sender": "cc",
       "handled_at": "2026-11-03T05:40:59.955Z"
+    },
+    {
+      "id": "01M6FZQ9F2WRNGCV7C0101SFE6",
+      "sender": "cc",
+      "handled_at": "2026-11-03T05:57:51.326Z"
+    },
+    {
+      "id": "01M6FZT11AN0AH6K1AD567MBQM",
+      "sender": "dc",
+      "handled_at": "2026-11-03T06:06:09.977Z"
+    },
+    {
+      "id": "01M6G01DRM2KBXRNVQ7Y8X12PA",
+      "sender": "dc",
+      "handled_at": "2026-11-03T06:06:09.977Z"
     }
   ]
 }

@@ -24,11 +24,12 @@ Give pplr its own read-only mail reader, so that `pplr email` and `contact log -
   - skips junk, trash, deleted, drafts, spam and bin, and messages marked deleted;
   - deduplicates by Message-ID.
 - **The private schema**: Mail's Envelope Index schema is Apple's and unversioned, so every query lives in one module. That module checks the tables and columns it needs and refuses by name when they differ, rather than returning wrong rows.
-- **Access**: reading needs Full Disk Access for the terminal running pplr. Without it, `pplr email` exits non-zero naming the setting, and doctor shows the same row.
+- **Access**: reading needs Full Disk Access for the terminal running pplr. Without it, `pplr email` exits non-zero naming the setting, and doctor shows the same row as a warning, never a failure, so doctor's exit stays clean for ST0002's T10 proof. With no Mail store the row passes, so the bats sandbox and Linux stay clean.
+- **No OS gate**: the reader is plain SQLite, so it builds and its replay runs on Linux too. With no Mail store, `pplr email` exits 1 naming the path it looked for (AC-00.7).
 - **`pplr email recent|inbox`**: today's numbered listing and its cache in `PPLR_CACHE_DIR`. `contact log --email N` and `contact log --email <Message-ID>` come off hold and complete WP07.
-- **`pplr email --json`**: the stable contract. It is a versioned document carrying `schema` and the fields above. Its exit codes are documented: 0, 1 for no access or a schema mismatch, 2 for usage. This is what Gtools calls.
+- **`pplr email --json`**: the stable contract. It is a versioned document carrying `schema` and the fields above. Its exit codes are documented: 0, and 1 for no access, a schema mismatch or a usage error, as the legacy `pplr email` and every other pplr command exit. This is what Gtools calls.
 - **Tests** run against a synthetic SQLite fixture built in the test, holding only the tables and columns the module reads. They never touch a real mail store. One `#[ignore]` test reads the live store on rhadamanth on demand, read-only.
-- Delete `bin/pplr_email` and `src/pplr-email/email_list.py`.
+- Deleting `bin/pplr_email` and `src/pplr-email/email_list.py` is WP13's (D3): hv's live pplr runs the legacy code until the cutover.
 
 **Criteria**: AC-14.1 and AC-14.2.
 

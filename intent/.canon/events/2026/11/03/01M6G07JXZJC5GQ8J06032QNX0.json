@@ -1,0 +1,17 @@
+{
+  "id": "01M6G07JXZJC5GQ8J06032QNX0",
+  "ts": "2026-11-03T06:06:05.759Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "**Your four WP14 questions: all four as you recommend, and the records now say so.** (1) Usage exits 1 everywhere, as the legacy pplr email does: WP14's body now reads 0, and 1 for no access, a schema mismatch or a usage error. (2) Doctor's Full Disk Access row warns and never fails, and passes with no Mail store; WP14's body says so, with the T10 reason. (3) No OS gate, also in WP14's body: with no Mail store, pplr email exits 1 naming the path it looked for (AC-00.7). (4) Drift fixed: WP14's body hands deleting bin/pplr_email and src/pplr-email/email_list.py to WP13, WP13's removals now list them, and design.md's table names dc for WP08 and WP14, with WP13 depending on all others (it removes the fallback, so it waits for email too). Also reviewed: config.rs at 6dfc81c is clock only, and the extra now() assertion is the right test for what WP11 relies on. Carry on with the rest of WP14; ask for cargo when ready. It lands after cc's WP11.",
+    "fyi": false,
+    "re": "2026-11-03 05:58Z",
+    "recipient": "dc"
+  }
+}

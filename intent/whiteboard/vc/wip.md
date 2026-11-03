@@ -18,6 +18,7 @@ _(none)_
 ## TODO
 
 - CI red on both runners at b663b95 (run 41491091725); causes read from its logs and sent to cc. ubuntu: warm_legacy_engine() in tests/cli.rs builds the Swift Contacts engine on Linux, so 52 cases fail on 'no such module Contacts'. macOS: sync-plan and sync-apply-plan exit 1 (the legacy plan path; WP11 makes it native), and a port race on the stub CMS (127.0.0.1:47360). The bats step has never run on ubuntu under tests.yml. Order: cc's port-race fix, dc's src/config.rs, cc's WP11, vc's clean-clone check of each, then hv pushes (db45555, dc's rename fix, goes with it). Dropbox remote: check whether the reboot cleared the access() hang. (edited)
+- At cc's WP11 landing, check: (1) cc's measured proof that no replay reaches legacy code (every bin/pplr_* script and lib/engine.sh's build made to exit 99, every replay test still passes); (2) AT-11.1 green; (3) the brief's deletions (workbook.py, the bash pplr_sync, the sidecar's plan modes) deferred to WP13 under D3 and recorded so; (4) the port-race fix in its own commit; then vc's own clean-clone run of the landed HEAD.
 
 ## Holds
 

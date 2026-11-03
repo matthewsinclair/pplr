@@ -110,18 +110,18 @@ macOS is the target. Linux builds, tests and runs everything except the macOS se
 | 05  | Indexes, new person, pictures and search          | cc    | M    | 04         | AC-02, AC-05               |
 | 06  | Tags                                              | cc    | M    | 04         | AC-01, AC-02, AC-05        |
 | 07  | Contact cadence                                   | cc    | M    | 06         | AC-01, AC-02, AC-05        |
-| 08  | Rename, links and the `pplr://` handler           | cc    | M    | 05         | AC-02, AC-05, AC-08        |
+| 08  | Rename, links and the `pplr://` handler           | dc    | M    | 05         | AC-02, AC-05, AC-08        |
 | 09  | The Contacts store and the Swift I/O sidecar      | dc    | M    | 02         | AC-07, AC-11               |
 | 10  | Sync: check, link, pull, photos and backup        | cc    | L    | 04, 09     | AC-02, AC-05, AC-07        |
 | 11  | The sync plan and its workbook                    | cc    | L    | 10         | AC-01, AC-02, AC-05        |
 | 12  | Doctor and Finder icons                           | dc    | S    | 04         | AC-02, AC-11               |
-| 13  | Cutover                                           | cc    | M    | 01 to 12   | AC-01, AC-02, AC-06, AC-12 |
-| 14  | pplr's own mail reader                            | cc    | M    | 04, 07     | AC-14.1, AC-14.2           |
+| 13  | Cutover                                           | cc    | M    | all others | AC-01, AC-02, AC-06, AC-12 |
+| 14  | pplr's own mail reader                            | dc    | M    | 04, 07     | AC-14.1, AC-14.2           |
 
 The two lanes run side by side:
 
-- **dc**: WP01, then WP02, then WP09 and WP12, interleaved with ST0002.
-- **cc**: WP03 now (it needs no Rust), then WP04 once WP02 lands, then WP05 to WP08 in any order the dependencies allow, then WP10 and WP11, then WP14 once WP07 is done, then WP13.
+- **dc**: WP01, then WP02, then WP09 and WP12, interleaved with ST0002; then WP08 and WP14, both moved from cc. WP08 moved because its signed `Pplr Links.app` sits with ST0002 WP07's signer, and WP14 with cc's agreement.
+- **cc**: WP03 now (it needs no Rust), then WP04 once WP02 lands, then WP05 to WP07 in any order the dependencies allow, then WP10 and WP11, then WP13 once every other WP is done.
 
 ST0002's release waits on WP13.
 
