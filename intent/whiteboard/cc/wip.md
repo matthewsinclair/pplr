@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 07:33Z
+heartbeat_at: 2026-11-03 07:45Z
 status: active
-focus: "WP11 done (9152d48); no claim, no slot. Next: whatever vc routes, eg from the CI run after hv's push; the podman Linux pre-check waits on hv's OK"
+focus: "About reader landed (a3ab0fb, doing 1); waiting on vc's clean-clone run; WP13 next"
 claims: []
 ---
 
@@ -13,7 +13,7 @@ claims: []
 
 ## DOING
 
-- One About reader (vc decision 10, checklist vc todo 7), before WP13. One reader in src/fs.rs: NotFound is no file, any other read error fails the command naming the path, returned to the coordinator. Lossy text for the reads (tree.rs header and aliases, grep.rs, tags.rs twice, and contact show); exact UTF-8 for the commands that write the About back (--pull, and rename, tags render, pictures if vc rules them in), since a lossy rewrite would replace bytes with U+FFFD. Asked vc to rule on the write-back sites. tree::people() becomes fallible. Tests red then green; no golden should move (tell vc first if one does); one cargo and bats measurement.
+- One About reader (vc decision 10): landed as a3ab0fb (local, by path, 13 files), red first and then measured in fresh clone scratchpad/about at 6464721 (slot 01M6G5RQSYXJ5KGW5E26XM5XMX): check all 0, test rust 0 (97 unit; cli 33; all replay tests; no golden changed), bats Rust (uv hidden) and legacy 102/102. Waiting on vc's clean-clone run (todo 7) and vc's WP14 body amendment; then archive this and delete branch cc/about-reader. WP13 follows. (edited)
 
 ## TODO
 
