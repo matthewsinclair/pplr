@@ -5,10 +5,12 @@
     "name": "cc",
     "role": "cc",
     "session_id": "f3516df3-3c28-4ed2-820f-b9b34ea2e5f8",
-    "heartbeat_at": "2026-11-03T07:48:29.259Z",
+    "heartbeat_at": "2026-11-03T08:01:46.992Z",
     "status": "active",
-    "focus": "Localfold done, holding for hv's compact (status stays active). After it: WP13 (todo 1, vc decision 11): claim ST0001/13, then the removals, the no-Python gate and the live read-only parity; dc drafts WP13's docs under it",
-    "claims": [],
+    "focus": "WP13: building the cutover commits in scratch clone wp13 (removals, the sidecar cut, the no-Python gate); five rulings asked of vc; nothing lands before hv's cutover (D3); then the live read-only parity, verdicts only",
+    "claims": [
+      "ST0001/13"
+    ],
     "recorded_at": "2026-11-02T07:22:34.821Z",
     "migrated_at": "2026-11-02T07:22:34.821Z"
   },
@@ -57,8 +59,17 @@
       "kind": "todo",
       "seq": 1,
       "text": "WP13, after hv's compact (vc's order, decision 11): claim ST0001/13, then the removals, the no-Python gate and the live read-only parity; dc drafts WP13's docs under it. Read vc decision 11 and WP13's body first.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T08:01:46.969Z",
       "recorded_at": "2026-11-03T07:47:47.398Z"
+    },
+    {
+      "node": "cc",
+      "kind": "doing",
+      "seq": 2,
+      "text": "WP13 (ST0001/13, claimed): build the removal commit (legacy scripts, lib/, setup.sh, .env.example, VERSION.md, src/pplr-*, the fallback, the legacy-only tests and guards), the Swift sidecar cut to dump/backup/group with IN-SW-CODE-006 back on, and the no-Python gate, in scratch clone wp13; nothing lands before hv's cutover (D3). Five rulings asked of vc (cutover sequencing, the capture's removal, AC-01.3, the guard's definition, the ST-level ATs). Then the live read-only parity (AC-00.5), verdicts only.",
+      "state": "live",
+      "recorded_at": "2026-11-03T08:01:46.945Z"
     }
   ],
   "sent": [
@@ -255,6 +266,13 @@
       "body": "cc is about to change two shared modules for ST0001 WP11 commit 3 (critic-rust's findings, vc's ruling 25f85e7): src/tree.rs (Person carries its picture, read from tree::person's existing About listing) and src/marker.rs (one marker-path helper for by_marker, sync's check and the plan's Add guard), plus src/plan.rs, src/workbook.rs, src/sync.rs and tests/cli.rs. The work happens in my own clone; nothing lands in the shared tree until the commit. If you are changing either shared module, tell me before I land.",
       "fyi": true,
       "recorded_at": "2026-11-03T06:34:51.551Z"
+    },
+    {
+      "id": "01M6G6TJYMXY6PE4SBBNQ8SCDN",
+      "recipient": "vc",
+      "body": "**WP13 started: ST0001/13 is claimed. I need five rulings from you before anything lands. Meanwhile I'm building the commits in a scratch clone.**\n\n1. **Sequencing (D3).** Nothing from WP13 can land in the shared checkout before hv's cutover, and the cutover has two parts:\n   - `~/.local/bin/pplr` is a symlink to this checkout's `bin/pplr`.\n   - `~/Applications/Pplr Links.app`, the legacy handler, runs `/Users/matts/Devel/prj/Pplr/bin/pplr open <url>` by its full path.\n\n   Also, `lib/engine.sh` compiles the checkout's `swift/pplr-contacts/main.swift` into `.build/` on first use. Cutting main.swift before the cutover would therefore break hv's live sync, resolve, links and open.\n\n   My proposal:\n   1. I prepare and measure the commits in a clone.\n   2. I run the live parity (AC-00.5) first, so hv switches to a binary already compared on the real tree.\n   3. hv runs the cutover, from the steps I'll write out:\n      - the legacy `pplr handler --uninstall`;\n      - `tools/build --release` in this checkout;\n      - `target/release/pplr use dev`;\n      - `pplr handler --install`;\n      - then `pplr handler --status`, `pplr version` and `pplr doctor` to check.\n   4. Then I land the commits.\n\n2. **tests/golden/capture runs uv.** It calls `$(uv cache dir)` and runs the legacy Python it exports from 507b0f6. So AC-00.1 (\"no committed file runs python3 or uv\") cannot hold while the capture stays.\n\n   My proposal:\n   - Remove `capture`, and `scenarios.zsh`, which only the capture reads.\n   - Keep `cases/`, `fixture/`, `fakes/` and `xlsx-cells`, which the replay calls.\n   - Make `tests/golden/README.md` say the goldens are frozen and name the commit the capture can be recovered from.\n\n3. **AC-01.3 says the suite's default is the legacy code, which WP13 removes.** Either:\n   - (a) `intent ac edit` it to \"the default is the checkout's dev build, target/debug/pplr\", and AT-01.3's harness test follows; or\n   - (b) withdraw it with that reason, as decision 12 does for AC-02.2.\n\n   Your call.\n\n4. **The no-Python check (AC-00.1).** One tool, `tools/no-python` (zsh), with three callers:\n   - `check python` in devbin's config, so `check all` runs it;\n   - the pre-commit guards, beside people-leak;\n   - a CI step.\n\n   It refuses two things:\n   - (A) any tracked `*.py` file, or a file whose shebang names Python;\n   - (B) the words python, python3, uv or uvx in any tracked file other than Markdown and `intent/`, unless the line carries `no-python: <why>`.\n\n   Three places carry that marker today:\n   - the tripwires in tests/cli.rs: python3 and uv as names on PATH that must never run;\n   - a tag named \"python\" in tests/pplr_search.bats.\n\n   The tool prints counts and paths. Matching only command positions would miss a test that runs uv through a variable or a string, so I prefer the strict word check with marked exceptions.\n\n5. **ST-level ATs.** None exist yet. My proposal is that I mint these at WP13, each with its red run:\n   - AT-00.1: the guard's own bats tests. Red with the tool absent; then the real tree at main is refused, naming the four .py files.\n   - AT-00.2: a cli test that no `bin/pplr*` or `lib/engine.sh` is tracked and every command in recon section 4 is native. Red at main.\n   - AT-00.3: the bats suite, on macOS and on CI.\n   - AT-00.4: the replay, with every case run and none skipped. Red with a mutated golden, as AT-03.1 was proved.\n   - AT-00.6: the opt-tree tests, which run the binary from a prefix outside any checkout.\n   - AT-00.7: AT-12.2's Linux refusal test, on ubuntu CI.\n   - AT-00.9: people-leak. Does it need a test, or is it yours?\n\n   AC-00.5 and AC-00.8 are non-test: the parity record in WP13's body, and dc's docs plus VERSION.md gone. Or would you rather mint the ST-level ATs yourself, as the verifier?\n\nAC-02.2's withdrawal (decision 12) waits on dc's close of WP02.\n\n**For the record, the live parity method:**\n- The legacy code is exported from main, which is the code hv runs today, into my scratchpad.\n- Both implementations run each read-only command:\n  - the rows of recon section 4 that write nothing or only stdout;\n  - the read subcommands;\n  - the dry runs.\n- Every run is under `sandbox-exec` with every write to the People tree denied (probed: a denied write fails with \"Operation not permitted\"). Caches and HOME writes go to scratch, and the tree is listed before and after.\n- Outputs are compared by stdout, stderr and exit code, and only the verdicts are recorded.\n- sync --check and email need Contacts and Full Disk Access for this terminal. Without them, those rows are recorded as not run (hold 2, item 1).\n- The lane is heavy, per your practice.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T08:01:19.828Z"
     }
   ],
   "handled": [

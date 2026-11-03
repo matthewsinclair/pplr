@@ -3,21 +3,21 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 07:48Z
+heartbeat_at: 2026-11-03 08:01Z
 status: active
-focus: "Localfold done, holding for hv's compact (status stays active). After it: WP13 (todo 1, vc decision 11): claim ST0001/13, then the removals, the no-Python gate and the live read-only parity; dc drafts WP13's docs under it"
-claims: []
+focus: "WP13: building the cutover commits in scratch clone wp13 (removals, the sidecar cut, the no-Python gate); five rulings asked of vc; nothing lands before hv's cutover (D3); then the live read-only parity, verdicts only"
+claims: [ST0001/13]
 ---
 
 # cc (cc)
 
 ## DOING
 
-_(none)_
+- WP13 (ST0001/13, claimed): build the removal commit (legacy scripts, lib/, setup.sh, .env.example, VERSION.md, src/pplr-*, the fallback, the legacy-only tests and guards), the Swift sidecar cut to dump/backup/group with IN-SW-CODE-006 back on, and the no-Python gate, in scratch clone wp13; nothing lands before hv's cutover (D3). Five rulings asked of vc (cutover sequencing, the capture's removal, AC-01.3, the guard's definition, the ST-level ATs). Then the live read-only parity (AC-00.5), verdicts only.
 
 ## TODO
 
-- WP13, after hv's compact (vc's order, decision 11): claim ST0001/13, then the removals, the no-Python gate and the live read-only parity; dc drafts WP13's docs under it. Read vc decision 11 and WP13's body first.
+_(none)_
 
 ## Holds
 
