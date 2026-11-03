@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 10:38Z
+heartbeat_at: 2026-11-03 10:47Z
 status: active
-focus: "C11 on main (f9798b3) for vc's verification; hv re-runs the five sync rows from iTerm against C11's opt build; then the AT-00 rows (CI 41619489383 green), AC-01.3 and AC-02.2, wp gate and WP13's close"
+focus: "Localfolded for hv's compact. WP13: C1 to C11 on main and pushed (eb15640); the live parity record complete (aa42c5a); AC-00.8 satisfied, AC-00.5 vc's. First after the compact: the AT-00 rows from scratchpad/at-rows-evidence.md with CI 41621882730's result, AC-01.3, AC-02.2 and AT-02.2, at lint, wp gate and wp done"
 claims: [ST0001/13]
 ---
 
@@ -13,12 +13,11 @@ claims: [ST0001/13]
 
 ## DOING
 
-- WP13 (ST0001/13): C1 to C10 landed on main as d596c35 to 9268cf7 (vc decision 16), and the AT-id commit as 7afa8a9 (comments only; measured at tree bf1e7ad in slot 01M6GCB0M4E68FSY7FSAW1EEQN), sent to vc to verify. hv's rebuild is checked. Next: vc's check of 7afa8a9, dc's tools/ move (decision 17) and docs, hv's push, and main's CI (AT-00.3's and AT-00.7's Linux greens); then the AC and AT rows, wp gate and done (todo 2). The contacts and mail parity rows: hold 2. (edited)
-- WP13 C11, a port bug the live parity found: on main as f9798b3 (vc decision 22), measured at tree 9e321d1 (slot 01M6GFGBK1DRSDS59MGGSHFZNN; nine mutants, each red by its own test's assertion), and listed beside C8 in WP13's body. vc verifies main with it. C11's opt tree (c57cf1208d4a) is now the parity runner's Rust side; hv re-runs the five sync rows from iTerm (parity/hv-next.zsh contacts), then the sync rows go into WP13's body and their outputs are deleted. AC-00.5 waits for them. (edited)
+- WP13 (ST0001/13), WIP: C1 to C10 (d596c35 to 9268cf7), the AT-id commit 7afa8a9 and C11 (f9798b3) are on main and pushed by hv (eb15640; vc decisions 16, 20 and 23). The live parity record is complete (590162c, 728465f, aa42c5a): every row the same or different by design, and C8, C10 and C11 the port bugs it found. AC-00.8 is satisfied by vc, and AC-00.5 is vc's to satisfy on that record. Next, after hv's compact: todo 2. (edited)
 
 ## TODO
 
-- After hv's push and main's CI, WP13's close: AC-01.3 reworded (vc decision 13 item 3); AC-02.2 withdrawn with AT-02.2 n/a (decision 12); AT-00.1, 00.2, 00.3, 00.4, 00.6, 00.7 and 00.9 minted, each with its measured red and its green (each cited file carries its literal id since 7afa8a9; AT-00.3 cites tests.yml, whose path holds through dc's tools/ move); then at lint, wp gate and wp done. vc satisfies AC-00.5 (once hv's sync and email rows are in) and AC-00.8 (dc's docs). (edited)
+- After hv's compact, WP13's close, from the evidence banked in the scratchpad's at-rows-evidence.md: mint AT-00.1, 00.2, 00.3, 00.4, 00.6, 00.7 and 00.9, each with its measured red and its green (CI 41619489383 at a18cc88, green on both runners; vc's b245b53 run for AT-00.3's macOS half, decision 19; CI 41621882730 on eb15640 was still running at the fold, and vc reports it); reword AC-01.3 (vc decision 13 item 3); withdraw AC-02.2 and mark AT-02.2 n/a (decisions 12 and 13); then at lint, wp gate and wp done. (edited)
 
 ## Holds
 

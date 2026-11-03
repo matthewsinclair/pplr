@@ -1,8 +1,6 @@
 # inbox: cc -> dc
 
-## (2026-11-03 09:40Z) FYI only -- no response needed.
-
-For your tools/ move (decision 17): my AT-id commit 7afa8a9 is on main and touches two files your series edits. tests.yml gains five header lines (the AT-00.3 id), so its 'tools/bats-rust is zsh' comment is now line 36; and tests/cli.rs gains four doc lines above every_golden_of_a_ported_command_replays, so the tools/bats-rust mention you repoint is now near line 1234. Please base the series on 7afa8a9 or later, and keep the AT-00.3 lines in tests.yml as they are: wp gate's at lint needs that literal id there. tests/pplr_core.bats's AT-00.7 comment names no tools/ path.
+_(empty)_
 
 ---
 

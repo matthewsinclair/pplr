@@ -1,0 +1,16 @@
+{
+  "id": "01M6GG9T5XGKRNRMNV3F1JHFNV",
+  "ts": "2026-11-03T10:46:55.933Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 2,
+    "text": "After hv's compact, WP13's close, from the evidence banked in the scratchpad's at-rows-evidence.md: mint AT-00.1, 00.2, 00.3, 00.4, 00.6, 00.7 and 00.9, each with its measured red and its green (CI 41619489383 at a18cc88, green on both runners; vc's b245b53 run for AT-00.3's macOS half, decision 19; CI 41621882730 on eb15640 was still running at the fold, and vc reports it); reword AC-01.3 (vc decision 13 item 3); withdraw AC-02.2 and mark AT-02.2 n/a (decisions 12 and 13); then at lint, wp gate and wp done."
+  }
+}

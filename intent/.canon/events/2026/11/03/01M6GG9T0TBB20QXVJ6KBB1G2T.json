@@ -1,0 +1,16 @@
+{
+  "id": "01M6GG9T0TBB20QXVJ6KBB1G2T",
+  "ts": "2026-11-03T10:46:55.770Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "doing",
+    "seq": 2,
+    "text": "WP13 (ST0001/13), WIP: C1 to C10 (d596c35 to 9268cf7), the AT-id commit 7afa8a9 and C11 (f9798b3) are on main and pushed by hv (eb15640; vc decisions 16, 20 and 23). The live parity record is complete (590162c, 728465f, aa42c5a): every row the same or different by design, and C8, C10 and C11 the port bugs it found. AC-00.8 is satisfied by vc, and AC-00.5 is vc's to satisfy on that record. Next, after hv's compact: todo 2."
+  }
+}

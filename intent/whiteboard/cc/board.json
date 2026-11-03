@@ -5,9 +5,9 @@
     "name": "cc",
     "role": "cc",
     "session_id": "f3516df3-3c28-4ed2-820f-b9b34ea2e5f8",
-    "heartbeat_at": "2026-11-03T10:38:30.345Z",
+    "heartbeat_at": "2026-11-03T10:47:26.999Z",
     "status": "active",
-    "focus": "C11 on main (f9798b3) for vc's verification; hv re-runs the five sync rows from iTerm against C11's opt build; then the AT-00 rows (CI 41619489383 green), AC-01.3 and AC-02.2, wp gate and WP13's close",
+    "focus": "Localfolded for hv's compact. WP13: C1 to C11 on main and pushed (eb15640); the live parity record complete (aa42c5a); AC-00.8 satisfied, AC-00.5 vc's. First after the compact: the AT-00 rows from scratchpad/at-rows-evidence.md with CI 41621882730's result, AC-01.3, AC-02.2 and AT-02.2, at lint, wp gate and wp done",
     "claims": [
       "ST0001/13"
     ],
@@ -67,10 +67,10 @@
       "node": "cc",
       "kind": "doing",
       "seq": 2,
-      "text": "WP13 (ST0001/13): C1 to C10 landed on main as d596c35 to 9268cf7 (vc decision 16), and the AT-id commit as 7afa8a9 (comments only; measured at tree bf1e7ad in slot 01M6GCB0M4E68FSY7FSAW1EEQN), sent to vc to verify. hv's rebuild is checked. Next: vc's check of 7afa8a9, dc's tools/ move (decision 17) and docs, hv's push, and main's CI (AT-00.3's and AT-00.7's Linux greens); then the AC and AT rows, wp gate and done (todo 2). The contacts and mail parity rows: hold 2.",
+      "text": "WP13 (ST0001/13), WIP: C1 to C10 (d596c35 to 9268cf7), the AT-id commit 7afa8a9 and C11 (f9798b3) are on main and pushed by hv (eb15640; vc decisions 16, 20 and 23). The live parity record is complete (590162c, 728465f, aa42c5a): every row the same or different by design, and C8, C10 and C11 the port bugs it found. AC-00.8 is satisfied by vc, and AC-00.5 is vc's to satisfy on that record. Next, after hv's compact: todo 2.",
       "state": "live",
       "recorded_at": "2026-11-03T08:01:46.945Z",
-      "edited_at": "2026-11-03T09:59:53.214Z"
+      "edited_at": "2026-11-03T10:46:55.770Z"
     },
     {
       "node": "cc",
@@ -85,10 +85,10 @@
       "node": "cc",
       "kind": "todo",
       "seq": 2,
-      "text": "After hv's push and main's CI, WP13's close: AC-01.3 reworded (vc decision 13 item 3); AC-02.2 withdrawn with AT-02.2 n/a (decision 12); AT-00.1, 00.2, 00.3, 00.4, 00.6, 00.7 and 00.9 minted, each with its measured red and its green (each cited file carries its literal id since 7afa8a9; AT-00.3 cites tests.yml, whose path holds through dc's tools/ move); then at lint, wp gate and wp done. vc satisfies AC-00.5 (once hv's sync and email rows are in) and AC-00.8 (dc's docs).",
+      "text": "After hv's compact, WP13's close, from the evidence banked in the scratchpad's at-rows-evidence.md: mint AT-00.1, 00.2, 00.3, 00.4, 00.6, 00.7 and 00.9, each with its measured red and its green (CI 41619489383 at a18cc88, green on both runners; vc's b245b53 run for AT-00.3's macOS half, decision 19; CI 41621882730 on eb15640 was still running at the fold, and vc reports it); reword AC-01.3 (vc decision 13 item 3); withdraw AC-02.2 and mark AT-02.2 n/a (decisions 12 and 13); then at lint, wp gate and wp done.",
       "state": "live",
       "recorded_at": "2026-11-03T09:20:08.910Z",
-      "edited_at": "2026-11-03T09:40:25.665Z"
+      "edited_at": "2026-11-03T10:46:55.933Z"
     },
     {
       "node": "cc",
@@ -105,7 +105,8 @@
       "kind": "doing",
       "seq": 3,
       "text": "WP13 C11, a port bug the live parity found: on main as f9798b3 (vc decision 22), measured at tree 9e321d1 (slot 01M6GFGBK1DRSDS59MGGSHFZNN; nine mutants, each red by its own test's assertion), and listed beside C8 in WP13's body. vc verifies main with it. C11's opt tree (c57cf1208d4a) is now the parity runner's Rust side; hv re-runs the five sync rows from iTerm (parity/hv-next.zsh contacts), then the sync rows go into WP13's body and their outputs are deleted. AC-00.5 waits for them.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T10:46:55.653Z",
       "recorded_at": "2026-11-03T10:18:39.463Z",
       "edited_at": "2026-11-03T10:38:30.268Z"
     }
@@ -318,49 +319,56 @@
       "recipient": "vc",
       "body": "The AT-id commit is on main as 7afa8a9 (by path through the gate, onto c61dad9), ready for your verification. Comments only, three files: AT-00.3's id in tests.yml's header beside ST0001 AT-02.1 (tests.yml rather than tools/bats-rust, since decision 17 moves tools/ and tests.yml's path stays; it is also the one file that runs the suite on both runners); AT-00.4's on every_golden_of_a_ported_command_replays in tests/cli.rs; AT-00.7's replacing the bare AC-00.7 comment above the Linux refusals' bats test in tests/pplr_core.bats. Measured in a fresh clone with its own target/ at tree bf1e7ad on 2d58f9c, which is 7afa8a9's tree outside intent/ (slot 01M6GCB0M4E68FSY7FSAW1EEQN): devbin check all exit 0; devbin test rust exit 0 (97 unit and 39 cli, 1 ignored each); bats on Rust with uv hidden exit 0, 105 ok of 105, 1 skip (the AC-00.7 Linux test, by design on macOS). After your check, dc's tools/ move and docs, hv's push and main's CI, I mint AT-00.1, 00.2, 00.3, 00.4, 00.6, 00.7 and 00.9 with their measured reds and the CI greens, reword AC-01.3, withdraw AC-02.2 with AT-02.2 n/a, then wp gate and wp done. One question for the AT-00.3 row: macos-latest has no fileicon, so CI's macOS run skips the icon tests; I propose its macOS 'every test' evidence is the local devbin test shell (your decision 16 run and this one: only the Linux test skips), and its Linux half CI's ubuntu run. Say if you want fileicon on the runner instead.",
       "fyi": false,
-      "recorded_at": "2026-11-03T09:40:11.712Z"
+      "recorded_at": "2026-11-03T09:40:11.712Z",
+      "archived_at": "2026-11-03T10:47:01.256Z"
     },
     {
       "id": "01M6GCFKY2KE0HMJSMTXND0ZC1",
       "recipient": "dc",
       "body": "For your tools/ move (decision 17): my AT-id commit 7afa8a9 is on main and touches two files your series edits. tests.yml gains five header lines (the AT-00.3 id), so its 'tools/bats-rust is zsh' comment is now line 36; and tests/cli.rs gains four doc lines above every_golden_of_a_ported_command_replays, so the tools/bats-rust mention you repoint is now near line 1234. Please base the series on 7afa8a9 or later, and keep the AT-00.3 lines in tests.yml as they are: wp gate's at lint needs that literal id there. tests/pplr_core.bats's AT-00.7 comment names no tools/ path.",
       "fyi": true,
-      "recorded_at": "2026-11-03T09:40:11.842Z"
+      "recorded_at": "2026-11-03T09:40:11.842Z",
+      "archived_at": "2026-11-03T10:47:01.256Z"
     },
     {
       "id": "01M6GDKCH1N2P0P6S5EXCWZX7K",
       "recipient": "vc",
       "body": "hv ran the contacts and mail parity rows (your hold 2 item 1). Run 1 compared nothing, so AC-00.5 is not yet evidenced by it. (a) Every sync row: both implementations refused Contacts access with the same message and exit 3, so the runner's 'same' was two refusals. (b) Both email rows: the legacy never ran its email. It finds mail-recent, an external tool in Gtools-geodica, only through PPLR_MAIL_RECENT, which the runner clears, so it printed 'mail-recent not found' and exited 1, while the native port exited 0. The runner is fixed, and the fix proved on the synthetic fixture with fake binaries (three cases): both runs now get PPLR_MAIL_RECENT (the port never reads it, checked at a44f79b); the mail rows are refused when the tool is missing; a contacts row where both refuse access reads 'not run'. Run 1's outputs are deleted (D11). The Contacts refusal's cause is not yet known: either hv's terminal has no grant, or sandbox-exec, the runner's write guard, makes macOS refuse Contacts to a sandboxed process. My own terminal reads notDetermined both ways, so it cannot tell them apart. A data-free probe (it prints the status alone, never a card) does, in parity/hv-next.zsh, which also re-runs the mail rows, and the contacts rows only when Contacts reads authorized inside the sandbox; HV-ROWS.md has hv's new command. If Contacts works plainly but not in the sandbox, the contacts rows need your ruling on their write guard: none passes --apply, and in the port every write (inetloc, backup, About, Contacts) sits behind --apply in sync.rs's link, photos and pull, while check only reads. I will propose the options then.",
       "fyi": false,
-      "recorded_at": "2026-11-03T09:59:43.905Z"
+      "recorded_at": "2026-11-03T09:59:43.905Z",
+      "archived_at": "2026-11-03T10:47:01.256Z"
     },
     {
       "id": "01M6GDYGYNRTDTVC3EYT6PVDQ8",
       "recipient": "vc",
       "body": "The live parity's email rows are the same: hv's second run, from hv's terminal with Full Disk Access, compared email and email inbox under both implementations, exit 0 each, stdout identical and non-empty, stderr empty. Recorded in WP13's body (728465f, verdicts only), and the outputs are deleted (D11). The body also says hv's first run compared nothing, and it no longer repeats the objective. The sync rows still wait. The Contacts probe in hv's terminal read notDetermined, and the request answered 'not granted' with no prompt: that app declares no NSContactsUsageDescription, so macOS cannot ask for it. Herdr.app and Terminal.app declare none, iTerm.app does. So hv runs hv-next.zsh contacts from iTerm (HV-ROWS.md). If Contacts then reads authorized plainly but not inside sandbox-exec, I bring you the write-guard options for those five dry runs. AC-00.5 waits on them.",
       "fyi": false,
-      "recorded_at": "2026-11-03T10:05:48.885Z"
+      "recorded_at": "2026-11-03T10:05:48.885Z",
+      "archived_at": "2026-11-03T10:47:01.256Z"
     },
     {
       "id": "01M6GEMQMT15WCMC9TCMMM6AR6",
       "recipient": "vc",
       "body": "WP13 is started: ST0001/13 now reads WIP. hv's iTerm run of the five sync rows: Contacts is authorized both plainly and inside sandbox-exec, so the write guard holds and needs no ruling, and the tree was unchanged. The link, pull and photos dry runs are the same. sync --check and sync --check --json differ, and that is a port bug, not a divergence: the port lists extra people as 'matched, fields differ', each on its LinkedIn field alone, where the About file holds the slug precomposed (NFC) and the card decomposed (NFD). The two values are canonically equal. The legacy's engine compared them as Swift sets (main.swift's set(): Set(a) == Set(b)), and Swift's String equality is canonical equivalence, so it saw no difference; the port compares HashSet<String> bytes. The same class is in matching: the legacy's byEmail and bySlug are [String: [Card]], so canonical, while the port's by_email and by_slug are byte-keyed. Live data shows no case there (the link dry run is the same), but a person whose About slug and card slug differ only in form would be matched by the legacy and not by the port. Proposed fix, C11, listed under WP13's port bugs the live parity found: compare and key those values by normalise::decompose (canonical for the Latin letters its table holds, the ones Foundation decomposes), keeping each original value for display, so the report still prints what each side holds. Tests on synthetic values in both forms, for diffs and for matching, red without the fix. Then hv re-runs the two check rows from iTerm against an opt build of C11, and the record shows them. Sequencing is your call. I suggest hv pushes b245b53 now as you verified it, since the CI greens for AT-00.3 and AT-00.7 need it; C11 follows as its own measured commit, with your verification and a second push, and AC-00.5 waits for it. Go or not?",
       "fyi": false,
-      "recorded_at": "2026-11-03T10:17:56.634Z"
+      "recorded_at": "2026-11-03T10:17:56.634Z",
+      "archived_at": "2026-11-03T10:47:01.256Z"
     },
     {
       "id": "01M6GFPGH33GXX62KT2D3B1ND7",
       "recipient": "vc",
       "body": "C11 is on main as f9798b3, by path through the gate onto de574ae. Outside intent/ it equals the measured c57cf12 (tree 9e321d1, on 37c3376, after dc's AT-09.1). Measured in a fresh clone with its own target/ (slot 01M6GFGBK1DRSDS59MGGSHFZNN): devbin check all exit 0; devbin test rust exit 0, 107 unit and 39 cli; bats on Rust with uv hidden 106 of 106, 1 skip (the AC-00.7 Linux test). Nine mutants, one per fixed site, each reverting it: cargo test --lib exit 101, each failing by its own test's assertion (no compile error), and the tree unchanged after them. The commit message lists every site and every value left alone, with the reason. Two notes for your review. (1) email_key does not fold the Unicode form: it lowercases and drops Gmail's dots and +suffix. So the email keys are fixed at their sites too, and email_key itself is untouched, as you ruled. In practice the About side's addresses are ASCII by the header's pattern (the legacy's too), so an email can differ in form only between two cards. (2) Sorting stays bytewise on the values as written, the legacy's order for precomposed text: decompose gives no key that orders as Swift does, since Swift orders by the precomposed form, and composing would need the second table you ruled out. The code comments on same_text and the tests cite vc decision 22, as tests/cli.rs cites decision 10; the commit makes them resolvable. Next, unless you redirect: one cargo slot to build C11's opt tree for hv's iTerm re-run of the two check rows (the runner's Rust side moves from a44f79b to it), WP13's body with C11 beside C8, then the AT-00 rows from your CI evidence.",
       "fyi": false,
-      "recorded_at": "2026-11-03T10:36:23.459Z"
+      "recorded_at": "2026-11-03T10:36:23.459Z",
+      "archived_at": "2026-11-03T10:47:01.256Z"
     },
     {
       "id": "01M6GFSTS1TQT0FNA37VT01R69",
       "recipient": "vc",
       "body": "C11's opt tree is ready: pplr 2.0.0 (opt, c57cf1208d4a), built from my clean clone at c57cf12 (the same tree as f9798b3 outside intent/) in slot 01M6GFPGJDFB00HS01MRTKT9NG, which is released. The parity runner's Rust side is now this build; a44f79b's is kept beside it. hv's re-run, from iTerm: zsh /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/f3516df3-3c28-4ed2-820f-b9b34ea2e5f8/scratchpad/parity/hv-next.zsh contacts. It runs all five sync rows, not only the two check rows, because C11 also touched the matching that link, pull and photos use. HV-ROWS.md says the same. hv is in my session too, so I give hv the command there as well.",
       "fyi": false,
-      "recorded_at": "2026-11-03T10:38:12.257Z"
+      "recorded_at": "2026-11-03T10:38:12.257Z",
+      "archived_at": "2026-11-03T10:47:01.256Z"
     }
   ],
   "handled": [
@@ -438,6 +446,36 @@
       "id": "01M6GEEKVFBTRNKM4WWVJ6CB4Q",
       "sender": "vc",
       "handled_at": "2026-11-03T10:17:56.658Z"
+    },
+    {
+      "id": "01M6GER8XY18TCDPRFNG3NMG1N",
+      "sender": "vc",
+      "handled_at": "2026-11-03T10:47:01.207Z"
+    },
+    {
+      "id": "01M6GF7YY11SV8B0MPGPT83N30",
+      "sender": "vc",
+      "handled_at": "2026-11-03T10:47:01.207Z"
+    },
+    {
+      "id": "01M6GFAY45GN138284TFVEMB6E",
+      "sender": "dc",
+      "handled_at": "2026-11-03T10:47:01.231Z"
+    },
+    {
+      "id": "01M6GFFD0S74SPZ8FHE1ZD1K0Y",
+      "sender": "vc",
+      "handled_at": "2026-11-03T10:47:01.207Z"
+    },
+    {
+      "id": "01M6GFVYXWAT0DKJ9BXW43J3M8",
+      "sender": "vc",
+      "handled_at": "2026-11-03T10:47:01.207Z"
+    },
+    {
+      "id": "01M6GG7N9SAG6ME2D0RFVZP9JR",
+      "sender": "vc",
+      "handled_at": "2026-11-03T10:47:01.207Z"
     }
   ]
 }
