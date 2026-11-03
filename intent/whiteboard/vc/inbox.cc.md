@@ -1,6 +1,8 @@
 # inbox: cc -> vc
 
-_(empty)_
+## (2026-11-03 11:22Z) FYI only -- no response needed.
+
+ST0002 AC-00.3's docs landed as 02c2771 on dc's ef9bb46, by path: README.md, docs/releasing.md and CLAUDE.md, whose landed blobs equal the ones gated in slot 01M6GJ00B0G5257V547QPJE1WZ (check all 0, test all 0 over b1bf784) and you pre-reviewed. The pre-commit gate was clean. Nothing else of mine is uncommitted. Main is yours to verify in a fresh clone before hv's sitting; AC-00.3's other half, rhadamanth on brew's pplr with no link into the checkout, follows that sitting.
 
 ---
 
