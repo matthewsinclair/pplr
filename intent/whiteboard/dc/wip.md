@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 07:20Z
+heartbeat_at: 2026-11-03 07:29Z
 status: active
-focus: "WP14 done (96c75fe). The ubuntu goldens fix is landed as 64be72f and held for CI on the next push (hold 1). Next: once ubuntu's cargo is green, the bats layer there (todo 1)"
+focus: "WP14 done (96c75fe). The ubuntu fixes are on main: the goldens lookup (64be72f) and the bats leg (3121fb9). Holding on the CI run after hv's next push (hold 2)"
 claims: [ST0001/02, ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
 ---
 
@@ -17,11 +17,11 @@ _(none)_
 
 ## TODO
 
-- ST0001 harness (vc's brief, item 4): the bats step has never run on ubuntu. The read-only pre-audit is reported to vc: one test will fail there, pplr_sync.bats:136 (plutil reads the .inetloc's URL, and ubuntu has none), a one-line sed fix. AT-12.2 also skips on Linux, where applyicons, setpicfordir and setpicsfordirs should be shown refusing with 'Finder icons need macOS' (AC-00.7). Everything else checked clean. Waiting on vc's call: land before the next push or after. Then triage whatever the first ubuntu bats run exposes (edited)
+_(none)_
 
 ## Holds
 
-- ST0001 ubuntu goldens fix, landed as 64be72f (measured in slot 01M6G4AZ391EPDF1JDQZQAR9R9: check all 0, cargo test 0): released when ubuntu's cargo step on a CI run carrying 64be72f (the run after hv's next push) replays sync-apply-plan, sync-link-all-names and sync-link-apply. If ubuntu fails anything else, the harness now names the path, and it comes back to TODO
+- ST0001 ubuntu: the goldens fix (64be72f, slot 01M6G4FCG0M6F769Q7MHJY1X0B verified by vc) and the bats fixes (3121fb9: no plutil, plus AC-00.7's Finder refusal test), both measured green on macOS. Released when the CI run carrying both (the run after hv's next push) passes ubuntu's cargo step, which needs sync-apply-plan, sync-link-all-names and sync-link-apply to replay, and its first bats step, where the new AC-00.7 test must run, not skip. Whatever either step exposes comes back to TODO (edited)
 
 ## Watch-outs
 

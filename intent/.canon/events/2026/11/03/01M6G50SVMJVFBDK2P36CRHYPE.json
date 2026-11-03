@@ -1,0 +1,16 @@
+{
+  "id": "01M6G50SVMJVFBDK2P36CRHYPE",
+  "ts": "2026-11-03T07:29:46.356Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "hold",
+    "seq": 2,
+    "text": "ST0001 ubuntu: the goldens fix (64be72f, slot 01M6G4FCG0M6F769Q7MHJY1X0B verified by vc) and the bats fixes (3121fb9: no plutil, plus AC-00.7's Finder refusal test), both measured green on macOS. Released when the CI run carrying both (the run after hv's next push) passes ubuntu's cargo step, which needs sync-apply-plan, sync-link-all-names and sync-link-apply to replay, and its first bats step, where the new AC-00.7 test must run, not skip. Whatever either step exposes comes back to TODO"
+  }
+}
