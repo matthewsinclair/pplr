@@ -2,7 +2,8 @@
 wp_id: WP-05
 title: Walking skeleton through a scratch tap
 scope: M
-status: WIP
+status: Cancelled
+status_reason: superseded by the real install from the tap (AC-00.1, AC-00.2): hv ruled no rehearsal, vc decision 24
 ---
 
 # WP-05: Walking skeleton through a scratch tap

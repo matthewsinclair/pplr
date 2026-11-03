@@ -1,0 +1,16 @@
+{
+  "id": "01M6GHE9BM4Y3NCYSA2ZZ740TM",
+  "ts": "2026-11-03T11:06:51.124Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wp.cancel",
+  "subject": {
+    "type": "wp",
+    "id": "ST0002/05"
+  },
+  "payload": {
+    "from": "wip",
+    "reason": "superseded by the real install from the tap (AC-00.1, AC-00.2): hv ruled no rehearsal, vc decision 24",
+    "to": "cancelled"
+  }
+}

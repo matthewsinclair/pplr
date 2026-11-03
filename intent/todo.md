@@ -8,7 +8,23 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
 
 ## DOING
 
-- [-] ST0001: Port Pplr from shell scripts to Rust
+- [-] ST0002: Create a homebrew distro for the new Rust version of Pplr
+  - [x] 01: Release and install design for pplr
+  - [x] 02: devbin release core and CI candidates
+  - [x] 03: Install, manifest, tree identity, version line and use
+  - [-] 04: Assets formula, tap and tap CI
+  - [~] 05: Walking skeleton through a scratch tap
+  - [ ] 06: Release 2.0.0 and move rhadamanth to brew
+  - [-] 07: Developer ID signing and notarisation
+  - [x] 08: tools/ becomes devbin project commands: bin/devbin the one entry point
+
+## TODO
+
+_(none)_
+
+## DONE
+
+- [x] ST0001: Port Pplr from shell scripts to Rust
   - [x] 01: Test safety, the parity seam and an honest runner
   - [x] 02: Rust scaffold under devbin, with the fallback
   - [x] 03: Golden capture from the legacy code
@@ -21,25 +37,8 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
   - [x] 10: Sync: check, link, pull, photos and backup
   - [x] 11: The sync plan and its workbook
   - [x] 12: Doctor and Finder icons
-  - [-] 13: Cutover
+  - [x] 13: Cutover
   - [x] 14: pplr's own mail reader
-- [-] ST0002: Create a homebrew distro for the new Rust version of Pplr
-  - [x] 01: Release and install design for pplr
-  - [x] 02: devbin release core and CI candidates
-  - [x] 03: Install, manifest, tree identity, version line and use
-  - [-] 04: Assets formula, tap and tap CI
-  - [-] 05: Walking skeleton through a scratch tap
-  - [ ] 06: Release 2.0.0 and move rhadamanth to brew
-  - [-] 07: Developer ID signing and notarisation
-  - [x] 08: tools/ becomes devbin project commands: bin/devbin the one entry point
-
-## TODO
-
-_(none)_
-
-## DONE
-
-_(none)_
 
 ---
 

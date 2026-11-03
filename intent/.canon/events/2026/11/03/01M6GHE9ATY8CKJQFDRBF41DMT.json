@@ -1,0 +1,14 @@
+{
+  "id": "01M6GHE9ATY8CKJQFDRBF41DMT",
+  "ts": "2026-11-03T11:06:51.099Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.withdraw",
+  "subject": {
+    "type": "ac",
+    "id": "ST0002/AC-05.1"
+  },
+  "payload": {
+    "reason": "superseded by the real install from the tap (AC-00.1, AC-00.2): hv ruled no rehearsal, vc decision 24"
+  }
+}

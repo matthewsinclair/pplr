@@ -1,0 +1,14 @@
+{
+  "id": "01M6GHE9EV9M69NKFH8ENNYSR9",
+  "ts": "2026-11-03T11:06:51.228Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.edit",
+  "subject": {
+    "type": "ac",
+    "id": "ST0002/AC-04.2"
+  },
+  "payload": {
+    "text": "The tap matthewsinclair/homebrew-pplr is described as \"Homebrew tap for pplr\"."
+  }
+}

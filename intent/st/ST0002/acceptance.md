@@ -16,7 +16,7 @@ title: Create a homebrew distro for the new Rust version of Pplr
 ### ST-level
 
 - AC-00.1 (non-test) From the tap on rhadamanth, `HOMEBREW_NO_AUTO_UPDATE=1 brew install matthewsinclair/pplr/pplr` succeeds, `brew test pplr` passes (including the signature check), and `pplr --version` reads `pplr 2.0.0 (brew, <sha12>)`, naming the release commit. -- satisfied: no
-- AC-00.2 (non-test) T10 holds: on rhadamanth, `pplr use dev`, `use opt` and `use brew` each give the right version line, a clean doctor and a passing shadow check, and on a Linux machine brew alone does. -- satisfied: no
+- AC-00.2 (non-test) T10 holds on rhadamanth: `pplr use dev`, `use opt` and `use brew` each give the right version line, a clean doctor and a passing shadow check. -- satisfied: no
 - AC-00.3 (non-test) rhadamanth runs brew's pplr, with no link into the old checkout. The user docs name brew alone (T1), and docs/releasing.md covers dev and opt for the maintainer. -- satisfied: no
 
 ### WP-01 -- Release and install design for pplr (status: Done)
@@ -36,16 +36,16 @@ title: Create a homebrew distro for the new Rust version of Pplr
 
 ### WP-04 -- Assets formula, tap and tap CI (status: WIP)
 
-- AC-04.1 packaging/homebrew/pplr.rb is a devbin `assets` template, rendered through `bin/devbin formula render` with nothing typed. The render passes `brew style` and `brew audit --strict`, its install verifies every macOS binary's signature against its designated requirement and writes the T3 manifest, and its test re-verifies the signatures and runs the version line. -- satisfied: no (computed)
-- AC-04.2 (non-test) The tap matthewsinclair/homebrew-pplr is described as "Homebrew tap for pplr", and its CI runs style, audit, install and test on macOS and Ubuntu. -- satisfied: no
+- AC-04.1 packaging/homebrew/pplr.rb is a devbin `assets` template, rendered through `bin/devbin formula render` with nothing typed. Its install verifies every macOS binary's signature against its designated requirement and writes the T3 manifest, and its test re-verifies the signatures and runs the version line. -- satisfied: no (computed)
+- AC-04.2 (non-test) The tap matthewsinclair/homebrew-pplr is described as "Homebrew tap for pplr". -- satisfied: no
 
-### WP-05 -- Walking skeleton through a scratch tap (status: WIP)
+### WP-05 -- Walking skeleton through a scratch tap (status: Cancelled)
 
-- AC-05.1 (non-test) A scaffold build installs from a locally rendered formula in a scratch tap on rhadamanth, T10's three trees are proved, and nothing is tagged or pushed on the real repository. -- satisfied: no
+- AC-05.1 (non-test) A scaffold build installs from a locally rendered formula in a scratch tap on rhadamanth, T10's three trees are proved, and nothing is tagged or pushed on the real repository. -- WITHDRAWN: superseded by the real install from the tap (AC-00.1, AC-00.2): hv ruled no rehearsal, vc decision 24 (by vc)
 
 ### WP-06 -- Release 2.0.0 and move rhadamanth to brew (status: Not Started)
 
-- AC-06.1 (non-test) 2.0.0 is cut by `bin/devbin release`. Its gates pass locally, on kovacs and in CI for candidate/v2.0.0, and the formula is published to the tap by `bin/devbin formula publish`. -- satisfied: no
+- AC-06.1 (non-test) 2.0.0 is cut by `bin/devbin release`. Its gates pass locally and in CI for candidate/v2.0.0, and the formula is published to the tap by `bin/devbin formula publish`. -- satisfied: no
 - AC-06.2 (non-test) The Contacts grant holds across upgrades: after a `brew upgrade` or `brew reinstall`, `pplr sync --check` from the keg reads the live store with no new permission prompt, and any first-use prompt for the signed sidecar is recorded. -- satisfied: no
 
 ### WP-07 -- Developer ID signing and notarisation (status: WIP)
@@ -81,7 +81,7 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-05 -- Walking skeleton through a scratch tap (status: WIP)
+### WP-05 -- Walking skeleton through a scratch tap (status: Cancelled)
 
 _(no tests in this group)_
 

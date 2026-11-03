@@ -1,0 +1,14 @@
+{
+  "id": "01M6GHE9E37RPHPVRV57K172YJ",
+  "ts": "2026-11-03T11:06:51.203Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.edit",
+  "subject": {
+    "type": "ac",
+    "id": "ST0002/AC-04.1"
+  },
+  "payload": {
+    "text": "packaging/homebrew/pplr.rb is a devbin `assets` template, rendered through `bin/devbin formula render` with nothing typed. Its install verifies every macOS binary's signature against its designated requirement and writes the T3 manifest, and its test re-verifies the signatures and runs the version line."
+  }
+}

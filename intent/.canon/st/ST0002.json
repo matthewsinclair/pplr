@@ -56,7 +56,8 @@
       "seq": 5,
       "title": "Walking skeleton through a scratch tap",
       "scope": "M",
-      "status": "wip",
+      "status": "cancelled",
+      "status_reason": "superseded by the real install from the tap (AC-00.1, AC-00.2): hv ruled no rehearsal, vc decision 24",
       "objective": "Prove the whole path early, before any real release. Install a build of the scaffold from a locally rendered formula in a scratch tap, and prove T10's three trees.",
       "body": "**Scope**\n\n- In a scratch clone, eg under `~/Devel/scratch/`:\n  - render the formula for a scratch tag;\n  - install from a local tap;\n  - run the version line, doctor and `brew test`;\n  - then `pplr use dev`, `use opt` and `use brew`, each followed by the version line, doctor and the shadow check.\n- Prefix every brew probe with `HOMEBREW_NO_AUTO_UPDATE=1`.\n- Nothing is tagged or pushed on the real repository, and the real tap is not written (E8).\n- Record the commands and their output on this thread.\n\n**Criteria**: AC-05.1.\n\n**Depends on**: WP04. The binary needs only ST0001 WP02's scaffold plus WP03's verbs; no ported commands.\n",
       "preamble": ""
@@ -100,7 +101,7 @@
     },
     {
       "id": "AC-00.2",
-      "text": "T10 holds: on rhadamanth, `pplr use dev`, `use opt` and `use brew` each give the right version line, a clean doctor and a passing shadow check, and on a Linux machine brew alone does.",
+      "text": "T10 holds on rhadamanth: `pplr use dev`, `use opt` and `use brew` each give the right version line, a clean doctor and a passing shadow check.",
       "kind": "non-test",
       "state": {
         "is": "unsatisfied"
@@ -166,7 +167,7 @@
     },
     {
       "id": "AC-04.1",
-      "text": "packaging/homebrew/pplr.rb is a devbin `assets` template, rendered through `bin/devbin formula render` with nothing typed. The render passes `brew style` and `brew audit --strict`, its install verifies every macOS binary's signature against its designated requirement and writes the T3 manifest, and its test re-verifies the signatures and runs the version line.",
+      "text": "packaging/homebrew/pplr.rb is a devbin `assets` template, rendered through `bin/devbin formula render` with nothing typed. Its install verifies every macOS binary's signature against its designated requirement and writes the T3 manifest, and its test re-verifies the signatures and runs the version line.",
       "kind": "test",
       "state": {
         "is": "computed"
@@ -174,7 +175,7 @@
     },
     {
       "id": "AC-04.2",
-      "text": "The tap matthewsinclair/homebrew-pplr is described as \"Homebrew tap for pplr\", and its CI runs style, audit, install and test on macOS and Ubuntu.",
+      "text": "The tap matthewsinclair/homebrew-pplr is described as \"Homebrew tap for pplr\".",
       "kind": "non-test",
       "state": {
         "is": "unsatisfied"
@@ -185,12 +186,14 @@
       "text": "A scaffold build installs from a locally rendered formula in a scratch tap on rhadamanth, T10's three trees are proved, and nothing is tagged or pushed on the real repository.",
       "kind": "non-test",
       "state": {
-        "is": "unsatisfied"
+        "is": "withdrawn",
+        "reason": "superseded by the real install from the tap (AC-00.1, AC-00.2): hv ruled no rehearsal, vc decision 24",
+        "by": "vc"
       }
     },
     {
       "id": "AC-06.1",
-      "text": "2.0.0 is cut by `bin/devbin release`. Its gates pass locally, on kovacs and in CI for candidate/v2.0.0, and the formula is published to the tap by `bin/devbin formula publish`.",
+      "text": "2.0.0 is cut by `bin/devbin release`. Its gates pass locally and in CI for candidate/v2.0.0, and the formula is published to the tap by `bin/devbin formula publish`.",
       "kind": "non-test",
       "state": {
         "is": "unsatisfied"
