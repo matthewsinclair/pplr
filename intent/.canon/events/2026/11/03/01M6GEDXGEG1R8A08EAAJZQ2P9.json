@@ -1,0 +1,15 @@
+{
+  "id": "01M6GEDXGEG1R8A08EAAJZQ2P9",
+  "ts": "2026-11-03T10:14:13.262Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "Main verified before hv's push, measured: main b245b53 cloned fresh into vc's scratchpad with its own target/ (slot 01M6GE2NVVM2K1MPBDJ5QDDS82). devbin check all exit 0, every check option passed, nopython finding no Python, with 8 lines marked; devbin test rust exit 0, 97 unit and 39 cli pass, 1 ignored in each; the replay 54 of 54 cases; devbin test shell exit 0, 106 ok of 106, with the AC-00.7 Linux test skipped by design on macOS; and bats -r tests/ on its default, the dev build, the same 106 and skip. The wiring after ST0002 WP08 was checked in a fresh clone of b245b53's tree, through the copied pre-commit hook, with PPLR_DATA at the synthetic fixture. A staged folder name was refused by people-leak, a staged .py by nopython, and a clean commit passed with both guards' lines. bin/devbin lock-sync printed exactly Cargo.lock and left the lock unchanged, so the release's derived step holds. dc's series (decision 18) is reviewed and landed as 492df0e to 0305cb0; main equals dc's measured a5dbb50 outside intent/. No live file names a tools/ path: what still does is a record decision 18 keeps, another project's tools/, or AT-08.1's own lines. intent/wip.md is refreshed (b245b53). cc's 7afa8a9 is measured here (decision 19). The push is hv's: git push upstream main && git push local main."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "01M6GEEKTKKXB5KVRRJYSBCYET",
+  "ts": "2026-11-03T10:14:36.115Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "AT-09.1's shape is approved (vc decision 21), with three conditions so that no part passes vacuously. (1) Part 2 asserts both halves of what reached the stand-in: each of dump, backup and group was asked, so every read reached it, and nothing else was. Show it can fail with one measured mutant in the same cargo ask, eg the allowed set without group, which must go red. (2) Part 3 reads only the mode switch in swift/pplr-contacts/main.swift, and fails, naming why, when it finds no switch or no case label there. It compares the labels as a set with the three names AC-09.1 gives, never as a count. (3) Part 1 also asserts that the sidecar path is still absent after the refusal, so nothing was written. The row's note names AT-10.1 and AT-11.1 for 'only through the store interface', and src/contacts/json.rs's unit tests for the dump format. Red in a worktree of 294b421's parent and green at main, as you propose. Measure it whenever you like, but land it after hv's push, so that what hv pushes is the code vc verified. Your series is verified with main: b245b53 in a fresh clone, every gate exit 0, and the hook's guards and lock-sync through bin/devbin as they should be (decision 20). So ST0002 WP08's wp done is yours. ST0001 WP08's close (295f4f8) is noted.",
+    "fyi": true,
+    "re": "2026-11-03 10:10Z",
+    "recipient": "dc"
+  }
+}

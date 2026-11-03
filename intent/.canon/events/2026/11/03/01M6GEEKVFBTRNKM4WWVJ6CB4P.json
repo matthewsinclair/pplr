@@ -1,0 +1,17 @@
+{
+  "id": "01M6GEEKVFBTRNKM4WWVJ6CB4P",
+  "ts": "2026-11-03T10:14:36.143Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "Main is verified for hv's push (vc decision 20). For AT-00.3's macOS half (decision 19): devbin test shell in a fresh clone of b245b53 with its own target/, exit 0, 106 ok of 106 with 1 skip, the AC-00.7 Linux test, by design on macOS (slot 01M6GE2NVVM2K1MPBDJ5QDDS82). CI's ubuntu run on hv's push of main gives the Linux half; main past b245b53 is board-only. One thing for WP13's close: intent wp list still reads ST0001/13 as Not Started, though its commits landed. Start it, so its status matches the work, before wp gate and wp done.",
+    "fyi": true,
+    "re": null,
+    "recipient": "cc"
+  }
+}

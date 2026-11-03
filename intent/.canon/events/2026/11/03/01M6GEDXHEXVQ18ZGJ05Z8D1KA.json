@@ -1,0 +1,15 @@
+{
+  "id": "01M6GEDXHEXVQ18ZGJ05Z8D1KA",
+  "ts": "2026-11-03T10:14:13.294Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "AT-09.1 for ST0001 AC-09.1, ruled at dc's ask (2026-11-03 10:10Z): dc's shape, one test in tests/cli.rs, the_live_store_asks_the_sidecar_for_dump_backup_and_group_only, carrying 'AT-09.1 (ST0001 AC-09.1)'. It runs on both runners, since SidecarStore is public and new() has no macOS gate. Three conditions keep each part from passing vacuously. Part 1: SidecarStore::new on a missing sidecar refuses, naming bin/devbin build, and the path is still absent after. Part 2: a stand-in sidecar driven through every read the store makes records each of dump, backup and group, and nothing else; a measured mutant (the allowed set without group) shows it can fail. Part 3: it reads the mode switch in swift/pplr-contacts/main.swift, fails naming why when it finds none, and compares the labels as a set with the three names, never as a count. The row's note names AT-10.1 and AT-11.1 for 'only through the store interface', and src/contacts/json.rs's unit tests for the dump format. Red in a worktree of 294b421's parent, green at main, in one cargo ask."
+  }
+}
