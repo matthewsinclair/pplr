@@ -1,0 +1,14 @@
+{
+  "id": "01M6GVQ3PV8SS4T3T2K6NB4M57",
+  "ts": "2026-11-03T14:06:26.012Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.satisfy",
+  "subject": {
+    "type": "ac",
+    "id": "ST0002/AC-06.1"
+  },
+  "payload": {
+    "evidence": "hv's 2.0.0 release sitting on 2026-11-03 (vc slot 01M6GM1SJZYN8GS5NHE69DDNR8): bin/devbin release v2.0.0 in a fresh release clone made dd6dc5b and passed its gates there (check all; test all with cargo 107 unit and 39 cli, bats 106 of 106, the Linux test the one skip; doctor) and CI 41646707500 on candidate/v2.0.0 on both runners; it tagged v2.0.0 (d32ed6e), pushed to local and upstream and made the release; bin/devbin formula publish pushed Formula/pplr.rb to the tap, whose main is 4fc7022"
+  }
+}

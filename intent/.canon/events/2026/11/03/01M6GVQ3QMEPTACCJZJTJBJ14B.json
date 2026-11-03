@@ -1,0 +1,14 @@
+{
+  "id": "01M6GVQ3QMEPTACCJZJTJBJ14B",
+  "ts": "2026-11-03T14:06:26.036Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.satisfy",
+  "subject": {
+    "type": "ac",
+    "id": "ST0002/AC-07.2"
+  },
+  "payload": {
+    "evidence": "bin/.devbin/cmd/macos is zsh and refuses on CI, off macOS and without the identity; in hv's 2.0.0 release sitting on 2026-11-03 (vc slot 01M6GM1SJZYN8GS5NHE69DDNR8) it notarised both builds with notarytool (the proof at main and the release at dd6dc5b, submission 7feafe51-18a8-4e39-bae8-c8500c07fc47, each Accepted). pack refuses a binary that fails verify, spctl included (6b1328f), and packs the signed asset alone into dist/release, the only folder bin/devbin release attach --from dist/release takes; an ad hoc asset goes to dist/adhoc (ef9bb46)"
+  }
+}

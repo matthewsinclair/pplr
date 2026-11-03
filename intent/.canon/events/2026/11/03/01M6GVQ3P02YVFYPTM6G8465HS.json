@@ -1,0 +1,14 @@
+{
+  "id": "01M6GVQ3P02YVFYPTM6G8465HS",
+  "ts": "2026-11-03T14:06:25.984Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.satisfy",
+  "subject": {
+    "type": "ac",
+    "id": "ST0002/AC-04.2"
+  },
+  "payload": {
+    "evidence": "hv's 2.0.0 release sitting on 2026-11-03 (vc slot 01M6GM1SJZYN8GS5NHE69DDNR8), step 5: gh repo view matthewsinclair/homebrew-pplr --json description printed {\"description\":\"Homebrew tap for pplr\"}, and vc read the same through gh api; the tap's CI waits for devbin's manifest-header fix (vc decision 24)"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "01M6GVQ3KMWVJDEQS5EFVYK69Y",
+  "ts": "2026-11-03T14:06:25.908Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.satisfy",
+  "subject": {
+    "type": "ac",
+    "id": "ST0002/AC-00.1"
+  },
+  "payload": {
+    "evidence": "hv's 2.0.0 release sitting on 2026-11-03 (vc slot 01M6GM1SJZYN8GS5NHE69DDNR8): with HOMEBREW_NO_AUTO_UPDATE=1, brew install matthewsinclair/pplr/pplr installed 2.0.0 from the tap after codesign --verify --strict -R on pplr, pplr-contacts and Pplr Links.app; brew test passed, re-verifying the three and running the version line; pplr --version read pplr 2.0.0 (brew, dd6dc5b96a2f), dd6dc5b being the release commit (tag v2.0.0)"
+  }
+}

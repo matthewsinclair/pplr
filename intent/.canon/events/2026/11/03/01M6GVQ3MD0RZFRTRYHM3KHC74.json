@@ -1,0 +1,14 @@
+{
+  "id": "01M6GVQ3MD0RZFRTRYHM3KHC74",
+  "ts": "2026-11-03T14:06:25.933Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.satisfy",
+  "subject": {
+    "type": "ac",
+    "id": "ST0002/AC-00.2"
+  },
+  "payload": {
+    "evidence": "hv's 2.0.0 release sitting on 2026-11-03 (vc slot 01M6GM1SJZYN8GS5NHE69DDNR8), step 7: bin/devbin t10-probe ~/Devel/prj/Pplr, with the opt tree installed at ~/Devel/scratch/pplr-opt: dev, opt and brew each ok on use, on a version line naming the tree (pplr 2.0.0 (dev|opt|brew, dd6dc5b96a2f)), on doctor's Install section and on the shadow check; it ended on brew"
+  }
+}

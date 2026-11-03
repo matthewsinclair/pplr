@@ -1,0 +1,14 @@
+{
+  "id": "01M6GVQ3N7AMSB08YF605JVFME",
+  "ts": "2026-11-03T14:06:25.959Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.satisfy",
+  "subject": {
+    "type": "ac",
+    "id": "ST0002/AC-00.3"
+  },
+  "payload": {
+    "evidence": "hv's 2.0.0 release sitting on 2026-11-03 (vc slot 01M6GM1SJZYN8GS5NHE69DDNR8), step 7: pplr --version read pplr 2.0.0 (brew, dd6dc5b96a2f) with ~/.local/bin/pplr gone, so nothing links into the old checkout; doctor's Install section passed (brew answers, the manifest and all three signatures); the pplr:// handler is brew's Pplr Links.app, the one lsregister lists. The docs landed in 02c2771: the README names Homebrew alone, and docs/releasing.md covers dev, opt, signing and the cut"
+  }
+}
