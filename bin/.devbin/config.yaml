@@ -36,6 +36,9 @@ commands:
 
 # The release core (ST0002 E3 and install-release.md section 5). Outward steps
 # (tag, push, release, tap) run only in ST0002 WP06, with hv's approval (E8).
+# No after: a cut runs it before the macOS asset is attached, so formula
+# publish runs by hand once bin/devbin release attach --from dist/release has
+# added it.
 release:
   repo: matthewsinclair/pplr
   remotes:
@@ -50,21 +53,16 @@ release:
     - check all
     - test all
     - doctor
-  legs:
-    - kovacs
   ci:
     workflow: tests.yml
   object: local
-  after:
-    - bin/devbin formula publish
 
-# The Homebrew formula: signed release assets (ST0002 E1), from the template
-# packaging/homebrew/pplr.rb.
+# The Homebrew formula: the signed macOS release asset (ST0002 E1), from the
+# template packaging/homebrew/pplr.rb. The Linux tarballs join it in a later
+# release, with the workflow that builds them.
 formula:
   mode: assets
   assets:
     - "pplr-{version}-aarch64-apple-darwin.tar.gz"
-    - "pplr-{version}-x86_64-unknown-linux-musl.tar.gz"
-    - "pplr-{version}-aarch64-unknown-linux-musl.tar.gz"
   bin:
     - bin/pplr

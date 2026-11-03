@@ -12,7 +12,10 @@
 #                                           runtime flag read back, the entitlement read back, and spctl
 #   bin/devbin macos notarize [--dry-run]   submit the signed binaries to Apple's notary service
 #   bin/devbin macos pack [--adhoc]         the release asset, pplr-<version>-<triple>.tar.gz, from
-#                                           binaries that pass verify; it refuses any that do not
+#                                           binaries that pass verify; it refuses any that do not.
+#                                           It is the one file in dist/release, which `bin/devbin
+#                                           release attach <tag> --from dist/release` takes whole;
+#                                           an ad hoc asset goes to dist/adhoc instead
 #   bin/devbin macos prepare [--adhoc]      stage, sign, verify, notarise (a dry run with --adhoc), pack
 #
 # --adhoc signs with `codesign -s -`: no identity, no keychain, no timestamp,
@@ -168,9 +171,14 @@ cmd_notarize() {
 cmd_pack() {
   local adhoc=$1
   cmd_verify $adhoc >/dev/null
-  local asset=dist/macos/pplr-$(version)-$(triple).tar.gz
+  # release attach --from takes every file under its directory, so the asset
+  # is packed into a directory of its own, emptied first. An ad hoc asset is
+  # never a release's, so it goes elsewhere.
+  local dir=dist/release
+  if (( adhoc )); then dir=dist/adhoc; fi
+  local asset=$dir/pplr-$(version)-$(triple).tar.gz
   local tree=dist/macos/tree
-  rm -rf $tree && mkdir -p $tree/bin
+  rm -rf $tree $dir && mkdir -p $tree/bin $dir
   local b
   for b in $binaries; do
     # The binaries go in bin/, the app at the root, as the tree lays them out

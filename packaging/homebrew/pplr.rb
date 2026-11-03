@@ -14,21 +14,10 @@ class Pplr < Formula
   sha256 "@@SHA256:pplr-{version}-aarch64-apple-darwin.tar.gz@@"
   license "MIT"
 
-  # Apple silicon only, as Intent (hv, 2026-11-02)
-  on_macos do
-    depends_on arch: :arm64
-  end
-
-  on_linux do
-    on_intel do
-      url "https://github.com/matthewsinclair/pplr/releases/download/v@@VERSION@@/pplr-@@VERSION@@-x86_64-unknown-linux-musl.tar.gz"
-      sha256 "@@SHA256:pplr-{version}-x86_64-unknown-linux-musl.tar.gz@@"
-    end
-    on_arm do
-      url "https://github.com/matthewsinclair/pplr/releases/download/v@@VERSION@@/pplr-@@VERSION@@-aarch64-unknown-linux-musl.tar.gz"
-      sha256 "@@SHA256:pplr-{version}-aarch64-unknown-linux-musl.tar.gz@@"
-    end
-  end
+  # macOS on Apple silicon alone, as Intent's Mac target (hv, 2026-11-02). The
+  # Linux tarballs join it in a later release.
+  depends_on arch: :arm64
+  depends_on :macos
 
   # The designated requirement each macOS binary is signed to: its identifier,
   # then a Developer ID certificate for Geodica's team
