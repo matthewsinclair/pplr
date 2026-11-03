@@ -133,7 +133,8 @@ EOF
     [ "$status" -eq 0 ]
     w="$PPLR_TEST_DATA/L/Lovelace, Ada/About/Ada Lovelace (Contacts).inetloc"
     [ -f "$w" ]
-    [ "$(plutil -extract URL raw -o - "$w")" = "addressbook://c1" ]
+    # The plist's one <string>, read the same way by BSD and GNU sed (no plutil on Linux)
+    [ "$(sed -n 's:.*<string>\(.*\)</string>.*:\1:p' "$w")" = "addressbook://c1" ]
 }
 
 @test "pplr sync --link --apply --limit 1 writes one and reports the rest as still to link" {
