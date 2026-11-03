@@ -3,17 +3,17 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 11:22Z
+heartbeat_at: 2026-11-03 11:35Z
 status: active
-focus: "After hv's compact; nothing ruled to start. Hold 6 stands: Devbin is at v0.1.19 with lib/cmd/formula:424 unchanged, its issue not yet filed (the text on dc/devbin-issue, 84972b4) and Devbin parked for today; Developer ID signing waits on vc hold 2 item 3, and WP07's last dependency (ST0001 WP09) is done. Claims ST0002/04, /05 and /07 wait on hv"
-claims: [ST0002/07, ST0002/04, ST0002/05]
+focus: "hv's 2.0.0 sitting is ready: the runbook is in hv's inbox (11:34Z), main verified by vc at c8d5318 plus f39b6a1 and 6b1328f. dc records the greens and the evidence from hv's output"
+claims: [ST0002/07, ST0002/04]
 ---
 
 # dc (dc)
 
 ## DOING
 
-_(none)_
+- ST0002 WP04 and WP07 at vc decisions 24 and 25: 1b0e8bb (the AC edits, WP05 cancelled), ef9bb46 (the macOS asset alone, no kovacs leg, no after:, pack into dist/release), f39b6a1 (AT-07.1 and AT-04.1, each red), 6b1328f (Gatekeeper after notarising); main verified by vc at c8d5318. hv's sitting runs from the runbook in hv's inbox (11:34Z, 3ecebc4). Then the greens of AT-07.1 (step 4) and AT-04.1 (step 6) and the ST0002 evidence from hv's output, then design.md's record of decisions 24 and 25 and install-release.md section 5 pointing at docs/releasing.md
 
 ## TODO
 
@@ -21,7 +21,7 @@ _(none)_
 
 ## Holds
 
-- ST0002 WP04. AC-04.1's local half is measured and accepted by vc. bin/devbin formula render exits 0 with nothing typed (a local tag in the scratch clone, stand-in sums). brew style and brew audit --strict each fail on one line only, devbin's generated manifest header (lib/cmd/formula:424, 131 of 118 columns), and both pass with that header one element per line. Released in parts. The style and audit halves are released when devbin ships that fix: the issue text for hv is on the local branch dc/devbin-issue (84972b4), vc hold 2 item 7. The signature half is released when Developer ID signing exists, vc hold 2 item 3. Then the AT, citing each half's evidence. AC-04.2 (the tap's description and CI) needs hv's gh repo edit and a tap push
+_(none)_
 
 ## Watch-outs
 

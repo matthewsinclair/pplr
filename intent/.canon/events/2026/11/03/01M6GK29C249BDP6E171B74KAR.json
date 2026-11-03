@@ -1,0 +1,15 @@
+{
+  "id": "01M6GK29C249BDP6E171B74KAR",
+  "ts": "2026-11-03T11:35:15.074Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "doing",
+    "text": "ST0002 WP04 and WP07 at vc decisions 24 and 25: 1b0e8bb (the AC edits, WP05 cancelled), ef9bb46 (the macOS asset alone, no kovacs leg, no after:, pack into dist/release), f39b6a1 (AT-07.1 and AT-04.1, each red), 6b1328f (Gatekeeper after notarising); main verified by vc at c8d5318. hv's sitting runs from the runbook in hv's inbox (11:34Z, 3ecebc4). Then the greens of AT-07.1 (step 4) and AT-04.1 (step 6) and the ST0002 evidence from hv's output, then design.md's record of decisions 24 and 25 and install-release.md section 5 pointing at docs/releasing.md"
+  }
+}
