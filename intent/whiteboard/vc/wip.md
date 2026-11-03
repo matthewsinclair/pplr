@@ -3,7 +3,7 @@ node: vc
 name: vc
 role: vc
 session_id: 60a887be-5fa2-4cf5-8de1-310286047151
-heartbeat_at: 2026-11-03 08:28Z
+heartbeat_at: 2026-11-03 08:49Z
 status: active
 focus: "main 37aaeff verified (decision 6) and green on CI 41598905802, both runners. Holding the slot desk. Next: dc closes ST0001 WP02 (AT-02.1; AT-02.2 with a measured mutant red in a cargo slot), then ST0002 AC-02.1's release check and doctor, then WP13's docs; cc claims ST0001/13 (the removals, the no-Python gate, the live read-only parity); vc reviews and verifies each landing in a fresh clone; hv's candidate/ci-probe push is hold 2 item 8"
 claims: []
@@ -21,12 +21,13 @@ _(none)_
 
 ## Holds
 
-- Each item needs hv, and each is released as hv does it. (1) Contacts access for this terminal, or hv runs 'cargo test --test cli live -- --ignored' (ST0001 AC-09.2). (2) Create the geodica.apple.{APPLE_ID,APPLE_APP_PASSWORD,APPLE_TEAM_ID} keychain entries. (3) Allow Developer ID signing, the identity check and the first notarytool submission (ST0002 WP07, AC-07.1 and 07.2). (4) Intent fixes outside pplr: the pre-commit hook's word-splitting, and AGENTS.md's swift lines (watchouts 1 and 2). (5) WP13 cutover moves ~/.local/bin/pplr to the Rust binary. (6) ST0002 WP05: the real brew install from a scratch tap; dc prepares everything up to it (it could shadow ~/.local/bin/pplr). (7) ST0002 WP04: the tap's description and CI need gh repo edit and a tap push (AC-04.2); if dc's rubocop wrap fails, a Devbin issue about the formula manifest line over brew's 118-column limit (lib/cmd/formula:424). (9) ST0001 AT-00.7's measured red, by the CI route hv chose (2026-11-03): push the branch cc built, candidate/wp13-at007-red (tip 116a607: main eb7e9b8, the AT-00.7 test and a mutant dropping the handler's macOS gate, reviewed by vc), with `git push upstream candidate/wp13-at007-red`, and delete it once CI has reported, with `git push upstream --delete candidate/wp13-at007-red`; ubuntu's failure of that test is the red. Each push is hv's, from the terminal: the auto-mode classifier refuses one from vc's session. (edited)
+- Each item needs hv, and each is released as hv does it. (1) Contacts access for this terminal, or hv runs 'cargo test --test cli live -- --ignored' (ST0001 AC-09.2). (2) Create the geodica.apple.{APPLE_ID,APPLE_APP_PASSWORD,APPLE_TEAM_ID} keychain entries. (3) Allow Developer ID signing, the identity check and the first notarytool submission (ST0002 WP07, AC-07.1 and 07.2). (4) Intent fixes outside pplr: the pre-commit hook's word-splitting, AGENTS.md's swift lines, and the estate page's false orphaned holds (watchouts 1 to 3). (5) WP13 cutover moves ~/.local/bin/pplr to the Rust binary. (6) ST0002 WP05: the real brew install from a scratch tap; dc prepares everything up to it (it could shadow ~/.local/bin/pplr). (7) ST0002 WP04: the tap's description and CI need gh repo edit and a tap push (AC-04.2); if dc's rubocop wrap fails, a Devbin issue about the formula manifest line over brew's 118-column limit (lib/cmd/formula:424). (9) ST0001 AT-00.7's measured red, by the CI route hv chose (2026-11-03): push the branch cc built, candidate/wp13-at007-red (tip 116a607: main eb7e9b8, the AT-00.7 test and a mutant dropping the handler's macOS gate, reviewed by vc), with `git push upstream candidate/wp13-at007-red`, and delete it once CI has reported, with `git push upstream --delete candidate/wp13-at007-red`; ubuntu's failure of that test is the red. Each push is hv's, from the terminal: the auto-mode classifier refuses one from vc's session. (edited)
 
 ## Watch-outs
 
 - For hv: Intent's pre-commit hook template word-splits staged Markdown paths (for f in $MD_FILES; prettier --list-different $MD_WHOLE), so it breaks on any .md with a space in its name. cc hit it on the goldens (65d5a8a) and worked around it with the hook's DROP_EXCLUDE seam plus .prettierignore. The fix is Intent's, out of pplr's scope (hv: just Pplr for now).
 - For hv: Intent's AGENTS.md generator writes 'swift build' and 'swift test' lines for any project declaring swift. pplr has no Package.swift (its sidecar is built with swiftc), but undeclaring swift would disarm the Swift critic, so the fix is Intent's, out of pplr's scope. dc noted the swiftc caveat in CLAUDE.md's project section (815210a).
+- For hv, dc's finding: the estate page draws every slot hold as orphaned, because intentd runs under launchd without CLAUDE_CONFIG_DIR and so finds no Claude session files. The CLI is right: read slot state from intent estate status and intent estate slots watch, not the page. The fix is Intent's, out of pplr's scope (hold 2 item 4).
 
 ## Decisions
 
