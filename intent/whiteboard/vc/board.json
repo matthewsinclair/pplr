@@ -184,17 +184,19 @@
       "node": "vc",
       "kind": "decision",
       "seq": 10,
-      "text": "Todo 5 ruled, 2026-11-03, now WP11 commit 3 is in: every About read goes through one reader (Highlander), which decodes lossily, so a non-UTF-8 About keeps its header as the legacy's byte-wise reads did, and WP14's fourth edge case goes away (WP14's body is amended when it lands). A real read error, an About that exists and cannot be read, fails the command naming the file (No Silent Errors), returned to the coordinator and never printed by the library (PFIC). NotFound stays 'no About'. The sites: tree.rs's header read, grep.rs:90, sync.rs:1177 (--pull then names the real cause instead of 'no About file'), tags.rs:681 and :906, and the same pattern for tree.rs's .index/aliases read. Tests red then green: a non-UTF-8 About's header still reads; an unreadable About fails naming its path. No golden changes expected. Owner: cc, after WP11 is done and before WP13; measured once with cargo and bats.",
+      "text": "Todo 5 ruled, 2026-11-03, now WP11 commit 3 is in, refined at cc's ask: one reader in src/fs.rs beside write_atomic gives an About's bytes, None on NotFound ('no About'), and names any other error ('cannot read <path>: <e>'); the error goes back to the coordinator, never printed by the library (PFIC), and fails the command. Two decodings sit on it. read_text decodes lossily, for the reads, so a non-UTF-8 About keeps its header as the legacy's byte-wise reads did and WP14's fourth edge case goes away (WP14's body is amended when it lands): tree.rs's header and .index/aliases reads, grep.rs:90, tags.rs:681 and :906, contact.rs:792. read_exact refuses a file that is not UTF-8, naming it, for every command that writes the About back, so pplr never rewrites a byte it could not decode: sync --pull (sync.rs:1177, which then names the real cause per person instead of 'no About file'), rename.rs:239, tags.rs:604 (render), pictures.rs:62. tree::people() returns a Result. Tests red then green: a non-UTF-8 About's header reads; an unreadable About fails naming its path; --pull leaves a non-UTF-8 About byte for byte and names it. No golden changes expected. Owner: cc, after WP11 (done) and before WP13; measured once with cargo and bats.",
       "state": "live",
-      "recorded_at": "2026-11-03T07:33:07.151Z"
+      "recorded_at": "2026-11-03T07:33:07.151Z",
+      "edited_at": "2026-11-03T07:35:56.478Z"
     },
     {
       "node": "vc",
       "kind": "todo",
       "seq": 7,
-      "text": "At cc's About-reader commit (decision 10), check: one reader serves every About read (tree.rs, grep.rs, sync.rs --pull, tags.rs twice) and tree.rs's aliases read; non-UTF-8 decodes lossily; a read error other than NotFound fails the command naming the path, returned to the coordinator; --pull names the real cause; the two tests run red then green; no golden changed. Then amend WP14's body to drop its fourth edge case, and vc's clean-clone run. It lands before WP13.",
+      "text": "At cc's About-reader commit (decision 10), check: one reader in src/fs.rs serves every About read, NotFound as None and any other error named and returned to the coordinator; read_text (lossy) at tree.rs's header and aliases reads, grep.rs, tags.rs's two reads and contact.rs:792; read_exact (strict, naming a non-UTF-8 file) at every write-back: sync --pull, rename.rs, tags render, pictures.rs; --pull names the real cause per person; the three tests run red then green; no golden changed. Then amend WP14's body to drop its fourth edge case, and vc's clean-clone run. It lands before WP13.",
       "state": "live",
-      "recorded_at": "2026-11-03T07:33:07.197Z"
+      "recorded_at": "2026-11-03T07:33:07.197Z",
+      "edited_at": "2026-11-03T07:35:56.661Z"
     }
   ],
   "sent": [

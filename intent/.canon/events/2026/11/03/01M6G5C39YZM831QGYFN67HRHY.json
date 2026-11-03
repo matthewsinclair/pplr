@@ -1,0 +1,16 @@
+{
+  "id": "01M6G5C39YZM831QGYFN67HRHY",
+  "ts": "2026-11-03T07:35:56.478Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "seq": 10,
+    "text": "Todo 5 ruled, 2026-11-03, now WP11 commit 3 is in, refined at cc's ask: one reader in src/fs.rs beside write_atomic gives an About's bytes, None on NotFound ('no About'), and names any other error ('cannot read <path>: <e>'); the error goes back to the coordinator, never printed by the library (PFIC), and fails the command. Two decodings sit on it. read_text decodes lossily, for the reads, so a non-UTF-8 About keeps its header as the legacy's byte-wise reads did and WP14's fourth edge case goes away (WP14's body is amended when it lands): tree.rs's header and .index/aliases reads, grep.rs:90, tags.rs:681 and :906, contact.rs:792. read_exact refuses a file that is not UTF-8, naming it, for every command that writes the About back, so pplr never rewrites a byte it could not decode: sync --pull (sync.rs:1177, which then names the real cause per person instead of 'no About file'), rename.rs:239, tags.rs:604 (render), pictures.rs:62. tree::people() returns a Result. Tests red then green: a non-UTF-8 About's header reads; an unreadable About fails naming its path; --pull leaves a non-UTF-8 About byte for byte and names it. No golden changes expected. Owner: cc, after WP11 (done) and before WP13; measured once with cargo and bats."
+  }
+}

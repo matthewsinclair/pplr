@@ -1,0 +1,16 @@
+{
+  "id": "01M6G5C3FN53J1P7AHSG2NQP5B",
+  "ts": "2026-11-03T07:35:56.661Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 7,
+    "text": "At cc's About-reader commit (decision 10), check: one reader in src/fs.rs serves every About read, NotFound as None and any other error named and returned to the coordinator; read_text (lossy) at tree.rs's header and aliases reads, grep.rs, tags.rs's two reads and contact.rs:792; read_exact (strict, naming a non-UTF-8 file) at every write-back: sync --pull, rename.rs, tags render, pictures.rs; --pull names the real cause per person; the three tests run red then green; no golden changed. Then amend WP14's body to drop its fourth edge case, and vc's clean-clone run. It lands before WP13."
+  }
+}
