@@ -1,0 +1,16 @@
+{
+  "id": "01M6G1XS4K9B11Y1930J7F17MF",
+  "ts": "2026-11-03T06:35:41.587Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "seq": 6,
+    "text": "vc's independent verification, measured: main 25f85e7 (WP11 commits 1 and 2, 95a75e8 and 515ee42, on top of config.rs 6dfc81c and the port-race fix 3d6dec4) cloned fresh into vc's scratchpad, slot 01M6G1TVTJ7TS6PD9TV7ZGPAB4. format, clippy, autotests, targetdir, critic, cargo test (83 unit and 26 cli pass; 1 ignored, the live Contacts test), bats on Rust 101/101 and on legacy 101/101, none skipped: every gate exited 0. This is the evidence for every WP accepted so far, independent of the nodes' own slot results; it supersedes the 95a75e8 run. cc's own measurements add the exit-99 mutant (no replay reaches legacy code) and bats on Rust with uv hidden (2 skips, both WP14)."
+  }
+}

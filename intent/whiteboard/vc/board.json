@@ -100,10 +100,10 @@
       "node": "vc",
       "kind": "decision",
       "seq": 6,
-      "text": "vc's independent verification, measured: main 95a75e8 (WP11 commit 1, on top of config.rs 6dfc81c and the port-race fix 3d6dec4) cloned fresh into vc's scratchpad, slot 01M6G0Y6PA2361400GR3KKHB4Y. format, clippy, autotests, targetdir, critic, cargo test (83 unit and 26 cli pass; 1 ignored, the live Contacts test), bats on Rust 101/101 and on legacy 101/101, none skipped: every gate exited 0. This is the evidence for every WP accepted so far, independent of the nodes' own slot results; it supersedes the 39199f5 run. cc's own measurement of the same tree adds the exit-99 mutant (7 of 7 replay tests pass with every legacy script exiting 99) and bats on Rust with uv hidden (2 skips, both WP14).",
+      "text": "vc's independent verification, measured: main 25f85e7 (WP11 commits 1 and 2, 95a75e8 and 515ee42, on top of config.rs 6dfc81c and the port-race fix 3d6dec4) cloned fresh into vc's scratchpad, slot 01M6G1TVTJ7TS6PD9TV7ZGPAB4. format, clippy, autotests, targetdir, critic, cargo test (83 unit and 26 cli pass; 1 ignored, the live Contacts test), bats on Rust 101/101 and on legacy 101/101, none skipped: every gate exited 0. This is the evidence for every WP accepted so far, independent of the nodes' own slot results; it supersedes the 95a75e8 run. cc's own measurements add the exit-99 mutant (no replay reaches legacy code) and bats on Rust with uv hidden (2 skips, both WP14).",
       "state": "live",
       "recorded_at": "2026-11-02T16:51:23.191Z",
-      "edited_at": "2026-11-03T06:19:59.756Z"
+      "edited_at": "2026-11-03T06:35:41.587Z"
     },
     {
       "node": "vc",
@@ -117,10 +117,10 @@
       "node": "vc",
       "kind": "todo",
       "seq": 2,
-      "text": "CI: both fixes are on main and vc verified main at 95a75e8 (decision 6): 3d6dec4 serialises the stub CMS port, and 95a75e8 (WP11 commit 1) drops the replay's Swift warm-up and makes plan native. Next: hv pushes main to upstream and local; then vc watches the first run. ubuntu's bats step runs for the first time under tests.yml, so a Linux layer may surface (the harness is dc's). dc's rename fix db45555 goes with this push.",
+      "text": "CI: both fixes are on main, and vc verified main at 25f85e7 (decision 6): 3d6dec4 serialises the stub CMS port, and 95a75e8 (WP11 commit 1) drops the replay's Swift warm-up and makes plan native. Next: hv pushes main to upstream and local; then vc watches the first run. ubuntu's bats step runs for the first time under tests.yml, and 515ee42's xlsx-cells styling pass (zsh and awk) has only run on macOS, so a Linux layer may surface. dc's rename fix db45555 goes with this push.",
       "state": "live",
       "recorded_at": "2026-11-02T17:36:44.232Z",
-      "edited_at": "2026-11-03T06:20:06.211Z"
+      "edited_at": "2026-11-03T06:35:41.742Z"
     },
     {
       "node": "vc",
