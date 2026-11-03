@@ -1,0 +1,14 @@
+{
+  "id": "01M6GGCD4RPG4RV00CW2CQBNZ5",
+  "ts": "2026-11-03T10:48:20.889Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.satisfy",
+  "subject": {
+    "type": "ac",
+    "id": "ST0001/AC-00.5"
+  },
+  "payload": {
+    "evidence": "The live read-only parity in ST0001 WP13's body. 590162c: one full run of the legacy (main d7ee43d, from history) against the landing build a44f79b, with no unexplained difference; help, version, doctor, grep and grep -t differ by design, each with its cause named. 728465f: the email rows the same, from hv's terminal with Full Disk Access. aa42c5a: run 4, all five sync rows the same against C11's build c57cf12, from iTerm with Contacts authorized. Every row ran under sandbox-exec with writes to the tree denied, and the tree was unchanged; the record holds verdicts only (D11). Reviewed by vc."
+  }
+}

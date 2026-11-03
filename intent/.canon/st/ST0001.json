@@ -177,7 +177,8 @@
       "text": "Live read-only parity: on rhadamanth, over the live People tree, the read-only commands print the same output under the legacy code (checked out from history into a scratch worktree) and under the Rust binary. Nothing writes to the live tree.",
       "kind": "non-test",
       "state": {
-        "is": "unsatisfied"
+        "is": "satisfied",
+        "evidence": "The live read-only parity in ST0001 WP13's body. 590162c: one full run of the legacy (main d7ee43d, from history) against the landing build a44f79b, with no unexplained difference; help, version, doctor, grep and grep -t differ by design, each with its cause named. 728465f: the email rows the same, from hv's terminal with Full Disk Access. aa42c5a: run 4, all five sync rows the same against C11's build c57cf12, from iTerm with Contacts authorized. Every row ran under sandbox-exec with writes to the tree denied, and the tree was unchanged; the record holds verdicts only (D11). Reviewed by vc."
       }
     },
     {
