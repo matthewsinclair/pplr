@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 09:30Z
+heartbeat_at: 2026-11-03 09:40Z
 status: active
-focus: "Localfolded for hv's compact. WP13 landed (main 9268cf7) and hv's rebuild checked by vc. First after the compact: the AT-id comment commit (todo 2), measured in a clone with one cargo-and-bats ask, landed by path; then vc verifies, hv pushes, and main's CI greens feed the AC and AT rows and WP13's close. dc lands the docs meanwhile; hv's sync and email parity rows pending"
+focus: "WP13's AT-id commit landed on main as 7afa8a9 (measured) and went to vc to verify. Waiting on dc's tools/ move and docs, hv's push and main's CI; then WP13's AC and AT rows, wp gate and done. hv's sync and email parity rows still pending"
 claims: [ST0001/13]
 ---
 
@@ -13,11 +13,11 @@ claims: [ST0001/13]
 
 ## DOING
 
-- WP13 (ST0001/13): landed on main as 9268cf7 (ten commits, d596c35 to 9268cf7, by path through the gate; outside intent/ main equals vc's verified d26bac3), after hv's cutover (vc's go); .build/ removed. Next: hv's rebuild and handler re-install (vc holds the cargo lane), dc's docs, hv's push and main's CI (AT-00.3's and AT-00.7's Linux greens), then the AT-id commit, the AC and AT rows, wp gate and done (todo). hv's sync and email parity rows still pending (parity/HV-ROWS.md). (edited)
+- WP13 (ST0001/13): C1 to C10 landed on main as d596c35 to 9268cf7 (vc decision 16), and the AT-id commit as 7afa8a9 (comments only; measured at tree bf1e7ad in slot 01M6GCB0M4E68FSY7FSAW1EEQN), sent to vc to verify. hv's rebuild is checked. Next: vc's check of 7afa8a9, dc's tools/ move (decision 17) and docs, hv's push, and main's CI (AT-00.3's and AT-00.7's Linux greens); then the AC and AT rows, wp gate and done (todo 2). hv's sync and email parity rows still pending (parity/HV-ROWS.md). (edited)
 
 ## TODO
 
-- After WP13 lands, before minting its AT rows: at lint needs each cited file to carry its AT's literal id (dc, for AT-02.2). Add them in one small comment-only commit, measured: 'AT-00.7' on the AC-00.7 test in tests/pplr_core.bats; 'AT-00.4' on every_golden_of_a_ported_command_replays in tests/cli.rs (today it appears only in AT-00.2's doc comment); and AT-00.3's cited file (tools/bats-rust, or tests.yml beside its 'ST0001 AT-02.1', which must stay). AT-00.1, 00.2, 00.6 and 00.9 already carry theirs. Then: AC-01.3 reworded, AC-02.2 withdrawn with AT-02.2 n/a (vc decision 12), AT-00.1 to 00.9 minted with their measured reds and greens, wp gate, wp done.
+- After hv's push and main's CI, WP13's close: AC-01.3 reworded (vc decision 13 item 3); AC-02.2 withdrawn with AT-02.2 n/a (decision 12); AT-00.1, 00.2, 00.3, 00.4, 00.6, 00.7 and 00.9 minted, each with its measured red and its green (each cited file carries its literal id since 7afa8a9; AT-00.3 cites tests.yml, whose path holds through dc's tools/ move); then at lint, wp gate and wp done. vc satisfies AC-00.5 (once hv's sync and email rows are in) and AC-00.8 (dc's docs). (edited)
 
 ## Holds
 

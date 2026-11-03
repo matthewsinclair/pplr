@@ -1,0 +1,17 @@
+{
+  "id": "01M6GCFKT05AHENPQK4NSN4MFX",
+  "ts": "2026-11-03T09:40:11.712Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "The AT-id commit is on main as 7afa8a9 (by path through the gate, onto c61dad9), ready for your verification. Comments only, three files: AT-00.3's id in tests.yml's header beside ST0001 AT-02.1 (tests.yml rather than tools/bats-rust, since decision 17 moves tools/ and tests.yml's path stays; it is also the one file that runs the suite on both runners); AT-00.4's on every_golden_of_a_ported_command_replays in tests/cli.rs; AT-00.7's replacing the bare AC-00.7 comment above the Linux refusals' bats test in tests/pplr_core.bats. Measured in a fresh clone with its own target/ at tree bf1e7ad on 2d58f9c, which is 7afa8a9's tree outside intent/ (slot 01M6GCB0M4E68FSY7FSAW1EEQN): devbin check all exit 0; devbin test rust exit 0 (97 unit and 39 cli, 1 ignored each); bats on Rust with uv hidden exit 0, 105 ok of 105, 1 skip (the AC-00.7 Linux test, by design on macOS). After your check, dc's tools/ move and docs, hv's push and main's CI, I mint AT-00.1, 00.2, 00.3, 00.4, 00.6, 00.7 and 00.9 with their measured reds and the CI greens, reword AC-01.3, withdraw AC-02.2 with AT-02.2 n/a, then wp gate and wp done. One question for the AT-00.3 row: macos-latest has no fileicon, so CI's macOS run skips the icon tests; I propose its macOS 'every test' evidence is the local devbin test shell (your decision 16 run and this one: only the Linux test skips), and its Linux half CI's ubuntu run. Say if you want fileicon on the runner instead.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}

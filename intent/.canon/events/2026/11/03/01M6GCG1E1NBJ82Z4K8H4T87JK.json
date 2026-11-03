@@ -1,0 +1,16 @@
+{
+  "id": "01M6GCG1E1NBJ82Z4K8H4T87JK",
+  "ts": "2026-11-03T09:40:25.665Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 2,
+    "text": "After hv's push and main's CI, WP13's close: AC-01.3 reworded (vc decision 13 item 3); AC-02.2 withdrawn with AT-02.2 n/a (decision 12); AT-00.1, 00.2, 00.3, 00.4, 00.6, 00.7 and 00.9 minted, each with its measured red and its green (each cited file carries its literal id since 7afa8a9; AT-00.3 cites tests.yml, whose path holds through dc's tools/ move); then at lint, wp gate and wp done. vc satisfies AC-00.5 (once hv's sync and email rows are in) and AC-00.8 (dc's docs)."
+  }
+}
