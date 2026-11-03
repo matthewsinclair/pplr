@@ -2,7 +2,7 @@
 wp_id: WP-08
 title: Rename, links and the pplr:// handler
 scope: M
-status: WIP
+status: Done
 ---
 
 # WP-08: Rename, links and the pplr:// handler
@@ -25,6 +25,8 @@ Port rename, link rewriting and the `pplr://` handler.
 - Delete `pplr_rename`, `pplr_links` and `pplr_handler`, and the sidecar source's `resolve`, `links` and `people` modes.
 
 **Criteria**: AC-08.1.
+
+**As built**: rename, links and the handler run natively (AC-08.1, AT-08.1). The deletions went in ST0001 WP13, after hv's cutover: the legacy scripts, `pplr_rename`, `pplr_links` and `pplr_handler` among them, in d596c35, and the sidecar's `resolve`, `links` and `people` modes in 294b421.
 
 ## Acceptance
 

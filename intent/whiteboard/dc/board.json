@@ -13,7 +13,6 @@
       "ST0002/07",
       "ST0002/04",
       "ST0002/05",
-      "ST0001/08",
       "ST0002/08"
     ],
     "recorded_at": "2026-11-02T07:20:46.074Z",
@@ -183,7 +182,8 @@
       "kind": "todo",
       "seq": 5,
       "text": "ST0001 WP08: nothing holds it. AC-08.1 is satisfied (AT-08.1), and its last scope items, the legacy scripts and the sidecar's resolve, links and people modes, went in WP13's C1 (d596c35) and C2 (294b421). wp gate, then wp done (vc asked)",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T10:08:22.858Z",
       "recorded_at": "2026-11-03T10:06:59.614Z"
     }
   ],

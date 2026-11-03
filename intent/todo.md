@@ -16,7 +16,7 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
   - [x] 05: Indexes, new person, pictures and search
   - [x] 06: Tags
   - [x] 07: Contact cadence
-  - [-] 08: Rename, links and the pplr:// handler
+  - [x] 08: Rename, links and the pplr:// handler
   - [-] 09: The Contacts store and the Swift I/O sidecar
   - [x] 10: Sync: check, link, pull, photos and backup
   - [x] 11: The sync plan and its workbook

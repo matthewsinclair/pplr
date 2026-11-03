@@ -6,7 +6,7 @@ session_id: da774a51-7916-4f68-b76b-37c788cb4a76
 heartbeat_at: 2026-11-03 10:07Z
 status: active
 focus: "ST0002/08 landed (492df0e to 0305cb0, AT-08.1 green, gate PASS); wp done after vc verifies main, then hv's push. Next: ST0001 WP08's close and WP09 AC-09.1's AT (todo 4, 5); WP09 AC-09.2 and ST0002 WP04 held (holds 5, 6)"
-claims: [ST0001/09, ST0002/07, ST0002/04, ST0002/05, ST0001/08, ST0002/08]
+claims: [ST0001/09, ST0002/07, ST0002/04, ST0002/05, ST0002/08]
 ---
 
 # dc (dc)
@@ -18,7 +18,6 @@ claims: [ST0001/09, ST0002/07, ST0002/04, ST0002/05, ST0001/08, ST0002/08]
 ## TODO
 
 - ST0001 WP09 AC-09.1: a covering AT with a measured red, now that C2 (294b421) has the sidecar doing only dump, backup and group and IN-SW-CODE-006 is on again (vc, 2026-11-03)
-- ST0001 WP08: nothing holds it. AC-08.1 is satisfied (AT-08.1), and its last scope items, the legacy scripts and the sidecar's resolve, links and people modes, went in WP13's C1 (d596c35) and C2 (294b421). wp gate, then wp done (vc asked)
 
 ## Holds
 

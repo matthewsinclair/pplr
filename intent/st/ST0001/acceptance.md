@@ -57,7 +57,7 @@ title: Port Pplr from shell scripts to Rust
 
 - AC-07.1 contact runs natively in Rust, and the contact goldens and bats tests pass; `log --email` is covered by AC-14.1. -- satisfied: yes (computed)
 
-### WP-08 -- Rename, links and the pplr:// handler (status: WIP)
+### WP-08 -- Rename, links and the pplr:// handler (status: Done)
 
 - AC-08.1 rename, links and handler run natively in Rust; their goldens and bats tests pass, and handler --install registers the tree's prebuilt, signed Pplr Links.app by its stable path, never a Cellar path (ST0002 ruling 7). -- satisfied: yes (computed)
 
@@ -120,7 +120,7 @@ _(no tests in this group)_
 
 - AT-07.1 `tests/cli.rs` -- covers AC-07.1 -- status: green -- contact_is_native_and_its_goldens_replay: red at a143133 (contact on the fallback), green with WP07 (35/54 goldens replay, every contact and tag case among them); bats 101/101 on both implementations from a scratch worktree
 
-### WP-08 -- Rename, links and the pplr:// handler (status: WIP)
+### WP-08 -- Rename, links and the pplr:// handler (status: Done)
 
 - AT-08.1 `tests/cli.rs` -- covers AC-08.1 -- status: green -- first measure, in the shared tree, was red (replay rc 101) from cc's uncommitted WP10 work, not WP08's; re-measured 2026-11-02 in a clean clone at 0013d4c with its own target/ (slot 01M6EKXYE10RJVNRTE8Q660SV5): cli replay exit 0, handler stable-path test exit 0, bats rename tests ok (two filtered runs exit 0)
 

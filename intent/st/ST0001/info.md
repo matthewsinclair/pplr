@@ -50,7 +50,7 @@ Replace Pplr's bash scripts, Python helpers and run-time-compiled Swift engine w
 | WP-05 | Indexes, new person, pictures and search          | M    | Done        |
 | WP-06 | Tags                                              | M    | Done        |
 | WP-07 | Contact cadence                                   | M    | Done        |
-| WP-08 | Rename, links and the pplr:// handler             | M    | WIP         |
+| WP-08 | Rename, links and the pplr:// handler             | M    | Done        |
 | WP-09 | The Contacts store and the Swift I/O sidecar      | M    | WIP         |
 | WP-10 | Sync: check, link, pull, photos and backup        | L    | Done        |
 | WP-11 | The sync plan and its workbook                    | L    | Done        |
