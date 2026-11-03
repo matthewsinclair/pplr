@@ -23,7 +23,7 @@ pplr pictures "Smith, John"                              # their photo at the to
 ```
 
 - DO give `new` the LinkedIn URL: without it, the About file keeps the template's placeholders and no shortcut is written.
-- DO rename with `pplr rename`, never by moving the folder: it records the old name in `.index/aliases`, repoints path-style links under `--refs`, and reindexes.
+- DO rename with `pplr rename`, never by moving the folder: it records the old name in the person's `.index/aliases`, repoints path-style links under `--refs`, and reindexes.
 - DO keep the About header's fields (`- Role:`, `- Company:`, `- LinkedIn:`, `- Email:`, `- Phone:`) one to a line: every command reads them from there.
 
 ## Tags
@@ -88,7 +88,8 @@ pplr doctor                         # the tree, its indexes, the settings and th
 | -------------------------------------------- | --------------------------------------------- |
 | `.index/index.json`, `.index/index.md`       | `pplr reindex` (or `pplr json`, `pplr index`) |
 | `.index/tags_index.json`                     | `pplr tags render` or `pplr tags index`       |
-| `.index/aliases`                             | `pplr rename`                                 |
+| `<person>/.index/aliases`                    | `pplr rename`                                 |
+| `<person>/.index/refreshed`                  | `pplr refresh stamp`                          |
 | `_tags/`                                     | `pplr tags render`                            |
 | an About's `- Tags:` line                    | `pplr tags render`                            |
 | `About/<First> <Surname> (Contact).md`       | every command that writes `contact.yaml`      |
