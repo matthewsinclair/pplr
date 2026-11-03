@@ -499,8 +499,8 @@
       "covers": [
         "AC-14.1"
       ],
-      "status": "red",
-      "note": "email_and_contact_log_email_are_native_and_their_goldens_replay: red at 95a75e8 with only WP14's tests and Cargo.toml applied, in a worktree with its own target/ (slot 01M6G1A0RZHCG1VD4YBCGK1JZR): cargo test exit 101, 'email is not native'"
+      "status": "green",
+      "note": "email_and_contact_log_email_are_native_and_their_goldens_replay: red at 95a75e8 with only WP14's tests and Cargo.toml applied, in a worktree with its own target/ (slot 01M6G1A0RZHCG1VD4YBCGK1JZR): cargo test exit 101, 'email is not native'; green at f726f34, whose tree is 8c89ebd as measured in dc's scratch clone with its own target/ (slot 01M6G3J0R9X5M25KZNF9M4AYSC): cargo test exit 0, devbin check all 0, bats on Rust 0 and on legacy 0"
     },
     {
       "id": "AT-14.2",
@@ -509,8 +509,8 @@
       "covers": [
         "AC-14.2"
       ],
-      "status": "red",
-      "note": "email_json_is_a_versioned_contract_and_refuses_a_store_it_cannot_trust: red at 95a75e8 with only WP14's tests and Cargo.toml applied, in a worktree with its own target/ (slot 01M6G1A0RZHCG1VD4YBCGK1JZR): cargo test exit 101, email --json exited 1 (the legacy usage), not 0"
+      "status": "green",
+      "note": "email_json_is_a_versioned_contract_and_refuses_a_store_it_cannot_trust: red at 95a75e8 with only WP14's tests and Cargo.toml applied, in a worktree with its own target/ (slot 01M6G1A0RZHCG1VD4YBCGK1JZR): cargo test exit 101, email --json exited 1 (the legacy usage), not 0; green at f726f34, whose tree is 8c89ebd as measured in dc's scratch clone with its own target/ (slot 01M6G3J0R9X5M25KZNF9M4AYSC): cargo test exit 0, devbin check all 0, bats on Rust 0 and on legacy 0"
     }
   ],
   "attachments": [

@@ -80,8 +80,8 @@ title: Port Pplr from shell scripts to Rust
 
 ### WP-14 -- pplr's own mail reader (status: WIP)
 
-- AC-14.1 pplr reads recent and inbox mail itself, read-only, from Mail's Envelope Index (no mail-recent, no Python). email's listing and cache and contact log --email N and --email <Message-ID> match their goldens, against a synthetic SQLite fixture. -- satisfied: no (computed)
-- AC-14.2 pplr email --json is a versioned contract (a schema field, documented fields and exit codes): it exits non-zero naming the cause on no Full Disk Access or an unrecognised Envelope Index schema, and never returns rows from a schema it did not verify. -- satisfied: no (computed)
+- AC-14.1 pplr reads recent and inbox mail itself, read-only, from Mail's Envelope Index (no mail-recent, no Python). email's listing and cache and contact log --email N and --email <Message-ID> match their goldens, against a synthetic SQLite fixture. -- satisfied: yes (computed)
+- AC-14.2 pplr email --json is a versioned contract (a schema field, documented fields and exit codes): it exits non-zero naming the cause on no Full Disk Access or an unrecognised Envelope Index schema, and never returns rows from a schema it did not verify. -- satisfied: yes (computed)
 
 ## Acceptance Tests
 
@@ -142,8 +142,8 @@ _(no tests in this group)_
 
 ### WP-14 -- pplr's own mail reader (status: WIP)
 
-- AT-14.1 `tests/cli.rs` -- covers AC-14.1 -- status: red -- email_and_contact_log_email_are_native_and_their_goldens_replay: red at 95a75e8 with only WP14's tests and Cargo.toml applied, in a worktree with its own target/ (slot 01M6G1A0RZHCG1VD4YBCGK1JZR): cargo test exit 101, 'email is not native'
-- AT-14.2 `tests/cli.rs` -- covers AC-14.2 -- status: red -- email_json_is_a_versioned_contract_and_refuses_a_store_it_cannot_trust: red at 95a75e8 with only WP14's tests and Cargo.toml applied, in a worktree with its own target/ (slot 01M6G1A0RZHCG1VD4YBCGK1JZR): cargo test exit 101, email --json exited 1 (the legacy usage), not 0
+- AT-14.1 `tests/cli.rs` -- covers AC-14.1 -- status: green -- email_and_contact_log_email_are_native_and_their_goldens_replay: red at 95a75e8 with only WP14's tests and Cargo.toml applied, in a worktree with its own target/ (slot 01M6G1A0RZHCG1VD4YBCGK1JZR): cargo test exit 101, 'email is not native'; green at f726f34, whose tree is 8c89ebd as measured in dc's scratch clone with its own target/ (slot 01M6G3J0R9X5M25KZNF9M4AYSC): cargo test exit 0, devbin check all 0, bats on Rust 0 and on legacy 0
+- AT-14.2 `tests/cli.rs` -- covers AC-14.2 -- status: green -- email_json_is_a_versioned_contract_and_refuses_a_store_it_cannot_trust: red at 95a75e8 with only WP14's tests and Cargo.toml applied, in a worktree with its own target/ (slot 01M6G1A0RZHCG1VD4YBCGK1JZR): cargo test exit 101, email --json exited 1 (the legacy usage), not 0; green at f726f34, whose tree is 8c89ebd as measured in dc's scratch clone with its own target/ (slot 01M6G3J0R9X5M25KZNF9M4AYSC): cargo test exit 0, devbin check all 0, bats on Rust 0 and on legacy 0
 
 ---
 
