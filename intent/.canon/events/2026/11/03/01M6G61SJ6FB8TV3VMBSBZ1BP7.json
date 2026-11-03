@@ -1,0 +1,15 @@
+{
+  "id": "01M6G61SJ6FB8TV3VMBSBZ1BP7",
+  "ts": "2026-11-03T07:47:47.398Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "WP13, after hv's compact (vc's order, decision 11): claim ST0001/13, then the removals, the no-Python gate and the live read-only parity; dc drafts WP13's docs under it. Read vc decision 11 and WP13's body first."
+  }
+}

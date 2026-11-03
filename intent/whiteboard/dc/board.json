@@ -5,9 +5,9 @@
     "name": "dc",
     "role": "dc",
     "session_id": "da774a51-7916-4f68-b76b-37c788cb4a76",
-    "heartbeat_at": "2026-11-03T07:44:19.902Z",
+    "heartbeat_at": "2026-11-03T07:47:57.299Z",
     "status": "active",
-    "focus": "ubuntu CI green: run 41598011297 at 6464721, cargo and the first ubuntu bats run (102 ok, AC-00.7's Linux test ran). WP14 done. Free for vc's next assignment; the other claims wait on hv's steps",
+    "focus": "held for hv's compact. Next: close ST0001 WP02 once vc rules on covering ATs for its test-backed ACs (doing 2), then WP13's docs (todo 3, vc decision 11)",
     "claims": [
       "ST0001/02",
       "ST0001/09",
@@ -79,6 +79,22 @@
       "archived_at": "2026-11-03T07:44:19.876Z",
       "recorded_at": "2026-11-03T07:20:09.849Z",
       "edited_at": "2026-11-03T07:29:46.356Z"
+    },
+    {
+      "node": "dc",
+      "kind": "doing",
+      "seq": 2,
+      "text": "ST0001 WP02 close (vc decision 11, job 1). AC-02.1 and AC-02.2 are test-backed (kind test), and 'intent ac satisfy' refuses them: 'test-backed, so its satisfaction is computed from covering green acceptance tests'. WP02 has no ATs. Proposed to vc, awaiting a ruling: AT-02.1 cites .github/workflows/tests.yml and covers AC-02.1, red at CI 41595332795 (acec3ca, ubuntu's cargo failed) and green at CI 41598011297 (6464721, both runners) with vc decision 6 for check all and test all. AT-02.2 cites tests/cli.rs (the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status, plus the bats suite on Rust) and covers AC-02.2, red by a measured mutant (drop one variable bin/pplr sets) in a cargo slot, green at 6464721. The alternative is vc reclassifying them as non-test. Then wp gate and wp done. ST0002 AC-02.1 beyond this run needs devbin release check and devbin doctor to pass (dc can run both) and a candidate/** push that fires tests.yml (hv's)",
+      "state": "live",
+      "recorded_at": "2026-11-03T07:47:52.905Z"
+    },
+    {
+      "node": "dc",
+      "kind": "todo",
+      "seq": 3,
+      "text": "ST0001 WP13's docs (vc decision 11, job 2), under cc's WP13 as their own commits, each draft sent to vc before it lands, nothing from the People tree, and describing the code as it stands after cc's About reader (a3ab0fb). README: the commands from the Rust help, the brew install from ST0002's install-release.md as the plan it is, and a maintainer section for dev and opt. usage-rules.md: the current tags model. CHANGELOG: '## [2.0.0] - unreleased', with the port and its divergences (WP11's two, WP14's as they stand after decision 10, which vc's live message counts as three and its inbox copy as two, so read decisions 9 to 11 and WP14's body; and decision 10's lossy reads and strict write-backs). intent/llm/ARCHITECTURE.md: the Rust architecture. CLAUDE.md's project section points at them. cc keeps the removals, the no-Python gate and the live parity",
+      "state": "live",
+      "recorded_at": "2026-11-03T07:47:52.935Z"
     }
   ],
   "sent": [
@@ -122,7 +138,8 @@
       "recipient": "vc",
       "body": "WP14: two rulings wanted before its one cargo+bats measurement (full text sent live). A, Highlander: build pplr email's address map from tree::Person.header.emails instead of a second read of every About with the legacy listing's own mailto regex. No golden byte changes; on real data a plain address on the Email line and mailto:x?subject= now tag, and a second '- Email:' line and a non-UTF-8 About no longer do; WP14's body records these for WP13's CHANGELOG. This also clears the critic's No-Silent finding at email.rs:129. tree.rs:63's skip of an unreadable About predates WP14 and is crate-wide, so I'd route it separately. B: contact log --email A --email B. The port takes all from B; the legacy took date, person and note from A and the link from B. I recommend refusing a second --email (exit 1, naming why), recorded as a divergence; the alternative is matching the legacy's mix. The other critic findings are clear fixes and I'm making them now. Also: the three untracked ST docs are mine (attached in 1a545a6, 34917d4, 1718f5f, 73919f0), byte-identical to the canon, and I'm committing them.",
       "fyi": false,
-      "recorded_at": "2026-11-03T06:56:07.398Z"
+      "recorded_at": "2026-11-03T06:56:07.398Z",
+      "archived_at": "2026-11-03T07:47:57.274Z"
     }
   ],
   "handled": [
@@ -220,6 +237,11 @@
       "id": "01M6G37H5570WBR94JFMTTB69V",
       "sender": "vc",
       "handled_at": "2026-11-03T07:20:35.995Z"
+    },
+    {
+      "id": "01M6G5Y26K48A610MFGJM7EN8P",
+      "sender": "vc",
+      "handled_at": "2026-11-03T07:47:57.250Z"
     }
   ]
 }

@@ -1,0 +1,16 @@
+{
+  "id": "01M6G61SG2RT30XA7ET4DNFTBA",
+  "ts": "2026-11-03T07:47:47.331Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "doing",
+    "seq": 1,
+    "text": "One About reader (vc decision 10): landed as a3ab0fb (local, by path, 13 files), red first, then measured in fresh clone scratchpad/about at 6464721 (slot 01M6G5RQSYXJ5KGW5E26XM5XMX): check all 0, test rust 0 (97 unit; cli 33; all replay tests; no golden changed), bats on Rust (uv hidden) and on legacy 102/102. vc's clean-clone run of it is slot 01M6G5YWE8VHKZYS3KDCHXWHTY (todo 7), reported after hv's compact if not before; WP14's body amendment is vc's. When it passes: archive this and delete branch cc/about-reader."
+  }
+}

@@ -1,20 +1,6 @@
 # inbox: cc -> dc
 
-## (2026-11-03 06:07Z) Re: 2026-11-03 06:02Z FYI only -- no response needed.
-
-Thanks: 6dfc81c is what WP11 needs, and I am verifying WP11 on it in a clean clone now. Your README line is fixed in WP11 (tests/golden/README.md:62 now says the port takes the day and the time from PPLR_TODAY, 2026-06-15 09:30:00 in the replay), and that file joins my WP11 paths. The sha comes to you the moment WP11 commits. Heads-up: I have proposed to vc that WP11 lands in two commits, the code now and a styling check after, and the first is the one you rebase on.
-
-## (2026-11-03 06:18Z) FYI only -- no response needed.
-
-**WP11 commit 1 is on main: 95a75e8** (parent cc78a0d). It holds src/plan.rs and src/workbook.rs (new), plus WP11's changes to Cargo.toml, Cargo.lock, src/lib.rs, src/sync.rs, tests/cli.rs, tests/golden/README.md, tests/golden/xlsx-cells and tests/pplr_sync.bats; the shared tree has no uncommitted WP11 code left, so your WP14 can rebase onto it. Commit 2 (the workbook's styling compared with the legacy's) touches only tests/golden/xlsx-cells, the two sync-plan goldens and, if the port gets something wrong, src/workbook.rs.
-
-## (2026-11-03 06:31Z) FYI only -- no response needed.
-
-FYI: WP11 commit 2 is on main at 515ee42. Of code it changes only src/workbook.rs (one call, show_input_message(false)); the rest is tests/golden/xlsx-cells, its README and the two sync-plan goldens. Nothing of yours.
-
-## (2026-11-03 06:34Z) FYI only -- no response needed.
-
-cc is about to change two shared modules for ST0001 WP11 commit 3 (critic-rust's findings, vc's ruling 25f85e7): src/tree.rs (Person carries its picture, read from tree::person's existing About listing) and src/marker.rs (one marker-path helper for by_marker, sync's check and the plan's Add guard), plus src/plan.rs, src/workbook.rs, src/sync.rs and tests/cli.rs. The work happens in my own clone; nothing lands in the shared tree until the commit. If you are changing either shared module, tell me before I land.
+_(empty)_
 
 ---
 

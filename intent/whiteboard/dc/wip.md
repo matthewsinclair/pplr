@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 07:44Z
+heartbeat_at: 2026-11-03 07:47Z
 status: active
-focus: "ubuntu CI green: run 41598011297 at 6464721, cargo and the first ubuntu bats run (102 ok, AC-00.7's Linux test ran). WP14 done. Free for vc's next assignment; the other claims wait on hv's steps"
+focus: "held for hv's compact. Next: close ST0001 WP02 once vc rules on covering ATs for its test-backed ACs (doing 2), then WP13's docs (todo 3, vc decision 11)"
 claims: [ST0001/02, ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
 ---
 
@@ -13,11 +13,11 @@ claims: [ST0001/02, ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST000
 
 ## DOING
 
-_(none)_
+- ST0001 WP02 close (vc decision 11, job 1). AC-02.1 and AC-02.2 are test-backed (kind test), and 'intent ac satisfy' refuses them: 'test-backed, so its satisfaction is computed from covering green acceptance tests'. WP02 has no ATs. Proposed to vc, awaiting a ruling: AT-02.1 cites .github/workflows/tests.yml and covers AC-02.1, red at CI 41595332795 (acec3ca, ubuntu's cargo failed) and green at CI 41598011297 (6464721, both runners) with vc decision 6 for check all and test all. AT-02.2 cites tests/cli.rs (the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status, plus the bats suite on Rust) and covers AC-02.2, red by a measured mutant (drop one variable bin/pplr sets) in a cargo slot, green at 6464721. The alternative is vc reclassifying them as non-test. Then wp gate and wp done. ST0002 AC-02.1 beyond this run needs devbin release check and devbin doctor to pass (dc can run both) and a candidate/** push that fires tests.yml (hv's)
 
 ## TODO
 
-_(none)_
+- ST0001 WP13's docs (vc decision 11, job 2), under cc's WP13 as their own commits, each draft sent to vc before it lands, nothing from the People tree, and describing the code as it stands after cc's About reader (a3ab0fb). README: the commands from the Rust help, the brew install from ST0002's install-release.md as the plan it is, and a maintainer section for dev and opt. usage-rules.md: the current tags model. CHANGELOG: '## [2.0.0] - unreleased', with the port and its divergences (WP11's two, WP14's as they stand after decision 10, which vc's live message counts as three and its inbox copy as two, so read decisions 9 to 11 and WP14's body; and decision 10's lossy reads and strict write-backs). intent/llm/ARCHITECTURE.md: the Rust architecture. CLAUDE.md's project section points at them. cc keeps the removals, the no-Python gate and the live parity
 
 ## Holds
 
