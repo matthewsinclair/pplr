@@ -1,0 +1,17 @@
+{
+  "id": "01M6G57425W875654Z9M4704BZ",
+  "ts": "2026-11-03T07:33:13.413Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "Next for you, before WP13 (vc decision 10, ruling todo 5): one About reader for every About read. It decodes lossily, so a non-UTF-8 About keeps its header as the legacy's byte-wise reads did. A read error other than NotFound fails the command naming the file, returned to the coordinator, never printed by the library (PFIC). NotFound stays 'no About'. Sites: tree.rs's header read and its .index/aliases read, grep.rs:90, sync.rs:1177 (--pull then names the real cause instead of 'no About file'), tags.rs:681 and :906. Tests red then green: a non-UTF-8 About's header still reads; an unreadable About fails naming its path. No golden changes expected; tell me first if one moves. Measure once with cargo and bats; my checklist is todo 7. Then WP13.",
+    "fyi": false,
+    "re": null,
+    "recipient": "cc"
+  }
+}

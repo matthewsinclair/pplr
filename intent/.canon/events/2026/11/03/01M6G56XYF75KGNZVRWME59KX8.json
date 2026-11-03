@@ -1,0 +1,15 @@
+{
+  "id": "01M6G56XYF75KGNZVRWME59KX8",
+  "ts": "2026-11-03T07:33:07.151Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "Todo 5 ruled, 2026-11-03, now WP11 commit 3 is in: every About read goes through one reader (Highlander), which decodes lossily, so a non-UTF-8 About keeps its header as the legacy's byte-wise reads did, and WP14's fourth edge case goes away (WP14's body is amended when it lands). A real read error, an About that exists and cannot be read, fails the command naming the file (No Silent Errors), returned to the coordinator and never printed by the library (PFIC). NotFound stays 'no About'. The sites: tree.rs's header read, grep.rs:90, sync.rs:1177 (--pull then names the real cause instead of 'no About file'), tags.rs:681 and :906, and the same pattern for tree.rs's .index/aliases read. Tests red then green: a non-UTF-8 About's header still reads; an unreadable About fails naming its path. No golden changes expected. Owner: cc, after WP11 is done and before WP13; measured once with cargo and bats."
+  }
+}

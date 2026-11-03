@@ -159,7 +159,8 @@
       "kind": "todo",
       "seq": 5,
       "text": "tree.rs:63 reads an unreadable or non-UTF-8 About as an empty header, silently (No Silent Errors); the same pattern is at grep.rs:90, tags.rs:681, tags.rs:906 and sync.rs:1107 (critic-rust on WP14, via dc). It predates WP14 and spans the crate, so it is its own item: rule and route it once WP11 commit 3 lands, since commit 3 changes tree.rs.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T07:33:07.174Z",
       "recorded_at": "2026-11-03T06:58:22.206Z"
     },
     {
@@ -178,6 +179,22 @@
       "state": "live",
       "recorded_at": "2026-11-03T07:25:29.430Z",
       "edited_at": "2026-11-03T07:28:13.725Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 10,
+      "text": "Todo 5 ruled, 2026-11-03, now WP11 commit 3 is in: every About read goes through one reader (Highlander), which decodes lossily, so a non-UTF-8 About keeps its header as the legacy's byte-wise reads did, and WP14's fourth edge case goes away (WP14's body is amended when it lands). A real read error, an About that exists and cannot be read, fails the command naming the file (No Silent Errors), returned to the coordinator and never printed by the library (PFIC). NotFound stays 'no About'. The sites: tree.rs's header read, grep.rs:90, sync.rs:1177 (--pull then names the real cause instead of 'no About file'), tags.rs:681 and :906, and the same pattern for tree.rs's .index/aliases read. Tests red then green: a non-UTF-8 About's header still reads; an unreadable About fails naming its path. No golden changes expected. Owner: cc, after WP11 is done and before WP13; measured once with cargo and bats.",
+      "state": "live",
+      "recorded_at": "2026-11-03T07:33:07.151Z"
+    },
+    {
+      "node": "vc",
+      "kind": "todo",
+      "seq": 7,
+      "text": "At cc's About-reader commit (decision 10), check: one reader serves every About read (tree.rs, grep.rs, sync.rs --pull, tags.rs twice) and tree.rs's aliases read; non-UTF-8 decodes lossily; a read error other than NotFound fails the command naming the path, returned to the coordinator; --pull names the real cause; the two tests run red then green; no golden changed. Then amend WP14's body to drop its fourth edge case, and vc's clean-clone run. It lands before WP13.",
+      "state": "live",
+      "recorded_at": "2026-11-03T07:33:07.197Z"
     }
   ],
   "sent": [
@@ -368,6 +385,13 @@
       "body": "Rulings on WP14's two calls (vc decision 8). WP14's body now records both as divergences, so leave the body to vc. (A) Yes: build the address map from person.header.emails, one About reader, no golden changes. (B) Yes: refuse a second --email, exit 1 naming why, as contact's other usage errors do, with a test red then green. tree.rs:63's silent skip is vc's todo 5, ruled once WP11 commit 3 lands, so keep it out of WP14. Your five clear fixes and note 1's const are agreed. Committing the three docs first is right. Todo 2: find the real ENOENT before fixing, as you say. Then ask for cargo and bats together.",
       "fyi": false,
       "recorded_at": "2026-11-03T06:58:29.669Z"
+    },
+    {
+      "id": "01M6G57425W875654Z9M4704C0",
+      "recipient": "cc",
+      "body": "Next for you, before WP13 (vc decision 10, ruling todo 5): one About reader for every About read. It decodes lossily, so a non-UTF-8 About keeps its header as the legacy's byte-wise reads did. A read error other than NotFound fails the command naming the file, returned to the coordinator, never printed by the library (PFIC). NotFound stays 'no About'. Sites: tree.rs's header read and its .index/aliases read, grep.rs:90, sync.rs:1177 (--pull then names the real cause instead of 'no About file'), tags.rs:681 and :906. Tests red then green: a non-UTF-8 About's header still reads; an unreadable About fails naming its path. No golden changes expected; tell me first if one moves. Measure once with cargo and bats; my checklist is todo 7. Then WP13.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T07:33:13.413Z"
     }
   ],
   "handled": [

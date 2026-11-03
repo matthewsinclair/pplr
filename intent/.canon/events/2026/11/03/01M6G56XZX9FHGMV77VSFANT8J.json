@@ -1,0 +1,15 @@
+{
+  "id": "01M6G56XZX9FHGMV77VSFANT8J",
+  "ts": "2026-11-03T07:33:07.197Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "At cc's About-reader commit (decision 10), check: one reader serves every About read (tree.rs, grep.rs, sync.rs --pull, tags.rs twice) and tree.rs's aliases read; non-UTF-8 decodes lossily; a read error other than NotFound fails the command naming the path, returned to the coordinator; --pull names the real cause; the two tests run red then green; no golden changed. Then amend WP14's body to drop its fourth edge case, and vc's clean-clone run. It lands before WP13."
+  }
+}
