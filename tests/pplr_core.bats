@@ -83,9 +83,9 @@ assert_version_output() {
     assert_version_output
 }
 
-# ST0001 AC-00.7: on Linux, each command that needs a macOS service exits
-# non-zero and names why. One row per gate the binary has: the command, then
-# a phrase its message holds. On macOS the services are there, and each
+# AT-00.7 (ST0001 AC-00.7): on Linux, each command that needs a macOS service
+# exits non-zero and names why. One row per gate the binary has: the command,
+# then a phrase its message holds. On macOS the services are there, and each
 # command's own tests cover it.
 @test "AC-00.7 on Linux, every command that needs a macOS service exits non-zero naming why" {
     [ "$(uname)" != Darwin ] || skip "checks the Linux refusals; on macOS the services are there"

@@ -3,6 +3,11 @@ name: Tests
 # The cargo gates and the bats suite against the Rust pplr, on macOS and Linux,
 # through devbin's own gates (ST0001 AT-02.1, ST0002 E6 and AT-02.1). A release
 # candidate (candidate/<tag>, pushed by devbin's release core) runs it too.
+#
+# AT-00.3 (ST0001 AC-00.3): the last step, the bats suite against the Rust
+# pplr, passes on both runners. On Linux only a test that needs a macOS service
+# skips, naming why. macos-latest has no fileicon, so the icon tests run under
+# bin/devbin test shell on a Mac that has it.
 
 on:
   push:

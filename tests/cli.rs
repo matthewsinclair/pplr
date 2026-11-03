@@ -744,6 +744,10 @@ fn same<T: PartialEq + std::fmt::Debug>(got: T, want: T, what: &str) -> Result<(
 /// AT-08.1 (ST0001 AC-08.1): rename, links and handler are native, so their
 /// goldens replay here too; the bats rename tests run them against the binary,
 /// and handler's stable opt path is src/handler.rs's own test.
+/// AT-00.4 (ST0001 AC-00.4): every file a case leaves under its sandbox, the
+/// data tree's among them, is byte-identical to its legacy golden once the
+/// time-dependent fields tests/golden/README.md lists are rewritten; a workbook
+/// matches by its cells, and no file is missing or extra.
 #[test]
 fn every_golden_of_a_ported_command_replays() -> Result<()> {
   let cases =
