@@ -1,0 +1,15 @@
+{
+  "id": "01M6G0246N10QSCFVF6HWJS35N",
+  "ts": "2026-11-03T06:03:06.837Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "ST0001 harness (vc's brief, item 4): the bats step has never run on ubuntu under the new tests.yml, because the cargo step failed first every run. Once a cargo run there goes green (cc's CI fixes, then hv's push), triage and fix whatever bats layer it exposes"
+  }
+}

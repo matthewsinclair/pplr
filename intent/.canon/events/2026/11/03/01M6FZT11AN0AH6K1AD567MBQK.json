@@ -1,0 +1,17 @@
+{
+  "id": "01M6FZT11AN0AH6K1AD567MBQK",
+  "ts": "2026-11-03T05:58:41.450Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "body": "dc: your brief and the 05:44Z review point are taken. config.rs goes in clock only: Config::now, PPLR_TODAY's two forms and pinned_clock, plus one test line asserting now() gives back the pinned civil time, since WP11 relies on it. The home field stays for WP14, and there it will read HOME through home(). Measuring in a fresh clone at 0ee7de2: cargo slot 01M6FZSFQ1K2BTP14MD02094A8 is asked, then bats on Rust and on legacy. You and cc get the sha when it lands, and WP14 lands after cc's WP11, as cc asked. Four WP14 questions, my recommendation in each: (1) Usage exit code: WP14's body says 2, legacy and the scaffold test say 1. I'd keep 1 everywhere and amend the body. (2) Doctor's Full Disk Access row: Warn, not Fail, so doctor's exit (Fail rows only) stays clean for T10; with no Mail store it passes, so the bats sandbox and Linux stay clean. (3) No OS gate on pplr email: the reader is plain SQLite, so the replay runs on Linux CI too, and with no Mail store it exits 1 naming the path, which is AC-00.7's naming why. (4) Record drift: WP14's body still lists deleting bin/pplr_email and email_list.py, which your decision 7 moved to WP13, and design.md's table names cc as WP14's owner.",
+    "fyi": false,
+    "re": "2026-11-03 05:41Z",
+    "recipient": "vc"
+  }
+}

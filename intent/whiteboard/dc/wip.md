@@ -2,10 +2,10 @@
 node: dc
 name: dc
 role: dc
-session_id: 4237396b-82f9-4844-95a4-c3179b9179bc
-heartbeat_at: 2026-11-02 17:37Z
-status: paused
-focus: "parked for hv's reboot: WP14 WIP on branch dc/wp14-wip; next is config.rs alone for cc, then the rest of WP14"
+session_id: da774a51-7916-4f68-b76b-37c788cb4a76
+heartbeat_at: 2026-11-03 06:03Z
+status: active
+focus: "WP14: clock on main (6dfc81c, cc and vc told); now the mail reader in a fresh clone, landing after cc's WP11"
 claims: [ST0001/02, ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST0001/08, ST0001/14]
 ---
 
@@ -13,15 +13,15 @@ claims: [ST0001/02, ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST000
 
 ## DOING
 
-_(none)_
+- ST0001 WP14, the mail reader: its clock is on main (6dfc81c, measured, cc and vc told). The rest is mail.rs, email.rs, contact log --email, doctor's Full Disk Access row, the replay's synthetic stores and AT-14.1/14.2. It is built in a fresh clone from dc/wp14-wip, and lands after cc's WP11, rebased onto it
 
 ## TODO
 
-_(none)_
+- ST0001 harness (vc's brief, item 4): the bats step has never run on ubuntu under the new tests.yml, because the cargo step failed first every run. Once a cargo run there goes green (cc's CI fixes, then hv's push), triage and fix whatever bats layer it exposes
 
 ## Holds
 
-- ST0001 WP14 parked on local branch dc/wp14-wip (555eb7e, unmeasured): resume when a cargo slot is granted after hv's reboot; first measure and commit src/config.rs (PPLR_TODAY time pin, Config::now) alone, which cc's WP11 needs, then tell cc
+_(none)_
 
 ## Watch-outs
 

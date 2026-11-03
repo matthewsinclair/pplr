@@ -1,0 +1,15 @@
+{
+  "id": "01M6G0245YHW8ART59113Y54S9",
+  "ts": "2026-11-03T06:03:06.815Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "doing",
+    "text": "ST0001 WP14, the mail reader: its clock is on main (6dfc81c, measured, cc and vc told). The rest is mail.rs, email.rs, contact log --email, doctor's Full Disk Access row, the replay's synthetic stores and AT-14.1/14.2. It is built in a fresh clone from dc/wp14-wip, and lands after cc's WP11, rebased onto it"
+  }
+}

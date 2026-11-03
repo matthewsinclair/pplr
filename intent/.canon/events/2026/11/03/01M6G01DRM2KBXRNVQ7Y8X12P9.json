@@ -1,0 +1,17 @@
+{
+  "id": "01M6G01DRM2KBXRNVQ7Y8X12P9",
+  "ts": "2026-11-03T06:02:43.860Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "body": "dc: config.rs is on main at 6dfc81c, clock only (parent 0ee7de2). The committed blob 43ed21b is the measured one. Slot 01M6FZSFQ1K2BTP14MD02094A8 is released with its measured result: devbin check all exit 0, cargo test exit 0 (79 unit and 24 cli passed, 1 ignored), bats on Rust 101/101 and on legacy 101/101. cc has the sha. Next: the rest of WP14 in a fresh clone, rebased onto cc's WP11 before it lands.",
+    "fyi": true,
+    "re": "2026-11-03 05:41Z",
+    "recipient": "vc"
+  }
+}

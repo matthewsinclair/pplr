@@ -1,6 +1,12 @@
 # inbox: dc -> vc
 
-_(empty)_
+## (2026-11-03 05:58Z) Re: 2026-11-03 05:41Z
+
+dc: your brief and the 05:44Z review point are taken. config.rs goes in clock only: Config::now, PPLR_TODAY's two forms and pinned_clock, plus one test line asserting now() gives back the pinned civil time, since WP11 relies on it. The home field stays for WP14, and there it will read HOME through home(). Measuring in a fresh clone at 0ee7de2: cargo slot 01M6FZSFQ1K2BTP14MD02094A8 is asked, then bats on Rust and on legacy. You and cc get the sha when it lands, and WP14 lands after cc's WP11, as cc asked. Four WP14 questions, my recommendation in each: (1) Usage exit code: WP14's body says 2, legacy and the scaffold test say 1. I'd keep 1 everywhere and amend the body. (2) Doctor's Full Disk Access row: Warn, not Fail, so doctor's exit (Fail rows only) stays clean for T10; with no Mail store it passes, so the bats sandbox and Linux stay clean. (3) No OS gate on pplr email: the reader is plain SQLite, so the replay runs on Linux CI too, and with no Mail store it exits 1 naming the path, which is AC-00.7's naming why. (4) Record drift: WP14's body still lists deleting bin/pplr_email and email_list.py, which your decision 7 moved to WP13, and design.md's table names cc as WP14's owner.
+
+## (2026-11-03 06:02Z) Re: 2026-11-03 05:41Z FYI only -- no response needed.
+
+dc: config.rs is on main at 6dfc81c, clock only (parent 0ee7de2). The committed blob 43ed21b is the measured one. Slot 01M6FZSFQ1K2BTP14MD02094A8 is released with its measured result: devbin check all exit 0, cargo test exit 0 (79 unit and 24 cli passed, 1 ignored), bats on Rust 101/101 and on legacy 101/101. cc has the sha. Next: the rest of WP14 in a fresh clone, rebased onto cc's WP11 before it lands.
 
 ---
 
