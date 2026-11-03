@@ -987,9 +987,10 @@ fn tripwires(sandbox: &Sandbox, names: &[&str]) -> Result<PathBuf> {
 
 /// AT-14.1 (ST0001 AC-14.1): pplr reads recent and inbox mail itself, from
 /// Mail's own stores. Every golden of pplr email and of contact log --email
-/// replays against stores built from the fixture's messages; and with
-/// mail-recent, python3 and uv as tripwires on PATH, pplr email lists the inbox
-/// and contact log --email <Message-ID> links a message, running none of them.
+/// replays against stores built from the fixture's messages; and with the
+/// tools the legacy code ran (mail-recent, and Python through its runner) as
+/// tripwires on PATH, pplr email lists the inbox and contact log --email
+/// <Message-ID> links a message, running none of them.
 /// The bats contact log --email tests run both forms against the binary.
 #[test]
 fn email_and_contact_log_email_are_native_and_their_goldens_replay() -> Result<()> {
@@ -1033,7 +1034,7 @@ fn email_and_contact_log_email_are_native_and_their_goldens_replay() -> Result<(
     about.join("Chidi Okafor (About).md"),
     "# Chidi Okafor (About)\n",
   )?;
-  let tools = ["mail-recent", "python3", "uv"];
+  let tools = ["mail-recent", "python3", "uv"]; // nopython: tripwires, never run
   let bin = tripwires(&sandbox, &tools)?;
   let path = format!("{}:/usr/bin:/bin", bin.display());
   let inbox = run(

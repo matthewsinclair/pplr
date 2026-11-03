@@ -18,6 +18,13 @@ commands:
   build:
     summary: cargo build, then the Contacts sidecar beside the binary on macOS
     run: tools/build
+  check:
+    options:
+      nopython:
+        summary: no Python in what the repository tracks (ST0001 AC-00.1)
+        run: tools/nopython
+        grammar: generic
+        log: NOPYTHON
   test:
     options:
       shell:

@@ -81,9 +81,9 @@ EOF
 
 @test "pplr grep -t searches each About/tags.yaml, and shows role and company from the About" {
     local person_dir=$(create_test_person "Tagged" "Terry")
-    printf '%s\n' 'tags:' '  - engineer' '  - {tag: python, source: auto}' > "$person_dir/About/tags.yaml"
+    printf '%s\n' 'tags:' '  - engineer' '  - {tag: python, source: auto}' > "$person_dir/About/tags.yaml" # nopython: a tag's name
 
-    run "$PPLR" grep -t "python"
+    run "$PPLR" grep -t "python" # nopython: the tag's name
     [ "$status" -eq 0 ]
     assert_contains "$output" "Tagged, Terry"
     assert_contains "$output" "Test Role"

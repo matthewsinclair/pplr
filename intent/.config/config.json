@@ -18,6 +18,11 @@
       "run": [
         "tools/people-leak"
       ]
+    },
+    {
+      "run": [
+        "tools/nopython"
+      ]
     }
   ]
 }

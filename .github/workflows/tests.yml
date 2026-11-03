@@ -49,6 +49,9 @@ jobs:
       - name: One test target, one target directory
         run: bin/devbin check autotests && bin/devbin check targetdir
 
+      - name: No Python
+        run: bin/devbin check nopython
+
       - name: Cargo tests
         run: bin/devbin test rust
 
