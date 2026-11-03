@@ -11,6 +11,8 @@ status: Not Started
 
 Remove the fallback and every legacy file, prove parity read-only on the live tree, and bring the docs up to date. This leaves one Rust binary ready for ST0002's release.
 
+Remove the fallback and every legacy file, prove parity read-only on the live tree, and bring the docs up to date. This leaves one Rust binary ready for ST0002's release.
+
 **Scope**
 
 - **Removals**: the fallback, `bin/pplr`, `lib/`, `setup.sh`, `.env.example`, `VERSION.md`, and any `src/` remnant. `templates/` stays as the embedding source.
@@ -30,6 +32,53 @@ Remove the fallback and every legacy file, prove parity read-only on the live tr
   - the project-specific section of `CLAUDE.md`: pointers to these.
 
 **Criteria**: AC-00.1 to AC-00.8, the thread's own criteria, hold at the end of this WP.
+
+**As built** (cc; the series C1 to C10, verified by vc on cc/wp13 in decision 16, to land after hv's cutover):
+
+1. The legacy code and the fallback go (C1): `bin/pplr` and its command scripts, `lib/engine.sh`, `setup.sh`, `.env.example`, `VERSION.md`, the Python helpers under `src/pplr-*` and `src/fallback.rs`, with the tests that leaned on them. `PPLR_UNDER_TEST` defaults to the dev build (AC-01.3 reworded, vc decision 13).
+2. The Contacts sidecar does only dump, backup and group (C2), and `IN-SW-CODE-006` is on again (rule 9).
+3. The goldens are frozen as the legacy's record (C3): the capture, its scenarios and the fakes only the legacy reached go.
+4. No Python, checked (C4): `tools/nopython` in `devbin check nopython`, the pre-commit guards and CI (AC-00.1).
+5. The thread's own acceptance tests (C5): AT-00.2, AT-00.6, AT-00.7 (every macOS gate, on Linux) and AT-00.9.
+
+**Fixes** (design D10: each changes no data file and no tested output; the CHANGELOG lists them):
+
+- `pplr tags` and `pplr contact` with no command name themselves in their usage, where the port had kept the names `tags.py` and `contact.py` (vc decision 14; C6).
+- `doctor` no longer asks for `jq`, which only the legacy scripts ran (C7).
+- `grep` and `grep -t` list people in name order, the same on every filesystem, where the legacy's `grep -r` and `find` gave the filesystem's own directory order (vc decision 15; C9).
+- `grep` prints a matched line as the file holds it, where the legacy's `IFS=: read` dropped a trailing colon that was the line's only one (vc decision 15; C9).
+
+**Port bugs the live parity found, fixed to match the legacy**:
+
+- `rename` tested its running-text skips against a hit's text alone, so it listed the person's own About as left unchanged; the legacy's `grep -vF` tested the whole hit, path and text (C8).
+- `links` walked into symlinked directories, so a link out of the tree was searched and one back up it sent the walk round and round; the legacy's FileManager enumerator never descends one (C10).
+
+**Live read-only parity** (AC-00.5), on rhadamanth, 2026-11-03. Verdicts only (design D11):
+
+- The legacy: main d7ee43d, the code hv's live pplr ran, exported with `git archive` into a scratch folder, its Swift engine built there. The Rust: the series' tip a44f79b, whose code tree is the one that lands, published as an opt tree.
+- Each row ran under both, from the same folder with the same settings, inside `sandbox-exec` with every write to the tree denied; caches and backups went to scratch. The tree's listing (path, size, time) was the same before and after.
+- Compared: stdout, stderr and the exit code. No output is recorded here, and the outputs were deleted once each difference was classified. Two earlier runs gave nothing to record: the first through a slip in the runner, the second stopped at `links` on the port's symlink walk, fixed as C10.
+
+| Rows                                                                                                                                      | Verdict                                                                                                                                              |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `count`, `json`, `index`                                                                                                                  | same                                                                                                                                                 |
+| `help --details`                                                                                                                          | same                                                                                                                                                 |
+| `meetings`: a year, a month, a range                                                                                                      | same                                                                                                                                                 |
+| `tags check`, `tags render --dry-run`                                                                                                     | same                                                                                                                                                 |
+| `contact due`, `contact due --all`, `contact scan --dry-run`                                                                              | same                                                                                                                                                 |
+| `refresh next`, `refresh next` with `--older-than`, `refresh status`                                                                      | same                                                                                                                                                 |
+| `pictures --dry-run`                                                                                                                      | same                                                                                                                                                 |
+| `links` and `links --json` over the tree (dry runs)                                                                                       | same                                                                                                                                                 |
+| `rename --dry-run` (one person)                                                                                                           | same                                                                                                                                                 |
+| For every person: `about`, `cp -o`, `cp -o -t linkedin`, `resolve`, `open --print`, `tag`, `tags show`, `contact show`, `contact context` | same                                                                                                                                                 |
+| `help`                                                                                                                                    | different by design: generated from the Rust command table (WP04), which carries ST0002 WP03's `install` and `use` and each WP's usage text          |
+| `version`                                                                                                                                 | different by design: the version line (design D7, ST0002 WP03), for `VERSION.md`'s number                                                            |
+| `doctor`                                                                                                                                  | different by design: WP12's checks, with ST0002's install section and design D5's legacy-folder warnings; neither doctor reports a fault in the tree |
+| `grep`, `grep -t`                                                                                                                         | different by design: vc decision 15 (name order; the line as the file holds it)                                                                      |
+| `sync --check`, `--check --json`, `--link`, `--pull`, `--photos` (dry runs)                                                               | not run here: they need Contacts access, so hv runs them (hold 2 item 1), and AC-00.5 waits for them                                                 |
+| `email`, `email inbox`                                                                                                                    | not run here: they need Full Disk Access, so hv runs them with the sync rows                                                                         |
+
+Unexplained differences: none.
 
 ## Acceptance
 
