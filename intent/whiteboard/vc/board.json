@@ -5,7 +5,7 @@
     "name": "vc",
     "role": "vc",
     "session_id": "60a887be-5fa2-4cf5-8de1-310286047151",
-    "heartbeat_at": "2026-11-03T08:22:30.733Z",
+    "heartbeat_at": "2026-11-03T08:25:44.697Z",
     "status": "active",
     "focus": "main 37aaeff verified (decision 6) and green on CI 41598905802, both runners. Holding the slot desk. Next: dc closes ST0001 WP02 (AT-02.1; AT-02.2 with a measured mutant red in a cargo slot), then ST0002 AC-02.1's release check and doctor, then WP13's docs; cc claims ST0001/13 (the removals, the no-Python gate, the live read-only parity); vc reviews and verifies each landing in a fresh clone; hv's candidate/ci-probe push is hold 2 item 8",
     "claims": [],
@@ -227,6 +227,14 @@
       "text": "WP13's five rulings, at cc's ask (2026-11-03 08:01Z), under hv's simpler-or-easier rule. (1) Sequencing, as cc proposes. Checked: ~/.local/bin/pplr links to the checkout's bin/pplr, Pplr Links.app runs the checkout's bin/pplr by its full path, and lib/engine.sh compiles main.swift into .build/, so no removal lands before hv's cutover (hold 2 item 5). cc measures the commits in a clone and runs the live parity first, then writes hv the cutover steps with the rollback beside them (until the removal lands, the rollback is the legacy handler's install and the link back to bin/pplr). hv cuts over and checks handler --status, version, doctor and one pplr:// link; then cc lands. The parity record carries verdicts only (the command, same or different, the exit codes), never output text: a difference is named by its kind, and the scratch outputs are deleted once the verdicts are written (D11). Rows that need Contacts or Full Disk Access are recorded as not run; cc's parity runner takes a row list, so hv can run those rows in hv's own terminal, and AC-00.5 waits for them. (2) The capture: remove tests/golden/capture and scenarios.zsh; keep cases/, fixture/, xlsx-cells and each fake the replay calls (a fake only the legacy called goes). tests/golden/README.md says the goldens are frozen as the legacy's record, names the last commit that has the capture, and says a golden changes only in the commit of a ruled divergence, naming the ruling. Repoint the doc comment at tests/cli.rs:713, which names scenarios.zsh. (3) AC-01.3: option (a), reworded with intent ac edit to 'One setting, PPLR_UNDER_TEST, points the bats suite at any pplr, and the default is the checkout's dev build, target/debug/pplr.' The setting outlives WP13 as the one way to point the suite at a release or installed pplr. AT-01.3's harness test follows: red at main, whose default is the legacy, green after. A missing dev build fails the suite naming cargo build; it never skips. (4) The no-Python check, as cc proposes: one tool, the strict word check, marked exceptions. Three rulings on it. The words match case-sensitively, lowercase and whole, so the doc comments naming the Python repr, str() and urllib forms the port keeps run nothing and stay unmarked. One spelling the word check never sees: the tool tools/nopython, devbin's check nopython and the marker 'nopython: <why>', so its own wiring needs no marker; the tool exempts its own file by path, since it must name the words. CI runs bin/devbin check nopython beside the other devbin steps, because CI runs the checks one by one, not check all. The guard's tests compare no hand-written count. (5) The ST-level ATs: cc mints them at WP13, each with a measured red, since cc writes the tests. vc verifies every red and green in a fresh clone before the thread's ACs are taken as met, and vc satisfies the two non-test ACs: AC-00.5 on the parity record, AC-00.8 on dc's docs. AT-00.1's red is main's real tree refused (the four .py files and the capture's uv), beside a synthetic repo where a planted .py, a Python shebang and a uv line are refused and a marked line passes, all through devbin check nopython. AT-00.7 cites a Linux test for each macOS gate (the Contacts store, the handler, the icons, and any other the binary has), not the icons alone; where a gate has none, it joins the AC-00.7 bats test, the commands written as data. AT-00.9 is needed, because AC-00.9 is test-backed and people-leak has no test: a bats test with a synthetic PPLR_DATA and a scratch repo, where a staged file holding a fixture name is refused and a clean one passes, red by a mutant that disables the match. When the fallback test goes, AC-02.2 is withdrawn and AT-02.2 marked n/a, the fallback's removal the reason for both (decision 12).",
       "state": "live",
       "recorded_at": "2026-11-03T08:07:31.629Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 14,
+      "text": "pplr tags with no command prints the legacy usage naming tags.py (src/tags.rs USAGE), which names a file WP13 removes. Ruled a design D10 fix, at dc's ask: it changes no data file and no tested output. The usage names pplr tags, with its layout realigned and its exit status kept. A test pins the new text, so the fix stays. cc makes it a small commit in WP13's series, measured with the rest, and lists it in WP13's body as D10 requires. dc adds it to the CHANGELOG's Fixed. vc confirms D9's correction (318d065: edit out, cp only without -o) and ST0002's objective (53cfa89) against the code and the packaging.",
+      "state": "live",
+      "recorded_at": "2026-11-03T08:25:41.361Z"
     }
   ],
   "sent": [
@@ -578,6 +586,11 @@
       "id": "01M6G7TKPHVEKSDTQX8BZZ1QGY",
       "sender": "dc",
       "handled_at": "2026-11-03T08:22:30.756Z"
+    },
+    {
+      "id": "01M6G85C382ZSP5AYGQS571RCJ",
+      "sender": "dc",
+      "handled_at": "2026-11-03T08:25:44.723Z"
     }
   ]
 }

@@ -1,0 +1,15 @@
+{
+  "id": "01M6G8767HB9AH39B87N4AKKJ6",
+  "ts": "2026-11-03T08:25:41.361Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "pplr tags with no command prints the legacy usage naming tags.py (src/tags.rs USAGE), which names a file WP13 removes. Ruled a design D10 fix, at dc's ask: it changes no data file and no tested output. The usage names pplr tags, with its layout realigned and its exit status kept. A test pins the new text, so the fix stays. cc makes it a small commit in WP13's series, measured with the rest, and lists it in WP13's body as D10 requires. dc adds it to the CHANGELOG's Fixed. vc confirms D9's correction (318d065: edit out, cp only without -o) and ST0002's objective (53cfa89) against the code and the packaging."
+  }
+}
