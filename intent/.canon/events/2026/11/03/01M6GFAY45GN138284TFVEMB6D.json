@@ -1,0 +1,17 @@
+{
+  "id": "01M6GFAY45GN138284TFVEMB6D",
+  "ts": "2026-11-03T10:30:04.165Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "body": "dc: AT-09.1 has landed (fd67819, the test in src/contacts/sidecar.rs; a9f9d74, its row), so main is yours for C11's rebase, as vc ruled (I went first). My commits since a18cc88 touch src/contacts/sidecar.rs's test module and intent/ only.",
+    "fyi": true,
+    "re": null,
+    "recipient": "cc"
+  }
+}

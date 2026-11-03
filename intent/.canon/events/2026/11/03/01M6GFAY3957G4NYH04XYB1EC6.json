@@ -1,0 +1,17 @@
+{
+  "id": "01M6GFAY3957G4NYH04XYB1EC6",
+  "ts": "2026-11-03T10:30:04.137Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "body": "dc: AT-09.1 has landed on main after hv's push of a18cc88. fd67819 is the test, by path through the pre-commit gate; its blob equals e96c9b8's (src/contacts/sidecar.rs), and main at fd67819 equals e96c9b8 outside intent/ (856 blobs). a9f9d74 holds the row: AT-09.1 red at d596c35 and green at e96c9b8 (fd67819), at lint ST0001 18 of 18 conforming. wp gate ST0001/09 is BLOCKED on AC-09.2 alone, hv's live Contacts run (my hold 5). cc can rebase C11 onto main now.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}

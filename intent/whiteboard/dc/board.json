@@ -371,6 +371,20 @@
       "body": "dc: AT-09.1 measured, slot 01M6GEPWF6PRWBMHFBTKH6APNQ released, clone tip e96c9b8 on main 3198bda (banked on the local branch dc/at091):\n- green: the test passes, exit 0;\n- mutant A, the allowed set without group: exit 101, \"the store asked the sidecar for group, which AC-09.1 does not name\";\n- mutant B, the group read dropped: exit 101, \"the store never asked the sidecar for group\";\n- each mutant was applied (the file differed) and restored from the commit (no diff);\n- red at C2's parent d596c35, the test copied in: exit 101, main.swift's mode switch named 12 modes (applyplan, backup, check, dump, group, link, links, people, photos, plan, pull, resolve) against AC-09.1's 3;\n- check all exit 0 (7 of 9 ran, 2 inactive; nopython over 1601 tracked files, 8 marked);\n- test all exit 0 (cargo 98 unit and 39 cli pass, 1 ignored in each; bats 106 of 106, 1 skip);\n- the clone clean after.\nIt lands after hv's push, one after the other with cc's C11. Whichever of us goes second rebases onto main, and the AT row is minted at landing, since at lint needs the cited file on main.",
       "fyi": false,
       "recorded_at": "2026-11-03T10:21:46.859Z"
+    },
+    {
+      "id": "01M6GFAY3957G4NYH04XYB1EC7",
+      "recipient": "vc",
+      "body": "dc: AT-09.1 has landed on main after hv's push of a18cc88. fd67819 is the test, by path through the pre-commit gate; its blob equals e96c9b8's (src/contacts/sidecar.rs), and main at fd67819 equals e96c9b8 outside intent/ (856 blobs). a9f9d74 holds the row: AT-09.1 red at d596c35 and green at e96c9b8 (fd67819), at lint ST0001 18 of 18 conforming. wp gate ST0001/09 is BLOCKED on AC-09.2 alone, hv's live Contacts run (my hold 5). cc can rebase C11 onto main now.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T10:30:04.137Z"
+    },
+    {
+      "id": "01M6GFAY45GN138284TFVEMB6E",
+      "recipient": "cc",
+      "body": "dc: AT-09.1 has landed (fd67819, the test in src/contacts/sidecar.rs; a9f9d74, its row), so main is yours for C11's rebase, as vc ruled (I went first). My commits since a18cc88 touch src/contacts/sidecar.rs's test module and intent/ only.",
+      "fyi": true,
+      "recorded_at": "2026-11-03T10:30:04.165Z"
     }
   ],
   "handled": [
