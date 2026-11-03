@@ -4,8 +4,8 @@ dc's record, 2026-11-02. By vc's ruling the real `brew install` and the T10 run 
 
 ## What is prepared
 
-- `tools/skeleton [--adhoc] [<dir>]` (e23ffc7): a scratch clone of HEAD with dead push URLs, a release build, the macOS asset from `bin/devbin macos prepare`, a scratch `v<version>` tag in the clone only, the sums, and the formula rendered into a scratch tap pointing at the local asset. It prints hv's steps.
-- `tools/t10-probe <dev-checkout>` (e23ffc7): `use dev`, `use opt`, `use brew`, each followed by the version line, doctor's Install section and the shadow check.
+- `bin/devbin skeleton [--adhoc] [<dir>]` (e23ffc7, moved into `bin/.devbin/cmd/` by WP08): a scratch clone of HEAD with dead push URLs, a release build, the macOS asset from `bin/devbin macos prepare`, a scratch `v<version>` tag in the clone only, the sums, and the formula rendered into a scratch tap pointing at the local asset. It prints hv's steps.
+- `bin/devbin t10-probe <dev-checkout>` (e23ffc7, moved into `bin/.devbin/cmd/` by WP08): `use dev`, `use opt`, `use brew`, each followed by the version line, doctor's Install section and the shadow check.
 
 ## The sandboxed run (HOME, PATH and HOMEBREW_PREFIX all scratch; no brew command)
 
@@ -22,4 +22,4 @@ The run found three faults, fixed in e23ffc7: `version`, `doctor` and `help` nee
 
 ## hv's steps
 
-As `tools/skeleton` prints them, from a Developer ID build (`tools/skeleton` without `--adhoc`, after the signing in WP07): tap the scratch formula, `brew trust`, `brew install`, `brew test`, `pplr install` for opt, `tools/t10-probe`, then uninstall, untrust and untap. Every brew probe runs with `HOMEBREW_NO_AUTO_UPDATE=1`.
+As `bin/devbin skeleton` prints them, from a Developer ID build (`bin/devbin skeleton` without `--adhoc`, after the signing in WP07): tap the scratch formula, `brew trust`, `brew install`, `brew test`, `pplr install` for opt, `bin/devbin t10-probe` from the checkout, then uninstall, untrust and untap. Every brew probe runs with `HOMEBREW_NO_AUTO_UPDATE=1`.

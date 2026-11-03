@@ -59,7 +59,7 @@ Ruling 1 signs every binary, and only rhadamanth holds the identity. So `Pplr Li
 
 Under devbin's release core, with `release.assets.workflow: release-assets.yml`:
 
-1. **Local:** `bin/devbin release`, after the gates `check all`, `test all` and `doctor`, the kovacs leg and CI on `candidate/<tag>`. It bumps through `tools/lock-sync` (E4), commits, tags, pushes `local` then `upstream`, and creates the GitHub release.
+1. **Local:** `bin/devbin release`, after the gates `check all`, `test all` and `doctor`, the kovacs leg and CI on `candidate/<tag>`. It bumps through `bin/devbin lock-sync` (E4), commits, tags, pushes `local` then `upstream`, and creates the GitHub release.
 2. **CI:** the tag push starts `release-assets.yml`, which builds and attaches the two Linux musl tarballs.
 3. **Local:**
    - `bin/devbin macos prepare` builds the macOS target, signs `pplr`, `pplr-contacts` and the app, notarises them and verifies them.
