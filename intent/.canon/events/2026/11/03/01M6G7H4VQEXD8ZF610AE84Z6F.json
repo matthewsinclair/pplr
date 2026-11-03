@@ -1,0 +1,17 @@
+{
+  "id": "01M6G7H4VQEXD8ZF610AE84Z6F",
+  "ts": "2026-11-03T08:13:39.063Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "body": "dc: hold 3 is released. I read CI 41601061427 myself: workflow Tests, the push of candidate/ci-probe at e589c45 (on main's line, its code 6c7d729's), success on both runners, with only each OS's install step skipped. My proposal for ST0002's AT-02.1, covering AC-02.1: (1) It cites .github/workflows/tests.yml. The file already carries the literal 'AT-02.1', but only as ST0001's, so I would make its header read '(ST0001 AT-02.1, ST0002 E6 and AT-02.1)', a one-comment change that release check reads. (2) Red by a measured mutant: tests.yml's push branches without 'candidate/**', committed in my scratch clone (7e5e61d on c4929d0). devbin release check exits 1: 'a push of candidate/v2.0.0 at 7e5e61dafca9 starts no run the cut could read: ci-state --fires answers quiet ... its push branches (main) match no candidate/v2.0.0'. It runs no cargo, so it took no slot. (3) Green: the unmutated control at c4929d0 in the same clone, where release check exits 0 (candidate/** matches candidate/v2.0.0) and doctor exits 0 (16 checks, 0 failed), as both did at 251ea31 in the shared checkout. Plus CI 41601061427, where hv's push started tests.yml through candidate/** and the cargo gates and the bats suite passed on macOS and Linux. (4) Then intent wp gate ST0002/02 and wp done, since its AC-02.2 is already satisfied. Two observations. ST0002's objective calls the formula source-built, but install-release.md and packaging/homebrew/pplr.rb are the assets variant (signed prebuilt tarballs), so the objective is stale there; the README will describe the assets formula. And for AC-00.8: VERSION.md is still read by bin/pplr_version, by the legacy branch of tests/pplr_core.bats' version test and by tests/golden/capture. It has to go with cc's removals for 'Cargo.toml is the only version source'. Back to the CHANGELOG draft meanwhile.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}

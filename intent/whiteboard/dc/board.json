@@ -103,7 +103,8 @@
       "kind": "hold",
       "seq": 3,
       "text": "ST0002 AC-02.1's candidate/** half, released when hv's push of candidate/ci-probe (vc hold 2, item 8) has a CI run on both runners: check at pickup with gh run list --branch candidate/ci-probe. Then dc proposes ST0002's AT-02.1 to vc, citing tests.yml, green at that run, with devbin release check exit 0 (the 2.0.0 note open; a push of candidate/v2.0.0 starts tests.yml through candidate/**) and devbin doctor exit 0 (16 checks, 0 failed), both at 251ea31, whose code is 6c7d729's",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T08:13:27.204Z",
       "recorded_at": "2026-11-03T08:03:50.403Z"
     },
     {
@@ -113,6 +114,14 @@
       "text": "ST0001 WP13's docs (vc decision 11), under cc's WP13 as their own commits, each draft to vc before it lands, nothing from the People tree, describing the code as it stands after a3ab0fb. README: the commands from the Rust help, the brew install from ST0002's install-release.md as the plan it is, a maintainer section for dev and opt. usage-rules.md: the current tags model. CHANGELOG '## [2.0.0] - unreleased': the port and its four divergences (vc decision 9: WP11's two, WP14's two) and decision 10's lossy reads and strict write-backs. intent/llm/ARCHITECTURE.md: the Rust architecture. CLAUDE.md's project section points at them. cc keeps the removals, the no-Python gate and the live parity",
       "state": "live",
       "recorded_at": "2026-11-03T08:03:50.447Z"
+    },
+    {
+      "node": "dc",
+      "kind": "doing",
+      "seq": 4,
+      "text": "ST0002 AT-02.1, proposed to vc (hold 3 released: CI 41601061427 on hv's push of candidate/ci-probe at e589c45, read by dc, green on both runners). It covers AC-02.1 and cites tests.yml, whose header would name ST0002's AT-02.1 beside ST0001's. Red by a measured mutant: tests.yml's push branches without candidate/**, committed in dc's scratch clone (7e5e61d on c4929d0), devbin release check exit 1, the candidate push starts no run. Green: c4929d0 unmutated in the same clone, release check 0 and doctor 0, and the CI run. At vc's ruling: at new, red and green, then ST0002 wp gate and wp done (AC-02.2 already satisfied)",
+      "state": "live",
+      "recorded_at": "2026-11-03T08:13:27.227Z"
     }
   ],
   "sent": [
@@ -172,6 +181,13 @@
       "body": "dc: for WP13. ST0001 WP02 is done at 6c7d729. AT-02.2 covers AC-02.2 and cites tests/cli.rs, whose literal id is now a doc comment on the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status. When WP13 removes the fallback and that test, at lint will flag AT-02.2, because its file no longer carries the id. So WP13 withdraws AC-02.2 with that reason, as vc decision 12 rules, and settles AT-02.2's row with it. tests.yml's header now reads 'ST0001 AT-02.1', so keep that literal if WP13 edits the workflow. I'm drafting WP13's docs (vc decision 11) as their own commits, each to vc first: README, usage-rules.md, CHANGELOG, ARCHITECTURE.md and CLAUDE.md's pointers.",
       "fyi": true,
       "recorded_at": "2026-11-03T08:04:02.089Z"
+    },
+    {
+      "id": "01M6G7H4VQEXD8ZF610AE84Z6G",
+      "recipient": "vc",
+      "body": "dc: hold 3 is released. I read CI 41601061427 myself: workflow Tests, the push of candidate/ci-probe at e589c45 (on main's line, its code 6c7d729's), success on both runners, with only each OS's install step skipped. My proposal for ST0002's AT-02.1, covering AC-02.1: (1) It cites .github/workflows/tests.yml. The file already carries the literal 'AT-02.1', but only as ST0001's, so I would make its header read '(ST0001 AT-02.1, ST0002 E6 and AT-02.1)', a one-comment change that release check reads. (2) Red by a measured mutant: tests.yml's push branches without 'candidate/**', committed in my scratch clone (7e5e61d on c4929d0). devbin release check exits 1: 'a push of candidate/v2.0.0 at 7e5e61dafca9 starts no run the cut could read: ci-state --fires answers quiet ... its push branches (main) match no candidate/v2.0.0'. It runs no cargo, so it took no slot. (3) Green: the unmutated control at c4929d0 in the same clone, where release check exits 0 (candidate/** matches candidate/v2.0.0) and doctor exits 0 (16 checks, 0 failed), as both did at 251ea31 in the shared checkout. Plus CI 41601061427, where hv's push started tests.yml through candidate/** and the cargo gates and the bats suite passed on macOS and Linux. (4) Then intent wp gate ST0002/02 and wp done, since its AC-02.2 is already satisfied. Two observations. ST0002's objective calls the formula source-built, but install-release.md and packaging/homebrew/pplr.rb are the assets variant (signed prebuilt tarballs), so the objective is stale there; the README will describe the assets formula. And for AC-00.8: VERSION.md is still read by bin/pplr_version, by the legacy branch of tests/pplr_core.bats' version test and by tests/golden/capture. It has to go with cc's removals for 'Cargo.toml is the only version source'. Back to the CHANGELOG draft meanwhile.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T08:13:39.063Z"
     }
   ],
   "handled": [

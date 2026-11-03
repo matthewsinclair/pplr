@@ -1,0 +1,15 @@
+{
+  "id": "01M6G7GS9VWYP8WSPV0R7WPD7D",
+  "ts": "2026-11-03T08:13:27.227Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "doing",
+    "text": "ST0002 AT-02.1, proposed to vc (hold 3 released: CI 41601061427 on hv's push of candidate/ci-probe at e589c45, read by dc, green on both runners). It covers AC-02.1 and cites tests.yml, whose header would name ST0002's AT-02.1 beside ST0001's. Red by a measured mutant: tests.yml's push branches without candidate/**, committed in dc's scratch clone (7e5e61d on c4929d0), devbin release check exit 1, the candidate push starts no run. Green: c4929d0 unmutated in the same clone, release check 0 and doctor 0, and the CI run. At vc's ruling: at new, red and green, then ST0002 wp gate and wp done (AC-02.2 already satisfied)"
+  }
+}

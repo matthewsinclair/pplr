@@ -14,6 +14,7 @@ claims: [ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
 ## DOING
 
 - ST0001 WP13's docs (vc decision 11), under cc's WP13 as their own commits, each draft to vc before it lands, nothing from the People tree, describing the code as it stands after a3ab0fb. README: the commands from the Rust help, the brew install from ST0002's install-release.md as the plan it is, a maintainer section for dev and opt. usage-rules.md: the current tags model. CHANGELOG '## [2.0.0] - unreleased': the port and its four divergences (vc decision 9: WP11's two, WP14's two) and decision 10's lossy reads and strict write-backs. intent/llm/ARCHITECTURE.md: the Rust architecture. CLAUDE.md's project section points at them. cc keeps the removals, the no-Python gate and the live parity
+- ST0002 AT-02.1, proposed to vc (hold 3 released: CI 41601061427 on hv's push of candidate/ci-probe at e589c45, read by dc, green on both runners). It covers AC-02.1 and cites tests.yml, whose header would name ST0002's AT-02.1 beside ST0001's. Red by a measured mutant: tests.yml's push branches without candidate/**, committed in dc's scratch clone (7e5e61d on c4929d0), devbin release check exit 1, the candidate push starts no run. Green: c4929d0 unmutated in the same clone, release check 0 and doctor 0, and the CI run. At vc's ruling: at new, red and green, then ST0002 wp gate and wp done (AC-02.2 already satisfied)
 
 ## TODO
 
@@ -21,7 +22,7 @@ _(none)_
 
 ## Holds
 
-- ST0002 AC-02.1's candidate/** half, released when hv's push of candidate/ci-probe (vc hold 2, item 8) has a CI run on both runners: check at pickup with gh run list --branch candidate/ci-probe. Then dc proposes ST0002's AT-02.1 to vc, citing tests.yml, green at that run, with devbin release check exit 0 (the 2.0.0 note open; a push of candidate/v2.0.0 starts tests.yml through candidate/**) and devbin doctor exit 0 (16 checks, 0 failed), both at 251ea31, whose code is 6c7d729's
+_(none)_
 
 ## Watch-outs
 
