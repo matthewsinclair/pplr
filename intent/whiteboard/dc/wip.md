@@ -3,25 +3,25 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 07:49Z
+heartbeat_at: 2026-11-03 08:04Z
 status: active
-focus: "held for hv's compact. Next: close ST0001 WP02 once vc rules on covering ATs for its test-backed ACs (doing 2), then WP13's docs (todo 3, vc decision 11)"
-claims: [ST0001/02, ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
+focus: "Drafting ST0001 WP13's docs (doing 3, vc decision 11), each draft to vc before it lands. WP02 done at 6c7d729. Hold 3: ST0002 AC-02.1's candidate/** half, until hv's push of candidate/ci-probe runs on CI"
+claims: [ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
 ---
 
 # dc (dc)
 
 ## DOING
 
-- ST0001 WP02 close, ruled (vc decision 12, 37aaeff): two covering ATs, as I proposed. AT-02.1 cites .github/workflows/tests.yml and covers AC-02.1: red at CI 41595332795 (acec3ca, ubuntu's cargo failed), green at CI 41598011297 (6464721, both runners), with vc decision 6. AT-02.2 cites tests/cli.rs (the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status, plus the bats suite on Rust) and covers AC-02.2: red by a measured mutant that drops one variable bin/pplr sets, in a cargo slot, then green at 6464721. Then wp gate and wp done. WP13 later withdraws AC-02.2 when the fallback goes. ST0002 AC-02.1's candidate/** push is item 8 on hv's hold list (branch candidate/ci-probe, from main's tip, deleted after its run); dc runs devbin release check and devbin doctor (edited)
+- ST0001 WP13's docs (vc decision 11), under cc's WP13 as their own commits, each draft to vc before it lands, nothing from the People tree, describing the code as it stands after a3ab0fb. README: the commands from the Rust help, the brew install from ST0002's install-release.md as the plan it is, a maintainer section for dev and opt. usage-rules.md: the current tags model. CHANGELOG '## [2.0.0] - unreleased': the port and its four divergences (vc decision 9: WP11's two, WP14's two) and decision 10's lossy reads and strict write-backs. intent/llm/ARCHITECTURE.md: the Rust architecture. CLAUDE.md's project section points at them. cc keeps the removals, the no-Python gate and the live parity
 
 ## TODO
 
-- ST0001 WP13's docs (vc decision 11, job 2), under cc's WP13 as their own commits, each draft sent to vc before it lands, nothing from the People tree, and describing the code as it stands after cc's About reader (a3ab0fb). README: the commands from the Rust help, the brew install from ST0002's install-release.md as the plan it is, and a maintainer section for dev and opt. usage-rules.md: the current tags model. CHANGELOG: '## [2.0.0] - unreleased', with the port and its divergences (WP11's two, WP14's as they stand after decision 10, which vc's live message counts as three and its inbox copy as two, so read decisions 9 to 11 and WP14's body; and decision 10's lossy reads and strict write-backs). intent/llm/ARCHITECTURE.md: the Rust architecture. CLAUDE.md's project section points at them. cc keeps the removals, the no-Python gate and the live parity
+_(none)_
 
 ## Holds
 
-_(none)_
+- ST0002 AC-02.1's candidate/** half, released when hv's push of candidate/ci-probe (vc hold 2, item 8) has a CI run on both runners: check at pickup with gh run list --branch candidate/ci-probe. Then dc proposes ST0002's AT-02.1 to vc, citing tests.yml, green at that run, with devbin release check exit 0 (the 2.0.0 note open; a push of candidate/v2.0.0 starts tests.yml through candidate/**) and devbin doctor exit 0 (16 checks, 0 failed), both at 251ea31, whose code is 6c7d729's
 
 ## Watch-outs
 

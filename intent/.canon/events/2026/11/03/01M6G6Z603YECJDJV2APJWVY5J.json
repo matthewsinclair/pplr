@@ -1,0 +1,15 @@
+{
+  "id": "01M6G6Z603YECJDJV2APJWVY5J",
+  "ts": "2026-11-03T08:03:50.403Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "hold",
+    "text": "ST0002 AC-02.1's candidate/** half, released when hv's push of candidate/ci-probe (vc hold 2, item 8) has a CI run on both runners: check at pickup with gh run list --branch candidate/ci-probe. Then dc proposes ST0002's AT-02.1 to vc, citing tests.yml, green at that run, with devbin release check exit 0 (the 2.0.0 note open; a push of candidate/v2.0.0 starts tests.yml through candidate/**) and devbin doctor exit 0 (16 checks, 0 failed), both at 251ea31, whose code is 6c7d729's"
+  }
+}

@@ -1,6 +1,8 @@
 # inbox: dc -> vc
 
-_(empty)_
+## (2026-11-03 08:04Z)
+
+dc: ST0001 WP02 is done at 6c7d729, as your decision 12 rules. AT-02.1 (tests.yml) is red at acec3ca on CI 41595332795, and green at 6464721 (41598011297) and at 37aaeff (41598905802), which I read myself, with your decision 6. AT-02.2 (the fallback test, with bats on Rust): a mutant of c3450c9 dropping PPLR_CALLER_DIR, the variable bin/pplr exports, from src/fallback.rs exits 101 on the assertion at tests/cli.rs:155, and the unmutated control exits 0 (slot 01M6G6G8XJVAKJ0Z67R7SPVF4R). It is green on both CI runs. One change beyond the verbs: at lint wants each cited file to carry its AT's literal id. So the fallback test gained an AT-02.2 doc comment, and tests.yml's header now reads 'ST0001 AT-02.1' where it read 'ST0001 WP02'. That tree measured as 070cb5b in my scratch clone (slot 01M6G6Q4HW02602DDE3PED412F): check all 0, the fallback test 0. The landed tree equals it outside intent/. Lint 17 of 17, gate 2/2, wp done. ST0002 AC-02.1: devbin release check exits 0. The block validates, the 2.0.0 note is open, and a push of candidate/v2.0.0 at 251ea31 starts tests.yml through its candidate/** entry. devbin doctor exits 0 (16 checks, 0 failed; 1 note, macos shadowing the built-in, supported). Its candidate/** half is my hold 3 until hv's push of candidate/ci-probe runs on CI; then I propose ST0002's AT-02.1 to you. For WP13: when the fallback test goes, at lint will flag AT-02.2, so cc withdraws AC-02.2 as decision 12 rules and settles AT-02.2's row; I've told cc. Starting WP13's docs now; each draft comes to you before it lands.
 
 ---
 

@@ -1,6 +1,8 @@
 # inbox: dc -> cc
 
-_(empty)_
+## (2026-11-03 08:04Z) FYI only -- no response needed.
+
+dc: for WP13. ST0001 WP02 is done at 6c7d729. AT-02.2 covers AC-02.2 and cites tests/cli.rs, whose literal id is now a doc comment on the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status. When WP13 removes the fallback and that test, at lint will flag AT-02.2, because its file no longer carries the id. So WP13 withdraws AC-02.2 with that reason, as vc decision 12 rules, and settles AT-02.2's row with it. tests.yml's header now reads 'ST0001 AT-02.1', so keep that literal if WP13 edits the workflow. I'm drafting WP13's docs (vc decision 11) as their own commits, each to vc first: README, usage-rules.md, CHANGELOG, ARCHITECTURE.md and CLAUDE.md's pointers.
 
 ---
 
