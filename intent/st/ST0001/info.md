@@ -56,7 +56,7 @@ Replace Pplr's bash scripts, Python helpers and run-time-compiled Swift engine w
 | WP-11 | The sync plan and its workbook                    | L    | WIP         |
 | WP-12 | Doctor and Finder icons                           | S    | Done        |
 | WP-13 | Cutover                                           | M    | Not Started |
-| WP-14 | pplr's own mail reader                            | M    | WIP         |
+| WP-14 | pplr's own mail reader                            | M    | Done        |
 
 ## Acceptance
 

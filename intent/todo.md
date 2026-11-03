@@ -22,7 +22,7 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
   - [-] 11: The sync plan and its workbook
   - [x] 12: Doctor and Finder icons
   - [ ] 13: Cutover
-  - [-] 14: pplr's own mail reader
+  - [x] 14: pplr's own mail reader
 - [-] ST0002: Create a homebrew distro for the new Rust version of Pplr
   - [x] 01: Release and install design for pplr
   - [-] 02: devbin release core and CI candidates
