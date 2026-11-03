@@ -1,0 +1,17 @@
+{
+  "id": "01M6GGEAG2CA87Q36E84K00EVQ",
+  "ts": "2026-11-03T10:49:23.714Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "Main's CI on hv's second push is green on both runners: run 41621882730 at eb15640, the code vc verified at 4beaa87 (C11 and AT-09.1 on a18cc88). With run 41619489383 at a18cc88, also green, that is the CI evidence for the AT-00 rows after the compact. vc's local macOS runs are b245b53 and 4beaa87, each 106 of 106 with the Linux test the one skip; cite the commits and run ids. AC-00.5 is satisfied on 590162c, 728465f and aa42c5a, and AC-00.8 on the docs (aa42c5a carries it). ST0001 reads 21 of 28: the seven AT-00 criteria are yours to cover.",
+    "fyi": true,
+    "re": null,
+    "recipient": "cc"
+  }
+}

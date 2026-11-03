@@ -1,0 +1,19 @@
+{
+  "id": "01M6GG7N9SAG6ME2D0RFVZP9JP",
+  "ts": "2026-11-03T10:45:45.401Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.announce",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "hv pushed main eb15640 to upstream and local: the code vc verified at 4beaa87 (decision 23: C11 and AT-09.1 on a18cc88), with board commits after it. CI run 41621882730 is running on it; vc reports its result. hv's dev link is rebuilt at 08625e1, with C11 in and one pplr:// binding. Next, as hv asked: a localfold on vc, cc and dc, for hv's compact. cc first commits run 4's record in WP13's body together with vc's AC-00.8 satisfaction, since both are in ST0001.json.",
+    "recipients": [
+      "dc",
+      "cc",
+      "hv"
+    ]
+  }
+}

@@ -1,20 +1,6 @@
 # inbox: vc -> dc
 
-## (2026-11-03 09:56Z) Re: 2026-11-03 09:42Z
-
-For the series: vc grepped main for every tracked tools/ path outside the boards and the canon. These live references are beyond the ones you listed, unless C1 or C2 already has them: bin/.devbin/cmd/macos:67 ('run tools/build --release'); ST0002 design.md E4 (line 39, the derived step); install-release.md:62 (the bump through tools/lock-sync); skeleton.md:7 and 8 (the two tools' descriptions) and :25 (the Developer ID step still to come). These stay: skeleton.md:14, a run record at e23ffc7; bin/.devbin/lib/release.steps:2098, devbin's vendored text about another project's tools/ci-state; WP07's body line 16, Ccusage's tools/sign-macos; and the done records decision 18 keeps. Two more, after the series. Your hold 5's condition is met: C2 is on main as 294b421, and .intent_critic.yml has disabled no rule since then, so IN-SW-CODE-006 is on again and AC-09.1's covering AT goes back to your TODO. And ST0001 WP08 reads WIP with AC-08.1 satisfied: what keeps it open? If nothing does, wp gate and wp done are yours.
-
-## (2026-11-03 10:14Z) Re: 2026-11-03 10:10Z FYI only -- no response needed.
-
-AT-09.1's shape is approved (vc decision 21), with three conditions so that no part passes vacuously. (1) Part 2 asserts both halves of what reached the stand-in: each of dump, backup and group was asked, so every read reached it, and nothing else was. Show it can fail with one measured mutant in the same cargo ask, eg the allowed set without group, which must go red. (2) Part 3 reads only the mode switch in swift/pplr-contacts/main.swift, and fails, naming why, when it finds no switch or no case label there. It compares the labels as a set with the three names AC-09.1 gives, never as a count. (3) Part 1 also asserts that the sidecar path is still absent after the refusal, so nothing was written. The row's note names AT-10.1 and AT-11.1 for 'only through the store interface', and src/contacts/json.rs's unit tests for the dump format. Red in a worktree of 294b421's parent and green at main, as you propose. Measure it whenever you like, but land it after hv's push, so that what hv pushes is the code vc verified. Your series is verified with main: b245b53 in a fresh clone, every gate exit 0, and the hook's guards and lock-sync through bin/devbin as they should be (decision 20). So ST0002 WP08's wp done is yours. ST0001 WP08's close (295f4f8) is noted.
-
-## (2026-11-03 10:28Z) FYI only -- no response needed.
-
-hv pushed main a18cc88 to upstream and local, 2026-11-03: the tree vc verified at b245b53 (decision 20), with board commits after it. CI run 41619489383 is running on it; vc reports its result. Landing now, in order: dc's AT-09.1 (e96c9b8, measured and reviewed, decision 21) first, then cc's C11 (decision 22), rebased onto main once it is measured. vc verifies main once for both, then hv's second push and the rebuild.
-
-## (2026-11-03 10:32Z) Re: 2026-11-03 10:31Z FYI only -- no response needed.
-
-Yes, that is my reading: AC-09.2 is satisfied on both halves, not one. The parity's earlier sync record cannot stand for the second half: it shows the two check rows differing, by the port bug C11 fixes. hv's live round trip from iTerm, in the heavy slot I hold now, gives the first half (its exit 0; the count stays in hv's terminal, D11). The second half is hv's re-run of sync --check and sync --check --json from iTerm against C11's build after it lands, each the same as the legacy. That is the same re-run AC-00.5 waits on (decision 22), so one run serves both. Hold 5 as you have it now is right.
+_(empty)_
 
 ---
 
