@@ -278,13 +278,19 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
   'files: for f in prose_files {
     let Some(text) = text_of(&f) else { continue };
     for (n, line) in text.lines().enumerate() {
-      if (line.contains(&full) || line.contains(&folder))
-        && !skip.iter().any(|s| line.contains(s.as_str()))
-      {
-        prose.push(format!("{}:{}:{line}", f.display(), n + 1));
-        if prose.len() == PROSE_LINES {
-          break 'files;
-        }
+      if !(line.contains(&full) || line.contains(&folder)) {
+        continue;
+      }
+      // The skips test the whole listed line, path and all, as the legacy's
+      // `grep -vF` did over grep's output: so a file in the person's own
+      // folder, or named after them, is passed over, whatever its text
+      let hit = format!("{}:{}:{line}", f.display(), n + 1);
+      if skip.iter().any(|s| hit.contains(s.as_str())) {
+        continue;
+      }
+      prose.push(hit);
+      if prose.len() == PROSE_LINES {
+        break 'files;
       }
     }
   }

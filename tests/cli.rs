@@ -2141,3 +2141,44 @@ fn an_installed_pplr_needs_no_checkout_and_no_legacy_setting() -> Result<()> {
   );
   Ok(())
 }
+
+/// ST0001 WP13, found by the live parity: rename lists the running text that
+/// still names the person, but passes over every hit whose path or text holds
+/// a skip, the person's own folder ("Surname, First/") or a file named after
+/// them ("First Surname ("), as the legacy's `grep -vF` over grep's output
+/// did. So the running text of their own About, which a rename rewrites, is
+/// never listed as left unchanged.
+#[test]
+fn rename_lists_running_text_outside_the_persons_own_files() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let about = sandbox.data().join("B/Blackwood, Esme/About");
+  fs::create_dir_all(&about)?;
+  fs::write(
+    about.join("Esme Blackwood (About).md"),
+    "# Esme Blackwood (About)\n\n_Esme Blackwood_\n\nEsme Blackwood designs bridges.\n",
+  )?;
+  let refs = sandbox.path("refs");
+  fs::create_dir_all(&refs)?;
+  let notes = refs.join("notes.md");
+  fs::write(&notes, "Lunch with Esme Blackwood.\n")?;
+
+  let out = run(sandbox.pplr().args([
+    "rename",
+    "Blackwood, Esme",
+    "Blackwood, Esmeralda",
+    "--dry-run",
+    "--refs",
+    &sandbox.root.to_string_lossy(),
+  ]))?;
+  assert!(out.status.success(), "{}", text(&out.stderr));
+  let listing = text(&out.stdout);
+  let (_, prose) = listing
+    .split_once("The old name still appears in running text (not changed):\n")
+    .ok_or(format!("no running text listed: {listing}"))?;
+  let listed: Vec<&str> = prose.lines().map(str::trim_start).collect();
+  assert_eq!(
+    listed,
+    [format!("{}:1:Lunch with Esme Blackwood.", notes.display())]
+  );
+  Ok(())
+}
