@@ -5,9 +5,9 @@
     "name": "vc",
     "role": "vc",
     "session_id": "60a887be-5fa2-4cf5-8de1-310286047151",
-    "heartbeat_at": "2026-11-03T07:12:44.410Z",
+    "heartbeat_at": "2026-11-03T07:22:11.113Z",
     "status": "active",
-    "focus": "main f726f34 (WP14) verified in a fresh clone, every gate 0; hv pinged to push. Next: cc's WP11 commit 3 rebases onto WP14 and measures once, then vc's review against todo 3 and a clean-clone run; dc closes WP14, then diagnoses ubuntu's ENOENT (todo 2); todo 5 is ruled after commit 3 lands",
+    "focus": "main 64be72f (todo 2's harness fix) verified in a fresh clone, every gate 0; hv pinged to push for the Linux proof. Next: watch that CI run (ubuntu's cargo should go green and its bats step run for the first time); cc's WP11 commit 3 measures once, then vc's review against todo 3 and a clean-clone run; dc pre-audits the bats suite for macOS-only assumptions; todo 5 after commit 3",
     "claims": [],
     "recorded_at": "2026-11-02T07:20:39.673Z",
     "migrated_at": "2026-11-02T07:20:39.673Z"
@@ -104,10 +104,10 @@
       "node": "vc",
       "kind": "decision",
       "seq": 6,
-      "text": "vc's independent verification, measured: main f726f34 (ST0001 WP14 landed, on WP11 commits 1 and 2) cloned fresh into vc's scratchpad, slot 01M6G3WK3Y0SSDC68DKC8NVZ2Y. format, clippy, autotests, targetdir, critic, cargo test (93 unit and 28 cli pass; 1 ignored in each, the live Mail and Contacts tests), the replay 54 of 54 cases native, bats on Rust 101/101 and on legacy 101/101, none skipped: every gate exited 0. It supersedes the 25f85e7 run and is the evidence for every WP accepted so far, independent of the nodes' own slot results; dc's measurement of WP14 (slot 01M6G3J0R9X5M25KZNF9M4AYSC at 8c89ebd, the same tree outside intent/) agrees.",
+      "text": "vc's independent verification, measured: main 64be72f (ST0001 WP14, then dc's decomposed-name lookup in the golden replay) cloned fresh into vc's scratchpad, slot 01M6G4FCG0M6F769Q7MHJY1X0B. format, clippy, autotests, targetdir, critic, cargo test (93 unit and 29 cli pass; 1 ignored in each, the live Mail and Contacts tests), the replay 54 of 54 cases native, bats on Rust 101/101 and on legacy 101/101, none skipped: every gate exited 0. It supersedes the f726f34 run and is the evidence for every WP accepted so far, independent of the nodes' own slot results; dc's measurement (slot 01M6G4AZ391EPDF1JDQZQAR9R9 at af37bb8, the same tree outside intent/) agrees.",
       "state": "live",
       "recorded_at": "2026-11-02T16:51:23.191Z",
-      "edited_at": "2026-11-03T07:12:37.517Z"
+      "edited_at": "2026-11-03T07:22:06.128Z"
     },
     {
       "node": "vc",

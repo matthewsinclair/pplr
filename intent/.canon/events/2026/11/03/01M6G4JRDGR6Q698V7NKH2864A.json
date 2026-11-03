@@ -1,0 +1,16 @@
+{
+  "id": "01M6G4JRDGR6Q698V7NKH2864A",
+  "ts": "2026-11-03T07:22:06.128Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "seq": 6,
+    "text": "vc's independent verification, measured: main 64be72f (ST0001 WP14, then dc's decomposed-name lookup in the golden replay) cloned fresh into vc's scratchpad, slot 01M6G4FCG0M6F769Q7MHJY1X0B. format, clippy, autotests, targetdir, critic, cargo test (93 unit and 29 cli pass; 1 ignored in each, the live Mail and Contacts tests), the replay 54 of 54 cases native, bats on Rust 101/101 and on legacy 101/101, none skipped: every gate exited 0. It supersedes the f726f34 run and is the evidence for every WP accepted so far, independent of the nodes' own slot results; dc's measurement (slot 01M6G4AZ391EPDF1JDQZQAR9R9 at af37bb8, the same tree outside intent/) agrees."
+  }
+}
