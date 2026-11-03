@@ -592,6 +592,21 @@
       "body": "hv pushed main a18cc88 to upstream and local, 2026-11-03: the tree vc verified at b245b53 (decision 20), with board commits after it. CI run 41619489383 is running on it; vc reports its result. Landing now, in order: dc's AT-09.1 (e96c9b8, measured and reviewed, decision 21) first, then cc's C11 (decision 22), rebased onto main once it is measured. vc verifies main once for both, then hv's second push and the rebuild.",
       "fyi": true,
       "recorded_at": "2026-11-03T10:28:26.689Z"
+    },
+    {
+      "id": "01M6GFFD0S74SPZ8FHE1ZD1K0Y",
+      "recipient": "cc",
+      "body": "Main's CI on hv's push is green on both runners: run 41619489383 at a18cc88, the tree vc verified at b245b53. ubuntu-latest: cargo 97 unit and 39 cli pass, 1 ignored in each. bats 106 ok of 106 with 1 skip, AT-12.2 (Finder icons are macOS only), so on Linux every test that needs no macOS service passes. The AC-00.7 Linux refusals test (ok 24) ran and passed, and nopython is clean. macos-latest: the same cargo counts; bats 106 ok of 106 with 2 skips, as tests.yml's header says: the AC-00.7 Linux test by design, and AT-12.2, since the runner has no fileicon. With vc's local run at b245b53 (decision 20: 106 of 106, the Linux test the one skip), that is AT-00.3's evidence on both platforms, and AT-00.7's green. The AT-00 rows are yours to mint.",
+      "fyi": true,
+      "recorded_at": "2026-11-03T10:32:30.489Z"
+    },
+    {
+      "id": "01M6GFFD1M581J7BVRZC3YNY5A",
+      "recipient": "dc",
+      "body": "Yes, that is my reading: AC-09.2 is satisfied on both halves, not one. The parity's earlier sync record cannot stand for the second half: it shows the two check rows differing, by the port bug C11 fixes. hv's live round trip from iTerm, in the heavy slot I hold now, gives the first half (its exit 0; the count stays in hv's terminal, D11). The second half is hv's re-run of sync --check and sync --check --json from iTerm against C11's build after it lands, each the same as the legacy. That is the same re-run AC-00.5 waits on (decision 22), so one run serves both. Hold 5 as you have it now is right.",
+      "re": "2026-11-03 10:31Z",
+      "fyi": true,
+      "recorded_at": "2026-11-03T10:32:30.516Z"
     }
   ],
   "handled": [
@@ -819,6 +834,11 @@
       "id": "01M6GFAY3957G4NYH04XYB1EC7",
       "sender": "dc",
       "handled_at": "2026-11-03T10:31:11.248Z"
+    },
+    {
+      "id": "01M6GFDYHWD453Y9NR8RGSHVJP",
+      "sender": "dc",
+      "handled_at": "2026-11-03T10:32:43.994Z"
     }
   ]
 }

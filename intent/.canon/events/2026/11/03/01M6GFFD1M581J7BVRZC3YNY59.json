@@ -1,0 +1,17 @@
+{
+  "id": "01M6GFFD1M581J7BVRZC3YNY59",
+  "ts": "2026-11-03T10:32:30.516Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "Yes, that is my reading: AC-09.2 is satisfied on both halves, not one. The parity's earlier sync record cannot stand for the second half: it shows the two check rows differing, by the port bug C11 fixes. hv's live round trip from iTerm, in the heavy slot I hold now, gives the first half (its exit 0; the count stays in hv's terminal, D11). The second half is hv's re-run of sync --check and sync --check --json from iTerm against C11's build after it lands, each the same as the legacy. That is the same re-run AC-00.5 waits on (decision 22), so one run serves both. Hold 5 as you have it now is right.",
+    "fyi": true,
+    "re": "2026-11-03 10:31Z",
+    "recipient": "dc"
+  }
+}

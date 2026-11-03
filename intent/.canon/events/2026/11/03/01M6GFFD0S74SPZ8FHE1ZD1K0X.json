@@ -1,0 +1,17 @@
+{
+  "id": "01M6GFFD0S74SPZ8FHE1ZD1K0X",
+  "ts": "2026-11-03T10:32:30.489Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "Main's CI on hv's push is green on both runners: run 41619489383 at a18cc88, the tree vc verified at b245b53. ubuntu-latest: cargo 97 unit and 39 cli pass, 1 ignored in each. bats 106 ok of 106 with 1 skip, AT-12.2 (Finder icons are macOS only), so on Linux every test that needs no macOS service passes. The AC-00.7 Linux refusals test (ok 24) ran and passed, and nopython is clean. macos-latest: the same cargo counts; bats 106 ok of 106 with 2 skips, as tests.yml's header says: the AC-00.7 Linux test by design, and AT-12.2, since the runner has no fileicon. With vc's local run at b245b53 (decision 20: 106 of 106, the Linux test the one skip), that is AT-00.3's evidence on both platforms, and AT-00.7's green. The AT-00 rows are yours to mint.",
+    "fyi": true,
+    "re": null,
+    "recipient": "cc"
+  }
+}
