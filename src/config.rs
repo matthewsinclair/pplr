@@ -24,8 +24,9 @@ pub struct Config {
   pub opt_prefix: Option<PathBuf>,
   /// PPLR_REFS_DIR, where rename repoints links; default ~/Dropbox when HOME is set.
   pub refs_dir: Option<PathBuf>,
-  /// PPLR_TODAY, which pins the day for every date-dependent command (design 3.5).
-  pub today: Option<jiff::civil::Date>,
+  /// PPLR_TODAY, which pins the clock (design 3.5): "YYYY-MM-DD", meaning its
+  /// midnight, or "YYYY-MM-DD HH:MM:SS", local time.
+  pub today: Option<jiff::civil::DateTime>,
   /// PPLR_CMS_URL, default the local CMS; set empty, files only, never the CMS.
   pub cms_url: String,
   /// PPLR_PICTURE_WIDTH, the width of the picture line `pictures` writes.
@@ -71,11 +72,9 @@ impl Config {
     let opt_prefix = get("PPLR_OPT_PREFIX");
     let refs_dir = get("PPLR_REFS_DIR").or_else(|| home().ok().map(|h| h.join("Dropbox")));
     let today = match get("PPLR_TODAY") {
-      Some(day) => Some(
-        day
-          .to_string_lossy()
-          .parse::<jiff::civil::Date>()
-          .map_err(|e| format!("PPLR_TODAY is not a date (YYYY-MM-DD): {e}"))?,
+      Some(pin) => Some(
+        pinned_clock(&pin.to_string_lossy())
+          .map_err(|e| format!("PPLR_TODAY is not YYYY-MM-DD or YYYY-MM-DD HH:MM:SS: {e}"))?,
       ),
       None => None,
     };
@@ -103,9 +102,28 @@ impl Config {
     })
   }
 
-  /// Today: PPLR_TODAY, or the local date.
+  /// Today: PPLR_TODAY's date, or the local date.
   pub fn today(&self) -> jiff::civil::Date {
-    self.today.unwrap_or_else(|| jiff::Zoned::now().date())
+    self
+      .today
+      .map_or_else(|| jiff::Zoned::now().date(), |pin| pin.date())
+  }
+
+  /// Now: PPLR_TODAY's instant in the local time zone, or the clock's.
+  pub fn now(&self) -> Result<jiff::Zoned> {
+    match self.today {
+      Some(pin) => Ok(pin.to_zoned(jiff::tz::TimeZone::system())?),
+      None => Ok(jiff::Zoned::now()),
+    }
+  }
+}
+
+/// PPLR_TODAY's two forms: a date, at its midnight, or a date and a time.
+fn pinned_clock(pin: &str) -> std::result::Result<jiff::civil::DateTime, jiff::Error> {
+  if pin.len() == "YYYY-MM-DD".len() {
+    Ok(pin.parse::<jiff::civil::Date>()?.at(0, 0, 0, 0))
+  } else {
+    jiff::civil::DateTime::strptime("%Y-%m-%d %H:%M:%S", pin)
   }
 }
 
@@ -183,6 +201,24 @@ mod tests {
       ("PPLR_TODAY", "2026-06-15"),
     ])?;
     assert_eq!(pinned.today(), jiff::civil::date(2026, 6, 15));
+    assert_eq!(
+      pinned.today,
+      Some(jiff::civil::date(2026, 6, 15).at(0, 0, 0, 0))
+    );
+    let timed = config(&[
+      ("HOME", "/h"),
+      ("PPLR_DATA", "/d"),
+      ("PPLR_TODAY", "2026-06-15 09:30:00"),
+    ])?;
+    assert_eq!(timed.today(), jiff::civil::date(2026, 6, 15));
+    assert_eq!(
+      timed.today,
+      Some(jiff::civil::date(2026, 6, 15).at(9, 30, 0, 0))
+    );
+    assert_eq!(
+      timed.now()?.datetime(),
+      jiff::civil::date(2026, 6, 15).at(9, 30, 0, 0)
+    );
     let bad = config(&[
       ("HOME", "/h"),
       ("PPLR_DATA", "/d"),
