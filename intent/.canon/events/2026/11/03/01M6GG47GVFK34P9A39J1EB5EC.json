@@ -1,0 +1,14 @@
+{
+  "id": "01M6GG47GVFK34P9A39J1EB5EC",
+  "ts": "2026-11-03T10:43:52.987Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.satisfy",
+  "subject": {
+    "type": "ac",
+    "id": "ST0001/AC-00.8"
+  },
+  "payload": {
+    "evidence": "Checked by vc on main 4beaa87, verified in a fresh clone. Cargo.toml's version is the one source: VERSION.md went in d596c35; src/install.rs reads CARGO_PKG_VERSION; bin/.devbin/cmd/macos and skeleton read Cargo.toml; Cargo.lock follows through bin/devbin lock-sync; no plist carries a version. The docs describe the Rust binary: README.md 099293f, CHANGELOG.md 2eaf790 (2.0.0, unreleased), intent/llm/ARCHITECTURE.md 9417743, usage-rules.md f57b6f2 and 4f5eb8a. Each was reviewed against its approved draft."
+  }
+}
