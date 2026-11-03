@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 07:27Z
+heartbeat_at: 2026-11-03 07:32Z
 status: active
-focus: "WP11 commit 3 landed (fe4b677, measured, watchout 3); waiting on vc's clean-clone run, then wp done ST0001/11 and the unclaim"
+focus: "WP11 done (9152d48); no claim, no slot. Next: whatever vc routes, eg from the CI run after hv's push; the podman Linux pre-check waits on hv's OK"
 claims: []
 ---
 
