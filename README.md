@@ -21,13 +21,13 @@ pplr (pronounced "peopler") is one Rust binary that works on a People tree: a fo
 
 ## Installation
 
-Homebrew is pplr's release path, and it arrives with 2.0.0, which is not released yet. From then:
+Install pplr with Homebrew:
 
 ```bash
 brew install matthewsinclair/pplr/pplr
 ```
 
-The formula, in the tap `matthewsinclair/homebrew-pplr`, installs the release's prebuilt binaries: macOS on Apple silicon, and Linux on `x86_64` and `aarch64`. On macOS, `pplr`, its Contacts sidecar `pplr-contacts` and `Pplr Links.app` are signed with a Developer ID and notarised, and the formula checks each signature. Until 2.0.0 is out, build pplr from a checkout, as [For the maintainer](#for-the-maintainer-dev-opt-and-brew) describes.
+The formula, in the tap `matthewsinclair/homebrew-pplr`, installs the release's prebuilt binaries for macOS on Apple silicon; Linux binaries come in a later release. `pplr`, its Contacts sidecar `pplr-contacts` and `Pplr Links.app` are signed with a Developer ID and notarised, and the formula checks each signature. `brew upgrade pplr` takes a new release.
 
 Then:
 
@@ -104,7 +104,7 @@ Every walk of the tree skips a folder whose name starts with `_` or `.`, so pplr
 | `handler`        | register the app that opens `pplr://` links                                  |
 | `help`           | the commands, one command's options, or this README                          |
 | `index`          | the Markdown index of everyone, to stdout                                    |
-| `install`        | publish a dev build as an opt tree (maintainer)                              |
+| `install`        | the maintainer's: publish a checkout's build (`docs/releasing.md`)           |
 | `json`           | the JSON index of everyone, to stdout                                        |
 | `linkedin`       | open a person's LinkedIn page                                                |
 | `links`          | rewrite Markdown links into the tree as `pplr://` URLs                       |
@@ -122,7 +122,7 @@ Every walk of the tree skips a folder whose name starts with `_` or `.`, so pplr
 | `sync`           | compare pplr with Apple Contacts; link, plan, apply, pull, photos and backup |
 | `tag`            | show or edit one person's tags                                               |
 | `tags`           | everyone's tags: check, show, render, index and apply                        |
-| `use`            | point `~/.local/bin/pplr` at a tree (maintainer)                             |
+| `use`            | the maintainer's: choose which build `pplr` runs (`docs/releasing.md`)       |
 | `version`        | the version, the tree it runs from and its commit                            |
 
 ### People
@@ -465,7 +465,7 @@ pplr -v          # The same
 pplr --version   # The same
 ```
 
-`pplr install` and `pplr use` are the maintainer's: see [For the maintainer](#for-the-maintainer-dev-opt-and-brew).
+`pplr install` and `pplr use` are the maintainer's: see [`docs/releasing.md`](https://github.com/matthewsinclair/pplr/blob/main/docs/releasing.md).
 
 ## File Formats
 
@@ -530,7 +530,7 @@ tags:
 
 ## Requirements
 
-- **Operating system**: macOS on Apple silicon, or Linux on `x86_64` or `aarch64`
+- **Operating system**: macOS on Apple silicon; Linux on `x86_64` or `aarch64` comes in a later release
 - **Optional**:
   - the Claude CLI (`claude`), for natural-language search
   - `fileicon` (`brew install fileicon`), for the Finder icon commands
@@ -567,32 +567,7 @@ Start with `pplr doctor`: it checks the tree, its indexes, the settings and the 
 
 ## Contributing
 
-pplr is a personal project, but suggestions and improvements are welcome. It is one Rust crate, with a small Swift sidecar for Contacts and an AppleScript app for `pplr://` links.
-
-## For the maintainer: dev, opt and brew
-
-Users install pplr through Homebrew alone. A maintainer working in a checkout also has two trees of their own, under devbin's dev/opt/brew contract:
-
-- **dev** is the checkout, built with `bin/devbin build`: `cargo build`, then on macOS the Contacts sidecar (`swiftc`, from `swift/pplr-contacts/main.swift`) and `Pplr Links.app` (`osacompile`), all into `target/<profile>/`. `pplr use dev` links the release build, `target/release/pplr`, so make it with `bin/devbin build --release`: without it, `use dev` refuses and names that step.
-- **opt** is a published working copy, written from dev by `pplr install [--prefix <dir>] [--force]`. It has no default place: `--prefix` names it, else `PPLR_OPT_PREFIX`. `install` refuses a build from uncommitted changes, and replaces an existing opt tree only with `--force`.
-- **brew** is the formula's tree, `$(brew --prefix)/opt/pplr/libexec`.
-
-`pplr use dev|opt|brew` moves the one link, `~/.local/bin/pplr`; `use brew` removes it, so Homebrew's `pplr` answers. `pplr use` with no argument says which tree the link serves, and `pplr version` names the running tree and its commit: `pplr 2.0.0 (dev, 1a2b3c4d5e6f)`, with `+dirty` on a dev build made from uncommitted changes.
-
-Building and testing go through devbin:
-
-```bash
-bin/devbin build        # cargo build, then the sidecar and the app beside the binary (macOS)
-bin/devbin check all    # every read-only gate; bin/devbin help check names them
-bin/devbin test all     # cargo test, then the bats suite against the Rust pplr
-bin/devbin doctor       # devbin's own install
-```
-
-The bats suite runs against any pplr named by `PPLR_UNDER_TEST`, and the default is the checkout's dev build, `target/debug/pplr`. Tests use synthetic data alone: nothing from a People tree is ever committed, and the pre-commit guard `bin/devbin people-leak` reads the tree at run time and refuses a staged file that matches it.
-
-Releases go through devbin's release core, and 2.0.0 will be the first. `bin/devbin release` runs its gates (`check all`, `test all`, `doctor`), the kovacs leg and CI on `candidate/<tag>`, then tags and pushes. CI builds the Linux tarballs, `bin/devbin macos prepare` signs, notarises and packs the macOS one, `bin/devbin release attach` adds it with `SHA256SUMS`, and `bin/devbin formula publish` renders `packaging/homebrew/pplr.rb` into the tap.
-
-Building needs the Rust toolchain (`Cargo.toml` names the edition and `rust-version`), the Xcode command line tools for `swiftc`, and devbin; the bats suite needs `bats-core`, `zsh` and bash 5.
+pplr is a personal project, but suggestions and improvements are welcome. It is one Rust crate, with a small Swift sidecar for Contacts and an AppleScript app for `pplr://` links. Building it from a checkout, testing it and releasing it are in [`docs/releasing.md`](https://github.com/matthewsinclair/pplr/blob/main/docs/releasing.md).
 
 ## License
 
