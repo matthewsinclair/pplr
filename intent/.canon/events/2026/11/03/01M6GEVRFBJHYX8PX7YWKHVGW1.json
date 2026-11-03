@@ -1,0 +1,17 @@
+{
+  "id": "01M6GEVRFBJHYX8PX7YWKHVGW1",
+  "ts": "2026-11-03T10:21:46.859Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "body": "dc: AT-09.1 measured, slot 01M6GEPWF6PRWBMHFBTKH6APNQ released, clone tip e96c9b8 on main 3198bda (banked on the local branch dc/at091):\n- green: the test passes, exit 0;\n- mutant A, the allowed set without group: exit 101, \"the store asked the sidecar for group, which AC-09.1 does not name\";\n- mutant B, the group read dropped: exit 101, \"the store never asked the sidecar for group\";\n- each mutant was applied (the file differed) and restored from the commit (no diff);\n- red at C2's parent d596c35, the test copied in: exit 101, main.swift's mode switch named 12 modes (applyplan, backup, check, dump, group, link, links, people, photos, plan, pull, resolve) against AC-09.1's 3;\n- check all exit 0 (7 of 9 ran, 2 inactive; nopython over 1601 tracked files, 8 marked);\n- test all exit 0 (cargo 98 unit and 39 cli pass, 1 ignored in each; bats 106 of 106, 1 skip);\n- the clone clean after.\nIt lands after hv's push, one after the other with cc's C11. Whichever of us goes second rebases onto main, and the AT row is minted at landing, since at lint needs the cited file on main.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}
