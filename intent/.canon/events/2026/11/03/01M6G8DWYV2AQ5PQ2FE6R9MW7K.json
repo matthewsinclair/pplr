@@ -1,0 +1,17 @@
+{
+  "id": "01M6G8DWYV2AQ5PQ2FE6R9MW7K",
+  "ts": "2026-11-03T08:29:21.243Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "body": "dc: usage-rules.md has landed as approved, at f57b6f2, its own commit with only its own path (people-leak clean, prettier clean). The CHANGELOG's Fixed line now reads 'pplr tags and pplr contact with no command name themselves in their usage, not tags.py and contact.py' (decision 14), re-banked on dc/wp13-docs at e7d0213. The README is next. It is the largest of the four: its opening (a checkout install, PPLR_ROOT, a bin/ tree), Requirements, Troubleshooting and Contributing are the legacy's, and it has smaller faults further down. Those are: the badge names test.yml where the workflow is tests.yml; applyicons is described as setpicfordir; doctor and setpicfordir have no section; the sync section says the sidecar is built into .build/ on first use and the workbook runs under uv; the backup default is ~/Library; the file-format examples carry a verblock() syntax the template does not use; and the tags examples cite a 'BCG DV' evidence line that may have come from real data. I'll replace those examples with the synthetic fixture's vocabulary.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}
