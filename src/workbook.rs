@@ -5,13 +5,15 @@
 //! (C0001...) resolve through the Contacts sheet of the same workbook.
 
 use crate::Result;
-use crate::plan::{DECISIONS, Decision, Plan};
+use crate::plan::{Confidence, Decision, Plan, Reviewed};
 use crate::yaml::Value as Py;
 use calamine::{Data, Reader, Xlsx, open_workbook};
+use rust_xlsxwriter::utility::column_number_to_name;
 use rust_xlsxwriter::{
   Color, ConditionalFormatFormula, DataValidation, Format, FormatAlign, Workbook, Worksheet,
 };
 use std::collections::HashMap;
+use std::ops::RangeInclusive;
 use std::path::Path;
 
 const REVIEW_FILL: u32 = 0xFFF4D6;
@@ -20,14 +22,27 @@ const MEDIUM_FILL: u32 = 0xFDF1C4;
 const HOW_WIDTH: f64 = 140.0;
 const TITLE_SIZE: u32 = 13;
 
-/// Merged's columns: header, width, wrapped. B to E are the reviewer's.
+/// The sheets --apply-plan reads.
+const MERGED_TITLE: &str = "Merged";
+const CONTACTS_TITLE: &str = "Contacts";
+
+/// The headers --apply-plan reads, and those the writer places by name.
+const PERSON: &str = "Person";
+const DECISION: &str = "Decision";
+const CARD: &str = "Card";
+const NOTES: &str = "Notes";
+const CONFIDENCE: &str = "Confidence";
+const CARD_ID: &str = "Card id";
+
+/// Merged's columns: header, width, wrapped. Decision to Notes are the
+/// reviewer's.
 const MERGED: [(&str, u16, bool); 21] = [
-  ("Person", 26, false),
-  ("Decision", 12, false),
-  ("Card", 9, false),
+  (PERSON, 26, false),
+  (DECISION, 12, false),
+  (CARD, 9, false),
   ("Dupes", 12, false),
-  ("Notes", 28, false),
-  ("Confidence", 11, false),
+  (NOTES, 28, false),
+  (CONFIDENCE, 11, false),
   ("Why", 34, true),
   ("Changes", 44, true),
   ("Card name", 22, false),
@@ -44,13 +59,9 @@ const MERGED: [(&str, u16, bool); 21] = [
   ("Card account", 10, false),
   ("Other candidates", 44, true),
 ];
-/// The reviewer's columns on Merged, by index: Decision, Card, Dupes, Notes.
-const REVIEW: std::ops::RangeInclusive<u16> = 1..=4;
-const DECISION_COL: u16 = 1;
-const CONFIDENCE_COL: u16 = 5;
 
 const PPLR: [(&str, u16, bool); 11] = [
-  ("Person", 26, false),
+  (PERSON, 26, false),
   ("Given", 14, false),
   ("Family", 16, false),
   ("Company", 22, false),
@@ -64,7 +75,7 @@ const PPLR: [(&str, u16, bool); 11] = [
 ];
 
 const CONTACTS: [(&str, u16, bool); 12] = [
-  ("Card", 8, false),
+  (CARD, 8, false),
   ("Name", 24, false),
   ("Company", 22, false),
   ("Role", 24, false),
@@ -75,19 +86,25 @@ const CONTACTS: [(&str, u16, bool); 12] = [
   ("Groups", 16, false),
   ("pplr URL", 24, false),
   ("Proposed for", 26, false),
-  ("Card id", 44, false),
+  (CARD_ID, 44, false),
 ];
-/// On the Contacts sheet: the card's ref and its id.
-const REF_COL: usize = 0;
-const ID_COL: usize = 11;
 
 fn lines(values: &[String]) -> String {
   values
     .iter()
     .filter(|v| !v.is_empty())
-    .cloned()
+    .map(String::as_str)
     .collect::<Vec<_>>()
     .join("\n")
+}
+
+/// The index of the column headed `header` in a sheet's table.
+fn col(columns: &[(&str, u16, bool)], header: &str) -> Result<u16> {
+  let at = columns
+    .iter()
+    .position(|(h, _, _)| *h == header)
+    .ok_or_else(|| format!("the workbook has no {header} column"))?;
+  Ok(u16::try_from(at)?)
 }
 
 /// One sheet: a bold header row, the rows top-aligned (wrapped where the
@@ -97,32 +114,32 @@ fn sheet<'a>(
   title: &str,
   columns: &[(&str, u16, bool)],
   rows: &[Vec<String>],
-  fill: Option<(std::ops::RangeInclusive<u16>, u32)>,
+  fill: Option<(RangeInclusive<u16>, u32)>,
 ) -> Result<&'a mut Worksheet> {
   let ws = wb.add_worksheet();
   ws.set_name(title)?;
   let bold = Format::new().set_bold();
-  let top = Format::new().set_align(FormatAlign::Top);
-  for (col, (header, width, _)) in (0u16..).zip(columns) {
+  let mut formats = Vec::new();
+  for (col, (header, width, wrap)) in (0u16..).zip(columns) {
     ws.write_string_with_format(0, col, *header, &bold)?;
     ws.set_column_width(col, *width)?;
+    let mut format = Format::new().set_align(FormatAlign::Top);
+    if *wrap {
+      format = format.set_text_wrap();
+    }
+    if let Some((cols, color)) = &fill
+      && cols.contains(&col)
+    {
+      format = format.set_background_color(Color::RGB(*color));
+    }
+    formats.push(format);
   }
   for (row, values) in (1u32..).zip(rows) {
-    for (col, (value, (_, _, wrap))) in (0u16..).zip(values.iter().zip(columns)) {
-      let mut format = if *wrap {
-        top.clone().set_text_wrap()
-      } else {
-        top.clone()
-      };
-      if let Some((cols, color)) = &fill
-        && cols.contains(&col)
-      {
-        format = format.set_background_color(Color::RGB(*color));
-      }
+    for ((col, value), format) in (0u16..).zip(values).zip(&formats) {
       if value.is_empty() {
-        ws.write_blank(row, col, &format)?;
+        ws.write_blank(row, col, format)?;
       } else {
-        ws.write_string_with_format(row, col, value, &format)?;
+        ws.write_string_with_format(row, col, value, format)?;
       }
     }
   }
@@ -150,11 +167,11 @@ pub fn write(plan: &Plan, out: &Path) -> Result<()> {
       let of_c = |f: &dyn Fn(&crate::plan::PlanCard) -> String| c.map(|c| f(c)).unwrap_or_default();
       vec![
         r.person.clone(),
-        r.decision.to_owned(),
+        r.decision.as_str().to_owned(),
         r.card.clone().unwrap_or_default(),
         r.dupes.join(", "),
         String::new(),
-        r.confidence.to_owned(),
+        r.confidence.as_str().to_owned(),
         r.why.clone(),
         lines(&r.changes),
         of_c(&|c| c.name.clone()),
@@ -178,29 +195,38 @@ pub fn write(plan: &Plan, out: &Path) -> Result<()> {
       ]
     })
     .collect();
+  let decision = col(&MERGED, DECISION)?;
+  let confidence = col(&MERGED, CONFIDENCE)?;
+  let review = decision..=col(&MERGED, NOTES)?;
   let ws = sheet(
     &mut wb,
-    "Merged",
+    MERGED_TITLE,
     &MERGED,
     &merged,
-    Some((REVIEW, REVIEW_FILL)),
+    Some((review, REVIEW_FILL)),
   )?;
   if let Ok(last) = u32::try_from(merged.len())
     && last >= 1
   {
+    let decisions = Decision::ALL.map(Decision::as_str);
     let dv = DataValidation::new()
-      .allow_list_strings(&DECISIONS)?
+      .allow_list_strings(&decisions)?
       .ignore_blank(false)
       // workbook.py's list sets no prompt and shows none
       .show_input_message(false)
-      .set_error_title("Decision")?
-      .set_error_message(format!("One of: {}", DECISIONS.join(", ")))?;
-    ws.add_data_validation(1, DECISION_COL, last, DECISION_COL, &dv)?;
-    for (level, color) in [("Low", LOW_FILL), ("Medium", MEDIUM_FILL)] {
+      .set_error_title(DECISION)?
+      .set_error_message(format!("One of: {}", decisions.join(", ")))?;
+    ws.add_data_validation(1, decision, last, decision, &dv)?;
+    // A rule names the range's first row, and Excel moves it down each row
+    let letter = column_number_to_name(confidence);
+    for (level, color) in [
+      (Confidence::Low, LOW_FILL),
+      (Confidence::Medium, MEDIUM_FILL),
+    ] {
       let rule = ConditionalFormatFormula::new()
-        .set_rule(format!("=$F2=\"{level}\"").as_str())
+        .set_rule(format!("=${letter}2=\"{level}\"").as_str())
         .set_format(Format::new().set_background_color(Color::RGB(color)));
-      ws.add_conditional_format(1, CONFIDENCE_COL, last, CONFIDENCE_COL, &rule)?;
+      ws.add_conditional_format(1, confidence, last, confidence, &rule)?;
     }
   }
 
@@ -245,7 +271,7 @@ pub fn write(plan: &Plan, out: &Path) -> Result<()> {
       ]
     })
     .collect();
-  sheet(&mut wb, "Contacts", &CONTACTS, &contacts, None)?;
+  sheet(&mut wb, CONTACTS_TITLE, &CONTACTS, &contacts, None)?;
 
   let how = wb.add_worksheet();
   how.set_name("How to review")?;
@@ -290,52 +316,208 @@ fn how_to_review(plan: &Plan) -> Vec<String> {
   text
 }
 
-fn text(cell: Option<&Data>) -> String {
-  cell.map(ToString::to_string).unwrap_or_default()
+/// What the reviewer got wrong, named as workbook.py named it.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Mistake {
+  /// A sheet without a column --apply-plan reads.
+  MissingHeader {
+    sheet: &'static str,
+    header: &'static str,
+  },
+  /// A Decision that is not one of Decision::ALL, as the reviewer wrote it.
+  BadDecision { person: String, decision: String },
+  /// Update or Link only without a card ref from the Contacts sheet.
+  NoCard {
+    person: String,
+    decision: Decision,
+    card: String,
+  },
 }
 
-/// The reviewed Merged sheet as decisions, card refs resolved through the
-/// same workbook's Contacts sheet. The inner Err is the reviewer's mistake,
-/// named, as workbook.py named it.
-pub fn decisions(path: &Path) -> Result<std::result::Result<Vec<Decision>, String>> {
+impl std::fmt::Display for Mistake {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    match self {
+      Mistake::MissingHeader { sheet, header } => {
+        write!(f, "The {sheet} sheet has no {header} column")
+      }
+      Mistake::BadDecision { person, decision } => write!(
+        f,
+        "{person}: Decision must be one of {}, not {}",
+        Decision::ALL.map(Decision::as_str).join(", "),
+        Py::Str(decision.clone()).py_repr()
+      ),
+      Mistake::NoCard {
+        person,
+        decision,
+        card,
+      } => write!(
+        f,
+        "{person}: {decision} needs a Card ref from the Contacts sheet, not {}",
+        Py::Str(card.clone()).py_repr()
+      ),
+    }
+  }
+}
+
+impl std::error::Error for Mistake {}
+
+/// The reviewed workbook's decisions: Merged and Contacts read as text, then
+/// `reviewed`. The reviewer's mistake is a Mistake, for the caller to report.
+pub fn decisions(path: &Path) -> Result<Vec<Reviewed>> {
   let mut wb: Xlsx<_> = open_workbook(path)?;
-  let mut ids: HashMap<String, String> = HashMap::new();
-  for row in wb.worksheet_range("Contacts")?.rows().skip(1) {
-    let r#ref = text(row.get(REF_COL));
+  let text = |range: calamine::Range<Data>| -> Vec<Vec<String>> {
+    range
+      .rows()
+      .map(|row| row.iter().map(ToString::to_string).collect())
+      .collect()
+  };
+  let contacts = text(wb.worksheet_range(CONTACTS_TITLE)?);
+  let merged = text(wb.worksheet_range(MERGED_TITLE)?);
+  Ok(reviewed(&merged, &contacts)?)
+}
+
+/// A row's cell, or nothing past its end.
+fn cell(row: &[String], col: usize) -> &str {
+  row.get(col).map_or("", String::as_str)
+}
+
+/// The reviewed Merged rows as decisions, each card ref resolved through the
+/// Contacts rows. The first row of each sheet is its header, and a column is
+/// found by its header, wherever the reviewer has moved it.
+pub fn reviewed(
+  merged: &[Vec<String>],
+  contacts: &[Vec<String>],
+) -> std::result::Result<Vec<Reviewed>, Mistake> {
+  let [person_at, decision_at, card_at] = columns(MERGED_TITLE, merged, [PERSON, DECISION, CARD])?;
+  let [ref_at, id_at] = columns(CONTACTS_TITLE, contacts, [CARD, CARD_ID])?;
+  let mut ids: HashMap<&str, &str> = HashMap::new();
+  for row in contacts.iter().skip(1) {
+    let r#ref = cell(row, ref_at);
     if !r#ref.is_empty() {
-      ids.insert(r#ref, text(row.get(ID_COL)));
+      ids.insert(r#ref, cell(row, id_at));
     }
   }
   let mut out = Vec::new();
-  for row in wb.worksheet_range("Merged")?.rows().skip(1) {
-    let person = text(row.first());
+  for row in merged.iter().skip(1) {
+    let person = cell(row, person_at).to_owned();
     if person.is_empty() {
       continue;
     }
-    let decision = text(row.get(1)).trim().to_owned();
-    let card = text(row.get(2)).trim().to_owned();
-    if !DECISIONS.contains(&decision.as_str()) {
-      return Ok(Err(format!(
-        "{person}: Decision must be one of {}, not {}",
-        DECISIONS.join(", "),
-        Py::Str(decision).py_repr()
-      )));
+    let written = cell(row, decision_at).trim();
+    let card = cell(row, card_at).trim();
+    let Some(decision) = Decision::named(written) else {
+      return Err(Mistake::BadDecision {
+        person,
+        decision: written.to_owned(),
+      });
+    };
+    if matches!(decision, Decision::Update | Decision::LinkOnly) && !ids.contains_key(card) {
+      return Err(Mistake::NoCard {
+        person,
+        decision,
+        card: card.to_owned(),
+      });
     }
-    if (decision == "Update" || decision == "Link only") && !ids.contains_key(&card) {
-      return Ok(Err(format!(
-        "{person}: {decision} needs a Card ref from the Contacts sheet, not {}",
-        Py::Str(card).py_repr()
-      )));
-    }
-    out.push(Decision {
+    out.push(Reviewed {
       person,
       decision,
       card: if card.is_empty() {
         None
       } else {
-        ids.get(&card).cloned()
+        ids.get(card).map(|id| (*id).to_owned())
       },
     });
   }
-  Ok(Ok(out))
+  Ok(out)
+}
+
+/// Where each of `headers` is in the sheet's first row; the first one
+/// missing is the mistake.
+fn columns<const N: usize>(
+  sheet: &'static str,
+  rows: &[Vec<String>],
+  headers: [&'static str; N],
+) -> std::result::Result<[usize; N], Mistake> {
+  let first = rows.first().map(Vec::as_slice).unwrap_or_default();
+  let mut at = [0; N];
+  for (slot, header) in at.iter_mut().zip(headers) {
+    *slot = first
+      .iter()
+      .position(|h| h == header)
+      .ok_or(Mistake::MissingHeader { sheet, header })?;
+  }
+  Ok(at)
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  fn row(cells: &[&str]) -> Vec<String> {
+    cells.iter().map(|c| (*c).to_owned()).collect()
+  }
+
+  /// Merged and Contacts as --plan writes them, one person reviewed.
+  fn sheets() -> (Vec<Vec<String>>, Vec<Vec<String>>) {
+    let header = |columns: &[(&str, u16, bool)]| columns.iter().map(|c| c.0.to_owned()).collect();
+    let merged = vec![
+      header(&MERGED),
+      row(&["K/Kemp, Jon", "Update", "C0001", "", ""]),
+    ];
+    let contacts = vec![
+      header(&CONTACTS),
+      row(&[
+        "C0001", "Jon Kemp", "", "", "", "", "", "home", "", "", "", "card-1",
+      ]),
+    ];
+    (merged, contacts)
+  }
+
+  #[test]
+  fn a_column_the_reviewer_inserted_is_read_by_its_header() {
+    let (merged, contacts) = sheets();
+    let want = reviewed(&merged, &contacts);
+    assert_eq!(
+      want,
+      Ok(vec![Reviewed {
+        person: "K/Kemp, Jon".to_owned(),
+        decision: Decision::Update,
+        card: Some("card-1".to_owned()),
+      }])
+    );
+    let inserted = |rows: &[Vec<String>]| -> Vec<Vec<String>> {
+      rows
+        .iter()
+        .enumerate()
+        .map(|(i, r)| [vec![if i == 0 { "Mine" } else { "" }.to_owned()], r.clone()].concat())
+        .collect()
+    };
+    assert_eq!(reviewed(&inserted(&merged), &inserted(&contacts)), want);
+  }
+
+  #[test]
+  fn a_sheet_without_a_header_it_reads_is_refused_naming_it() {
+    for (sheet, header) in [
+      ("Merged", "Person"),
+      ("Merged", "Decision"),
+      ("Merged", "Card"),
+      ("Contacts", "Card"),
+      ("Contacts", "Card id"),
+    ] {
+      let (mut merged, mut contacts) = sheets();
+      let rows = if sheet == "Merged" {
+        &mut merged
+      } else {
+        &mut contacts
+      };
+      for h in rows.iter_mut().take(1).flatten().filter(|h| *h == header) {
+        *h = format!("Not {header}");
+      }
+      assert_eq!(
+        reviewed(&merged, &contacts).map_err(|e| e.to_string()),
+        Err(format!("The {sheet} sheet has no {header} column")),
+        "{sheet} without {header}"
+      );
+    }
+  }
 }

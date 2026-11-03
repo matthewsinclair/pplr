@@ -936,7 +936,7 @@ fn index(root: &Path) -> Result<ExitCode> {
       marker: marker_url(&p.key),
       role: header_field(&text, "Role"),
       company: header_field(&text, "Company"),
-      picture: picture_of(&p.dir).map(|pic| rel(&pic)),
+      picture: p.picture.as_deref().map(rel),
       tags,
       facets: Facets(facets),
     });
@@ -960,18 +960,6 @@ fn index(root: &Path) -> Result<ExitCode> {
     doc.people_count
   );
   Ok(ExitCode::SUCCESS)
-}
-
-/// The engine's picture: the first About file ending (Picture).jpg, .png or .jpeg.
-fn picture_of(dir: &Path) -> Option<PathBuf> {
-  names(&dir.join("About"))
-    .into_iter()
-    .find(|n| {
-      [".jpg", ".png", ".jpeg"]
-        .iter()
-        .any(|ext| n.ends_with(&format!("(Picture){ext}")))
-    })
-    .map(|n| dir.join("About").join(n))
 }
 
 #[cfg(test)]

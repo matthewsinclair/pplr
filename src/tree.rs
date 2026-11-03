@@ -5,6 +5,12 @@ use crate::about::{Header, header};
 use std::fs;
 use std::path::{Path, PathBuf};
 
+/// The endings of a picture's name in About/, as the engine found it: the
+/// first file by name with any of them. `pplr pictures` and the index keep
+/// their own scripts' rules (src/pictures.rs, src/index.rs), which try the
+/// extensions in turn, so with two pictures they can pick the other one.
+const PICTURES: [&str; 3] = ["(Picture).jpg", "(Picture).png", "(Picture).jpeg"];
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Person {
   /// "K/Kemp, Jon": the letter folder and the person folder.
@@ -17,6 +23,9 @@ pub struct Person {
   pub dir: PathBuf,
   /// Their About file: the first `*(About).md` in About/, by name.
   pub about: Option<PathBuf>,
+  /// Their picture: the first file in About/, by name, ending (Picture).jpg,
+  /// .png or .jpeg.
+  pub picture: Option<PathBuf>,
   /// Former keys ("H/Horely, Steve"), from .index/aliases, written by rename.
   pub aliases: Vec<String>,
   /// The About file's header.
@@ -27,6 +36,11 @@ impl Person {
   /// What a bare link to the person opens: their About file, or their folder.
   pub fn page(&self) -> &Path {
     self.about.as_deref().unwrap_or(&self.dir)
+  }
+
+  /// Their key, then each former key.
+  pub fn keys(&self) -> impl Iterator<Item = &String> {
+    std::iter::once(&self.key).chain(&self.aliases)
   }
 }
 
@@ -54,9 +68,14 @@ fn person(dir: &Path, letter: &str, name: &str) -> Person {
     .map(str::to_owned)
     .collect();
   let about_dir = dir.join("About");
-  let about = names(&about_dir)
-    .into_iter()
+  let files = names(&about_dir);
+  let about = files
+    .iter()
     .find(|n| n.ends_with("(About).md"))
+    .map(|n| about_dir.join(n));
+  let picture = files
+    .iter()
+    .find(|n| PICTURES.iter().any(|ending| n.ends_with(ending)))
     .map(|n| about_dir.join(n));
   let header = about
     .as_ref()
@@ -69,6 +88,7 @@ fn person(dir: &Path, letter: &str, name: &str) -> Person {
     family: family.to_owned(),
     dir: dir.to_path_buf(),
     about,
+    picture,
     aliases,
     header,
   }

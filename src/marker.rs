@@ -47,12 +47,17 @@ pub fn marker_url(key: &str) -> String {
   format!("{SCHEME}{}", marker_path(key))
 }
 
+/// The marker path of a person's key, then of each former key.
+pub fn marker_paths(person: &Person) -> impl Iterator<Item = String> + '_ {
+  person.keys().map(|key| marker_path(key))
+}
+
 /// Everyone by their marker path, and by the marker of each former name.
 pub fn by_marker(people: &[Person]) -> HashMap<String, &Person> {
   let mut out = HashMap::new();
   for person in people {
-    for key in std::iter::once(&person.key).chain(&person.aliases) {
-      out.insert(marker_path(key), person);
+    for path in marker_paths(person) {
+      out.insert(path, person);
     }
   }
   out
@@ -189,6 +194,7 @@ mod tests {
       family: String::new(),
       dir: PathBuf::from("/p").join(key),
       about: None,
+      picture: None,
       aliases: aliases.iter().map(|a| (*a).to_owned()).collect(),
       header: Header::default(),
     }

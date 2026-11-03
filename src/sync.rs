@@ -8,10 +8,10 @@ use crate::Result;
 use crate::config::Config;
 use crate::contacts::{self, AccessDenied, Card, MarkerWrite, Store, linkedin_url, to_swift_json};
 use crate::layout::Layout;
-use crate::marker::{marker_path, marker_url};
+use crate::marker::{by_marker, marker_path, marker_paths, marker_url};
 use crate::normalise::{decompose, email_key, fold, percent_decode};
-use crate::plan::{self, Decision, Work};
-use crate::tree::{Person, names, people};
+use crate::plan::{self, Decision, Reviewed, Work};
+use crate::tree::{Person, people};
 use crate::workbook;
 use serde_json::{Value, json};
 use std::collections::{HashMap, HashSet};
@@ -22,8 +22,10 @@ use std::process::ExitCode;
 const DEFAULT_GROUP: &str = "PPLR";
 /// A phone shorter than this is not matched or pulled.
 const MIN_PHONE: usize = 8;
-/// Writes stop after this many failures.
+/// Writes stop after this many failures; --link and --apply-plan say so,
+/// and --photos, as the engine did, does not.
 const MAX_FAILURES: usize = 3;
+const STOPPED: &str = "(stopped after three failures)";
 /// The engine's exit for no Contacts access.
 const NO_ACCESS: u8 = 3;
 /// The width of a header field's label in an About file ("- Company:  ").
@@ -77,39 +79,61 @@ struct Options {
   workbook: Option<String>,
 }
 
-pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
+/// The options, or None when they ask for the usage. A mistake in them is
+/// the error: an unknown option, an option without its value, or a --limit
+/// that is not a number.
+fn options(args: &[String]) -> std::result::Result<Option<Options>, String> {
   let mut o = Options::default();
   let mut it = args.iter();
   while let Some(arg) = it.next() {
-    let mut value = || it.next().cloned().unwrap_or_default();
+    let mut value = || {
+      it.next()
+        .cloned()
+        .ok_or_else(|| format!("{arg} needs a value"))
+    };
     match arg.as_str() {
       "--check" | "--link" | "--backup" | "--plan" | "--photos" | "--pull" => {
         o.mode = Some(arg.trim_start_matches('-').to_owned());
       }
       "--apply-plan" => {
-        o.workbook = Some(value());
+        o.workbook = Some(value()?);
         o.mode = Some("applyplan".to_owned());
       }
-      "--out" => o.out = Some(value()),
+      "--out" => o.out = Some(value()?),
       "--apply" => o.apply = true,
-      "--name" => o.names.push(value()),
-      "--skip" => o.skips.push(value()),
+      "--name" => o.names.push(value()?),
+      "--skip" => o.skips.push(value()?),
       "--all-names" => o.all_names = true,
-      "--limit" => o.limit = value().parse().ok(),
+      "--limit" => {
+        let n = value()?;
+        o.limit = Some(
+          n.parse()
+            .map_err(|_| format!("--limit needs a number, not '{n}'"))?,
+        );
+      }
       "--json" => o.json = true,
       "-v" | "--verbose" => o.verbose = true,
-      "--group" => o.group = Some(value()),
-      "-h" | "--help" => {
-        usage();
-        return Ok(ExitCode::SUCCESS);
-      }
-      other => {
-        println!("Error: unknown option '{other}'");
-        usage();
-        return Ok(ExitCode::FAILURE);
-      }
+      "--group" => o.group = Some(value()?),
+      "-h" | "--help" => return Ok(None),
+      other => return Err(format!("unknown option '{other}'")),
     }
   }
+  Ok(Some(o))
+}
+
+pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
+  let o = match options(args) {
+    Ok(Some(o)) => o,
+    Ok(None) => {
+      usage();
+      return Ok(ExitCode::SUCCESS);
+    }
+    Err(mistake) => {
+      println!("Error: {mistake}");
+      usage();
+      return Ok(ExitCode::FAILURE);
+    }
+  };
   let Some(mode) = o.mode.clone() else {
     usage();
     return Ok(ExitCode::FAILURE);
@@ -179,7 +203,7 @@ pub struct Pair {
   /// The card has a pplr URL in an older form, to replace.
   pub marker_stale: bool,
   pub inetloc: PathBuf,
-  /// It exists and opens this card.
+  /// It exists and opens this card: check() reads it, matches() leaves it false.
   pub has_inetloc: bool,
   pub diffs: Vec<FieldDiff>,
 }
@@ -238,13 +262,41 @@ pub fn pplr_marker(c: &Card) -> Option<String> {
     .map(|u| u.value.replace("pplr://", ""))
 }
 
-pub fn display_name(c: &Card) -> String {
-  let n = [c.given.as_str(), c.family.as_str()]
+/// An iCloud card, where the group lives: in "home", or no account named.
+pub fn is_home(c: &Card) -> bool {
+  c.account.as_deref().unwrap_or("home") == "home"
+}
+
+/// Linking puts an iCloud card in the group, if it is not in it yet.
+pub fn needs_group(c: &Card, group: &str) -> bool {
+  is_home(c) && !c.groups.iter().any(|g| g == group)
+}
+
+/// The pplr URL linking writes on the card: none when it has the person's
+/// current one, else theirs, in place of a URL in an older form.
+pub fn marker_write(c: &Card, key: &str) -> Option<MarkerWrite> {
+  match pplr_marker(c) {
+    Some(m) if m == marker_path(key) => None,
+    m => Some(MarkerWrite {
+      url: marker_url(key),
+      replace: m.is_some(),
+    }),
+  }
+}
+
+/// The card's given and family names, whichever it has.
+pub fn card_name(c: &Card) -> String {
+  [c.given.as_str(), c.family.as_str()]
     .iter()
     .filter(|s| !s.is_empty())
     .copied()
     .collect::<Vec<_>>()
-    .join(" ");
+    .join(" ")
+}
+
+/// The card's name, else its company, else "(no name)".
+pub fn display_name(c: &Card) -> String {
+  let n = card_name(c);
   if !n.is_empty() {
     n
   } else if c.organization.is_empty() {
@@ -383,13 +435,31 @@ fn uniq(cs: Vec<&Card>) -> Vec<&Card> {
     .collect()
 }
 
+/// matches(), with each pair's .inetloc read to see whether it opens the card.
+pub fn check(people: &[Person], cards: &[Card], group: &str) -> Report {
+  let mut r = matches(people, cards, group);
+  for p in r
+    .linked
+    .iter_mut()
+    .chain(&mut r.matched)
+    .chain(&mut r.name_only)
+  {
+    p.has_inetloc = inetloc_opens(&p.inetloc, &p.contact);
+  }
+  r
+}
+
 /// Every person matched to a card: the pplr URL first, then a unique email,
 /// LinkedIn or phone, then the name alone; ambiguity and orphans reported.
-pub fn check(people: &[Person], cards: &[Card], group: &str) -> Report {
+/// Nothing is read from disk, so no .inetloc is known to open its card.
+pub fn matches(people: &[Person], cards: &[Card], group: &str) -> Report {
+  // A card's pplr URL names a person by a marker path, or by the key itself
   let mut marker_keys: HashMap<String, String> = HashMap::new();
   for p in people {
-    for k in std::iter::once(&p.key).chain(&p.aliases) {
-      marker_keys.insert(marker_path(k), p.key.clone());
+    for path in marker_paths(p) {
+      marker_keys.insert(path, p.key.clone());
+    }
+    for k in p.keys() {
       marker_keys.insert(k.clone(), p.key.clone());
     }
   }
@@ -443,8 +513,7 @@ pub fn check(people: &[Person], cards: &[Card], group: &str) -> Report {
   let mut claimed: HashSet<String> = HashSet::new();
   let mut pair = |p: &Person, c: &Card, how: &'static str| -> Pair {
     claimed.insert(c.id.clone());
-    let inetloc = inetloc_path(p);
-    let marker = pplr_marker(c);
+    let marker = marker_write(c, &p.key);
     let account = c.account.as_deref();
     Pair {
       person: p.key.clone(),
@@ -452,13 +521,13 @@ pub fn check(people: &[Person], cards: &[Card], group: &str) -> Report {
       contact_name: display_name(c),
       how,
       in_group: c.groups.iter().any(|g| g == group),
-      needs_group: account.unwrap_or("home") == "home" && !c.groups.iter().any(|g| g == group),
+      needs_group: needs_group(c, group),
       no_account: account == Some("none"),
       other_account: account == Some("other"),
-      has_marker: marker.as_deref() == Some(marker_path(&p.key).as_str()),
-      marker_stale: marker.as_ref().is_some_and(|m| *m != marker_path(&p.key)),
-      has_inetloc: inetloc_opens(&inetloc, &c.id),
-      inetloc,
+      has_marker: marker.is_none(),
+      marker_stale: marker.is_some_and(|m| m.replace),
+      inetloc: inetloc_path(p),
+      has_inetloc: false,
       diffs: diffs(p, c),
     }
   };
@@ -687,54 +756,90 @@ fn plan_link(r: &Report, names: &[String], all_names: bool) -> LinkPlan {
   }
 }
 
+/// Each write's person, with its error when it failed.
 type Outcome = Vec<(String, Option<String>)>;
+
+/// Each item written in turn, the first `limit` of them, stopping after
+/// MAX_FAILURES failures.
+fn write_each<T>(
+  items: &[T],
+  limit: Option<usize>,
+  person: impl Fn(&T) -> String,
+  mut write: impl FnMut(&T) -> Result<()>,
+) -> Outcome {
+  let mut outcome = Outcome::new();
+  let mut failures = 0;
+  for item in items.iter().take(limit.unwrap_or(usize::MAX)) {
+    let error = write(item).err().map(|e| e.to_string());
+    let failed = error.is_some();
+    outcome.push((person(item), error));
+    if failed {
+      failures += 1;
+      if failures >= MAX_FAILURES {
+        break;
+      }
+    }
+  }
+  outcome
+}
+
+/// FAILURE when a write failed.
+fn exit_code(outcome: Option<&Outcome>) -> ExitCode {
+  if outcome.is_some_and(|o| o.iter().any(|(_, e)| e.is_some())) {
+    ExitCode::FAILURE
+  } else {
+    ExitCode::SUCCESS
+  }
+}
+
+/// The writes that failed, each with its error, and whether they stopped the rest.
+fn print_failed(bad: &[&(String, Option<String>)]) {
+  if bad.is_empty() {
+    return;
+  }
+  println!("\nFailed:");
+  for (person, error) in bad {
+    println!("  {person}: {}", error.as_deref().unwrap_or_default());
+  }
+  if bad.len() >= MAX_FAILURES {
+    println!("  {STOPPED}");
+  }
+}
 
 fn link(store: &mut dyn Store, o: &Options, group: &str, config: &Config) -> Result<ExitCode> {
   let report = check(&people(&config.data), &store.cards()?, group);
   let plan = plan_link(&report, &o.names, o.all_names);
-  let mut outcome: Option<Outcome> = None;
   let mut backup = None;
-  if o.apply {
-    let mut done: Outcome = Vec::new();
-    if !plan.to_link.is_empty() {
-      backup = Some(store.backup(&config.backup_dir)?);
-      let mut failures = 0;
-      for p in plan.to_link.iter().take(o.limit.unwrap_or(usize::MAX)) {
+  let outcome = if !o.apply {
+    None
+  } else if plan.to_link.is_empty() {
+    Some(Outcome::new())
+  } else {
+    backup = Some(store.backup(&config.backup_dir)?);
+    let done = write_each(
+      &plan.to_link,
+      o.limit,
+      |p| p.person.clone(),
+      |p| {
         let marker = (!p.has_marker).then(|| MarkerWrite {
           url: marker_url(&p.person),
           replace: p.marker_stale,
         });
-        let mut result = if marker.is_some() || p.needs_group {
-          store.link(&p.contact, marker.as_ref(), p.needs_group.then_some(group))
-        } else {
+        if marker.is_some() || p.needs_group {
+          store.link(&p.contact, marker.as_ref(), p.needs_group.then_some(group))?;
+        }
+        if p.has_inetloc {
           Ok(())
-        };
-        if result.is_ok() && !p.has_inetloc {
-          result = write_inetloc(&p.inetloc, &p.contact);
+        } else {
+          write_inetloc(&p.inetloc, &p.contact)
         }
-        let error = result.err().map(|e| e.to_string());
-        let failed = error.is_some();
-        done.push((p.person.clone(), error));
-        if failed {
-          failures += 1;
-          if failures >= MAX_FAILURES {
-            break;
-          }
-        }
-      }
-      store.save()?;
-    }
-    outcome = Some(done);
-  }
+      },
+    );
+    store.save()?;
+    Some(done)
+  };
   print_link(&plan, group, outcome.as_ref(), backup.as_deref());
-  let failed = outcome
-    .as_ref()
-    .is_some_and(|o| o.iter().any(|(_, e)| e.is_some()));
-  Ok(if failed {
-    ExitCode::FAILURE
-  } else {
-    ExitCode::SUCCESS
-  })
+  Ok(exit_code(outcome.as_ref()))
 }
 
 fn print_link(plan: &LinkPlan, group: &str, outcome: Option<&Outcome>, backup: Option<&Path>) {
@@ -775,15 +880,7 @@ fn print_link(plan: &LinkPlan, group: &str, outcome: Option<&Outcome>, backup: O
         }
       }
     }
-    if !bad.is_empty() {
-      println!("\nFailed:");
-      for (person, error) in &bad {
-        println!("  {person}: {}", error.as_deref().unwrap_or_default());
-      }
-      if bad.len() >= MAX_FAILURES {
-        println!("  (stopped after three failures)");
-      }
-    }
+    print_failed(&bad);
   } else {
     println!("pplr sync --link (dry run: nothing written; --apply to write)\n");
     println!("  to link                 {}", plan.to_link.len());
@@ -828,50 +925,27 @@ fn print_link(plan: &LinkPlan, group: &str, outcome: Option<&Outcome>, backup: O
 
 // --photos
 
-/// The engine's picture: the first About file ending (Picture).jpg, .png or .jpeg.
-pub fn picture_path(p: &Person) -> Option<PathBuf> {
-  let about = p.dir.join("About");
-  names(&about)
-    .into_iter()
-    .find(|n| {
-      n.ends_with("(Picture).jpg") || n.ends_with("(Picture).png") || n.ends_with("(Picture).jpeg")
-    })
-    .map(|n| about.join(n))
-}
-
 fn photos(store: &mut dyn Store, o: &Options, config: &Config) -> Result<ExitCode> {
   let everyone = people(&config.data);
-  let mut keys: HashMap<String, &Person> = HashMap::new();
-  for p in &everyone {
-    for k in std::iter::once(&p.key).chain(&p.aliases) {
-      keys.insert(marker_path(k), p);
-    }
-  }
+  let keys = by_marker(&everyone);
   let cards = store.cards()?;
-  let mut work: Vec<(&Person, &Card, PathBuf)> = cards
+  let mut work: Vec<(&Person, &Card, &Path)> = cards
     .iter()
     .filter(|c| c.has_image != Some(true) && c.account.as_deref() != Some("none"))
     .filter_map(|c| {
       let p = *keys.get(&pplr_marker(c)?)?;
-      Some((p, c, picture_path(p)?))
+      Some((p, c, p.picture.as_deref()?))
     })
     .collect();
   work.sort_by(|a, b| a.0.key.cmp(&b.0.key));
   if o.apply && !work.is_empty() {
     let backup = store.backup(&config.backup_dir)?;
-    let mut outcome: Outcome = Vec::new();
-    let mut failures = 0;
-    for (p, c, picture) in work.iter().take(o.limit.unwrap_or(usize::MAX)) {
-      let error = store.set_photo(&c.id, picture).err().map(|e| e.to_string());
-      let failed = error.is_some();
-      outcome.push((p.key.clone(), error));
-      if failed {
-        failures += 1;
-        if failures >= MAX_FAILURES {
-          break;
-        }
-      }
-    }
+    let outcome = write_each(
+      &work,
+      o.limit,
+      |(p, _, _)| p.key.clone(),
+      |(_, c, picture)| store.set_photo(&c.id, picture),
+    );
     store.save()?;
     let bad: Vec<&(String, Option<String>)> = outcome.iter().filter(|(_, e)| e.is_some()).collect();
     println!(
@@ -883,11 +957,7 @@ fn photos(store: &mut dyn Store, o: &Options, config: &Config) -> Result<ExitCod
       println!("  {person}: {}", error.as_deref().unwrap_or_default());
     }
     println!("\nBackup: {}", backup.display());
-    return Ok(if bad.is_empty() {
-      ExitCode::SUCCESS
-    } else {
-      ExitCode::FAILURE
-    });
+    return Ok(exit_code(Some(&outcome)));
   }
   println!(
     "pplr sync --photos (dry run: nothing written; --apply to write)\n\n  linked cards with no photo, where pplr has one  {}",
@@ -1082,7 +1152,7 @@ fn pulled_about(text: &str, w: &PullWork) -> String {
 fn pull(store: &mut dyn Store, o: &Options, group: &str, config: &Config) -> Result<ExitCode> {
   let everyone = people(&config.data);
   let cards = store.cards()?;
-  let report = check(&everyone, &cards, group);
+  let report = matches(&everyone, &cards, group);
   let only: HashSet<String> = o.names.iter().map(|n| person_key(n)).collect();
   let skip: HashSet<String> = o.skips.iter().map(|n| person_key(n)).collect();
   let work: Vec<PullWork> = pull_work(&report, &everyone, &cards)
@@ -1120,11 +1190,7 @@ fn pull(store: &mut dyn Store, o: &Options, group: &str, config: &Config) -> Res
     outcome.push((w.person.key.clone(), None));
   }
   print_pull(&chosen, Some(&outcome), Some(&dir));
-  Ok(if outcome.iter().any(|(_, e)| e.is_some()) {
-    ExitCode::FAILURE
-  } else {
-    ExitCode::SUCCESS
-  })
+  Ok(exit_code(Some(&outcome)))
 }
 
 fn print_pull(work: &[&PullWork], outcome: Option<&Outcome>, backup: Option<&Path>) {
@@ -1199,16 +1265,16 @@ fn apply_plan(
     println!("Error: no such workbook: {}", path.display());
     return Ok(ExitCode::FAILURE);
   }
-  let decisions = match workbook::decisions(&path)? {
-    Ok(decisions) => decisions,
-    Err(mistake) => {
-      eprintln!("{mistake}");
+  let decisions = match workbook::decisions(&path) {
+    Err(e) if e.is::<workbook::Mistake>() => {
+      eprintln!("{e}");
       return Ok(ExitCode::FAILURE);
     }
+    read => read?,
   };
   // --name: only these people (eg to try one card first)
   let only: HashSet<String> = o.names.iter().map(|n| person_key(n)).collect();
-  let chosen: Vec<Decision> = decisions
+  let chosen: Vec<Reviewed> = decisions
     .into_iter()
     .filter(|d| only.is_empty() || only.contains(&d.person))
     .collect();
@@ -1216,14 +1282,14 @@ fn apply_plan(
   let cards = store.cards()?;
   let (work, problems) = plan::plan_work(&chosen, &everyone, &cards, group);
   let todo: Vec<&Work> = work.iter().filter(|w| !w.is_empty()).collect();
-  let mut outcome: Option<Outcome> = None;
   let mut backup = None;
-  if o.apply && !todo.is_empty() {
+  let outcome = if o.apply && !todo.is_empty() {
     backup = Some(store.backup(&config.backup_dir)?);
-    let mut done: Outcome = Vec::new();
-    let mut failures = 0;
-    for w in todo.iter().take(o.limit.unwrap_or(usize::MAX)) {
-      let result = match w {
+    let done = write_each(
+      &todo,
+      o.limit,
+      |w| w.person().key.clone(),
+      |w| match w {
         Work::Add { person, card } => store
           .create(card, group)
           .and_then(|id| write_inetloc(&inetloc_path(person), &id)),
@@ -1235,20 +1301,13 @@ fn apply_plan(
         } => store
           .update(&card.id, change, group)
           .and_then(|()| write_inetloc(&inetloc_path(person), &card.id)),
-      };
-      let error = result.err().map(|e| e.to_string());
-      let failed = error.is_some();
-      done.push((w.person().key.clone(), error));
-      if failed {
-        failures += 1;
-        if failures >= MAX_FAILURES {
-          break;
-        }
-      }
-    }
+      },
+    );
     store.save()?;
-    outcome = Some(done);
-  }
+    Some(done)
+  } else {
+    None
+  };
   print_work(
     &work,
     &todo,
@@ -1257,14 +1316,7 @@ fn apply_plan(
     backup.as_deref(),
     if o.apply { None } else { o.limit },
   );
-  let failed = outcome
-    .as_ref()
-    .is_some_and(|o| o.iter().any(|(_, e)| e.is_some()));
-  Ok(if failed {
-    ExitCode::FAILURE
-  } else {
-    ExitCode::SUCCESS
-  })
+  Ok(exit_code(outcome.as_ref()))
 }
 
 fn print_work(
@@ -1275,7 +1327,7 @@ fn print_work(
   backup: Option<&Path>,
   limit: Option<usize>,
 ) {
-  let count = |d: &str| todo.iter().filter(|w| w.decision() == d).count();
+  let count = |d: Decision| todo.iter().filter(|w| w.decision() == d).count();
   println!(
     "{}",
     if outcome.is_some() {
@@ -1285,9 +1337,9 @@ fn print_work(
     }
   );
   println!();
-  println!("  add (new iCloud cards)  {}", count("Add"));
-  println!("  update                  {}", count("Update"));
-  println!("  link only               {}", count("Link only"));
+  println!("  add (new iCloud cards)  {}", count(Decision::Add));
+  println!("  update                  {}", count(Decision::Update));
+  println!("  link only               {}", count(Decision::LinkOnly));
   println!("  nothing to change       {}", work.len() - todo.len());
   if !problems.is_empty() {
     println!("  cannot be done          {}", problems.len());
@@ -1298,15 +1350,7 @@ fn print_work(
     println!("  written now             {ok}");
     println!("  failed                  {}", bad.len());
     println!("  still to write          {}", todo.len() - ok);
-    if !bad.is_empty() {
-      println!("\nFailed:");
-      for (person, error) in &bad {
-        println!("  {person}: {}", error.as_deref().unwrap_or_default());
-      }
-      if bad.len() >= MAX_FAILURES {
-        println!("  (stopped after three failures)");
-      }
-    }
+    print_failed(&bad);
   } else {
     println!(
       "\nWould write{}:",

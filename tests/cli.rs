@@ -1818,6 +1818,64 @@ fn sync_plan_and_apply_plan_are_native_and_their_goldens_replay() -> Result<()> 
   Ok(())
 }
 
+/// ST0001 WP11, a deliberate divergence from the legacy (WP11's body): sync
+/// refuses a missing option value and a --limit that is not a number, with
+/// the error and the usage, and writes nothing. The legacy read them as no
+/// limit or an empty group, so `--apply-plan wb.xlsx --apply --limit l`
+/// wrote every change.
+#[test]
+fn sync_refuses_a_missing_value_or_a_bad_limit_and_writes_nothing() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let about = sandbox.data().join("K/Kemp, Jon/About");
+  fs::create_dir_all(&about)?;
+  fs::write(about.join("Jon Kemp (About).md"), "# Jon Kemp (About)\n")?;
+  let contacts = sandbox.path("contacts.json");
+  fs::write(&contacts, "[]")?;
+  let backups = sandbox.path("backups");
+  let sync = |args: &[&str]| {
+    run(
+      sandbox
+        .pplr()
+        .env("PPLR_CONTACTS_JSON", &contacts)
+        .env("PPLR_BACKUP_DIR", &backups)
+        .args(args),
+    )
+  };
+  let book = sandbox.path("plan.xlsx");
+  let book = book.to_string_lossy();
+  let planned = sync(&["sync", "--plan", "--out", &book])?;
+  assert_eq!(planned.status.code(), Some(0), "{}", text(&planned.stderr));
+  for args in [
+    &["sync", "--apply-plan", &book, "--apply", "--limit", "l"][..],
+    &["sync", "--apply-plan", &book, "--apply", "--limit"],
+    &["sync", "--link", "--apply", "--group"],
+    &["sync", "--link", "--apply", "--name"],
+    &["sync", "--pull", "--apply", "--skip"],
+    &["sync", "--plan", "--out"],
+    &["sync", "--apply-plan"],
+  ] {
+    let refused = sync(args)?;
+    let out = text(&refused.stdout);
+    assert_eq!(refused.status.code(), Some(1), "{args:?}: {out}");
+    assert!(
+      out.starts_with("Error: ") && out.contains("\nUsage: pplr sync"),
+      "{args:?}: {out}"
+    );
+    assert_eq!(
+      fs::read_to_string(&contacts)?,
+      "[]",
+      "{args:?} wrote to Contacts"
+    );
+    assert!(!backups.exists(), "{args:?} made a backup");
+  }
+  // The control: asked properly, the same workbook writes, so the checks above can fail
+  let applied = sync(&["sync", "--apply-plan", &book, "--apply", "--limit", "1"])?;
+  assert_eq!(applied.status.code(), Some(0), "{}", text(&applied.stdout));
+  assert_ne!(fs::read_to_string(&contacts)?, "[]");
+  assert!(backups.exists());
+  Ok(())
+}
+
 #[test]
 fn publish_lays_out_an_app_bundle_file_by_file_with_each_mode_kept() -> Result<()> {
   use pplr::install::{MANIFEST, Manifest, drift};

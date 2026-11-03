@@ -119,7 +119,7 @@ fn physical(path: &Path) -> PathBuf {
 pub fn by_key(people: &[Person]) -> HashMap<String, &Person> {
   let mut out = HashMap::new();
   for person in people {
-    for key in std::iter::once(&person.key).chain(&person.aliases) {
+    for key in person.keys() {
       out.insert(key.clone(), person);
     }
   }

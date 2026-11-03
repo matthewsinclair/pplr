@@ -4,19 +4,96 @@
 //! into the changes it asks of a card. The engine's rules, rule for rule.
 
 use crate::contacts::{Card, CardChange, MarkerWrite, NewCard};
-use crate::marker::{marker_path, marker_url};
+use crate::marker::{marker_paths, marker_url};
 use crate::normalise::{email_key, fold};
-use crate::sync::{check, display_name, picture_path, pplr_marker};
+use crate::sync::{
+  card_name, display_name, is_home, marker_write, matches, needs_group, pplr_marker,
+};
 use crate::tree::Person;
-use serde::Serialize;
-use std::collections::{BTreeMap, HashMap, HashSet};
+use serde::{Serialize, Serializer};
+use std::collections::{HashMap, HashSet};
+use std::fmt;
 use std::path::PathBuf;
 
-/// The decisions a reviewer can make, in the workbook's order.
-pub const DECISIONS: [&str; 5] = ["Add", "Update", "Link only", "No change", "Skip"];
+/// What to do about one person, in the order rows of one confidence run.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum Decision {
+  Update,
+  LinkOnly,
+  Add,
+  NoChange,
+  Skip,
+}
 
-/// Confidence, least certain first.
-const CONFIDENCE: [&str; 3] = ["Low", "Medium", "High"];
+impl Decision {
+  /// Every decision, in the workbook's order.
+  pub const ALL: [Decision; 5] = [
+    Decision::Add,
+    Decision::Update,
+    Decision::LinkOnly,
+    Decision::NoChange,
+    Decision::Skip,
+  ];
+
+  /// As the workbook and the reports write it.
+  pub fn as_str(self) -> &'static str {
+    match self {
+      Decision::Add => "Add",
+      Decision::Update => "Update",
+      Decision::LinkOnly => "Link only",
+      Decision::NoChange => "No change",
+      Decision::Skip => "Skip",
+    }
+  }
+
+  /// The decision a reviewer wrote, if it is one.
+  pub fn named(name: &str) -> Option<Decision> {
+    Decision::ALL.into_iter().find(|d| d.as_str() == name)
+  }
+}
+
+impl fmt::Display for Decision {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    f.pad(self.as_str())
+  }
+}
+
+impl Serialize for Decision {
+  fn serialize<S: Serializer>(&self, s: S) -> std::result::Result<S::Ok, S::Error> {
+    s.serialize_str(self.as_str())
+  }
+}
+
+/// How sure the plan is of a row, least certain first.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum Confidence {
+  Low,
+  Medium,
+  High,
+}
+
+impl Confidence {
+  /// As the workbook and the reports write it.
+  pub fn as_str(self) -> &'static str {
+    match self {
+      Confidence::Low => "Low",
+      Confidence::Medium => "Medium",
+      Confidence::High => "High",
+    }
+  }
+}
+
+impl fmt::Display for Confidence {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    f.pad(self.as_str())
+  }
+}
+
+impl Serialize for Confidence {
+  fn serialize<S: Serializer>(&self, s: S) -> std::result::Result<S::Ok, S::Error> {
+    s.serialize_str(self.as_str())
+  }
+}
 
 /// A score this good is a match; below it, a person is proposed as an Add.
 const MATCH: i32 = 40;
@@ -152,10 +229,8 @@ pub struct Candidate {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct PlanRow {
   pub person: String,
-  /// One of DECISIONS.
-  pub decision: &'static str,
-  /// One of CONFIDENCE.
-  pub confidence: &'static str,
+  pub decision: Decision,
+  pub confidence: Confidence,
   pub why: String,
   /// The card's ref, eg C0042.
   #[serde(skip_serializing_if = "Option::is_none")]
@@ -217,34 +292,17 @@ pub struct Plan {
 
 impl Plan {
   /// How many rows of each confidence and decision, least certain first and
-  /// then by decision: ((confidence, decision), count).
-  pub fn proposals(&self) -> Vec<((&'static str, &'static str), usize)> {
-    let mut counts: BTreeMap<(usize, &'static str), usize> = BTreeMap::new();
+  /// then by the decision's name, as the engine listed them:
+  /// ((confidence, decision), count).
+  pub fn proposals(&self) -> Vec<((Confidence, Decision), usize)> {
+    let mut counts: HashMap<(Confidence, Decision), usize> = HashMap::new();
     for r in &self.rows {
-      *counts.entry((rank(r.confidence), r.decision)).or_default() += 1;
+      *counts.entry((r.confidence, r.decision)).or_default() += 1;
     }
-    counts
-      .into_iter()
-      .map(|((c, d), n)| ((CONFIDENCE[c], d), n))
-      .collect()
+    let mut out: Vec<_> = counts.into_iter().collect();
+    out.sort_by_key(|((c, d), _)| (*c, d.as_str()));
+    out
   }
-}
-
-fn rank(confidence: &str) -> usize {
-  CONFIDENCE
-    .iter()
-    .position(|c| *c == confidence)
-    .unwrap_or_default()
-}
-
-/// The order rows of one confidence run in.
-const DECISION_ORDER: [&str; 5] = ["Update", "Link only", "Add", "No change", "Skip"];
-
-fn decision_rank(decision: &str) -> usize {
-  DECISION_ORDER
-    .iter()
-    .position(|d| *d == decision)
-    .unwrap_or(DECISION_ORDER.len())
 }
 
 // Scoring
@@ -377,63 +435,80 @@ fn or_empty(s: &str) -> &str {
   if s.is_empty() { "empty" } else { s }
 }
 
-fn card_name(c: &Card) -> String {
-  [c.given.as_str(), c.family.as_str()]
-    .iter()
-    .filter(|s| !s.is_empty())
-    .copied()
-    .collect::<Vec<_>>()
-    .join(" ")
-}
-
-fn is_home(c: &Card) -> bool {
-  c.account.as_deref().unwrap_or("home") == "home"
-}
-
-/// What Update would do to the card: pplr wins on name, company and role;
-/// emails, phones and LinkedIn are added; nothing on the card is removed.
-fn field_changes(p: &Person, c: &Card) -> Vec<String> {
+/// What Update writes to the card: pplr wins on name, company and role; its
+/// emails, phones and LinkedIn are added; the card is linked as --link links
+/// it. Nothing on the card is removed.
+fn card_change(p: &Person, c: &Card, group: &str) -> CardChange {
   let h = &p.header;
-  let mut out = Vec::new();
-  let (pname, cname) = (format!("{} {}", p.given, p.family), card_name(c));
-  if fold(&pname) != fold(&cname) {
-    out.push(format!("name: {pname} (was {})", or_empty(&cname)));
+  let name = format!("{} {}", p.given, p.family);
+  CardChange {
+    name: (fold(&name) != fold(&card_name(c))).then(|| (p.given.clone(), p.family.clone())),
+    organization: (!h.company.is_empty() && fold(&h.company) != fold(&c.organization))
+      .then(|| h.company.clone()),
+    job_title: (!h.role.is_empty() && fold(&h.role) != fold(&c.job_title)).then(|| h.role.clone()),
+    add_emails: h
+      .emails
+      .iter()
+      .filter(|e| !c.emails.iter().any(|x| email_key(x) == email_key(e)))
+      .cloned()
+      .collect(),
+    add_phones: h
+      .phones
+      .iter()
+      .filter(|ph| !c.phones.contains(ph))
+      .cloned()
+      .collect(),
+    add_linkedin: (!h.linkedin.is_empty() && !c.linkedin.contains(&h.linkedin))
+      .then(|| h.linkedin.clone()),
+    marker: marker_write(c, &p.key),
+    add_group: needs_group(c, group),
   }
-  if !h.company.is_empty() && fold(&h.company) != fold(&c.organization) {
+}
+
+/// What Link only writes of a change: the pplr URL and the group.
+fn link_only(change: &CardChange) -> CardChange {
+  CardChange {
+    marker: change.marker.clone(),
+    add_group: change.add_group,
+    ..CardChange::default()
+  }
+}
+
+/// Whether a change writes a field of the card, not only the link.
+fn touches_fields(change: &CardChange) -> bool {
+  *change != link_only(change)
+}
+
+/// A change as the Changes column lists it: each field set, beside what the
+/// card has now, each value added, then the link.
+fn change_lines(change: &CardChange, c: &Card, group: &str) -> Vec<String> {
+  let mut out = Vec::new();
+  if let Some((given, family)) = &change.name {
     out.push(format!(
-      "company: {} (was {})",
-      h.company,
+      "name: {given} {family} (was {})",
+      or_empty(&card_name(c))
+    ));
+  }
+  if let Some(company) = &change.organization {
+    out.push(format!(
+      "company: {company} (was {})",
       or_empty(&c.organization)
     ));
   }
-  if !h.role.is_empty() && fold(&h.role) != fold(&c.job_title) {
-    out.push(format!("role: {} (was {})", h.role, or_empty(&c.job_title)));
+  if let Some(role) = &change.job_title {
+    out.push(format!("role: {role} (was {})", or_empty(&c.job_title)));
   }
-  let card_emails: HashSet<String> = c.emails.iter().map(|e| email_key(e)).collect();
-  for e in h
-    .emails
-    .iter()
-    .filter(|e| !card_emails.contains(&email_key(e)))
-  {
-    out.push(format!("+ email {e}"));
+  out.extend(change.add_emails.iter().map(|e| format!("+ email {e}")));
+  out.extend(change.add_phones.iter().map(|ph| format!("+ phone {ph}")));
+  if let Some(slug) = &change.add_linkedin {
+    out.push(format!("+ LinkedIn {slug}"));
   }
-  for ph in h.phones.iter().filter(|ph| !c.phones.contains(ph)) {
-    out.push(format!("+ phone {ph}"));
+  match &change.marker {
+    Some(MarkerWrite { replace: true, .. }) => out.push("pplr URL updated".to_owned()),
+    Some(_) => out.push("+ pplr URL".to_owned()),
+    None => {}
   }
-  if !h.linkedin.is_empty() && !c.linkedin.contains(&h.linkedin) {
-    out.push(format!("+ LinkedIn {}", h.linkedin));
-  }
-  out
-}
-
-fn link_changes(p: &Person, c: &Card, group: &str) -> Vec<String> {
-  let mut out = Vec::new();
-  match pplr_marker(c) {
-    Some(m) if m != marker_path(&p.key) => out.push("pplr URL updated".to_owned()),
-    Some(_) => {}
-    None => out.push("+ pplr URL".to_owned()),
-  }
-  if is_home(c) && !c.groups.iter().any(|g| g == group) {
+  if change.add_group {
     out.push(format!("+ {group} group"));
   }
   out
@@ -447,25 +522,41 @@ fn count_of(n: usize, one: &str, many: &str) -> String {
   }
 }
 
-fn add_changes(p: &Person, group: &str) -> Vec<String> {
+/// The card Add makes from a person.
+fn new_card(p: &Person) -> NewCard {
   let h = &p.header;
+  NewCard {
+    given: p.given.clone(),
+    family: p.family.clone(),
+    organization: h.company.clone(),
+    job_title: h.role.clone(),
+    emails: h.emails.clone(),
+    phones: h.phones.clone(),
+    linkedin: (!h.linkedin.is_empty()).then(|| h.linkedin.clone()),
+    marker: marker_url(&p.key),
+    picture: p.picture.clone(),
+  }
+}
+
+/// An Add as the Changes column lists it.
+fn add_changes(card: &NewCard, group: &str) -> Vec<String> {
   let mut parts = vec!["name".to_owned()];
-  if !h.company.is_empty() {
+  if !card.organization.is_empty() {
     parts.push("company".to_owned());
   }
-  if !h.role.is_empty() {
+  if !card.job_title.is_empty() {
     parts.push("role".to_owned());
   }
-  if !h.emails.is_empty() {
-    parts.push(count_of(h.emails.len(), "email", "emails"));
+  if !card.emails.is_empty() {
+    parts.push(count_of(card.emails.len(), "email", "emails"));
   }
-  if !h.phones.is_empty() {
-    parts.push(count_of(h.phones.len(), "phone", "phones"));
+  if !card.phones.is_empty() {
+    parts.push(count_of(card.phones.len(), "phone", "phones"));
   }
-  if !h.linkedin.is_empty() {
+  if card.linkedin.is_some() {
     parts.push("LinkedIn".to_owned());
   }
-  if picture_path(p).is_some() {
+  if card.picture.is_some() {
     parts.push("photo".to_owned());
   }
   vec![
@@ -495,7 +586,8 @@ struct Scored<'a> {
 }
 
 /// A decision for every pplr person: the strict tiers first, then the best
-/// of the free cards by score. `generated` is the plan's timestamp.
+/// of the free cards by score. `generated` is the plan's timestamp. Nothing
+/// is read from disk: the people come with their pictures.
 pub fn plan(people: &[Person], raw_cards: &[Card], group: &str, generated: String) -> Plan {
   // One entry per real card, each with a short ref for the reviewer
   let mut seen = HashSet::new();
@@ -520,7 +612,7 @@ pub fn plan(people: &[Person], raw_cards: &[Card], group: &str, generated: Strin
   let card_ref = |c: &Card| ref_of.get(c.id.as_str()).cloned().unwrap_or_default();
   let card_by_id: HashMap<&str, &Card> = cards.iter().map(|c| (c.id.as_str(), c)).collect();
   let by_key: HashMap<&str, &Person> = people.iter().map(|p| (p.key.as_str(), p)).collect();
-  let report = check(people, &cards, group);
+  let report = matches(people, &cards, group);
 
   let mut rows: Vec<PlanRow> = Vec::new();
   let mut done: HashSet<&str> = HashSet::new();
@@ -542,12 +634,12 @@ pub fn plan(people: &[Person], raw_cards: &[Card], group: &str, generated: Strin
     if pr.no_account {
       rows.push(PlanRow {
         person: p.key.clone(),
-        decision: "Add",
-        confidence: "Medium",
+        decision: Decision::Add,
+        confidence: Confidence::Medium,
         why: format!("{tier}, {NO_ACCOUNT}"),
         card: None,
         dupes: Vec::new(),
-        changes: add_changes(p, group),
+        changes: add_changes(&new_card(p), group),
         candidates: vec![Candidate {
           r#ref: card_ref(c),
           name: display_name(c),
@@ -557,24 +649,28 @@ pub fn plan(people: &[Person], raw_cards: &[Card], group: &str, generated: Strin
       });
       continue;
     }
-    let (fields, link) = (field_changes(p, c), link_changes(p, c, group));
-    let decision = if !fields.is_empty() {
-      "Update"
-    } else if !link.is_empty() {
-      "Link only"
+    let change = card_change(p, c, group);
+    let decision = if touches_fields(&change) {
+      Decision::Update
+    } else if change == CardChange::default() {
+      Decision::NoChange
     } else {
-      "No change"
+      Decision::LinkOnly
     };
     // A rename is the reviewer's call: pplr's own spelling can be the wrong one
-    let renames = fields.iter().any(|f| f.starts_with("name: "));
+    let renames = change.name.is_some();
     rows.push(PlanRow {
       person: p.key.clone(),
       decision,
-      confidence: if renames { "Medium" } else { "High" },
+      confidence: if renames {
+        Confidence::Medium
+      } else {
+        Confidence::High
+      },
       why: format!("{tier}{}", if renames { ", names differ" } else { "" }),
       card: Some(card_ref(c)),
       dupes: Vec::new(),
-      changes: [fields, link].concat(),
+      changes: change_lines(&change, c, group),
       candidates: Vec::new(),
     });
   }
@@ -622,8 +718,12 @@ pub fn plan(people: &[Person], raw_cards: &[Card], group: &str, generated: Strin
     let Some(best) = cands.first().filter(|b| b.score >= MATCH) else {
       rows.push(PlanRow {
         person: p.key.clone(),
-        decision: "Add",
-        confidence: if cands.is_empty() { "High" } else { "Low" },
+        decision: Decision::Add,
+        confidence: if cands.is_empty() {
+          Confidence::High
+        } else {
+          Confidence::Low
+        },
         why: if cands.is_empty() {
           "no card found"
         } else {
@@ -632,7 +732,7 @@ pub fn plan(people: &[Person], raw_cards: &[Card], group: &str, generated: Strin
         .to_owned(),
         card: None,
         dupes: Vec::new(),
-        changes: add_changes(p, group),
+        changes: add_changes(&new_card(p), group),
         candidates: cands.iter().map(as_cand).collect(),
       });
       continue;
@@ -640,12 +740,12 @@ pub fn plan(people: &[Person], raw_cards: &[Card], group: &str, generated: Strin
     if best.card.account.as_deref() == Some("none") {
       rows.push(PlanRow {
         person: p.key.clone(),
-        decision: "Add",
-        confidence: "Low",
+        decision: Decision::Add,
+        confidence: Confidence::Low,
         why: format!("{}, {NO_ACCOUNT}", best.why),
         card: None,
         dupes: Vec::new(),
-        changes: add_changes(p, group),
+        changes: add_changes(&new_card(p), group),
         candidates: cands.iter().map(as_cand).collect(),
       });
       continue;
@@ -660,26 +760,23 @@ pub fn plan(people: &[Person], raw_cards: &[Card], group: &str, generated: Strin
       })
       .collect();
     let twin_ids: HashSet<&str> = twins.iter().map(|s| s.card.id.as_str()).collect();
-    let (fields, link) = (
-      field_changes(p, best.card),
-      link_changes(p, best.card, group),
-    );
-    let renames = fields.iter().any(|f| f.starts_with("name: "));
+    let change = card_change(p, best.card, group);
+    let renames = change.name.is_some();
     let confidence = if !twins.is_empty() {
-      "Low"
+      Confidence::Low
     } else if best.score >= HIGH && !renames {
-      "High"
+      Confidence::High
     } else if best.score >= TWIN {
-      "Medium"
+      Confidence::Medium
     } else {
-      "Low"
+      Confidence::Low
     };
     rows.push(PlanRow {
       person: p.key.clone(),
-      decision: if fields.is_empty() {
-        "Link only"
+      decision: if touches_fields(&change) {
+        Decision::Update
       } else {
-        "Update"
+        Decision::LinkOnly
       },
       confidence,
       why: if twins.is_empty() {
@@ -693,7 +790,7 @@ pub fn plan(people: &[Person], raw_cards: &[Card], group: &str, generated: Strin
       },
       card: Some(card_ref(best.card)),
       dupes: twins.iter().map(|s| card_ref(s.card)).collect(),
-      changes: [fields, link].concat(),
+      changes: change_lines(&change, best.card, group),
       candidates: cands[1..]
         .iter()
         .filter(|s| !twin_ids.contains(s.card.id.as_str()))
@@ -715,7 +812,7 @@ pub fn plan(people: &[Person], raw_cards: &[Card], group: &str, generated: Strin
       continue;
     };
     if others.len() > 1 {
-      r.confidence = "Low";
+      r.confidence = Confidence::Low;
       let rest: Vec<&str> = others
         .iter()
         .filter(|o| **o != r.person)
@@ -725,11 +822,7 @@ pub fn plan(people: &[Person], raw_cards: &[Card], group: &str, generated: Strin
     }
   }
   rows.sort_by(|a, b| {
-    (rank(a.confidence), decision_rank(a.decision), &a.person).cmp(&(
-      rank(b.confidence),
-      decision_rank(b.decision),
-      &b.person,
-    ))
+    (a.confidence, a.decision, &a.person).cmp(&(b.confidence, b.decision, &b.person))
   });
 
   let mut proposed: HashMap<String, String> = HashMap::new();
@@ -756,7 +849,7 @@ pub fn plan(people: &[Person], raw_cards: &[Card], group: &str, generated: Strin
         phones: p.header.phones.clone(),
         linkedin: p.header.linkedin.clone(),
         marker: marker_url(&p.key),
-        picture: picture_path(p),
+        picture: p.picture.clone(),
         dir: p.dir.clone(),
       })
       .collect(),
@@ -787,9 +880,9 @@ pub fn plan(people: &[Person], raw_cards: &[Card], group: &str, generated: Strin
 
 /// One reviewed row: the person, the decision, and the card's id.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Decision {
+pub struct Reviewed {
   pub person: String,
-  pub decision: String,
+  pub decision: Decision,
   pub card: Option<String>,
 }
 
@@ -802,8 +895,8 @@ pub enum Work<'a> {
   },
   Change {
     person: &'a Person,
-    /// "Update" or "Link only".
-    decision: &'static str,
+    /// Update or Link only.
+    decision: Decision,
     card: &'a Card,
     change: CardChange,
   },
@@ -816,10 +909,10 @@ impl Work<'_> {
     }
   }
 
-  pub fn decision(&self) -> &'static str {
+  pub fn decision(&self) -> Decision {
     match self {
-      Work::Add { .. } => "Add",
-      Work::Change { decision, .. } => decision,
+      Work::Add { .. } => Decision::Add,
+      Work::Change { decision, .. } => *decision,
     }
   }
 
@@ -885,7 +978,7 @@ impl Work<'_> {
 
 /// The work a reviewed plan asks for, and what cannot be done.
 pub fn plan_work<'a>(
-  decisions: &[Decision],
+  decisions: &[Reviewed],
   people: &'a [Person],
   cards: &'a [Card],
   group: &str,
@@ -905,31 +998,17 @@ pub fn plan_work<'a>(
       problems.push(format!("{}: no such person in pplr", d.person));
       continue;
     };
-    let h = &p.header;
-    match d.decision.as_str() {
-      "Add" => {
-        if std::iter::once(&p.key)
-          .chain(&p.aliases)
-          .any(|k| marked_for.contains(&marker_path(k)))
-        {
+    match d.decision {
+      Decision::Add => {
+        if marker_paths(p).any(|m| marked_for.contains(&m)) {
           continue;
         }
         work.push(Work::Add {
           person: p,
-          card: NewCard {
-            given: p.given.clone(),
-            family: p.family.clone(),
-            organization: h.company.clone(),
-            job_title: h.role.clone(),
-            emails: h.emails.clone(),
-            phones: h.phones.clone(),
-            linkedin: (!h.linkedin.is_empty()).then(|| h.linkedin.clone()),
-            marker: marker_url(&p.key),
-            picture: picture_path(p),
-          },
+          card: new_card(p),
         });
       }
-      decision @ ("Update" | "Link only") => {
+      decision @ (Decision::Update | Decision::LinkOnly) => {
         let Some(c) = d.card.as_deref().and_then(|id| by_id.get(id)).copied() else {
           problems.push(format!("{}: the card is no longer in Contacts", d.person));
           continue;
@@ -942,56 +1021,19 @@ pub fn plan_work<'a>(
           ));
           continue;
         }
-        let full = decision == "Update";
-        let marker = match pplr_marker(c) {
-          None => Some(false),
-          Some(m) if m != marker_path(&p.key) => Some(true),
-          Some(_) => None,
-        };
-        let name = format!("{} {}", p.given, p.family);
+        let change = card_change(p, c, group);
         work.push(Work::Change {
           person: p,
-          decision: if full { "Update" } else { "Link only" },
+          decision,
           card: c,
-          change: CardChange {
-            name: (full && fold(&name) != fold(&format!("{} {}", c.given, c.family)))
-              .then(|| (p.given.clone(), p.family.clone())),
-            organization: (full
-              && !h.company.is_empty()
-              && fold(&h.company) != fold(&c.organization))
-            .then(|| h.company.clone()),
-            job_title: (full && !h.role.is_empty() && fold(&h.role) != fold(&c.job_title))
-              .then(|| h.role.clone()),
-            add_emails: if full {
-              h.emails
-                .iter()
-                .filter(|e| !c.emails.iter().any(|x| email_key(x) == email_key(e)))
-                .cloned()
-                .collect()
-            } else {
-              Vec::new()
-            },
-            add_phones: if full {
-              h.phones
-                .iter()
-                .filter(|ph| !c.phones.contains(ph))
-                .cloned()
-                .collect()
-            } else {
-              Vec::new()
-            },
-            add_linkedin: (full && !h.linkedin.is_empty() && !c.linkedin.contains(&h.linkedin))
-              .then(|| h.linkedin.clone()),
-            marker: marker.map(|replace| MarkerWrite {
-              url: marker_url(&p.key),
-              replace,
-            }),
-            add_group: is_home(c) && !c.groups.iter().any(|g| g == group),
+          change: if decision == Decision::Update {
+            change
+          } else {
+            link_only(&change)
           },
         });
       }
-      // No change, Skip
-      _ => {}
+      Decision::NoChange | Decision::Skip => {}
     }
   }
   (work, problems)
@@ -1026,9 +1068,20 @@ mod tests {
   }
 
   #[test]
-  fn decisions_rank_update_link_add_then_the_rest() {
-    let mut d = DECISIONS.to_vec();
-    d.sort_by_key(|d| decision_rank(d));
-    assert_eq!(d, ["Update", "Link only", "Add", "No change", "Skip"]);
+  fn decisions_sort_update_link_add_then_the_rest() {
+    let mut d = Decision::ALL;
+    d.sort();
+    assert_eq!(
+      d.map(Decision::as_str),
+      ["Update", "Link only", "Add", "No change", "Skip"]
+    );
+  }
+
+  #[test]
+  fn a_decision_is_read_back_by_the_name_it_is_written_with() {
+    for d in Decision::ALL {
+      assert_eq!(Decision::named(d.as_str()), Some(d));
+    }
+    assert_eq!(Decision::named("link only"), None);
   }
 }
