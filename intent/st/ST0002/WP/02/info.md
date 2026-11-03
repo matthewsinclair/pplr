@@ -2,7 +2,7 @@
 wp_id: WP-02
 title: devbin release core and CI candidates
 scope: M
-status: WIP
+status: Done
 ---
 
 # WP-02: devbin release core and CI candidates

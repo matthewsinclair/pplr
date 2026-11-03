@@ -29,7 +29,7 @@
       "seq": 2,
       "title": "devbin release core and CI candidates",
       "scope": "M",
-      "status": "wip",
+      "status": "done",
       "objective": "Configure devbin's release core and formula tool for pplr, and make CI fire on release candidates.",
       "body": "**Scope**\n\n- **`bin/.devbin/config.yaml`**:\n  - `version_from: Cargo.toml`;\n  - `commands.release.enabled` and `commands.formula.enabled`;\n  - a `release:` block naming the repo, the remotes (local then upstream), the gates (`check all`, `test all`, `doctor`), the kovacs leg, `derived: [tools/lock-sync]` and `after: [bin/devbin formula publish]`;\n  - `formula: mode: assets` (E1, as ruled).\n- **`tools/lock-sync`**, in zsh after Gtools' model: rewrite `Cargo.lock` for the new version, then print `Cargo.lock`.\n- **CI**: `tests.yml` fires on `main` and on `candidate/**`.\n- **CHANGELOG**:\n  - opens `## [2.0.0] - unreleased`;\n  - merges the duplicate `### Fixed`;\n  - keeps the history of 1.0.1 and earlier.\n- `bin/devbin release check` and `bin/devbin doctor` pass.\n\n**Criteria**: AC-02.1 and AC-02.2.\n\n**Depends on**: ST0001 WP02, which brings the crate, devbin's gates and `tests.yml`.\n\n",
       "preamble": ""
@@ -213,6 +213,16 @@
     }
   ],
   "tests": [
+    {
+      "id": "AT-02.1",
+      "kind": "test",
+      "file": ".github/workflows/tests.yml",
+      "covers": [
+        "AC-02.1"
+      ],
+      "status": "green",
+      "note": "tests.yml's push trigger with devbin's release gates: devbin release check validates the release block and asks whether a push of candidate/<tag> starts tests.yml, and devbin doctor checks the install and its config; red by a measured mutant of c4929d0, tests.yml's push branches without candidate/** (7e5e61d in dc's scratch clone): devbin release check exit 1, a push of candidate/v2.0.0 starts no run (ci-state --fires answers quiet); it runs no cargo, so no slot; green at c4929d0 unmutated in the same clone: devbin release check exit 0 (candidate/** matches candidate/v2.0.0) and devbin doctor exit 0 (16 checks, 0 failed), as at 251ea31 in the shared checkout, and release check 0 again with this header (f809e29 on f8b8db8). On CI 41601061427, hv's push of candidate/ci-probe at e589c45 started tests.yml through candidate/**, and the cargo gates and the bats suite passed on macOS and Linux"
+    },
     {
       "id": "AT-03.1",
       "kind": "test",

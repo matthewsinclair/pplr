@@ -23,9 +23,9 @@ title: Create a homebrew distro for the new Rust version of Pplr
 
 - AC-01.1 (non-test) The release and install design (E1 to E8, the T1 to T10 table, the install layout) is settled on this thread, with hv's answers to its open questions recorded. -- evidence: install-release.md on ST0002 (settled; vc accepted amendments 1-5; hv's rulings 5574e38) -- satisfied: yes
 
-### WP-02 -- devbin release core and CI candidates (status: WIP)
+### WP-02 -- devbin release core and CI candidates (status: Done)
 
-- AC-02.1 `bin/devbin release check` and `bin/devbin doctor` pass with the release and formula config, and tests.yml fires on candidate/** and runs the cargo gates and the bats suite on macOS and Linux. -- satisfied: no (computed)
+- AC-02.1 `bin/devbin release check` and `bin/devbin doctor` pass with the release and formula config, and tests.yml fires on candidate/** and runs the cargo gates and the bats suite on macOS and Linux. -- satisfied: yes (computed)
 - AC-02.2 (non-test) tools/lock-sync (zsh) rewrites Cargo.lock for a version bump and prints Cargo.lock, and the CHANGELOG opens 2.0.0 as `## [2.0.0] - unreleased`. -- evidence: scratch-clone runs for 111b72e: version-only lock rewrite printing Cargo.lock; new-dependency refusal restoring the lock byte for byte; CHANGELOG opens ## [2.0.0] - unreleased -- satisfied: yes
 
 ### WP-03 -- Install, manifest, tree identity, version line and use (status: Done)
@@ -63,9 +63,9 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-02 -- devbin release core and CI candidates (status: WIP)
+### WP-02 -- devbin release core and CI candidates (status: Done)
 
-_(no tests in this group)_
+- AT-02.1 `.github/workflows/tests.yml` -- covers AC-02.1 -- status: green -- tests.yml's push trigger with devbin's release gates: devbin release check validates the release block and asks whether a push of candidate/<tag> starts tests.yml, and devbin doctor checks the install and its config; red by a measured mutant of c4929d0, tests.yml's push branches without candidate/** (7e5e61d in dc's scratch clone): devbin release check exit 1, a push of candidate/v2.0.0 starts no run (ci-state --fires answers quiet); it runs no cargo, so no slot; green at c4929d0 unmutated in the same clone: devbin release check exit 0 (candidate/** matches candidate/v2.0.0) and devbin doctor exit 0 (16 checks, 0 failed), as at 251ea31 in the shared checkout, and release check 0 again with this header (f809e29 on f8b8db8). On CI 41601061427, hv's push of candidate/ci-probe at e589c45 started tests.yml through candidate/**, and the cargo gates and the bats suite passed on macOS and Linux
 
 ### WP-03 -- Install, manifest, tree identity, version line and use (status: Done)
 

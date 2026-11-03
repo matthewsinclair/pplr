@@ -41,7 +41,7 @@ Make Homebrew the way Pplr reaches a machine. `brew install matthewsinclair/pplr
 | WP    | Title                                                  | Size | Status      |
 | ----- | ------------------------------------------------------ | ---- | ----------- |
 | WP-01 | Release and install design for pplr                    | S    | Done        |
-| WP-02 | devbin release core and CI candidates                  | M    | WIP         |
+| WP-02 | devbin release core and CI candidates                  | M    | Done        |
 | WP-03 | Install, manifest, tree identity, version line and use | L    | Done        |
 | WP-04 | Assets formula, tap and tap CI                         | M    | WIP         |
 | WP-05 | Walking skeleton through a scratch tap                 | M    | WIP         |
