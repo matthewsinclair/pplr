@@ -3,7 +3,7 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 07:47Z
+heartbeat_at: 2026-11-03 07:49Z
 status: active
 focus: "held for hv's compact. Next: close ST0001 WP02 once vc rules on covering ATs for its test-backed ACs (doing 2), then WP13's docs (todo 3, vc decision 11)"
 claims: [ST0001/02, ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
@@ -13,7 +13,7 @@ claims: [ST0001/02, ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST000
 
 ## DOING
 
-- ST0001 WP02 close (vc decision 11, job 1). AC-02.1 and AC-02.2 are test-backed (kind test), and 'intent ac satisfy' refuses them: 'test-backed, so its satisfaction is computed from covering green acceptance tests'. WP02 has no ATs. Proposed to vc, awaiting a ruling: AT-02.1 cites .github/workflows/tests.yml and covers AC-02.1, red at CI 41595332795 (acec3ca, ubuntu's cargo failed) and green at CI 41598011297 (6464721, both runners) with vc decision 6 for check all and test all. AT-02.2 cites tests/cli.rs (the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status, plus the bats suite on Rust) and covers AC-02.2, red by a measured mutant (drop one variable bin/pplr sets) in a cargo slot, green at 6464721. The alternative is vc reclassifying them as non-test. Then wp gate and wp done. ST0002 AC-02.1 beyond this run needs devbin release check and devbin doctor to pass (dc can run both) and a candidate/** push that fires tests.yml (hv's)
+- ST0001 WP02 close, ruled (vc decision 12, 37aaeff): two covering ATs, as I proposed. AT-02.1 cites .github/workflows/tests.yml and covers AC-02.1: red at CI 41595332795 (acec3ca, ubuntu's cargo failed), green at CI 41598011297 (6464721, both runners), with vc decision 6. AT-02.2 cites tests/cli.rs (the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status, plus the bats suite on Rust) and covers AC-02.2: red by a measured mutant that drops one variable bin/pplr sets, in a cargo slot, then green at 6464721. Then wp gate and wp done. WP13 later withdraws AC-02.2 when the fallback goes. ST0002 AC-02.1's candidate/** push is item 8 on hv's hold list (branch candidate/ci-probe, from main's tip, deleted after its run); dc runs devbin release check and devbin doctor (edited)
 
 ## TODO
 

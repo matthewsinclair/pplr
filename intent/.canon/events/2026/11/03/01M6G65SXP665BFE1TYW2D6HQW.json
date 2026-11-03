@@ -1,0 +1,16 @@
+{
+  "id": "01M6G65SXP665BFE1TYW2D6HQW",
+  "ts": "2026-11-03T07:49:58.838Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "doing",
+    "seq": 2,
+    "text": "ST0001 WP02 close, ruled (vc decision 12, 37aaeff): two covering ATs, as I proposed. AT-02.1 cites .github/workflows/tests.yml and covers AC-02.1: red at CI 41595332795 (acec3ca, ubuntu's cargo failed), green at CI 41598011297 (6464721, both runners), with vc decision 6. AT-02.2 cites tests/cli.rs (the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status, plus the bats suite on Rust) and covers AC-02.2: red by a measured mutant that drops one variable bin/pplr sets, in a cargo slot, then green at 6464721. Then wp gate and wp done. WP13 later withdraws AC-02.2 when the fallback goes. ST0002 AC-02.1's candidate/** push is item 8 on hv's hold list (branch candidate/ci-probe, from main's tip, deleted after its run); dc runs devbin release check and devbin doctor"
+  }
+}
