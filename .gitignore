@@ -4,16 +4,10 @@
 # The macOS signer's staging and release assets (bin/.devbin/cmd/macos)
 /dist/
 
-# The legacy Swift engine, built by pplr on first use (gone at ST0001 WP09)
-/.build/
-
-# The legacy Python helpers' caches (gone at ST0001 cutover)
-__pycache__/
-
 # macOS and editor droppings
 .DS_Store
 # Finder custom-icon files: "Icon" and a carriage return, written with two CRs because git strips one
-Icon
+Icon
 .obsidian
 
 # The Intent runtime store: per-machine, rebuilt from the committed extract.

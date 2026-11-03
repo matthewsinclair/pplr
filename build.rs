@@ -6,14 +6,12 @@
 
 use std::process::Command;
 
-/// The build inputs: the crate, what it embeds, and the sidecar's source. The
-/// legacy Python and Swift under src/pplr-* are not built into pplr.
+/// The build inputs: the crate, what it embeds, and the sidecar's source.
 const INPUTS: &[&str] = &[
   "Cargo.toml",
   "Cargo.lock",
   "build.rs",
   "src",
-  ":(exclude,glob)src/pplr-*/**",
   "templates",
   "swift",
   "README.md",
@@ -39,7 +37,7 @@ fn main() {
   println!("cargo:rustc-env=PPLR_SOURCE_DIRTY={dirty}");
 
   // Rerun when an input or the commit moves; a commit changes HEAD and the index
-  for input in INPUTS.iter().filter(|i| !i.starts_with(':')) {
+  for input in INPUTS {
     println!("cargo:rerun-if-changed={input}");
   }
   if let Some(git_dir) = git(&["rev-parse", "--git-dir"]) {

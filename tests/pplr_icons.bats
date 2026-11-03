@@ -21,7 +21,6 @@ load test_helper
 # ST0001 AC-00.7: elsewhere, a command that needs Finder exits 1 and says why
 @test "AC-00.7 on Linux, applyicons, setpicfordir and setpicsfordirs exit 1 naming macOS" {
     [ "$(uname)" != Darwin ] || skip "checks the Linux refusal; on macOS AT-12.2 checks the icons"
-    [ "$PPLR" != "$PPLR_ROOT/bin/pplr" ] || skip "the legacy pplr predates the Linux refusal (AC-00.7)"
     create_test_person "Lovelace" "Ada" >/dev/null
 
     run "$PPLR" applyicons "Ada" "Lovelace"

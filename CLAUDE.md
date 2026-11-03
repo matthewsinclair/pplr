@@ -30,7 +30,7 @@ The cross-language principles, Highlander, PFIC, Thin Coordinator and No Silent 
 <!-- Author: matts. Add project-specific Claude directives below this line. Preserved across regeneration. -->
 
 - **Code and data never mix** (ST0001 design D11). This repo holds code and synthetic fixtures only; the People tree (`~/Dropbox/Career/People`, or `PPLR_DATA`) holds the data. Nothing from it (names, markers, emails, notes, generated files or command output) is ever committed here. The commit guard `tools/people-leak` reads the tree at run time and refuses a staged file that matches it.
-- **Build and test through devbin**: `bin/devbin check all` (fmt, clippy, autotests, targetdir, critic) and `bin/devbin test all` (`cargo test`, then the bats suite against the Rust binary through `tools/bats-rust`). `PPLR_UNDER_TEST=<pplr>` points the bats suite at any implementation; it defaults to the legacy `bin/pplr`. cargo and bats run through `intent estate slots`.
+- **Build and test through devbin**: `bin/devbin check all` (fmt, clippy, autotests, targetdir, critic) and `bin/devbin test all` (`cargo test`, then the bats suite against the Rust binary through `tools/bats-rust`). `PPLR_UNDER_TEST=<pplr>` points the bats suite at any pplr; it defaults to the checkout's dev build, `target/debug/pplr`. cargo and bats run through `intent estate slots`.
 - **The Swift sidecar is one file**, compiled with `swiftc`; there is no `Package.swift`, so the `swift build` and `swift test` lines in `AGENTS.md` (generated from the declared languages) do not apply.
 
 <!-- user:end -->

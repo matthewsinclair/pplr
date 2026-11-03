@@ -43,7 +43,6 @@ load test_helper
 exit 1
 EOF
     chmod +x "$PPLR_TEST_BIN/claude"
-    needs_uv_for_legacy reindex
     "$PPLR" reindex >/dev/null
 
     run "$PPLR" search "test"

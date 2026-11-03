@@ -25,7 +25,6 @@ YAML
 }
 
 @test "pplr tags apply writes tags.yaml, and keeps hand tags on a re-run" {
-    needs_uv_for_legacy tags
     setup_vocab
     echo '[{"person": "K/Kemp, Jon", "auto": ["cto", "fintech"], "inferred": [{"tag": "bcg", "evidence": "BCG DV 2018"}], "hand": ["london"]}]' > "$PPLR_TEST_DATA/r.json"
     run "$PPLR" tags apply "$PPLR_TEST_DATA/r.json"
@@ -43,7 +42,6 @@ YAML
 }
 
 @test "pplr tags check names tags outside the vocabulary and says where they fold" {
-    needs_uv_for_legacy tags
     setup_vocab
     printf '%s\n' 'tags:' '  - payments' '  - Fin-Tech' '  - {tag: london, source: inferred}' > "$PPLR_TEST_DATA/K/Kemp, Jon/About/tags.yaml"
     run "$PPLR" tags check
@@ -54,7 +52,6 @@ YAML
 }
 
 @test "pplr tags render writes one Tags line into the header, and replaces it on a re-run" {
-    needs_uv_for_legacy tags
     setup_vocab
     printf '%s\n' 'tags:' '  - london' '  - {tag: cto, source: auto}' > "$PPLR_TEST_DATA/K/Kemp, Jon/About/tags.yaml"
     run "$PPLR" tags render
@@ -68,7 +65,6 @@ YAML
 }
 
 @test "pplr tags render writes a page per tag, and an index, linking to each About" {
-    needs_uv_for_legacy tags
     setup_vocab
     printf '%s\n' 'tags:' '  - london' '  - {tag: cto, source: auto}' > "$PPLR_TEST_DATA/K/Kemp, Jon/About/tags.yaml"
     mkdir -p "$PPLR_TEST_DATA/S/Tolley, Jon/About"

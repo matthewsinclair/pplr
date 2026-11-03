@@ -2,17 +2,6 @@
 
 load test_helper
 
-# The legacy sync builds its Swift engine on first use and says so on stderr,
-# which a test's run would mix into the output jq reads; against the legacy
-# pplr, build it once up front (until WP13 retires it). The Rust pplr needs none.
-setup_file() {
-    [ "$(uname)" = Darwin ] || return 0
-    [ -z "${PPLR_UNDER_TEST:-}" ] || [ "$PPLR_UNDER_TEST" -ef "$PPLR_ROOT/bin/pplr" ] || return 0
-    # shellcheck source=../lib/engine.sh
-    source "$PPLR_ROOT/lib/engine.sh"
-    build_engine
-}
-
 # A person with the real About header format
 make_about() {
     local surname="$1" firstname="$2" body="$3"
@@ -221,7 +210,6 @@ setup_plan() {
 }
 
 @test "pplr sync --plan writes a workbook with the four sheets" {
-    needs_uv_for_legacy sync
     setup_plan
     out="$PPLR_TEST_DATA/plan.xlsx"
     run "$PPLR" sync --plan --out "$out"
@@ -380,7 +368,6 @@ setup_plan() {
 }
 
 @test "pplr sync --apply-plan is a dry run by default, and changes nothing" {
-    needs_uv_for_legacy sync
     setup_contacts
     "$PPLR" sync --plan --out "$PPLR_TEST_DATA/plan.xlsx" >/dev/null
     before=$(cat "$PPLR_CONTACTS_JSON")
@@ -393,7 +380,6 @@ setup_plan() {
 }
 
 @test "pplr sync --apply-plan --apply adds new cards and updates matched ones, removing nothing" {
-    needs_uv_for_legacy sync
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     "$PPLR" sync --plan --out "$PPLR_TEST_DATA/plan.xlsx" >/dev/null
@@ -414,7 +400,6 @@ setup_plan() {
 }
 
 @test "pplr sync --apply-plan --name writes only the named people" {
-    needs_uv_for_legacy sync
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     "$PPLR" sync --plan --out "$PPLR_TEST_DATA/plan.xlsx" >/dev/null

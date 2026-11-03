@@ -5,7 +5,7 @@
 #
 # Each test makes and removes its own sandbox (see test_helper.bash), so this
 # runner sets no data paths and deletes nothing. PPLR_UNDER_TEST names the pplr
-# executable to test; it defaults to the checkout's bin/pplr.
+# executable to test; it defaults to the checkout's dev build, target/debug/pplr.
 
 TEST_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$TEST_DIR" || exit 1
@@ -17,9 +17,9 @@ if ! command -v bats >/dev/null 2>&1; then
 fi
 
 if [ $# -eq 0 ]; then
-  echo "Running all tests against ${PPLR_UNDER_TEST:-bin/pplr}..."
+  echo "Running all tests against ${PPLR_UNDER_TEST:-target/debug/pplr}..."
   exec bats ./*.bats
 fi
 
-echo "Running $* against ${PPLR_UNDER_TEST:-bin/pplr}..."
+echo "Running $* against ${PPLR_UNDER_TEST:-target/debug/pplr}..."
 exec bats "$@"

@@ -1,11 +1,11 @@
-//! The command table, and dispatch: a ported command runs natively, and every
-//! other command goes through the legacy fallback until its own WP.
+//! The command table, and dispatch: every command runs here, and a name the
+//! table does not hold is refused as the legacy `bin/pplr` refused it.
 
 use crate::Result;
 use crate::config::Config;
 use crate::{
-  contact, doctor, email, fallback, grep, handler, icons, index, install, links, marker, meetings,
-  new, open, pictures, refresh, rename, search, sync, tags,
+  contact, doctor, email, grep, handler, icons, index, install, links, marker, meetings, new, open,
+  pictures, refresh, rename, search, sync, tags,
 };
 use std::io::{IsTerminal, Write};
 use std::process::{Command as Process, ExitCode, Stdio};
@@ -18,8 +18,7 @@ pub struct Command {
   pub run: fn(&[String], &Config) -> Result<ExitCode>,
 }
 
-/// The commands ported to Rust, by name. Each porting WP adds its rows here,
-/// and the golden replay skips every command not in this table.
+/// Every command, by name: what dispatch runs and what `help` lists.
 pub const COMMANDS: &[Command] = &[
   Command {
     name: "about",
@@ -186,10 +185,13 @@ pub const COMMANDS: &[Command] = &[
 /// The README, the one source of `help --details` (design D6).
 const README: &str = include_str!("../README.md");
 
-/// The native command called `name`, if it has been ported.
+/// The command called `name`, if there is one.
 pub fn native(name: &str) -> Option<&'static Command> {
   COMMANDS.iter().find(|command| command.name == name)
 }
+
+/// What a missing or unknown command prints after its error, as `bin/pplr` did.
+const USAGE: &str = "Usage: pplr <cmd>";
 
 /// The commands that run where there is no People tree: those about pplr
 /// itself (ST0002 WP03), and doctor, which reports a missing tree as a row.
@@ -200,8 +202,13 @@ pub fn run(args: Vec<String>) -> Result<ExitCode> {
   if matches!(args.first().map(String::as_str), Some("-v" | "--version")) {
     return run_version(&[], &config);
   }
-  let Some(command) = args.first().and_then(|name| native(name)) else {
-    return fallback::run(&args, &config);
+  let Some(name) = args.first() else {
+    println!("{USAGE}");
+    return Ok(ExitCode::FAILURE);
+  };
+  let Some(command) = native(name) else {
+    println!("Error: Command '{name}' not found.\n{USAGE}");
+    return Ok(ExitCode::FAILURE);
   };
   if !WITHOUT_DATA.contains(&command.name)
     && let Some(code) = data_missing(&config)
@@ -213,7 +220,7 @@ pub fn run(args: Vec<String>) -> Result<ExitCode> {
 }
 
 /// Every command runs from the data root, so a missing one stops it, as `bin/pplr` stopped.
-pub fn data_missing(config: &Config) -> Option<ExitCode> {
+fn data_missing(config: &Config) -> Option<ExitCode> {
   (!config.data.is_dir()).then(|| {
     println!(
       "Error: Could not change to directory {}.",
@@ -273,9 +280,9 @@ fn run_help(args: &[String], _config: &Config) -> Result<ExitCode> {
   Ok(ExitCode::SUCCESS)
 }
 
-/// Every command, native and still on the fallback, by name, with its usage lines.
+/// Every command, by name (the table's own order), with its usage lines.
 fn commands() -> Vec<(String, Vec<String>)> {
-  let mut all: Vec<(String, Vec<String>)> = COMMANDS
+  COMMANDS
     .iter()
     .map(|c| {
       (
@@ -283,14 +290,7 @@ fn commands() -> Vec<(String, Vec<String>)> {
         c.usage.lines().map(str::to_owned).collect(),
       )
     })
-    .collect();
-  for (name, lines) in fallback::usages() {
-    if native(&name).is_none() {
-      all.push((name, lines));
-    }
-  }
-  all.sort();
-  all
+    .collect()
 }
 
 /// Text through `less` at a terminal, else straight to stdout.

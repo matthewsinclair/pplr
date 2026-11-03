@@ -54,14 +54,9 @@ load test_helper
     assert_contains "$output" "2"
 }
 
-# The legacy pplr prints VERSION.md; the Rust pplr prints the version line,
-# `pplr <Cargo.toml's version> (<tree>, <sha12>[+dirty])` (devbin T4, ST0002
-# WP03). The legacy branch goes with bin/ in ST0001 WP13.
+# The version line, `pplr <Cargo.toml's version> (<tree>, <sha12>[+dirty])`
+# (devbin T4, ST0002 WP03).
 assert_version_output() {
-    if [ "$PPLR" = "$PPLR_ROOT/bin/pplr" ]; then
-        [ "$output" = "$(cat "$PPLR_ROOT/VERSION.md")" ]
-        return
-    fi
     local version
     version=$(sed -n 's/^version = "\(.*\)"$/\1/p' "$PPLR_ROOT/Cargo.toml" | head -1)
     [[ "$output" =~ ^pplr\ ${version//./\\.}\ \((dev|opt|brew),\ ([0-9a-f]{12}(\+dirty)?|unknown)\)$ ]] || {

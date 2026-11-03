@@ -53,7 +53,7 @@ nested_suite() {
   [ "$(cat "$decoy/A/sentinel")" = keep ]
 }
 
-@test "AT-01.3 PPLR_UNDER_TEST picks the implementation, and the default is the legacy bin/pplr" {
+@test "AT-01.3 PPLR_UNDER_TEST picks the implementation, and the default is the dev build" {
   local stub="$BATS_TEST_TMPDIR/stub/pplr" suite
   mkdir -p "$(dirname "$stub")"
   printf '#!/bin/bash\necho "stub pplr $*"\n' > "$stub"
@@ -61,7 +61,7 @@ nested_suite() {
   suite=$(nested_suite seam \
     '@test "seam" {' \
     '  if [ -n "${EXPECT:-}" ]; then [ "$PPLR" = "$EXPECT" ]; run "$PPLR" ping; [ "$output" = "stub pplr ping" ];' \
-    '  else [ "$PPLR" = "$PPLR_ROOT/bin/pplr" ]; fi' \
+    '  else [ "$PPLR" = "$PPLR_ROOT/target/debug/pplr" ]; fi' \
     '}')
 
   EXPECT="$stub" PPLR_UNDER_TEST="$stub" run "$PPLR_ROOT/tests/run_tests.sh" "$suite"
@@ -73,4 +73,13 @@ nested_suite() {
   PPLR_UNDER_TEST="$BATS_TEST_TMPDIR/missing" run "$PPLR_ROOT/tests/run_tests.sh" "$suite"
   [ "$status" -ne 0 ]
   assert_contains "$output" "PPLR_UNDER_TEST is not an executable file"
+
+  # A checkout with no dev build fails the suite, naming cargo build; it never skips
+  local bare="$BATS_TEST_TMPDIR/bare"
+  mkdir -p "$bare/tests"
+  cp "$PPLR_ROOT/tests/test_helper.bash" "$bare/tests/"
+  printf '%s\n' "load '$bare/tests/test_helper'" '@test "needs a pplr" { true; }' > "$bare/tests/needs.bats"
+  run env -u PPLR_UNDER_TEST "$PPLR_ROOT/tests/run_tests.sh" "$bare/tests/needs.bats"
+  [ "$status" -ne 0 ]
+  assert_contains "$output" "cargo build makes it"
 }

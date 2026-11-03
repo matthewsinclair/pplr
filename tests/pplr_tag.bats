@@ -10,7 +10,6 @@ setup_person() {
 }
 
 @test "pplr tag shows a person's tags by facet" {
-    needs_uv_for_legacy tags
     setup_person
     run "$PPLR" tag "Kemp, Jon"
     [ "$status" -eq 0 ]
@@ -18,7 +17,6 @@ setup_person() {
 }
 
 @test "pplr tag adds a hand tag and removes another" {
-    needs_uv_for_legacy tags
     setup_person
     run "$PPLR" tag "Kemp, Jon" +london -cto
     [ "$status" -eq 0 ]
@@ -28,7 +26,6 @@ setup_person() {
 }
 
 @test "pplr tag refuses a tag outside the vocabulary, and names the one it folds into" {
-    needs_uv_for_legacy tags
     setup_person
     run "$PPLR" tag "Kemp, Jon" +payments
     [ "$status" -ne 0 ]
@@ -42,7 +39,6 @@ setup_person() {
 }
 
 @test "pplr tag re-renders (Contact).md, so a new cadence tag shows at once" {
-    needs_uv_for_legacy tags
     setup_person
     printf '%s\n' 'relationship:' '  contact: {}' 'cadence:' '  3month: {}' >> "$PPLR_TEST_DATA/_pplr/vocabulary.yaml"
     printf '%s\n' 'roster: {contact: 182}' 'every: {3month: 91}' > "$PPLR_TEST_DATA/_pplr/cadence.yaml"

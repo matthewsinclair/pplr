@@ -63,16 +63,6 @@ impl Sandbox {
       .current_dir(&self.root);
     command
   }
-
-  /// A stand-in for a legacy `bin/pplr_<name>` script, in the sandbox's own bin.
-  fn legacy_script(&self, name: &str, body: &str) -> Result<PathBuf> {
-    let bin = self.path("legacy-bin");
-    fs::create_dir_all(&bin)?;
-    let script = bin.join(format!("pplr_{name}"));
-    fs::write(&script, format!("#!/bin/sh\n{body}\n"))?;
-    fs::set_permissions(&script, fs::Permissions::from_mode(0o755))?;
-    Ok(bin)
-  }
 }
 
 impl Drop for Sandbox {
@@ -130,65 +120,36 @@ fn a_missing_data_directory_is_named_and_fails() -> Result<()> {
 /// from the data root, with the variables bin/pplr sets, its arguments and its
 /// exit status. The bats suite against the Rust pplr is the AC's other half.
 #[test]
-fn the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status() -> Result<()> {
-  let sandbox = Sandbox::new()?;
-  let bin = sandbox.legacy_script(
-    "probe",
-    r#"echo "pwd=$(pwd -P)"; echo "data=$PPLR_DATA"; echo "dir=$PPLR_DIR"; echo "caller=$PPLR_CALLER_DIR"; echo "bin=$PPLR_BIN_DIR"; for a in "$@"; do echo "arg=$a"; done; exit 7"#,
-  )?;
-  let caller = sandbox.path("home");
-  let out = run(
-    sandbox
-      .pplr()
-      .env("PPLR_BIN_DIR", &bin)
-      .current_dir(&caller)
-      .args(["probe", "a b", "c"]),
-  )?;
-  assert_eq!(out.status.code(), Some(7));
-  let data = sandbox.data();
-  let expected = [
-    format!("pwd={}", data.display()),
-    format!("data={}", data.display()),
-    format!("dir={}", data.display()),
-    format!("caller={}", caller.display()),
-    format!("bin={}", bin.display()),
-    "arg=a b".to_owned(),
-    "arg=c".to_owned(),
-  ];
-  assert_eq!(text(&out.stdout).lines().collect::<Vec<_>>(), expected);
-  Ok(())
-}
-
-#[test]
-fn a_person_marker_becomes_their_folder_for_a_fallback_command() -> Result<()> {
-  // Every legacy command is native now, so a stand-in script plays one; the
-  // URL-taking commands' exemption is marker::rewrite_args' own tests'
+fn a_person_marker_stands_for_their_folder_name() -> Result<()> {
+  // contact show takes "Surname, First": given the person's marker it shows
+  // the same person. Which arguments are rewritten, and the URL-taking
+  // commands' exemption, are marker::rewrite_args' own tests'
   let sandbox = Sandbox::new()?;
   let about = sandbox.data().join("K/Kemp, Jon/About");
   fs::create_dir_all(&about)?;
   fs::write(about.join("Jon Kemp (About).md"), "# Jon Kemp (About)\n")?;
-  let bin = sandbox.legacy_script("unported", r#"for a in "$@"; do echo "$a"; done"#)?;
-  assert!(pplr::cli::native("unported").is_none());
 
-  let out = run(sandbox.pplr().env("PPLR_BIN_DIR", &bin).args([
-    "unported",
-    "pplr://k/kemp-jon",
-    "pplr://k/kemp-jon/About",
-  ]))?;
-  assert_eq!(text(&out.stdout), "Kemp, Jon\npplr://k/kemp-jon/About\n");
+  let by_marker = run(
+    sandbox
+      .pplr()
+      .args(["contact", "show", "pplr://k/kemp-jon"]),
+  )?;
+  let by_name = run(sandbox.pplr().args(["contact", "show", "Kemp, Jon"]))?;
+  assert_eq!(
+    by_marker.status.code(),
+    Some(0),
+    "{}",
+    text(&by_marker.stderr)
+  );
+  assert!(text(&by_name.stdout).starts_with("Jon Kemp\n"));
+  assert_eq!(text(&by_marker.stdout), text(&by_name.stdout));
   Ok(())
 }
 
 #[test]
 fn a_marker_that_does_not_resolve_stops_the_command() -> Result<()> {
   let sandbox = Sandbox::new()?;
-  let bin = sandbox.legacy_script("rename", "echo ran")?;
-  let out = run(
-    sandbox
-      .pplr()
-      .env("PPLR_BIN_DIR", &bin)
-      .args(["rename", "pplr://x/nobody"]),
-  )?;
+  let out = run(sandbox.pplr().args(["rename", "pplr://x/nobody"]))?;
   assert_eq!(out.status.code(), Some(1));
   assert_eq!(text(&out.stdout), "");
   assert_eq!(
@@ -220,17 +181,21 @@ fn version_and_its_flags_print_the_version_line() -> Result<()> {
 }
 
 #[test]
-fn help_lists_native_and_fallback_commands_and_details_is_the_readme() -> Result<()> {
+fn help_lists_every_command_and_details_is_the_readme() -> Result<()> {
   let sandbox = Sandbox::new()?;
   let out = run(sandbox.pplr().arg("help"))?;
   assert!(out.status.success());
   let listing = text(&out.stdout);
-  for command in ["count", "meetings", "sync", "tags"] {
+  // A command's first line is its name, padded to the longest, then ": "
+  let listed: Vec<&str> = listing
+    .lines()
+    .filter_map(|l| l.split_once(": ").map(|(name, _)| name.trim_end()))
+    .collect();
+  for command in pplr::cli::COMMANDS {
     assert!(
-      listing
-        .lines()
-        .any(|l| l.starts_with(&format!("{command} "))),
-      "{command} is not listed"
+      listed.contains(&command.name),
+      "{} is not listed",
+      command.name
     );
   }
   let details = run(sandbox.pplr().args(["help", "--details"]))?;
@@ -242,11 +207,9 @@ fn help_lists_native_and_fallback_commands_and_details_is_the_readme() -> Result
 }
 
 // The golden replay (ST0001 WP03, AC-03.1). Every case in tests/golden/cases
-// was captured from the legacy code; each one whose steps all name a native
-// command runs again here against this binary, in a sandbox seeded the same
-// way, and must match: stdout, stderr, exit code and the resulting tree, after
-// the rewrites tests/golden/README.md lists. A case with a step on the
-// fallback is skipped, so each porting WP turns its own goldens on.
+// was captured from the legacy code, and runs again here against this binary,
+// in a sandbox seeded the same way, and must match: stdout, stderr, exit code
+// and the resulting tree, after the rewrites tests/golden/README.md lists.
 
 /// The capture's sandbox root, whose length the replay must keep: rename cuts
 /// its running-text lines at 200 columns, absolute path included.
@@ -379,19 +342,12 @@ fn mask_value(text: &str, key: &str, token: &str) -> String {
   out
 }
 
-// Test-only switches, for proving the replay itself (never read by pplr):
-//   PPLR_GOLDEN_ALL=1           replay every case, fallback commands included
-//   PPLR_GOLDEN_REAL_DAY=<day>  the real date the legacy tags.py reads, rewritten
-//                               to the pinned day as the capture does
+// A test-only switch, for proving the replay itself (never read by pplr):
 //   PPLR_GOLDEN_CASES=<dir>     replay the cases in <dir> (eg a mutated copy)
 
-/// The README's rewrites. Today's date only under PPLR_GOLDEN_REAL_DAY: the
-/// port reads PPLR_TODAY.
+/// The README's rewrites, less today's date: the port reads PPLR_TODAY.
 fn golden_normalise(text: &str, sandbox: &str) -> String {
   let mut text = text.to_owned();
-  if let Ok(day) = std::env::var("PPLR_GOLDEN_REAL_DAY") {
-    text = text.replace(&day, GOLDEN_DAY);
-  }
   let bare = sandbox.strip_prefix("/private").unwrap_or(sandbox);
   for form in [
     sandbox.to_owned(),
@@ -468,8 +424,8 @@ fn one_named(part: &str, listed: Vec<PathBuf>) -> Result<Option<PathBuf>> {
   Ok(matches.pop())
 }
 
-/// Replays one case; `Ok(false)` when a step is still on the fallback.
-fn replay(case: &std::path::Path) -> Result<bool> {
+/// Replays one case: Ok when every step and the resulting tree match.
+fn replay(case: &std::path::Path) -> Result<()> {
   let steps_dir = case.join("steps");
   let mut steps: Vec<PathBuf> = fs::read_dir(&steps_dir)
     .named(&steps_dir)?
@@ -478,18 +434,9 @@ fn replay(case: &std::path::Path) -> Result<bool> {
     .named(&steps_dir)?;
   steps.retain(|p| p.extension().is_some_and(|x| x == "args"));
   steps.sort();
-  let all = std::env::var_os("PPLR_GOLDEN_ALL").is_some();
   let mut argv = Vec::new();
   for step in &steps {
-    let args = lines_of(step)?;
-    if !all
-      && args
-        .first()
-        .is_none_or(|name| pplr::cli::native(name).is_none())
-    {
-      return Ok(false);
-    }
-    argv.push((step.with_extension(""), args));
+    argv.push((step.with_extension(""), lines_of(step)?));
   }
 
   let golden = golden_dir();
@@ -558,20 +505,9 @@ fn replay(case: &std::path::Path) -> Result<bool> {
       .env("PPLR_BACKUP_DIR", sb.join("backups"))
       .env("PPLR_CACHE_DIR", sb.join("cache"))
       .env("PPLR_REFS_DIR", &sb)
-      .env("PPLR_MAIL_RECENT", fakes.join("mail-recent"))
-      .env(
-        "PPLR_HANDLER_APP",
-        sb.join("home/Applications/Pplr Links.app"),
-      )
       .env("PPLR_GOLDEN_NOW", GOLDEN_NOW)
       .env("PPLR_GOLDEN_SANDBOX", &sb)
       .env("PPLR_GOLDEN_TRIPWIRE", root.join("tripwire.log"))
-      .envs(
-        // The legacy code's uv, when the fallback runs it under PPLR_GOLDEN_ALL
-        ["UV_CACHE_DIR", "UV_PYTHON_INSTALL_DIR", "UV_OFFLINE"]
-          .iter()
-          .filter_map(|key| std::env::var_os(key).map(|value| (*key, value))),
-      )
       .current_dir(&sb)
       .stdin(std::process::Stdio::null());
     for line in &case_env {
@@ -707,7 +643,7 @@ fn replay(case: &std::path::Path) -> Result<bool> {
     (Vec::new(), Vec::new()),
     "the tree's paths (extra, missing)",
   )?;
-  Ok(true)
+  Ok(())
 }
 
 /// Where the CMS-up scenarios put the CMS (tests/golden/scenarios.zsh).
@@ -805,8 +741,7 @@ fn same<T: PartialEq + std::fmt::Debug>(got: T, want: T, what: &str) -> Result<(
   }
 }
 
-/// AT-03.1 (ST0001 AC-03.1): every golden replays against the binary,
-/// skipping only the commands still on the fallback.
+/// AT-03.1 (ST0001 AC-03.1): every golden replays against the binary.
 /// AT-08.1 (ST0001 AC-08.1): rename, links and handler are native, so their
 /// goldens replay here too; the bats rename tests run them against the binary,
 /// and handler's stable opt path is src/handler.rs's own test.
@@ -827,8 +762,7 @@ fn every_golden_of_a_ported_command_replays() -> Result<()> {
       .map(|n| n.to_string_lossy().into_owned())
       .unwrap_or_default();
     match replay(case) {
-      Ok(true) => ran.push(name),
-      Ok(false) => {}
+      Ok(()) => ran.push(name),
       Err(error) => failed.push(format!("{name}: {error}")),
     }
   }
@@ -1081,7 +1015,7 @@ fn email_and_contact_log_email_are_native_and_their_goldens_replay() -> Result<(
       .iter()
       .any(|s| s.first().is_some_and(|c| c == "contact") && s.iter().any(|a| a == "--email"));
     if lists || logs {
-      same(replay(&case)?, true, &format!("{} replays", case.display()))?;
+      replay(&case)?;
       listed |= lists;
       logged |= logs;
     }
@@ -1319,7 +1253,7 @@ fn the_read_commands_are_native_and_their_goldens_replay() -> Result<()> {
       }
     }
     if commands.iter().all(|c| WP04.contains(&c.as_str())) {
-      same(replay(&case)?, true, &format!("{} replays", case.display()))?;
+      replay(&case)?;
       replayed.push(case);
     }
   }
@@ -1327,20 +1261,13 @@ fn the_read_commands_are_native_and_their_goldens_replay() -> Result<()> {
   Ok(())
 }
 
-/// reindex's own files against its golden, while its tags step is still the
-/// legacy script (stubbed here): index.json as `jq .` prints it, and index.md.
+/// reindex's own files against its golden: index.json as `jq .` prints it,
+/// and index.md.
 #[test]
 fn reindex_writes_index_json_as_jq_prints_it_and_index_md() -> Result<()> {
   let sandbox = Sandbox::new()?;
   copy_tree(&golden_dir().join("fixture/Career/People"), &sandbox.data())?;
-  let bin = sandbox.legacy_script("tags", "exit 0")?;
-  let out = run(
-    sandbox
-      .pplr()
-      .env("PPLR_BIN_DIR", &bin)
-      .env("PPLR_TODAY", GOLDEN_DAY)
-      .arg("reindex"),
-  )?;
+  let out = run(sandbox.pplr().env("PPLR_TODAY", GOLDEN_DAY).arg("reindex"))?;
   assert!(out.status.success(), "{}", text(&out.stderr));
   let golden = golden_dir().join("cases/reindex/files/Career/People/.index");
   for file in ["index.json", "index.md"] {
@@ -1602,7 +1529,7 @@ fn the_index_new_pictures_and_search_commands_are_native_and_their_goldens_repla
     if commands.iter().any(|c| WP05.contains(&c.as_str()))
       && commands.iter().all(|c| pplr::cli::native(c).is_some())
     {
-      same(replay(&case)?, true, &format!("{} replays", case.display()))?;
+      replay(&case)?;
       replayed += 1;
     }
   }
@@ -1636,7 +1563,7 @@ fn tag_and_tags_are_native_and_their_goldens_replay() -> Result<()> {
     if commands.iter().any(|c| c == "tags" || c == "reindex")
       && commands.iter().all(|c| pplr::cli::native(c).is_some())
     {
-      same(replay(&case)?, true, &format!("{} replays", case.display()))?;
+      replay(&case)?;
       replayed.push(case);
     }
   }
@@ -1708,7 +1635,7 @@ fn contact_is_native_and_its_goldens_replay() -> Result<()> {
     if commands.iter().any(|c| c == "contact" || c == "tag")
       && commands.iter().all(|c| pplr::cli::native(c).is_some())
     {
-      same(replay(&case)?, true, &format!("{} replays", case.display()))?;
+      replay(&case)?;
       replayed.push(case);
     }
   }
@@ -1740,7 +1667,7 @@ fn sync_is_native_and_its_goldens_replay() -> Result<()> {
       }
     }
     if !syncs.is_empty() {
-      same(replay(&case)?, true, &format!("{} replays", case.display()))?;
+      replay(&case)?;
       modes.extend(syncs);
     }
   }
@@ -1753,22 +1680,20 @@ fn sync_is_native_and_its_goldens_replay() -> Result<()> {
   Ok(())
 }
 
-/// AT-11.1 (ST0001 AC-11.1): sync --plan and --apply-plan run in Rust (a
-/// legacy sync that would fail is never reached), and their goldens replay:
-/// the plan's JSON, its summary, the workbook's four sheets cell for cell, and
-/// a reviewed workbook carried out against the JSON store.
+/// AT-11.1 (ST0001 AC-11.1): sync --plan and --apply-plan run in Rust, and
+/// their goldens replay: the plan's JSON, its summary, the workbook's four
+/// sheets cell for cell, and a reviewed workbook carried out against the JSON
+/// store.
 #[test]
 fn sync_plan_and_apply_plan_are_native_and_their_goldens_replay() -> Result<()> {
   let sandbox = Sandbox::new()?;
   fs::create_dir_all(sandbox.data())?;
   let contacts = sandbox.path("contacts.json");
   fs::write(&contacts, "[]")?;
-  let bin = sandbox.legacy_script("sync", "echo legacy; exit 99")?;
   let plan = |args: &[&str]| {
     run(
       sandbox
         .pplr()
-        .env("PPLR_BIN_DIR", &bin)
         .env("PPLR_CONTACTS_JSON", &contacts)
         .env("PPLR_BACKUP_DIR", sandbox.path("backups"))
         .args(args),
@@ -1808,7 +1733,7 @@ fn sync_plan_and_apply_plan_are_native_and_their_goldens_replay() -> Result<()> 
       }
     }
     if !ours.is_empty() {
-      same(replay(&case)?, true, &format!("{} replays", case.display()))?;
+      replay(&case)?;
       modes.extend(ours);
     }
   }

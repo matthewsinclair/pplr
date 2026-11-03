@@ -6,7 +6,6 @@ pub mod contact;
 pub mod contacts;
 pub mod doctor;
 pub mod email;
-pub mod fallback;
 pub mod fs;
 pub mod grep;
 pub mod handler;

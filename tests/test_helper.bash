@@ -7,8 +7,9 @@
 # sandbox, and no path taken from the environment is ever a deletion target.
 #
 # PPLR_UNDER_TEST names the pplr executable the suite tests, and defaults to
-# the checkout's legacy bin/pplr. Point it at another build to test that:
-#   PPLR_UNDER_TEST=target/debug/pplr bats -r tests/
+# the checkout's dev build, target/debug/pplr, which tools/bats-rust builds
+# first. Point it at another build to test that, eg an opt tree's:
+#   PPLR_UNDER_TEST="$PPLR_OPT_PREFIX/bin/pplr" bats -r tests/
 
 # The checkout these tests belong to
 PPLR_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -20,27 +21,22 @@ setup() {
   }
 
   # The implementation under test, as an absolute path
-  local under_test="${PPLR_UNDER_TEST:-$PPLR_ROOT/bin/pplr}"
+  local under_test="${PPLR_UNDER_TEST:-$PPLR_ROOT/target/debug/pplr}"
   [ -x "$under_test" ] && [ -f "$under_test" ] || {
     echo "test_helper: PPLR_UNDER_TEST is not an executable file: $under_test" >&2
+    [ -n "${PPLR_UNDER_TEST:-}" ] ||
+      echo "test_helper: that is the default, the dev build: cargo build makes it" >&2
     return 1
   }
   PPLR="$(cd "$(dirname "$under_test")" && pwd)/$(basename "$under_test")"
 
   # Nothing pplr reads from the caller's shell leaks into a test: a stray
-  # PPLR_BIN_DIR would run another checkout, a stray PPLR_DATA the real tree
+  # PPLR_DATA would reach the real tree
   local var
   for var in $(compgen -v PPLR_); do
     [ "$var" = PPLR_UNDER_TEST ] || [ "$var" = PPLR_ROOT ] || unset "$var"
   done
   export -n PPLR_ROOT
-
-  # uv keeps its cache and Pythons under HOME, which the sandbox replaces.
-  # Legacy-only: this goes with the Python at cutover (ST0001 WP13)
-  if command -v uv >/dev/null 2>&1; then
-    export UV_CACHE_DIR="${UV_CACHE_DIR:-$(uv cache dir 2>/dev/null)}"
-    export UV_PYTHON_INSTALL_DIR="${UV_PYTHON_INSTALL_DIR:-$(uv python dir 2>/dev/null)}"
-  fi
 
   local sandbox="$BATS_TEST_TMPDIR"
   export HOME="$sandbox/home"
@@ -303,19 +299,4 @@ assert_contains() {
     echo "In: $haystack" >&2
     return 1
   fi
-}
-
-# Skip a test that runs the legacy Swift engine (it needs the Contacts
-# framework) when not on macOS, naming the work package that ports what the
-# test runs. A porting WP is not done while a skip naming it remains.
-needs_legacy_engine() {
-  [ "$(uname)" = Darwin ] || skip "needs the legacy Swift engine, macOS only, until ST0001 $1 ports it"
-}
-
-# Skip when the legacy pplr would run a command through its Python helpers and
-# uv is missing. The Rust pplr needs no uv, so against it this never skips: a
-# missing uv must not leave a native command untested (ST0001 rule 8).
-needs_uv_for_legacy() {
-  [ "$PPLR" = "$PPLR_ROOT/bin/pplr" ] || return 0
-  command -v uv >/dev/null 2>&1 || skip "legacy $1 is Python until WP13 removes it"
 }
