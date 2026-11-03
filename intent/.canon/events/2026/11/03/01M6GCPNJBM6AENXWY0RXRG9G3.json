@@ -1,0 +1,15 @@
+{
+  "id": "01M6GCPNJBM6AENXWY0RXRG9G3",
+  "ts": "2026-11-03T09:44:02.891Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "ST0002/08's mapping (dc's, for decision 17) ruled as proposed. Each tools/ script moves by git mv to bin/.devbin/cmd/<name>: build, bats-rust, nopython, people-leak, lock-sync, skeleton and t10-probe. fold-table.swift's source moves to swift/fold-table/main.swift, with a zsh cmd/fold-table that compiles it and writes src/fold_table.rs; it refuses off macOS, since the table is Foundation's answers; and the regenerated file lands only if its diff is the header line. check nopython and test shell stay sealed config options naming the moved files. The pre-commit guards call bin/devbin nopython and bin/devbin people-leak. install.rs's use dev refusal names bin/devbin build --release. Done records keep their paths: ST0002 AC-02.2, WP02's and WP13's bodies, and design.md E3's prose. vc fixes intent/wip.md once C1 lands. WP08's AC: 'Every script that was in tools/ is a devbin project command in bin/.devbin/cmd/, reached through bin/devbin, and tools/ is gone', covered by dc's bats AT, red at main. Behaviour unchanged is shown by the measured check all and test all, and 'no live file names a tools/ path' is vc's review check. Series: C1 the move, C2 ST0002's docs, then dc's four WP13 docs, all measured in one clone through the hook; t10-probe runs only as far as its refusal."
+  }
+}
