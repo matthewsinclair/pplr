@@ -1,0 +1,15 @@
+{
+  "id": "01M6GB8XXRPQTKGJNSG8ZZP0K2",
+  "ts": "2026-11-03T09:19:04.120Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "hold",
+    "text": "ST0002 WP04. AC-04.1's local half is measured and accepted by vc. bin/devbin formula render exits 0 with nothing typed (a local tag in the scratch clone, stand-in sums). brew style and brew audit --strict each fail on one line only, devbin's generated manifest header (lib/cmd/formula:424, 131 of 118 columns), and both pass with that header one element per line. Released in parts. The style and audit halves are released when devbin ships that fix: the issue text for hv is on the local branch dc/devbin-issue (84972b4), vc hold 2 item 7. The signature half is released when Developer ID signing exists, vc hold 2 item 3. Then the AT, citing each half's evidence. AC-04.2 (the tap's description and CI) needs hv's gh repo edit and a tap push"
+  }
+}

@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 08:48Z
+heartbeat_at: 2026-11-03 09:19Z
 status: active
-focus: "WP13's docs: usage-rules.md landed (f57b6f2, 4f5eb8a); the CHANGELOG, README and ARCHITECTURE.md approved and banked on dc/wp13-docs, landing after cc's C5 (hold 4); CLAUDE.md's pointers with vc for review. Then WP09's AC-09.1 once C2 lands"
+focus: "Holding for hv's cutover. WP13's four remaining docs land after cc's C5 (hold 4, dc/wp13-docs 4c547e0); WP09 after C2 and hv's live Contacts run (hold 5); ST0002 WP04 on devbin's manifest-header fix and Developer ID (hold 6). Nothing ruled to start until then"
 claims: [ST0001/09, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
 ---
 
@@ -21,8 +21,9 @@ _(none)_
 
 ## Holds
 
-- WP13's docs, all approved by vc: CHANGELOG.md, README.md, intent/llm/ARCHITECTURE.md and CLAUDE.md's project section. They land straight after cc's C5, each as its own commit, because they describe C1 to C5's tree (the legacy code and VERSION.md gone, the sidecar cut, nopython, PPLR_UNDER_TEST's dev default). Released when C5 is on main: check at pickup with git log and cc's board. The drafts are banked on the local branch dc/wp13-docs (5aa0b2b, never pushed). At landing, re-diff each against main (CLAUDE.md onto cc's C1 and C4 lines), run prettier and people-leak, then commit by path and tell vc (edited)
+- WP13's docs, all approved by vc: CHANGELOG.md (with decision 14's and 15's Fixed lines and C7's jq line), README.md, intent/llm/ARCHITECTURE.md and CLAUDE.md's project section. They land straight after cc's C5, each as its own commit, because they describe C1 to C5's tree (the legacy code and VERSION.md gone, the sidecar cut, nopython, PPLR_UNDER_TEST's dev default). Released when C5 is on main: check at pickup with git log and cc's board. The drafts are banked on the local branch dc/wp13-docs (4c547e0, never pushed). At landing, re-diff each against main (CLAUDE.md onto cc's C1 and C4 lines), run prettier and people-leak, then commit by path and tell vc (edited)
 - ST0001 WP09. AC-09.1 is released when cc's C2 lands on main (the sidecar does only dump, backup and group; IN-SW-CODE-006 back on); then a covering AT with a measured red. AC-09.2 waits on hv's live Contacts run (vc hold 2, item 1). Then wp gate and wp done
+- ST0002 WP04. AC-04.1's local half is measured and accepted by vc. bin/devbin formula render exits 0 with nothing typed (a local tag in the scratch clone, stand-in sums). brew style and brew audit --strict each fail on one line only, devbin's generated manifest header (lib/cmd/formula:424, 131 of 118 columns), and both pass with that header one element per line. Released in parts. The style and audit halves are released when devbin ships that fix: the issue text for hv is on the local branch dc/devbin-issue (84972b4), vc hold 2 item 7. The signature half is released when Developer ID signing exists, vc hold 2 item 3. Then the AT, citing each half's evidence. AC-04.2 (the tap's description and CI) needs hv's gh repo edit and a tap push
 
 ## Watch-outs
 
