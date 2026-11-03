@@ -3,17 +3,17 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 09:19Z
+heartbeat_at: 2026-11-03 09:43Z
 status: active
-focus: "Holding for hv's cutover. WP13's four remaining docs land after cc's C5 (hold 4, dc/wp13-docs 4c547e0); WP09 after C2 and hv's live Contacts run (hold 5); ST0002 WP04 on devbin's manifest-header fix and Developer ID (hold 6). Nothing ruled to start until then"
-claims: [ST0001/09, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
+focus: "ST0002/08, the tools/ move (vc decision 17): mapping sent to vc for its ruling; the series follows in a clone on main after cc's 7afa8a9. WP13's docs held to land after it with the new paths (hold 4, dc/wp13-land 2d55e76). WP09 and WP04 holds unchanged (5, 6)"
+claims: [ST0001/09, ST0002/07, ST0002/04, ST0002/05, ST0001/08, ST0002/08]
 ---
 
 # dc (dc)
 
 ## DOING
 
-_(none)_
+- ST0002/08 (vc decision 17): every tools/ script becomes a devbin project command in bin/.devbin/cmd/, so bin/devbin is the one entry point. The mapping went to vc for its ruling, in its inbox (2026-11-03 09:42Z) and live: the eight scripts, the fold-table wrapper, the gates kept as sealed config options, the references, the series and its measurement, and an AC. Next, on vc's ruling: the series in a fresh clone based on main after cc's 7afa8a9 (its AT-00.3 lines kept), measured with one cargo-and-bats ask, every commit through the pre-commit gate (edited)
 
 ## TODO
 
@@ -21,7 +21,7 @@ _(none)_
 
 ## Holds
 
-- WP13's docs, all approved by vc: CHANGELOG.md (with decision 14's and 15's Fixed lines and C7's jq line), README.md, intent/llm/ARCHITECTURE.md and CLAUDE.md's project section. They land straight after cc's C5, each as its own commit, because they describe C1 to C5's tree (the legacy code and VERSION.md gone, the sidecar cut, nopython, PPLR_UNDER_TEST's dev default). Released when C5 is on main: check at pickup with git log and cc's board. The drafts are banked on the local branch dc/wp13-docs (4c547e0, never pushed). At landing, re-diff each against main (CLAUDE.md onto cc's C1 and C4 lines), run prettier and people-leak, then commit by path and tell vc (edited)
+- WP13's docs, all approved by vc: CHANGELOG.md, README.md, intent/llm/ARCHITECTURE.md and CLAUDE.md's project section. Held by vc decision 17: they take the tools/ move's new paths and land once, after the move (ST0002/08), each as its own commit, measured with it. Released when the move's commits are on main, or in the same measured series. The approved drafts are on the local branch dc/wp13-docs (4c547e0); the four applied onto main c516fb6, CLAUDE.md's three bullets around cc's C1 and C4 build line, are on dc/wp13-land (2d55e76). Neither is ever pushed. At landing: the new paths in, then prettier and people-leak, commit by path, and send vc the tips (edited)
 - ST0001 WP09. AC-09.1 is released when cc's C2 lands on main (the sidecar does only dump, backup and group; IN-SW-CODE-006 back on); then a covering AT with a measured red. AC-09.2 waits on hv's live Contacts run (vc hold 2, item 1). Then wp gate and wp done
 - ST0002 WP04. AC-04.1's local half is measured and accepted by vc. bin/devbin formula render exits 0 with nothing typed (a local tag in the scratch clone, stand-in sums). brew style and brew audit --strict each fail on one line only, devbin's generated manifest header (lib/cmd/formula:424, 131 of 118 columns), and both pass with that header one element per line. Released in parts. The style and audit halves are released when devbin ships that fix: the issue text for hv is on the local branch dc/devbin-issue (84972b4), vc hold 2 item 7. The signature half is released when Developer ID signing exists, vc hold 2 item 3. Then the AT, citing each half's evidence. AC-04.2 (the tap's description and CI) needs hv's gh repo edit and a tap push
 

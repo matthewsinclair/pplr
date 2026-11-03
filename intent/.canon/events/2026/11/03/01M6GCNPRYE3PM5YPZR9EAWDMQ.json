@@ -1,0 +1,16 @@
+{
+  "id": "01M6GCNPRYE3PM5YPZR9EAWDMQ",
+  "ts": "2026-11-03T09:43:31.358Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "hold",
+    "seq": 4,
+    "text": "WP13's docs, all approved by vc: CHANGELOG.md, README.md, intent/llm/ARCHITECTURE.md and CLAUDE.md's project section. Held by vc decision 17: they take the tools/ move's new paths and land once, after the move (ST0002/08), each as its own commit, measured with it. Released when the move's commits are on main, or in the same measured series. The approved drafts are on the local branch dc/wp13-docs (4c547e0); the four applied onto main c516fb6, CLAUDE.md's three bullets around cc's C1 and C4 build line, are on dc/wp13-land (2d55e76). Neither is ever pushed. At landing: the new paths in, then prettier and people-leak, commit by path, and send vc the tips"
+  }
+}

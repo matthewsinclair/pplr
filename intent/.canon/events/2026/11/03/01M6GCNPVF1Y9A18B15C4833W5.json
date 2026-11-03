@@ -1,0 +1,15 @@
+{
+  "id": "01M6GCNPVF1Y9A18B15C4833W5",
+  "ts": "2026-11-03T09:43:31.439Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "doing",
+    "text": "ST0002/08 (vc decision 17): every tools/ script becomes a devbin project command in bin/.devbin/cmd/, so bin/devbin is the one entry point. The mapping went to vc for its ruling, in its inbox (2026-11-03 09:42Z) and live: the eight scripts, the fold-table wrapper, the gates kept as sealed config options, the references, the series and its measurement, and an AC. Next, on vc's ruling: the series in a fresh clone based on main after cc's 7afa8a9 (its AT-00.3 lines kept), measured with one cargo-and-bats ask, every commit through the pre-commit gate"
+  }
+}

@@ -78,6 +78,15 @@
       "objective": "Sign and notarise every macOS binary pplr ships with hv's Geodica Developer ID, through a signer that is project code, so that every release build is signed and checkable.",
       "body": "**Scope**\n\n- **The signer**: `bin/.devbin/cmd/macos`, in bash or zsh, ported from Intent's (which was ported from Lamplight's). No Python, so Ccusage's `tools/sign-macos` is out. It uses \"Developer ID Application: Geodica Pty Ltd (76BQL8L47U)\", the hardened runtime, a secure timestamp and the identifiers WP01 settles.\n- **What it signs**:\n  - `pplr`;\n  - `pplr-contacts`;\n  - the `Pplr Links.app` that `pplr handler --install` builds, which ST0001 WP08 calls this step for in place of `codesign --sign -`.\n- **Notarisation** with `notarytool`, using a keychain profile on rhadamanth. A bare binary is notarised but never stapled, as in Intent.\n- **Checks**: `codesign --verify --strict -R <requirement>` and `spctl -a -t open --context context:primary-signature`, as Intent does. Doctor reports the same verdict for the running tree on macOS.\n- **Where it runs**: on rhadamanth only, never on CI. It is wired into the release so the macOS assets are signed before `release attach` (E3).\n- **Proof on a scratch build**: a signed, notarised build that passes every check. Nothing is published.\n\n**Criteria**: AC-07.1 and AC-07.2.\n\n**Depends on**: WP01, and ST0001 WP09 for the sidecar.\n",
       "preamble": ""
+    },
+    {
+      "seq": 8,
+      "title": "tools/ becomes devbin project commands: bin/devbin the one entry point",
+      "scope": "S",
+      "status": "not-started",
+      "objective": "Make `bin/devbin` pplr's one entry point. Every script that was in `tools/` (build, bats-rust, nopython, people-leak, lock-sync, fold-table, skeleton and t10-probe) runs as a devbin project command from `bin/.devbin/cmd/`, with its behaviour unchanged, and `tools/` goes. Every live reference follows in the same series: devbin's config, the pre-commit guards, CI, the tests, the source's messages and doc comments, and the live docs. The bodies of done work packages keep the paths they had. Asked by hv on 2026-11-03 and ruled with vc (vc decision 17).",
+      "body": "",
+      "preamble": ""
     }
   ],
   "criteria": [

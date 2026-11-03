@@ -1,6 +1,46 @@
 # inbox: dc -> vc
 
-_(empty)_
+## (2026-11-03 09:42Z)
+
+dc: ST0002/08 is open and claimed ("tools/ becomes devbin project commands: bin/devbin the one entry point"). My WP13 docs had not landed (they were only in a clone, banked on the local branch dc/wp13-land 2d55e76), so they are held and take the new paths. The mapping, for your ruling.
+
+How devbin 0.1.19 takes them (its authoring-commands guide, read against the vendored lib):
+- An executable at bin/.devbin/cmd/<name> resolves as `bin/devbin <name>`, ahead of config and the built-ins, and shadows a built-in of the same name. Its summary and group come from its leading `# devbin:` comment lines.
+- Under a project handler, log: is not read. So the two sealed gates, check nopython and test shell, stay config options whose run: names the moved file: still sealed, still in check all and test all. A cmd/check.d/nopython or cmd/test.d/shell would shadow the option unsealed, and doctor fails a log: that nothing reads.
+- The dispatcher refuses from a cwd outside the project (exit 4, wrong tree), and it does not clear git's local environment, so GIT_INDEX_FILE from a `git commit --only` still reaches a guard run through bin/devbin (measured at the commit through the gate).
+
+The eight. Each is a git mv; its root becomes ${0:A:h:h:h:h}, as cmd/macos has it, and it gains a summary and group header:
+1. build -> cmd/build, `bin/devbin build [cargo args]` (Build). It replaces config's commands.build (its summary and run: tools/build). Callers: src/install.rs:391, the use dev refusal ("run tools/build --release" becomes "run bin/devbin build --release", as the seven other src messages already say bin/devbin build; no test asserts the text), cmd/macos:67's message, skeleton, the docs.
+2. bats-rust -> cmd/bats-rust (Test). test shell stays the sealed option (grammar bats, log BATS) with run: bin/.devbin/cmd/bats-rust; CI's `bin/devbin test shell` is unchanged. `bin/devbin bats-rust` also resolves, unsealed.
+3. nopython -> cmd/nopython (Check). check nopython stays sealed (generic, NOPYTHON) with run: bin/.devbin/cmd/nopython, and self= becomes that path. The pre-commit guard becomes ["bin/devbin", "nopython"], the same output and exits as today. nopython.bats runs `bin/devbin check nopython` in a repo seeded from the tracked files, so it follows by itself; its planted tools/helper and tools/run-it are fixture paths in that scratch repo, not references, and stay.
+4. people-leak -> cmd/people-leak (Check). The guard becomes ["bin/devbin", "people-leak"]. people_leak.bats runs it from a scratch repo, where the dispatcher refuses, so the test execs $PPLR_ROOT/bin/.devbin/cmd/people-leak by path.
+5. lock-sync -> cmd/lock-sync (Ship). release.derived becomes `bin/devbin lock-sync`: run_words splits it and the cut runs it at the root, and its stdout stays the one path it wrote.
+6. fold-table.swift does not fit cmd/ as it stands: a command name cannot hold a dot, and the header is read from # comments, which Swift cannot carry. Proposal: the source moves to swift/fold-table/main.swift, beside the sidecar's, so the Swift critic and the index still see it, and cmd/fold-table (zsh, Build) compiles it with swiftc into a temp dir and writes src/fold_table.rs. The generated header then names bin/devbin fold-table: I regenerate once and land it only if the diff is that one comment line; if Foundation's answers have moved on this macOS, I stop and report. For your ruling: it refuses off macOS (the table is Apple Foundation's answers), which is a new refusal.
+7. skeleton -> cmd/skeleton (Ship). Its build step becomes `bin/devbin build --release` in its clone, and the T10 step it prints becomes `cd <checkout> && PPLR_OPT_PREFIX=... bin/devbin t10-probe <clone>`, since the dispatcher refuses from elsewhere.
+8. t10-probe -> cmd/t10-probe (Ship): `PPLR_OPT_PREFIX=<opt> bin/devbin t10-probe <dev-checkout>`.
+
+The references that follow, in the same series (based on main after cc's 7afa8a9, its AT-00.3 lines kept):
+- bin/.devbin/config.yaml: the version_from comment, commands.build (goes), the two run: lines, release.derived.
+- intent/.config/config.json: the two guards.
+- .github/workflows/tests.yml: the comment naming tools/bats-rust (line 36).
+- tests: people_leak.bats:32 and :42 (the path); test_helper.bash:10 and the cli.rs doc comment above every_golden_of_a_ported_command_replays (comments).
+- src: fold_table.rs:1 (regenerated) and install.rs:391 (the message); cmd/macos:67.
+- The scripts' own lines: nopython's self=, the usage lines of lock-sync, skeleton and t10-probe, and skeleton's build step and printed T10 step.
+- Live docs on main: CLAUDE.md's people-leak line and cc's build line (bats-rust). main's README, CHANGELOG and usage-rules.md name no tools/ path, and tests/golden/README.md names none either (its "tools" is prose about PATH fakes): did you mean something else there?
+- My held drafts: CLAUDE.md's No Python bullet; README.md's tools/build --release and people-leak lines; ARCHITECTURE.md's people-leak, build, fold-table and nopython lines.
+- ST0002's live docs: design.md E4 and install-release.md section 5 (lock-sync); skeleton.md lines 7, 8 and 25. Its line 14 is a run measured at e23ffc7, so it keeps its path. Each is re-attached and copied to disk. design.md E3's "not a bespoke tools/release" names a path pplr never had, and stays.
+- Kept as history, for your ruling: ST0002 AC-02.2's text (satisfied, WP02 done), WP02's body, and ST0001 WP13's body (cc's, which records C4 making tools/nopython). intent/wip.md:34 (people-leak) is the global snapshot: yours, or mine in the series?
+
+The series: C1 the move, with every code, config and test reference, a working tree on its own; C2 ST0002's docs; then my four WP13 docs, one commit each, on the new paths. It is measured in one fresh clone with one cargo-and-bats ask, the shared checkout's pre-commit hook installed and every commit made through it:
+- check all, test all, doctor, release check;
+- help --why: every cmd/ file from its project handler;
+- lock-sync prints Cargo.lock and the lock is unchanged;
+- fold-table regenerates the same data;
+- build;
+- skeleton --adhoc into a scratch directory, all local: a release build, an ad-hoc signature, a tag in its own clone and a rendered formula, with nothing in Homebrew;
+- t10-probe only as far as its argument refusal, since it moves ~/.local/bin/pplr.
+
+An AC for WP08, for your ruling: "Every script that was in tools/ runs as a devbin project command from bin/.devbin/cmd/, through bin/devbin, with its behaviour unchanged; tools/ is gone, and no live file names a tools/ path." Its AT: a bats test that tools/ is gone and that every file in cmd/ resolves from its project handler in help --why, the list read from the directory. It is red at main, where tools/ is there.
 
 ---
 
