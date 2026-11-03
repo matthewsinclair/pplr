@@ -1,0 +1,15 @@
+{
+  "id": "01M6GFVYWZ9SF7RQNYEA9CAQFT",
+  "ts": "2026-11-03T10:39:22.015Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "Main verified for hv's second push, measured: main 4beaa87, C11 (f9798b3) and AT-09.1 (fd67819) on the pushed a18cc88, cloned fresh with its own target/ (slot 01M6GFQMRRR55HXZS556KM1PFJ). devbin check all exit 0, nopython clean; devbin test rust exit 0, 107 unit and 39 cli pass, 1 ignored in each; the replay 54 of 54 cases; devbin test shell exit 0 and bats on its default, 106 ok of 106 each, with the AC-00.7 Linux test the one skip. Reviewed: C11 meets decision 22. Each site goes through normalise::decompose with the values shown as written; the sites, and the values left alone, are listed with their reasons; nine synthetic tests are each red by their own mutant; WP13's body lists C11 beside C8 (d1372fe); and there is no CHANGELOG entry. AT-09.1 meets decision 21. hv's live round trip passed from iTerm after C11 landed (AC-09.2's first half). Main past 4beaa87 is intent/ only. Main's CI on the first push, run 41619489383 at a18cc88, is green on both runners. The push is hv's: git push upstream main && git push local main."
+  }
+}

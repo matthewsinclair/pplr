@@ -311,6 +311,14 @@
       "text": "C11, ruled at cc's ask (2026-11-03 10:17Z): a port bug the live parity found, like C8, not a divergence. hv's iTerm run of the five sync rows: Contacts was authorized both plainly and inside the sandbox, so the write guard holds, and the tree was unchanged. Link, pull and photos are the same. sync --check and --check --json differ, because the port compares field values, and keys by_email and by_slug, by bytes. The legacy's Swift sets and dictionaries compare by canonical equivalence, so an About slug in NFC equals the card's NFD there. The fix: every comparison and key the legacy made on a Swift String, in src/sync.rs and src/plan.rs, unless it is already folded, goes through normalise::decompose, the port's one normaliser. Each side's original value is kept for display, and the commit lists each site. Synthetic tests use both forms, for a diff and for matching, each red by a measured mutant. WP13's body lists C11 beside C8; there is no CHANGELOG entry, since the bug never shipped. Sequencing: hv pushes b245b53 now (decision 20), since the bug is already upstream and --check only reads. C11 and dc's AT-09.1 land after the push, one after the other; vc verifies main once for both. Then hv's second push, a rebuild in a cargo slot, and hv's iTerm re-run of the two check rows against C11's build. AC-00.5 waits for those rows.",
       "state": "live",
       "recorded_at": "2026-11-03T10:19:52.607Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 23,
+      "text": "Main verified for hv's second push, measured: main 4beaa87, C11 (f9798b3) and AT-09.1 (fd67819) on the pushed a18cc88, cloned fresh with its own target/ (slot 01M6GFQMRRR55HXZS556KM1PFJ). devbin check all exit 0, nopython clean; devbin test rust exit 0, 107 unit and 39 cli pass, 1 ignored in each; the replay 54 of 54 cases; devbin test shell exit 0 and bats on its default, 106 ok of 106 each, with the AC-00.7 Linux test the one skip. Reviewed: C11 meets decision 22. Each site goes through normalise::decompose with the values shown as written; the sites, and the values left alone, are listed with their reasons; nine synthetic tests are each red by their own mutant; WP13's body lists C11 beside C8 (d1372fe); and there is no CHANGELOG entry. AT-09.1 meets decision 21. hv's live round trip passed from iTerm after C11 landed (AC-09.2's first half). Main past 4beaa87 is intent/ only. Main's CI on the first push, run 41619489383 at a18cc88, is green on both runners. The push is hv's: git push upstream main && git push local main.",
+      "state": "live",
+      "recorded_at": "2026-11-03T10:39:22.015Z"
     }
   ],
   "sent": [
@@ -607,6 +615,14 @@
       "re": "2026-11-03 10:31Z",
       "fyi": true,
       "recorded_at": "2026-11-03T10:32:30.516Z"
+    },
+    {
+      "id": "01M6GFVYXWAT0DKJ9BXW43J3M8",
+      "recipient": "cc",
+      "body": "C11 is reviewed and verified with main (vc decision 23). It meets decision 22: decompose at every site, with values shown as written; the sites and the ones left alone listed with their reasons; nine tests, each red by its own mutant; WP13's body with C11 beside C8 (d1372fe); and no CHANGELOG entry. Your two notes stand: email_key is fixed at its sites, and sorting stays bytewise. Main 4beaa87 in a fresh clone: check all 0; test rust 0 (107 unit, 39 cli); the replay 54 of 54; test shell and bats on the default, 106 of 106 each, with the Linux test the one skip. hv is asked for the second push, then run 4 from iTerm (HV-ROWS.md), then the rebuild of the dev link with vc holding cargo. Run 4's verdicts settle AC-00.5 and AC-09.2's second half.",
+      "re": "2026-11-03 10:38Z",
+      "fyi": true,
+      "recorded_at": "2026-11-03T10:39:22.044Z"
     }
   ],
   "handled": [
@@ -839,6 +855,16 @@
       "id": "01M6GFDYHWD453Y9NR8RGSHVJP",
       "sender": "dc",
       "handled_at": "2026-11-03T10:32:43.994Z"
+    },
+    {
+      "id": "01M6GFPGH33GXX62KT2D3B1ND7",
+      "sender": "cc",
+      "handled_at": "2026-11-03T10:39:31.373Z"
+    },
+    {
+      "id": "01M6GFSTS1TQT0FNA37VT01R69",
+      "sender": "cc",
+      "handled_at": "2026-11-03T10:39:31.373Z"
     }
   ]
 }
