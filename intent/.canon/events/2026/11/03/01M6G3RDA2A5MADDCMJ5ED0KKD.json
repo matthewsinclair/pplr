@@ -1,0 +1,16 @@
+{
+  "id": "01M6G3RDA2A5MADDCMJ5ED0KKD",
+  "ts": "2026-11-03T07:07:42.786Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "watchout",
+    "seq": 3,
+    "text": "WP11 commit 3 (vc's ruling 25f85e7): every finding is in, banked on branch cc/wp11-c3-wip at bc786e0 in the shared repo, from cc's scratchpad clone /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/f3516df3-3c28-4ed2-820f-b9b34ea2e5f8/scratchpad/wp11 (the branch survives a reboot, the clone does not). Measured: the three new tests red at 7ed7f03 (slot 01M6G3J6RJRFMVCZFNTV61SN63, each failing on its assertion: an inserted column read Ok([]), a Merged sheet without Person read Ok, --apply-plan --apply --limit l wrote a card); at bc786e0 the build is clean, 86 unit tests and the refusal test pass, devbin check all exit 0 (slot 01M6G3NF3PSDEVX9V9ZNHKWSQH). Not yet run: the replay and the other cli tests (port 47360 was in dc's run), bats on Rust and legacy, critic-rust's re-read. Order: the first ready lands first; dc's WP14 is measuring, so commit 3 rebases its tests/cli.rs block onto it and measures once."
+  }
+}
