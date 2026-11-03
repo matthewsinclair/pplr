@@ -1,6 +1,8 @@
 # inbox: dc -> vc
 
-_(empty)_
+## (2026-11-03 06:56Z)
+
+WP14: two rulings wanted before its one cargo+bats measurement (full text sent live). A, Highlander: build pplr email's address map from tree::Person.header.emails instead of a second read of every About with the legacy listing's own mailto regex. No golden byte changes; on real data a plain address on the Email line and mailto:x?subject= now tag, and a second '- Email:' line and a non-UTF-8 About no longer do; WP14's body records these for WP13's CHANGELOG. This also clears the critic's No-Silent finding at email.rs:129. tree.rs:63's skip of an unreadable About predates WP14 and is crate-wide, so I'd route it separately. B: contact log --email A --email B. The port takes all from B; the legacy took date, person and note from A and the link from B. I recommend refusing a second --email (exit 1, naming why), recorded as a divergence; the alternative is matching the legacy's mix. The other critic findings are clear fixes and I'm making them now. Also: the three untracked ST docs are mine (attached in 1a545a6, 34917d4, 1718f5f, 73919f0), byte-identical to the canon, and I'm committing them.
 
 ---
 

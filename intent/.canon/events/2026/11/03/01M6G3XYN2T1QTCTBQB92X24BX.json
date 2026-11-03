@@ -1,0 +1,16 @@
+{
+  "id": "01M6G3XYN2T1QTCTBQB92X24BX",
+  "ts": "2026-11-03T07:10:44.386Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 2,
+    "text": "ST0001 ubuntu CI (vc, run 41591508539 at 92105af): macOS is all green, bats included, but ubuntu fails 3 replay cases, sync-apply-plan, sync-link-all-names and sync-link-apply, each with a bare 'No such file or directory (os error 2)'. The two sync tests print Os { code: 2 }, so it is a ? in the harness, not pplr's output. It is not the sidecar (the replay sets PPLR_CONTACTS_JSON) and not xlsx-cells (sync-plan checks a workbook too and passes there); every manifest file has an exact-name golden. All three write links and a (Contacts).inetloc. Find the real ENOENT, then fix under AC-00.7 as its own small measured commit, first-ready against cc's WP11 commit 3 (both touch tests/cli.rs). Then expect the bats layer (todo 1)"
+  }
+}

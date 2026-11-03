@@ -3,22 +3,22 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 06:45Z
+heartbeat_at: 2026-11-03 06:49Z
 status: active
 focus: "held for hv's compact: WP14 on branch dc/wp14-wip at 5accda2 (cargo-green, not re-measured on 515ee42; watchout 1); next is the critic's findings, then one cargo+bats measurement and land, first-ready against cc's WP11 commit 3; then the ubuntu Contacts fix (todo 2)"
-claims: [ST0001/02, ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST0001/08, ST0001/14]
+claims: [ST0001/02, ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
 ---
 
 # dc (dc)
 
 ## DOING
 
-- ST0001 WP14, the mail reader: its clock is on main (6dfc81c). The rest is on branch dc/wp14-wip at 5accda2 (see watchout 1), cargo-green, not yet on main. vc's order after the compact: whichever of WP14 and cc's WP11 commit 3 is ready first lands first, and the other rebases onto it and measures once (edited)
+_(none)_
 
 ## TODO
 
 - ST0001 harness (vc's brief, item 4): the bats step has never run on ubuntu under the new tests.yml, because the cargo step failed first every run. Once a cargo run there goes green (cc's CI fixes, then hv's push), triage and fix whatever bats layer it exposes
-- ST0001 ubuntu CI (vc, run 41591508539 at 92105af): macOS is all green, bats included, but ubuntu fails 3 replay cases, sync-apply-plan, sync-link-all-names and sync-link-apply. Each fails with 'No such file or directory (os error 2)' from the harness, not a golden diff: all three write to Contacts, and the sidecar is built only on macOS (tests/cli.rs reaches for pplr-contacts beside the binary). Fix under AC-00.7: on Linux a Contacts write exits non-zero naming why, and the replay skips those cases there by name. It lands as its own small commit, measured, first-ready against WP14 and cc's WP11 commit 3 (all three touch tests/cli.rs). Then expect the bats layer (todo 1)
+- ST0001 ubuntu CI (vc, run 41591508539 at 92105af): macOS is all green, bats included, but ubuntu fails 3 replay cases, sync-apply-plan, sync-link-all-names and sync-link-apply, each with a bare 'No such file or directory (os error 2)'. The two sync tests print Os { code: 2 }, so it is a ? in the harness, not pplr's output. It is not the sidecar (the replay sets PPLR_CONTACTS_JSON) and not xlsx-cells (sync-plan checks a workbook too and passes there); every manifest file has an exact-name golden. All three write links and a (Contacts).inetloc. Find the real ENOENT, then fix under AC-00.7 as its own small measured commit, first-ready against cc's WP11 commit 3 (both touch tests/cli.rs). Then expect the bats layer (todo 1) (edited)
 
 ## Holds
 
@@ -26,7 +26,7 @@ _(none)_
 
 ## Watch-outs
 
-- ST0001 WP14 is not on main yet. Its code is on branch dc/wp14-wip at 5accda2 in the repo: five WIP commits on 515ee42. Its working clone, /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/da774a51-7916-4f68-b76b-37c788cb4a76/scratchpad/wp14, dies at a reboot; the branch does not. Paths it changes: Cargo.toml, Cargo.lock, README.md, src/cli.rs, src/config.rs, src/contact.rs, src/doctor.rs, src/email.rs (new), src/lib.rs, src/links.rs, src/mail.rs (new), src/normalise.rs, src/open.rs, tests/cli.rs, tests/golden/README.md, tests/pplr_contact.bats, tests/test_helper.bash. State: cargo-green on 95a75e8 in slot 01M6G1FSYKN02XSW6A10T5HVAY (fmt, clippy -D warnings, cargo test 93 unit + 27 cli, replay 54 of 54, devbin check all). Rebased cleanly onto 515ee42 but not re-measured, and bats has not run. A critic-rust review was still running at the fold. Next: fold in the critic's findings, rebase onto main (and onto cc's WP11 commit 3 if it lands first; it also changes tests/cli.rs), ask cargo and bats together, measure once (check all, cargo test, bats on Rust and on legacy), land with --only, set AT-14.1 and AT-14.2 green, then wp done (edited)
+_(none)_
 
 ## Decisions
 
