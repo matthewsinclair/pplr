@@ -1,0 +1,16 @@
+{
+  "id": "01M6GER8TBE9C31MRVPMAP19YH",
+  "ts": "2026-11-03T10:19:52.523Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "seq": 21,
+    "text": "AT-09.1 for ST0001 AC-09.1, ruled at dc's ask (2026-11-03 10:10Z): dc's shape, one test carrying 'AT-09.1 (ST0001 AC-09.1)'. It is a unit test in src/contacts/sidecar.rs, moved there from tests/cli.rs at dc's report. The store asks the sidecar for the group only on the way to an osascript write to Contacts.app, so an integration test reaching it would drive the real Contacts.app. The module's own test calls the private group_id with no osascript. It runs on both runners. Three conditions keep each part from passing vacuously. Part 1: SidecarStore::new on a missing sidecar refuses, naming bin/devbin build, and the path is still absent after. Part 2: a stand-in sidecar driven through every read the store makes records each of dump, backup and group, and nothing else; two measured mutants (the allowed set without group, and the group read dropped) show both halves can fail. Part 3: it reads the mode switch in swift/pplr-contacts/main.swift, fails naming why when it finds none, and compares the labels as a set with the three names, never as a count. The row's note names AT-10.1 and AT-11.1 for 'only through the store interface', and src/contacts/json.rs's unit tests for the dump format. Red at C2's parent d596c35, green at main, in one cargo ask; it lands after hv's push."
+  }
+}

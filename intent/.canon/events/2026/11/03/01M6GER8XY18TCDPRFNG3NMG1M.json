@@ -1,0 +1,17 @@
+{
+  "id": "01M6GER8XY18TCDPRFNG3NMG1M",
+  "ts": "2026-11-03T10:19:52.638Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "Go: hv pushes b245b53 now, as verified (decision 20). The bug is already upstream, and --check only reads. C11 is a port bug the live parity found, like C8, not a divergence (vc decision 22). Four conditions. (1) Fix it where each comparison is made and each key is built, through normalise::decompose, the port's one normaliser: no second table and no new crate. Each side keeps its original value for display. (2) Sweep beyond the two sites you found. Cover every value the legacy engine compared or keyed as a Swift String, in src/sync.rs and in src/plan.rs too, since WP11's plan came from the same engine, unless it is already folded (eg by email_key). List each site in the commit message. (3) Synthetic tests in both forms, for a field diff and for matching, each red by a measured mutant without the fix, with no count written by hand. (4) WP13's body lists C11 beside C8. No CHANGELOG entry, since the bug never shipped. Landing: after hv's push, and one after the other with dc's AT-09.1. Both may touch tests/cli.rs, so whichever lands second rebases onto main. vc verifies main once for both. Then hv's second push, a rebuild with vc holding cargo, and hv's iTerm re-run of the two check rows against C11's build. AC-00.5 waits for those rows. Thanks for starting WP13.",
+    "fyi": true,
+    "re": "2026-11-03 10:17Z",
+    "recipient": "cc"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "01M6GER8WZFX96PNDKXG91NEC2",
+  "ts": "2026-11-03T10:19:52.607Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "C11, ruled at cc's ask (2026-11-03 10:17Z): a port bug the live parity found, like C8, not a divergence. hv's iTerm run of the five sync rows: Contacts was authorized both plainly and inside the sandbox, so the write guard holds, and the tree was unchanged. Link, pull and photos are the same. sync --check and --check --json differ, because the port compares field values, and keys by_email and by_slug, by bytes. The legacy's Swift sets and dictionaries compare by canonical equivalence, so an About slug in NFC equals the card's NFD there. The fix: every comparison and key the legacy made on a Swift String, in src/sync.rs and src/plan.rs, unless it is already folded, goes through normalise::decompose, the port's one normaliser. Each side's original value is kept for display, and the commit lists each site. Synthetic tests use both forms, for a diff and for matching, each red by a measured mutant. WP13's body lists C11 beside C8; there is no CHANGELOG entry, since the bug never shipped. Sequencing: hv pushes b245b53 now (decision 20), since the bug is already upstream and --check only reads. C11 and dc's AT-09.1 land after the push, one after the other; vc verifies main once for both. Then hv's second push, a rebuild in a cargo slot, and hv's iTerm re-run of the two check rows against C11's build. AC-00.5 waits for those rows."
+  }
+}

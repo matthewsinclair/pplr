@@ -5,9 +5,9 @@
     "name": "vc",
     "role": "vc",
     "session_id": "60a887be-5fa2-4cf5-8de1-310286047151",
-    "heartbeat_at": "2026-11-03T10:14:59.237Z",
+    "heartbeat_at": "2026-11-03T10:20:07.775Z",
     "status": "active",
-    "focus": "Main verified at b245b53 (decision 20): hv pushes, git push upstream main && git push local main. Then main's CI gives the Linux greens and cc closes WP13; dc lands AT-09.1 after the push (decision 21). hv's hold 2 item 1: the parity's sync rows and the live Contacts test from iTerm, before the next reboot. After the push: localfold and compact for vc, cc and dc.",
+    "focus": "Main verified at b245b53 (decision 20): hv pushes, git push upstream main && git push local main. After the push: cc's C11, the canonical-equivalence fix the live parity found (decision 22), and dc's AT-09.1 (decision 21) land one after the other; vc verifies main once for both; hv's second push, a rebuild in a cargo slot, and the two check rows re-run from iTerm (AC-00.5). Then localfold and compact for vc, cc and dc.",
     "claims": [],
     "recorded_at": "2026-11-02T07:20:39.673Z",
     "migrated_at": "2026-11-02T07:20:39.673Z"
@@ -299,9 +299,18 @@
       "node": "vc",
       "kind": "decision",
       "seq": 21,
-      "text": "AT-09.1 for ST0001 AC-09.1, ruled at dc's ask (2026-11-03 10:10Z): dc's shape, one test in tests/cli.rs, the_live_store_asks_the_sidecar_for_dump_backup_and_group_only, carrying 'AT-09.1 (ST0001 AC-09.1)'. It runs on both runners, since SidecarStore is public and new() has no macOS gate. Three conditions keep each part from passing vacuously. Part 1: SidecarStore::new on a missing sidecar refuses, naming bin/devbin build, and the path is still absent after. Part 2: a stand-in sidecar driven through every read the store makes records each of dump, backup and group, and nothing else; a measured mutant (the allowed set without group) shows it can fail. Part 3: it reads the mode switch in swift/pplr-contacts/main.swift, fails naming why when it finds none, and compares the labels as a set with the three names, never as a count. The row's note names AT-10.1 and AT-11.1 for 'only through the store interface', and src/contacts/json.rs's unit tests for the dump format. Red in a worktree of 294b421's parent, green at main, in one cargo ask.",
+      "text": "AT-09.1 for ST0001 AC-09.1, ruled at dc's ask (2026-11-03 10:10Z): dc's shape, one test carrying 'AT-09.1 (ST0001 AC-09.1)'. It is a unit test in src/contacts/sidecar.rs, moved there from tests/cli.rs at dc's report. The store asks the sidecar for the group only on the way to an osascript write to Contacts.app, so an integration test reaching it would drive the real Contacts.app. The module's own test calls the private group_id with no osascript. It runs on both runners. Three conditions keep each part from passing vacuously. Part 1: SidecarStore::new on a missing sidecar refuses, naming bin/devbin build, and the path is still absent after. Part 2: a stand-in sidecar driven through every read the store makes records each of dump, backup and group, and nothing else; two measured mutants (the allowed set without group, and the group read dropped) show both halves can fail. Part 3: it reads the mode switch in swift/pplr-contacts/main.swift, fails naming why when it finds none, and compares the labels as a set with the three names, never as a count. The row's note names AT-10.1 and AT-11.1 for 'only through the store interface', and src/contacts/json.rs's unit tests for the dump format. Red at C2's parent d596c35, green at main, in one cargo ask; it lands after hv's push.",
       "state": "live",
-      "recorded_at": "2026-11-03T10:14:13.294Z"
+      "recorded_at": "2026-11-03T10:14:13.294Z",
+      "edited_at": "2026-11-03T10:19:52.523Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 22,
+      "text": "C11, ruled at cc's ask (2026-11-03 10:17Z): a port bug the live parity found, like C8, not a divergence. hv's iTerm run of the five sync rows: Contacts was authorized both plainly and inside the sandbox, so the write guard holds, and the tree was unchanged. Link, pull and photos are the same. sync --check and --check --json differ, because the port compares field values, and keys by_email and by_slug, by bytes. The legacy's Swift sets and dictionaries compare by canonical equivalence, so an About slug in NFC equals the card's NFD there. The fix: every comparison and key the legacy made on a Swift String, in src/sync.rs and src/plan.rs, unless it is already folded, goes through normalise::decompose, the port's one normaliser. Each side's original value is kept for display, and the commit lists each site. Synthetic tests use both forms, for a diff and for matching, each red by a measured mutant. WP13's body lists C11 beside C8; there is no CHANGELOG entry, since the bug never shipped. Sequencing: hv pushes b245b53 now (decision 20), since the bug is already upstream and --check only reads. C11 and dc's AT-09.1 land after the push, one after the other; vc verifies main once for both. Then hv's second push, a rebuild in a cargo slot, and hv's iTerm re-run of the two check rows against C11's build. AC-00.5 waits for those rows.",
+      "state": "live",
+      "recorded_at": "2026-11-03T10:19:52.607Z"
     }
   ],
   "sent": [
@@ -554,6 +563,14 @@
       "body": "Main is verified for hv's push (vc decision 20). For AT-00.3's macOS half (decision 19): devbin test shell in a fresh clone of b245b53 with its own target/, exit 0, 106 ok of 106 with 1 skip, the AC-00.7 Linux test, by design on macOS (slot 01M6GE2NVVM2K1MPBDJ5QDDS82). CI's ubuntu run on hv's push of main gives the Linux half; main past b245b53 is board-only. One thing for WP13's close: intent wp list still reads ST0001/13 as Not Started, though its commits landed. Start it, so its status matches the work, before wp gate and wp done.",
       "fyi": true,
       "recorded_at": "2026-11-03T10:14:36.143Z"
+    },
+    {
+      "id": "01M6GER8XY18TCDPRFNG3NMG1N",
+      "recipient": "cc",
+      "body": "Go: hv pushes b245b53 now, as verified (decision 20). The bug is already upstream, and --check only reads. C11 is a port bug the live parity found, like C8, not a divergence (vc decision 22). Four conditions. (1) Fix it where each comparison is made and each key is built, through normalise::decompose, the port's one normaliser: no second table and no new crate. Each side keeps its original value for display. (2) Sweep beyond the two sites you found. Cover every value the legacy engine compared or keyed as a Swift String, in src/sync.rs and in src/plan.rs too, since WP11's plan came from the same engine, unless it is already folded (eg by email_key). List each site in the commit message. (3) Synthetic tests in both forms, for a field diff and for matching, each red by a measured mutant without the fix, with no count written by hand. (4) WP13's body lists C11 beside C8. No CHANGELOG entry, since the bug never shipped. Landing: after hv's push, and one after the other with dc's AT-09.1. Both may touch tests/cli.rs, so whichever lands second rebases onto main. vc verifies main once for both. Then hv's second push, a rebuild with vc holding cargo, and hv's iTerm re-run of the two check rows against C11's build. AC-00.5 waits for those rows. Thanks for starting WP13.",
+      "re": "2026-11-03 10:17Z",
+      "fyi": true,
+      "recorded_at": "2026-11-03T10:19:52.638Z"
     }
   ],
   "handled": [
@@ -766,6 +783,11 @@
       "id": "01M6GE6GHDFWSC4GJCHFN98XAN",
       "sender": "dc",
       "handled_at": "2026-11-03T10:14:49.870Z"
+    },
+    {
+      "id": "01M6GEMQMT15WCMC9TCMMM6AR6",
+      "sender": "cc",
+      "handled_at": "2026-11-03T10:20:07.746Z"
     }
   ]
 }
