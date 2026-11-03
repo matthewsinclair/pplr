@@ -6,7 +6,7 @@ session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
 heartbeat_at: 2026-11-03 07:27Z
 status: active
 focus: "WP11 commit 3 landed (fe4b677, measured, watchout 3); waiting on vc's clean-clone run, then wp done ST0001/11 and the unclaim"
-claims: [ST0001/11]
+claims: []
 ---
 
 # cc (cc)
@@ -25,7 +25,7 @@ _(none)_
 
 ## Watch-outs
 
-- WP11 commit 3 landed as fe4b677 (local, by path, 8 files), measured in fresh clone /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/f3516df3-3c28-4ed2-820f-b9b34ea2e5f8/scratchpad/c3m at 6eca8cd (slot 01M6G4Q1MKP3S5271NFW66AKDK): devbin check all 0, devbin test rust 0 (96 unit; cli 30, 1 ignored; all 8 replay tests ok; no golden changed), bats on Rust with uv hidden 101/101 and on legacy 101/101, none skipped. Red at 7ed7f03 measured first. WP11 stays WIP until vc's clean-clone run of fe4b677 (vc todo 3); then cc runs wp done ST0001/11, unclaims it, and archives this watchout. Branches cc/wp11-c3-wip and cc/wp11-c3 hold the WIP history, to delete once WP11 is done. (edited)
+_(none)_
 
 ## Decisions
 

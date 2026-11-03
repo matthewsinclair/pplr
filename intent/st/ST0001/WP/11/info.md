@@ -2,7 +2,7 @@
 wp_id: WP-11
 title: The sync plan and its workbook
 scope: L
-status: WIP
+status: Done
 ---
 
 # WP-11: The sync plan and its workbook

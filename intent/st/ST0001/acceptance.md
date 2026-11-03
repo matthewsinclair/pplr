@@ -70,7 +70,7 @@ title: Port Pplr from shell scripts to Rust
 
 - AC-10.1 sync --check, --link, --pull, --photos and --backup run in Rust against the JSON store, and their goldens and bats tests pass. -- satisfied: yes (computed)
 
-### WP-11 -- The sync plan and its workbook (status: WIP)
+### WP-11 -- The sync plan and its workbook (status: Done)
 
 - AC-11.1 sync --plan and --apply-plan run in Rust. The workbook's four sheets, review columns, Decision list and highlighting match the legacy workbook by content. -- satisfied: yes (computed)
 
@@ -131,7 +131,7 @@ _(no tests in this group)_
 
 - AT-10.1 `tests/cli.rs` -- covers AC-10.1 -- status: green -- sync_is_native_and_its_goldens_replay; red first (slot 01M6EM6ETPRBA5NTFK20RXXX2Q, only the NFD inetloc name differed), then green in a cold clean clone: cargo test 79 unit and 24 integration passed; bats 101/101 against Rust and legacy (slot 01M6EMBD3APESKVD5EC9RDE16C)
 
-### WP-11 -- The sync plan and its workbook (status: WIP)
+### WP-11 -- The sync plan and its workbook (status: Done)
 
 - AT-11.1 `tests/cli.rs` -- covers AC-11.1 -- status: green -- sync_plan_and_apply_plan_are_native_and_their_goldens_replay; red first, before WP11's code was in the tree (the stand-in legacy sync was reached); green in a fresh clone at 421b9b0 holding WP11's two commits (slot 01M6G1EVKDDG7DZDH2DTJ4VT1X): the replay 7 of 7, with the workbook's styling compared against the legacy's re-captured from 507b0f6; a planted wrong review fill and commit 1's workbook.rs (input message on) each fail it; cargo test 83 unit and 26 cli passed; bats on Rust with uv hidden 101/101, 2 skips both naming WP14, and on legacy 101/101 (slot 01M6G1HSCVJRN7C71J3WWD3S0E)
 
