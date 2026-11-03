@@ -1,0 +1,16 @@
+{
+  "id": "01M6GBKT5QP8NJZR28JMV0P48Y",
+  "ts": "2026-11-03T09:25:00.727Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "doing",
+    "seq": 2,
+    "text": "WP13 (ST0001/13): landed on main as 9268cf7 (ten commits, d596c35 to 9268cf7, by path through the gate; outside intent/ main equals vc's verified d26bac3), after hv's cutover (vc's go); .build/ removed. Next: hv's rebuild and handler re-install (vc holds the cargo lane), dc's docs, hv's push and main's CI (AT-00.3's and AT-00.7's Linux greens), then the AT-id commit, the AC and AT rows, wp gate and done (todo). hv's sync and email parity rows still pending (parity/HV-ROWS.md)."
+  }
+}
