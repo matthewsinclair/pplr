@@ -1,0 +1,16 @@
+{
+  "id": "01M6G6DSBZ8RYJRM592FVRFFEC",
+  "ts": "2026-11-03T07:54:20.415Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "seq": 6,
+    "text": "vc's independent verification, measured: main a3ab0fb (the one About reader, decision 10, on WP11 commit 3, the ubuntu fixes and WP14) cloned fresh into vc's scratchpad, slot 01M6G5YWE8VHKZYS3KDCHXWHTY. format, clippy, autotests, targetdir, critic, cargo test (97 unit and 33 cli pass; 1 ignored in each, the live Mail and Contacts tests), the replay 54 of 54 cases native, bats on Rust and on legacy 102 ok each with 1 skip each, the AC-00.7 Linux refusal test by design on macOS: every gate exited 0. It supersedes the 3121fb9 run and is the evidence for every WP accepted so far, independent of the nodes' own slot results; cc's measurement (slot 01M6G5RQSYXJ5KGW5E26XM5XMX) agrees. CI run 41598905802 at 37aaeff, which carries a3ab0fb, is green on both runners: cargo 97 unit and 33 cli on each, bats 102 ok on each; ubuntu skips AT-12.2 (macOS only), and macOS skips AT-12.2 (no fileicon on the runner) and the AC-00.7 Linux test, by design."
+  }
+}

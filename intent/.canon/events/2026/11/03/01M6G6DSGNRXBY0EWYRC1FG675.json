@@ -1,0 +1,16 @@
+{
+  "id": "01M6G6DSGNRXBY0EWYRC1FG675",
+  "ts": "2026-11-03T07:54:20.565Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "seq": 9,
+    "text": "hv, 2026-11-03, in vc's session: 'yes, the divergences stand'. All four stand as recorded in WP11's and WP14's bodies, for WP13's CHANGELOG: WP11, sync refuses a bad or missing option value, a non-numeric --limit and a trailing --group, and --apply-plan reads its sheets by header name; WP14, email finds people through the shared About header reader (four edge cases differed; decision 10's one reader removed one, and WP14's body lists the three that remain), and contact log refuses a second --email. The hold 2 item that asked for this ruling is released."
+  }
+}
