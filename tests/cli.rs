@@ -10,6 +10,18 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
+/// An io failure that names the path it was about, so a failing run says
+/// which file without a guess (No Silent Errors).
+trait Named<T> {
+  fn named(self, path: &std::path::Path) -> Result<T>;
+}
+
+impl<T> Named<T> for std::io::Result<T> {
+  fn named(self, path: &std::path::Path) -> Result<T> {
+    self.map_err(|e| format!("{}: {e}", path.display()).into())
+  }
+}
+
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 
 /// A private directory with its own HOME and People tree, removed on drop.
@@ -266,17 +278,18 @@ fn golden_root() -> Result<PathBuf> {
 
 /// Copies a tree, keeping symlinks as symlinks.
 fn copy_tree(from: &std::path::Path, to: &std::path::Path) -> Result<()> {
-  fs::create_dir_all(to)?;
-  for entry in fs::read_dir(from)? {
-    let entry = entry?;
+  fs::create_dir_all(to).named(to)?;
+  for entry in fs::read_dir(from).named(from)? {
+    let entry = entry.named(from)?;
     let (source, target) = (entry.path(), to.join(entry.file_name()));
-    let kind = entry.file_type()?;
+    let kind = entry.file_type().named(&source)?;
     if kind.is_symlink() {
-      std::os::unix::fs::symlink(fs::read_link(&source)?, &target)?;
+      std::os::unix::fs::symlink(fs::read_link(&source).named(&source)?, &target).named(&target)?;
     } else if kind.is_dir() {
       copy_tree(&source, &target)?;
     } else {
-      fs::copy(&source, &target)?;
+      fs::copy(&source, &target)
+        .map_err(|e| format!("{} to {}: {e}", source.display(), target.display()))?;
     }
   }
   Ok(())
@@ -285,11 +298,11 @@ fn copy_tree(from: &std::path::Path, to: &std::path::Path) -> Result<()> {
 /// Every path under `root`, relative and bytewise sorted, skipping `skip` at the top.
 fn walk(root: &std::path::Path, skip: &[&str]) -> Result<Vec<String>> {
   fn visit(root: &std::path::Path, dir: &std::path::Path, out: &mut Vec<String>) -> Result<()> {
-    for entry in fs::read_dir(dir)? {
-      let path = entry?.path();
+    for entry in fs::read_dir(dir).named(dir)? {
+      let path = entry.named(dir)?.path();
       let rel = path.strip_prefix(root)?.to_string_lossy().into_owned();
       out.push(rel);
-      if fs::symlink_metadata(&path)?.is_dir() {
+      if fs::symlink_metadata(&path).named(&path)?.is_dir() {
         visit(root, &path, out)?;
       }
     }
@@ -403,17 +416,63 @@ fn golden_normalise(text: &str, sandbox: &str) -> String {
 /// The lines of a golden file. Split on newlines alone: a path such as
 /// Finder's `Icon\r` ends in a carriage return that `str::lines` would drop.
 fn lines_of(path: &std::path::Path) -> Result<Vec<String>> {
-  let text = fs::read_to_string(path)?;
+  let text = fs::read_to_string(path).named(path)?;
   let text = text.strip_suffix('\n').unwrap_or(&text);
   Ok(text.split('\n').map(str::to_owned).collect())
+}
+
+/// The file under `dir` that `rel` names, or None. Each component is matched
+/// by its decomposed form against the names the directory lists, never by
+/// the filesystem: git on macOS, where the goldens are captured, stores every
+/// path precomposed (core.precomposeunicode), while a manifest names a file as
+/// macOS showed it, and pplr writes an .inetloc's name decomposed, as
+/// Foundation did. APFS takes either form for the other; ext4 does not.
+fn golden_file(dir: &std::path::Path, rel: &str) -> Result<Option<PathBuf>> {
+  let mut at = dir.to_path_buf();
+  for part in rel.split('/') {
+    let entries = match fs::read_dir(&at) {
+      Ok(entries) => entries,
+      Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+      Err(e) => return Err(format!("{}: {e}", at.display()).into()),
+    };
+    let listed = entries
+      .map(|e| e.map(|e| e.path()))
+      .collect::<std::io::Result<Vec<_>>>()
+      .named(&at)?;
+    let Some(next) = one_named(part, listed)? else {
+      return Ok(None);
+    };
+    at = next;
+  }
+  Ok(Some(at))
+}
+
+/// The one entry of `listed` whose name is `part` once both are decomposed;
+/// two such entries are refused, naming both, rather than one picked.
+fn one_named(part: &str, listed: Vec<PathBuf>) -> Result<Option<PathBuf>> {
+  use pplr::normalise::decompose;
+  let want = decompose(part);
+  let mut matches: Vec<PathBuf> = listed
+    .into_iter()
+    .filter(|p| {
+      p.file_name()
+        .is_some_and(|n| decompose(&n.to_string_lossy()) == want)
+    })
+    .collect();
+  if matches.len() > 1 {
+    return Err(format!("{part} names more than one entry: {matches:?}").into());
+  }
+  Ok(matches.pop())
 }
 
 /// Replays one case; `Ok(false)` when a step is still on the fallback.
 fn replay(case: &std::path::Path) -> Result<bool> {
   let steps_dir = case.join("steps");
-  let mut steps: Vec<PathBuf> = fs::read_dir(&steps_dir)?
+  let mut steps: Vec<PathBuf> = fs::read_dir(&steps_dir)
+    .named(&steps_dir)?
     .map(|e| e.map(|e| e.path()))
-    .collect::<std::io::Result<_>>()?;
+    .collect::<std::io::Result<_>>()
+    .named(&steps_dir)?;
   steps.retain(|p| p.extension().is_some_and(|x| x == "args"));
   steps.sort();
   let all = std::env::var_os("PPLR_GOLDEN_ALL").is_some();
@@ -439,23 +498,26 @@ fn replay(case: &std::path::Path) -> Result<bool> {
   copy_tree(&fixture, &sb)?;
   for rel in walk(&sb, &[])? {
     let path = sb.join(&rel);
-    if fs::symlink_metadata(&path)?.is_file() {
-      let bytes = fs::read(&path)?;
+    if fs::symlink_metadata(&path).named(&path)?.is_file() {
+      let bytes = fs::read(&path).named(&path)?;
       if is_text(&bytes) && String::from_utf8_lossy(&bytes).contains("@SANDBOX@") {
         fs::write(
           &path,
           String::from_utf8_lossy(&bytes).replace("@SANDBOX@", &sandbox),
-        )?;
+        )
+        .named(&path)?;
       }
     }
   }
   for dir in ["home", "cache", "backups"] {
-    fs::create_dir_all(sb.join(dir))?;
+    fs::create_dir_all(sb.join(dir)).named(&sb.join(dir))?;
   }
+  let gitconfig = sb.join("home/.gitconfig");
   fs::write(
-    sb.join("home/.gitconfig"),
+    &gitconfig,
     "[user]\n\tname = Matthew Sinclair\n\temail = golden@example.invalid\n",
-  )?;
+  )
+  .named(&gitconfig)?;
   // pplr email reads Mail's own stores under HOME, built from the messages the
   // capture's fake mail-recent served the legacy code
   mail_stores(&sb.join("home"), &sb.join("mail/messages.json"))?;
@@ -516,12 +578,21 @@ fn replay(case: &std::path::Path) -> Result<bool> {
       command.env(key, value.replace("@SANDBOX@", &sandbox));
     }
     command.args(args.iter().map(|a| a.replace("@SANDBOX@", &sandbox)));
-    let out = command.output()?;
+    let out = command.output().map_err(|e| {
+      format!(
+        "step {}: cannot run {}: {e}",
+        stem.display(),
+        env!("CARGO_BIN_EXE_pplr")
+      )
+    })?;
     let step = stem
       .file_name()
       .map(|n| n.to_string_lossy().into_owned())
       .unwrap_or_default();
-    let expect = |ext: &str| fs::read_to_string(stem.with_extension(ext));
+    let expect = |ext: &str| {
+      let path = stem.with_extension(ext);
+      fs::read_to_string(&path).named(&path)
+    };
     same(
       out.status.code().map(|c| c.to_string()),
       Some(expect("exit")?.trim().to_owned()),
@@ -538,26 +609,28 @@ fn replay(case: &std::path::Path) -> Result<bool> {
       &format!("step {step}: stderr"),
     )?;
   }
-  if fs::metadata(root.join("tripwire.log")).is_ok_and(|m| m.len() > 0) {
+  let tripwire = root.join("tripwire.log");
+  if fs::metadata(&tripwire).is_ok_and(|m| m.len() > 0) {
     return Err(
       format!(
         "reached a tool no scenario should: {}",
-        fs::read_to_string(root.join("tripwire.log"))?
+        fs::read_to_string(&tripwire).named(&tripwire)?
       )
       .into(),
     );
   }
 
   // Stamped backup names, then the tree against the manifest
-  for entry in fs::read_dir(sb.join("backups"))? {
-    let path = entry?.path();
+  let backups = sb.join("backups");
+  for entry in fs::read_dir(&backups).named(&backups)? {
+    let path = entry.named(&backups)?.path();
     let file = path
       .file_name()
       .map(|n| n.to_string_lossy().into_owned())
       .unwrap_or_default();
     let masked = mask_stamps(&file);
     if masked != file {
-      fs::rename(&path, sb.join("backups").join(masked))?;
+      fs::rename(&path, backups.join(masked)).named(&path)?;
     }
   }
   let mut expected = Vec::new();
@@ -573,18 +646,22 @@ fn replay(case: &std::path::Path) -> Result<bool> {
     match kind {
       "d" => same(meta.is_dir(), true, &format!("{rel} is a directory"))?,
       "l" => same(
-        fs::read_link(&actual)?.to_string_lossy().into_owned(),
+        fs::read_link(&actual)
+          .named(&actual)?
+          .to_string_lossy()
+          .into_owned(),
         value.to_owned(),
         &format!("symlink {rel}"),
       )?,
       "f" => {
-        let bytes = fs::read(&actual)?;
-        let stored = case.join("files").join(rel);
-        let want = if stored.exists() {
-          fs::read(&stored)?
-        } else {
-          fs::read(fixture.join(rel))?
+        let bytes = fs::read(&actual).named(&actual)?;
+        // The case's own golden, else the file as the fixture holds it
+        let stored = match golden_file(&case.join("files"), rel)? {
+          Some(stored) => stored,
+          None => golden_file(&fixture, rel)?
+            .ok_or_else(|| format!("{rel} has no golden in the case or the fixture"))?,
         };
+        let want = fs::read(&stored).named(&stored)?;
         let got = if is_text(&bytes) && bytes != want {
           golden_normalise(&text(&bytes), &sandbox).into_bytes()
         } else {
@@ -598,15 +675,17 @@ fn replay(case: &std::path::Path) -> Result<bool> {
       }
       "x" => {
         // A workbook by its cells, read by the same script the capture uses
-        let dump = Command::new(golden.join("xlsx-cells"))
-          .arg(&actual)
-          .output()?;
+        let script = golden.join("xlsx-cells");
+        let dump = Command::new(&script).arg(&actual).output().named(&script)?;
         same(
           dump.status.success(),
           true,
           &format!("xlsx-cells reads {rel}"),
         )?;
-        let want = fs::read_to_string(case.join("files").join(format!("{rel}.cells")))?;
+        let cells = format!("{rel}.cells");
+        let stored = golden_file(&case.join("files"), &cells)?
+          .ok_or_else(|| format!("{cells} has no golden in the case"))?;
+        let want = fs::read_to_string(&stored).named(&stored)?;
         same(
           golden_normalise(&text(&dump.stdout), &sandbox),
           want,
@@ -781,6 +860,43 @@ fn the_golden_rewrites_mask_what_varies_between_runs() {
   assert_eq!(golden_normalise(&raw, sb), want);
 }
 
+/// A golden is found whichever Unicode form names it. Git stores the path
+/// precomposed, a manifest may name it decomposed (as pplr names an
+/// .inetloc), and ext4, unlike APFS, keeps the two apart (ubuntu's run
+/// 41591508539). The lookup lists and compares, so this runs the same match
+/// on either filesystem; two entries of one name are refused, naming both.
+#[test]
+fn a_golden_is_found_whichever_unicode_form_names_it() -> Result<()> {
+  let (composed, decomposed) = (
+    "Zs\u{f3}fia Varga (Contacts).inetloc",
+    "Zso\u{301}fia Varga (Contacts).inetloc",
+  );
+  let sandbox = Sandbox::new()?;
+  let files = sandbox.path("files");
+  let about = files.join("V/Varga, Zs\u{f3}fia/About");
+  fs::create_dir_all(&about)?;
+  fs::write(about.join(composed), "the golden")?;
+  let rel = format!("V/Varga, Zs\u{f3}fia/About/{decomposed}");
+  let found = golden_file(&files, &rel)?.ok_or("no golden found")?;
+  assert_eq!(fs::read_to_string(found)?, "the golden");
+  assert_eq!(
+    golden_file(&files, "V/Varga, Zs\u{f3}fia/About/nobody.inetloc")?,
+    None
+  );
+  assert_eq!(golden_file(&files, "W/Nobody, Here/About")?, None);
+
+  let both = vec![about.join(composed), about.join(decomposed)];
+  let refused = one_named(decomposed, both)
+    .err()
+    .ok_or("two entries of one name were not refused")?
+    .to_string();
+  assert!(
+    refused.contains("more than one entry") && refused.contains(composed),
+    "{refused}"
+  );
+  Ok(())
+}
+
 // pplr's own mail reader (ST0001 WP14). Mail's two stores are built here from
 // the fixture's messages, holding only the tables and columns pplr email
 // reads, so no test touches a real mail store.
@@ -813,16 +929,20 @@ fn mail_store_paths(home: &std::path::Path) -> (PathBuf, PathBuf) {
 /// labelled with the rest, as Gmail's All Mail holds a message labelled INBOX.
 fn mail_stores(home: &std::path::Path, messages_json: &std::path::Path) -> Result<()> {
   use rusqlite::{Connection, ToSql};
-  let messages: Vec<FixtureMessage> = serde_json::from_slice(&fs::read(messages_json)?)?;
+  let messages: Vec<FixtureMessage> =
+    serde_json::from_slice(&fs::read(messages_json).named(messages_json)?)?;
   let (index_path, accounts_path) = mail_store_paths(home);
   for path in [&index_path, &accounts_path] {
-    fs::create_dir_all(path.parent().ok_or("a store has no folder")?)?;
+    let folder = path.parent().ok_or("a store has no folder")?;
+    fs::create_dir_all(folder).named(folder)?;
   }
-  let accounts = Connection::open(&accounts_path)?;
+  let open =
+    |path: &std::path::Path| Connection::open(path).map_err(|e| format!("{}: {e}", path.display()));
+  let accounts = open(&accounts_path)?;
   accounts.execute_batch(
     "create table ZACCOUNT (Z_PK integer primary key, ZIDENTIFIER, ZUSERNAME, ZPARENTACCOUNT);",
   )?;
-  let index = Connection::open(&index_path)?;
+  let index = open(&index_path)?;
   index.execute_batch(
     "create table messages (date_received, sender, subject, global_message_id, mailbox, deleted);
      create table subjects (subject);
