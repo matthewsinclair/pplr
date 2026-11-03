@@ -180,3 +180,141 @@ impl Store for SidecarStore {
     Ok(())
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  use std::collections::BTreeSet;
+  use std::os::unix::fs::PermissionsExt;
+
+  /// The sidecar's modes, as AC-09.1 names them.
+  const MODES: &[&str] = &["dump", "backup", "group"];
+
+  /// A temporary directory of the test's own, removed on drop.
+  struct Scratch(PathBuf);
+
+  impl Scratch {
+    fn new(name: &str) -> Result<Self> {
+      let dir =
+        std::env::temp_dir().join(format!("pplr-sidecar-test-{}-{name}", std::process::id()));
+      std::fs::create_dir_all(&dir)?;
+      Ok(Self(dir))
+    }
+  }
+
+  impl Drop for Scratch {
+    fn drop(&mut self) {
+      let _ = std::fs::remove_dir_all(&self.0);
+    }
+  }
+
+  /// AT-09.1 (ST0001 AC-09.1): the live store asks the sidecar for dump,
+  /// backup and group alone, and never builds it. A missing sidecar is
+  /// refused, naming the step that builds it, and nothing appears at its path;
+  /// a stand-in sidecar is asked for each of the three modes and for nothing
+  /// else; and the sidecar's own mode switch names exactly those three. That
+  /// sync reaches Contacts only through the store rests on AT-10.1 and
+  /// AT-11.1, which run it on the JSON store alone, and the dump format on
+  /// json.rs's tests.
+  #[test]
+  fn the_live_store_asks_the_sidecar_for_dump_backup_and_group_only() -> Result<()> {
+    let modes: BTreeSet<String> = MODES.iter().map(|mode| mode.to_string()).collect();
+    let scratch = Scratch::new("modes")?;
+
+    // Built ahead of time: a missing sidecar is refused by name, and nothing
+    // is built in its place
+    let missing = scratch.0.join("absent").join("pplr-contacts");
+    let refusal = match SidecarStore::new(missing.clone()) {
+      Ok(_) => return Err("a missing sidecar was accepted".into()),
+      Err(e) => e.to_string(),
+    };
+    assert!(
+      refusal.contains("bin/devbin build"),
+      "the refusal does not name the step that builds the sidecar: {refusal}"
+    );
+    assert!(
+      !missing.exists(),
+      "something was written at the sidecar's path"
+    );
+
+    // A stand-in that records each mode it is asked for, and answers it
+    let asked_log = scratch.0.join("asked");
+    let stand_in = scratch.0.join("pplr-contacts");
+    std::fs::write(
+      &stand_in,
+      format!(
+        "#!/bin/sh\nprintf '%s\\n' \"$1\" >> '{}'\ncase \"$1\" in\n  dump) echo '[]' ;;\n  backup) echo \"Backup: $3/contacts.vcf\" ;;\n  group) echo group-id ;;\nesac\n",
+        asked_log.display()
+      ),
+    )?;
+    std::fs::set_permissions(&stand_in, std::fs::Permissions::from_mode(0o755))?;
+
+    // Every read the store makes of the sidecar: the cards, a backup and the
+    // group (the writes go to Contacts.app through osascript instead)
+    let mut store = SidecarStore::new(stand_in)?;
+    store.cards()?;
+    store.backup(&scratch.0.join("backups"))?;
+    store.group_id("PPLR")?;
+    let asked: BTreeSet<String> = std::fs::read_to_string(&asked_log)?
+      .lines()
+      .map(str::to_owned)
+      .collect();
+    for mode in &modes {
+      assert!(
+        asked.contains(mode),
+        "the store never asked the sidecar for {mode}"
+      );
+    }
+    for mode in &asked {
+      assert!(
+        modes.contains(mode),
+        "the store asked the sidecar for {mode}, which AC-09.1 does not name"
+      );
+    }
+
+    // The sidecar's own mode switch names the three, read from its source
+    let main_swift = Path::new(env!("CARGO_MANIFEST_DIR")).join("swift/pplr-contacts/main.swift");
+    let labels = mode_switch_labels(&std::fs::read_to_string(main_swift)?)?;
+    assert_eq!(
+      labels, modes,
+      "swift/pplr-contacts/main.swift's mode switch names other modes than AC-09.1's"
+    );
+    Ok(())
+  }
+
+  /// The case labels of main.swift's mode switch, `switch cmd { ... }`; an
+  /// error, naming why, when there is no such switch or it has no case label.
+  fn mode_switch_labels(source: &str) -> Result<BTreeSet<String>> {
+    let start = source
+      .find("switch cmd {")
+      .ok_or("swift/pplr-contacts/main.swift has no mode switch (switch cmd)")?;
+    let open = start + "switch cmd ".len();
+    // The switch's body runs to the brace that closes its opening one
+    let mut depth = 0_i32;
+    let mut close = None;
+    for (at, c) in source[open..].char_indices() {
+      match c {
+        '{' => depth += 1,
+        '}' => {
+          depth -= 1;
+          if depth == 0 {
+            close = Some(open + at);
+            break;
+          }
+        }
+        _ => {}
+      }
+    }
+    let close = close.ok_or("main.swift's mode switch never closes")?;
+    let mut labels = BTreeSet::new();
+    for line in source[open..close].lines() {
+      if let Some(case) = line.trim().strip_prefix("case ") {
+        labels.extend(case.split('"').skip(1).step_by(2).map(str::to_owned));
+      }
+    }
+    if labels.is_empty() {
+      return Err("main.swift's mode switch has no case label".into());
+    }
+    Ok(labels)
+  }
+}
