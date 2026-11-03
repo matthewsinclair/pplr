@@ -20,6 +20,7 @@ pub mod new;
 pub mod normalise;
 pub mod open;
 pub mod pictures;
+pub mod plan;
 pub mod refresh;
 pub mod rename;
 pub mod search;
@@ -27,6 +28,7 @@ pub mod sync;
 pub mod tags;
 pub mod tools;
 pub mod tree;
+pub mod workbook;
 pub mod yaml;
 
 mod error;

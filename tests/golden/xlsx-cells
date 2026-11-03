@@ -5,24 +5,44 @@
 #
 # One line per non-empty cell, sheet<TAB>cell<TAB>value, sheets in workbook
 # order, with the five XML entities decoded and each newline in a value
-# written as \n. Styles and the zip's own bytes are not content. It reads
-# inline strings and numbers, which is what the legacy workbook holds; a
-# writer that uses shared strings needs this extended first. The capture and
-# the replay in tests/cli.rs both call it, so a workbook has one reading.
+# written as \n. Styles and the zip's own bytes are not content. A value is an
+# inline string (the legacy workbook's), a shared string (the port's) or a
+# number. The capture and the replay in tests/cli.rs both call it, so a
+# workbook has one reading.
 
 emulate -L zsh
 setopt err_exit no_unset pipe_fail
 xlsx=${1:?usage: xlsx-cells WORKBOOK.xlsx}
+# The shared strings, one per line in table order, each newline written as \n
+# (a template mktemp reads alike on macOS and on Linux, unlike -t)
+shared=$(mktemp "${TMPDIR:-/tmp}/xlsx-cells.XXXXXX")
+trap 'rm -f -- "$shared"' EXIT
+if unzip -l -- "$xlsx" xl/sharedStrings.xml >/dev/null 2>&1; then
+  unzip -p -- "$xlsx" xl/sharedStrings.xml | LC_ALL=C awk '
+    BEGIN { RS = "<si>" }
+    NR > 1 {
+      s = ""; rest = $0
+      while (match(rest, /<t[^>]*>/)) {
+        rest = substr(rest, RSTART + RLENGTH)
+        s = s substr(rest, 1, index(rest, "</t>") - 1)
+        rest = substr(rest, index(rest, "</t>") + 4)
+      }
+      gsub(/\n/, "\\n", s)
+      print s
+    }' > "$shared"
+fi
 i=0
 for sheet in ${(f)"$(unzip -p -- "$xlsx" xl/workbook.xml | grep -o '<sheet name="[^"]*"' | sed 's/<sheet name="//; s/"$//')"}; do
   i=$(( i + 1 ))
-  unzip -p -- "$xlsx" "xl/worksheets/sheet$i.xml" | LC_ALL=C awk -v sheet="$sheet" '
-    BEGIN { RS = "<c " }
+  unzip -p -- "$xlsx" "xl/worksheets/sheet$i.xml" | LC_ALL=C awk -v sheet="$sheet" -v shared="$shared" '
+    BEGIN { n = 0; while ((getline line < shared) > 0) ss[n++] = line; RS = "<c " }
     NR > 1 {
       if (!match($0, /^r="[^"]+"/)) next
       cell = substr($0, 4, RLENGTH - 4)
+      head = substr($0, 1, index($0, ">"))
       v = ""
-      if (match($0, /<t[^>]*>/)) { rest = substr($0, RSTART + RLENGTH); v = substr(rest, 1, index(rest, "</t>") - 1) }
+      if (head ~ /t="s"/ && match($0, /<v>[^<]*<\/v>/)) { v = ss[substr($0, RSTART + 3, RLENGTH - 7) + 0] }
+      else if (match($0, /<t[^>]*>/)) { rest = substr($0, RSTART + RLENGTH); v = substr(rest, 1, index(rest, "</t>") - 1) }
       else if (match($0, /<v>[^<]*<\/v>/)) { v = substr($0, RSTART + 3, RLENGTH - 7) }
       if (v == "") next
       gsub(/\n/, "\\n", v)

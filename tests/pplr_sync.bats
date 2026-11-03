@@ -2,10 +2,12 @@
 
 load test_helper
 
-# The legacy Swift engine builds on first use and says so on stderr, which a
-# test's run would mix into the output jq reads; build it once up front.
+# The legacy sync builds its Swift engine on first use and says so on stderr,
+# which a test's run would mix into the output jq reads; against the legacy
+# pplr, build it once up front (until WP13 retires it). The Rust pplr needs none.
 setup_file() {
     [ "$(uname)" = Darwin ] || return 0
+    [ -z "${PPLR_UNDER_TEST:-}" ] || [ "$PPLR_UNDER_TEST" -ef "$PPLR_ROOT/bin/pplr" ] || return 0
     # shellcheck source=../lib/engine.sh
     source "$PPLR_ROOT/lib/engine.sh"
     build_engine
@@ -185,7 +187,6 @@ setup_plan() {
 }
 
 @test "pplr sync --plan --json proposes a decision for every pplr person" {
-    needs_legacy_engine WP11
     setup_plan
     run "$PPLR" sync --plan --json
     [ "$status" -eq 0 ]
@@ -195,7 +196,6 @@ setup_plan() {
 }
 
 @test "pplr sync --plan matches a nickname with the same surname and company" {
-    needs_legacy_engine WP11
     setup_plan
     run "$PPLR" sync --plan --json
     [ "$status" -eq 0 ]
@@ -206,7 +206,6 @@ setup_plan() {
 }
 
 @test "pplr sync --plan reads a phone written as a link, and never marks a rename High" {
-    needs_legacy_engine WP11
     setup_plan
     run "$PPLR" sync --plan --json
     [ "$status" -eq 0 ]
@@ -215,25 +214,23 @@ setup_plan() {
 }
 
 @test "pplr sync --plan reads a LinkedIn link without its closing bracket" {
-    needs_legacy_engine WP11
     setup_plan
     run "$PPLR" sync --plan --json
     [ "$(echo "$output" | jq -r '.people[] | select(.key == "M/Mayhew, Bill") | .linkedin')" = "bill-mayhew" ]
 }
 
 @test "pplr sync --plan writes a workbook with the four sheets" {
-    command -v uv >/dev/null 2>&1 || skip "uv not installed"
+    needs_uv_for_legacy sync
     setup_plan
     out="$PPLR_TEST_DATA/plan.xlsx"
     run "$PPLR" sync --plan --out "$out"
     [ "$status" -eq 0 ]
     assert_contains "$output" "Workbook: $out"
-    sheets=$(uv run --quiet --with openpyxl python3 -c "import openpyxl,sys; print(','.join(openpyxl.load_workbook(sys.argv[1]).sheetnames))" "$out")
+    sheets=$(unzip -p "$out" xl/workbook.xml | grep -o '<sheet name="[^"]*"' | sed 's/<sheet name="//; s/"$//' | paste -sd, -)
     [ "$sheets" = "Merged,pplr,Contacts,How to review" ]
 }
 
 @test "pplr sync reads several phones apart by a middle dot" {
-    needs_legacy_engine WP11
     setup_contacts
     make_about Carron Elise "$(printf '%s\n' '- Role:' '- Company:' '- LinkedIn:' '- Email:' '- Phone:    +262 262 90 00 00 — switchboard · +262 692 90 00 01 — mobile')"
     run "$PPLR" sync --plan --json
@@ -382,7 +379,7 @@ setup_plan() {
 }
 
 @test "pplr sync --apply-plan is a dry run by default, and changes nothing" {
-    command -v uv >/dev/null 2>&1 || skip "uv not installed"
+    needs_uv_for_legacy sync
     setup_contacts
     "$PPLR" sync --plan --out "$PPLR_TEST_DATA/plan.xlsx" >/dev/null
     before=$(cat "$PPLR_CONTACTS_JSON")
@@ -395,7 +392,7 @@ setup_plan() {
 }
 
 @test "pplr sync --apply-plan --apply adds new cards and updates matched ones, removing nothing" {
-    command -v uv >/dev/null 2>&1 || skip "uv not installed"
+    needs_uv_for_legacy sync
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     "$PPLR" sync --plan --out "$PPLR_TEST_DATA/plan.xlsx" >/dev/null
@@ -416,7 +413,7 @@ setup_plan() {
 }
 
 @test "pplr sync --apply-plan --name writes only the named people" {
-    command -v uv >/dev/null 2>&1 || skip "uv not installed"
+    needs_uv_for_legacy sync
     setup_contacts
     export PPLR_BACKUP_DIR="$PPLR_TEST_DATA/backups"
     "$PPLR" sync --plan --out "$PPLR_TEST_DATA/plan.xlsx" >/dev/null

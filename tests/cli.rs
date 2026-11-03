@@ -260,31 +260,6 @@ fn golden_dir() -> PathBuf {
   PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/golden")
 }
 
-/// Builds the legacy Swift engine once, before a replay can reach it through
-/// the fallback: its first build says so on stderr, which no golden carries.
-fn warm_legacy_engine() -> Result<()> {
-  static BUILT: std::sync::OnceLock<std::result::Result<(), String>> = std::sync::OnceLock::new();
-  BUILT
-    .get_or_init(|| {
-      let out = Command::new("bash")
-        .args(["-c", "source lib/engine.sh && build_engine"])
-        .env("PPLR_ROOT", env!("CARGO_MANIFEST_DIR"))
-        .current_dir(env!("CARGO_MANIFEST_DIR"))
-        .output()
-        .map_err(|e| e.to_string())?;
-      if out.status.success() {
-        Ok(())
-      } else {
-        Err(format!(
-          "the legacy engine did not build: {}",
-          text(&out.stderr)
-        ))
-      }
-    })
-    .clone()
-    .map_err(Into::into)
-}
-
 /// A sandbox root as long as the capture's, at a real path (no symlink in it).
 fn golden_root() -> Result<PathBuf> {
   let unique = format!(
@@ -469,7 +444,6 @@ fn replay(case: &std::path::Path) -> Result<bool> {
     }
     argv.push((step.with_extension(""), args));
   }
-  warm_legacy_engine()?;
 
   let golden = golden_dir();
   let fixture = golden.join("fixture");
@@ -526,7 +500,7 @@ fn replay(case: &std::path::Path) -> Result<bool> {
       .env("TZ", "Europe/London")
       .env("PPLR_DATA", sb.join("Career/People"))
       .env("PPLR_DIR", sb.join("Career/People"))
-      .env("PPLR_TODAY", GOLDEN_DAY)
+      .env("PPLR_TODAY", GOLDEN_NOW)
       .env("PPLR_CONTACTS_JSON", sb.join("contacts.json"))
       .env("PPLR_BACKUP_DIR", sb.join("backups"))
       .env("PPLR_CACHE_DIR", sb.join("cache"))
@@ -1270,8 +1244,8 @@ fn contact_is_native_and_its_goldens_replay() -> Result<()> {
 }
 
 /// AT-10.1 (ST0001 AC-10.1): sync runs natively, its --check, --link, --pull,
-/// --photos and --backup against the JSON store (--plan and --apply-plan stay
-/// on the legacy code until WP11), and every golden of sync replays.
+/// --photos and --backup against the JSON store, and every golden of sync
+/// replays.
 #[test]
 fn sync_is_native_and_its_goldens_replay() -> Result<()> {
   const WP10: [&str; 5] = ["--check", "--link", "--pull", "--photos", "--backup"];
@@ -1298,6 +1272,74 @@ fn sync_is_native_and_its_goldens_replay() -> Result<()> {
     }
   }
   for mode in WP10 {
+    assert!(
+      modes.iter().any(|m| m == mode),
+      "no golden of sync {mode} replayed"
+    );
+  }
+  Ok(())
+}
+
+/// AT-11.1 (ST0001 AC-11.1): sync --plan and --apply-plan run in Rust (a
+/// legacy sync that would fail is never reached), and their goldens replay:
+/// the plan's JSON, its summary, the workbook's four sheets cell for cell, and
+/// a reviewed workbook carried out against the JSON store.
+#[test]
+fn sync_plan_and_apply_plan_are_native_and_their_goldens_replay() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  fs::create_dir_all(sandbox.data())?;
+  let contacts = sandbox.path("contacts.json");
+  fs::write(&contacts, "[]")?;
+  let bin = sandbox.legacy_script("sync", "echo legacy; exit 99")?;
+  let plan = |args: &[&str]| {
+    run(
+      sandbox
+        .pplr()
+        .env("PPLR_BIN_DIR", &bin)
+        .env("PPLR_CONTACTS_JSON", &contacts)
+        .env("PPLR_BACKUP_DIR", sandbox.path("backups"))
+        .args(args),
+    )
+  };
+  let json = plan(&["sync", "--plan", "--json"])?;
+  assert_eq!(json.status.code(), Some(0), "{}", text(&json.stderr));
+  assert!(text(&json.stdout).starts_with("{\n  \"cards\" : ["));
+  let book = sandbox.path("plan.xlsx");
+  let book = book.to_string_lossy();
+  let wrote = plan(&["sync", "--plan", "--out", &book])?;
+  assert_eq!(wrote.status.code(), Some(0), "{}", text(&wrote.stderr));
+  let applied = plan(&["sync", "--apply-plan", &book])?;
+  assert_eq!(applied.status.code(), Some(0), "{}", text(&applied.stderr));
+  assert!(text(&applied.stdout).starts_with("pplr sync --apply-plan (dry run"));
+
+  const WP11: [&str; 2] = ["--plan", "--apply-plan"];
+  let mut modes = Vec::new();
+  for case in fs::read_dir(golden_dir().join("cases"))? {
+    let case = case?.path();
+    if !case.is_dir() {
+      continue;
+    }
+    let mut ours = Vec::new();
+    for step in fs::read_dir(case.join("steps"))? {
+      let step = step?.path();
+      if step.extension().is_some_and(|x| x == "args") {
+        let args = lines_of(&step)?;
+        if args.first().is_some_and(|c| c == "sync") {
+          ours.extend(
+            args
+              .into_iter()
+              .skip(1)
+              .filter(|a| WP11.contains(&a.as_str())),
+          );
+        }
+      }
+    }
+    if !ours.is_empty() {
+      same(replay(&case)?, true, &format!("{} replays", case.display()))?;
+      modes.extend(ours);
+    }
+  }
+  for mode in WP11 {
     assert!(
       modes.iter().any(|m| m == mode),
       "no golden of sync {mode} replayed"

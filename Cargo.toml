@@ -17,6 +17,10 @@ jiff = "0.2"
 sha2 = "0.10"
 # The engine's email pattern in About headers, and pplr grep's basic regular expressions.
 regex = "1"
+# sync --plan's review workbook, written (ST0001 WP11).
+rust_xlsxwriter = { version = "0.102.0", default-features = false }
+# The reviewed workbook, read back by sync --apply-plan.
+calamine = { version = "0.38.0", default-features = false }
 
 [lints.rust]
 unsafe_code = "forbid"

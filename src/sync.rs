@@ -1,8 +1,8 @@
 //! `pplr sync`: pplr and Contacts, compared (`--check`), linked (`--link`),
 //! pulled into pplr (`--pull`), given photos (`--photos`) and backed up
 //! (`--backup`), through the store (ST0001 design 3.2). The engine's logic,
-//! ported; the plan and its workbook (`--plan`, `--apply-plan`) stay on the
-//! legacy script until WP11.
+//! ported, and the plan with its review workbook (`--plan`, `--apply-plan`),
+//! which src/plan.rs scores and src/workbook.rs writes and reads back.
 
 use crate::Result;
 use crate::config::Config;
@@ -10,7 +10,9 @@ use crate::contacts::{self, AccessDenied, Card, MarkerWrite, Store, linkedin_url
 use crate::layout::Layout;
 use crate::marker::{marker_path, marker_url};
 use crate::normalise::{decompose, email_key, fold, percent_decode};
+use crate::plan::{self, Decision, Work};
 use crate::tree::{Person, names, people};
+use crate::workbook;
 use serde_json::{Value, json};
 use std::collections::{HashMap, HashSet};
 use std::fs;
@@ -69,6 +71,10 @@ struct Options {
   group: Option<String>,
   names: Vec<String>,
   skips: Vec<String>,
+  /// --plan's workbook, as given.
+  out: Option<String>,
+  /// --apply-plan's workbook, as given.
+  workbook: Option<String>,
 }
 
 pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
@@ -81,12 +87,10 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
         o.mode = Some(arg.trim_start_matches('-').to_owned());
       }
       "--apply-plan" => {
-        value();
+        o.workbook = Some(value());
         o.mode = Some("applyplan".to_owned());
       }
-      "--out" => {
-        value();
-      }
+      "--out" => o.out = Some(value()),
       "--apply" => o.apply = true,
       "--name" => o.names.push(value()),
       "--skip" => o.skips.push(value()),
@@ -110,13 +114,6 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
     usage();
     return Ok(ExitCode::FAILURE);
   };
-  if mode == "plan" || mode == "applyplan" {
-    // The plan and its workbook are WP11's: until then the legacy script runs the whole command
-    let legacy: Vec<String> = std::iter::once("sync".to_owned())
-      .chain(args.iter().cloned())
-      .collect();
-    return crate::fallback::run(&legacy, config);
-  }
   match run_mode(&mode, &o, config) {
     Ok(code) => Ok(code),
     Err(e) if e.downcast_ref::<AccessDenied>().is_some() => {
@@ -147,6 +144,8 @@ fn run_mode(mode: &str, o: &Options, config: &Config) -> Result<ExitCode> {
     "link" => link(store.as_mut(), o, &group, config),
     "photos" => photos(store.as_mut(), o, config),
     "pull" => pull(store.as_mut(), o, &group, config),
+    "plan" => plan_mode(store.as_mut(), o, &group, config),
+    "applyplan" => apply_plan(store.as_mut(), o, &group, config),
     _ => Ok(ExitCode::FAILURE),
   }
 }
@@ -830,7 +829,7 @@ fn print_link(plan: &LinkPlan, group: &str, outcome: Option<&Outcome>, backup: O
 // --photos
 
 /// The engine's picture: the first About file ending (Picture).jpg, .png or .jpeg.
-fn picture_path(p: &Person) -> Option<PathBuf> {
+pub fn picture_path(p: &Person) -> Option<PathBuf> {
   let about = p.dir.join("About");
   names(&about)
     .into_iter()
@@ -1149,6 +1148,193 @@ fn print_pull(work: &[&PullWork], outcome: Option<&Outcome>, backup: Option<&Pat
   }
   if let Some(backup) = backup {
     println!("\nBackup of each About file: {}", backup.display());
+  }
+}
+
+// --plan and --apply-plan
+
+fn plan_mode(store: &mut dyn Store, o: &Options, group: &str, config: &Config) -> Result<ExitCode> {
+  let now = config.now()?;
+  let plan = plan::plan(
+    &people(&config.data),
+    &store.cards()?,
+    group,
+    now.strftime("%Y-%m-%d %H:%M").to_string(),
+  );
+  if o.json {
+    println!("{}", to_swift_json(&serde_json::to_value(&plan)?));
+    return Ok(ExitCode::SUCCESS);
+  }
+  let shown = o.out.clone().unwrap_or_else(|| {
+    format!(
+      "{}/_out/contacts-plan-{}.xlsx",
+      config.data.display(),
+      now.strftime("%Y%m%d-%H%M")
+    )
+  });
+  // A relative --out is under the data folder, where the legacy script ran
+  let out = config.data.join(&shown);
+  if let Some(dir) = out.parent() {
+    fs::create_dir_all(dir)?;
+  }
+  workbook::write(&plan, &out)?;
+  println!("pplr sync --plan (read-only)");
+  println!();
+  for ((confidence, decision), n) in plan.proposals() {
+    println!("  {n}\t{confidence} / {decision}");
+  }
+  println!();
+  println!("Workbook: {shown}");
+  Ok(ExitCode::SUCCESS)
+}
+
+fn apply_plan(
+  store: &mut dyn Store,
+  o: &Options,
+  group: &str,
+  config: &Config,
+) -> Result<ExitCode> {
+  let path = std::env::current_dir()?.join(o.workbook.as_deref().unwrap_or_default());
+  if !path.is_file() {
+    println!("Error: no such workbook: {}", path.display());
+    return Ok(ExitCode::FAILURE);
+  }
+  let decisions = match workbook::decisions(&path)? {
+    Ok(decisions) => decisions,
+    Err(mistake) => {
+      eprintln!("{mistake}");
+      return Ok(ExitCode::FAILURE);
+    }
+  };
+  // --name: only these people (eg to try one card first)
+  let only: HashSet<String> = o.names.iter().map(|n| person_key(n)).collect();
+  let chosen: Vec<Decision> = decisions
+    .into_iter()
+    .filter(|d| only.is_empty() || only.contains(&d.person))
+    .collect();
+  let everyone = people(&config.data);
+  let cards = store.cards()?;
+  let (work, problems) = plan::plan_work(&chosen, &everyone, &cards, group);
+  let todo: Vec<&Work> = work.iter().filter(|w| !w.is_empty()).collect();
+  let mut outcome: Option<Outcome> = None;
+  let mut backup = None;
+  if o.apply && !todo.is_empty() {
+    backup = Some(store.backup(&config.backup_dir)?);
+    let mut done: Outcome = Vec::new();
+    let mut failures = 0;
+    for w in todo.iter().take(o.limit.unwrap_or(usize::MAX)) {
+      let result = match w {
+        Work::Add { person, card } => store
+          .create(card, group)
+          .and_then(|id| write_inetloc(&inetloc_path(person), &id)),
+        Work::Change {
+          person,
+          card,
+          change,
+          ..
+        } => store
+          .update(&card.id, change, group)
+          .and_then(|()| write_inetloc(&inetloc_path(person), &card.id)),
+      };
+      let error = result.err().map(|e| e.to_string());
+      let failed = error.is_some();
+      done.push((w.person().key.clone(), error));
+      if failed {
+        failures += 1;
+        if failures >= MAX_FAILURES {
+          break;
+        }
+      }
+    }
+    store.save()?;
+    outcome = Some(done);
+  }
+  print_work(
+    &work,
+    &todo,
+    &problems,
+    outcome.as_ref(),
+    backup.as_deref(),
+    if o.apply { None } else { o.limit },
+  );
+  let failed = outcome
+    .as_ref()
+    .is_some_and(|o| o.iter().any(|(_, e)| e.is_some()));
+  Ok(if failed {
+    ExitCode::FAILURE
+  } else {
+    ExitCode::SUCCESS
+  })
+}
+
+fn print_work(
+  work: &[Work],
+  todo: &[&Work],
+  problems: &[String],
+  outcome: Option<&Outcome>,
+  backup: Option<&Path>,
+  limit: Option<usize>,
+) {
+  let count = |d: &str| todo.iter().filter(|w| w.decision() == d).count();
+  println!(
+    "{}",
+    if outcome.is_some() {
+      "pplr sync --apply-plan --apply"
+    } else {
+      "pplr sync --apply-plan (dry run: nothing written; --apply to write)"
+    }
+  );
+  println!();
+  println!("  add (new iCloud cards)  {}", count("Add"));
+  println!("  update                  {}", count("Update"));
+  println!("  link only               {}", count("Link only"));
+  println!("  nothing to change       {}", work.len() - todo.len());
+  if !problems.is_empty() {
+    println!("  cannot be done          {}", problems.len());
+  }
+  if let Some(outcome) = outcome {
+    let bad: Vec<_> = outcome.iter().filter(|(_, e)| e.is_some()).collect();
+    let ok = outcome.len() - bad.len();
+    println!("  written now             {ok}");
+    println!("  failed                  {}", bad.len());
+    println!("  still to write          {}", todo.len() - ok);
+    if !bad.is_empty() {
+      println!("\nFailed:");
+      for (person, error) in &bad {
+        println!("  {person}: {}", error.as_deref().unwrap_or_default());
+      }
+      if bad.len() >= MAX_FAILURES {
+        println!("  (stopped after three failures)");
+      }
+    }
+  } else {
+    println!(
+      "\nWould write{}:",
+      limit
+        .map(|l| format!(" (the first {l})"))
+        .unwrap_or_default()
+    );
+    for w in todo.iter().take(limit.unwrap_or(usize::MAX)) {
+      let card = match w {
+        Work::Change { card, .. } => format!("  <->  {}", display_name(card)),
+        Work::Add { .. } => String::new(),
+      };
+      println!(
+        "  {:<10} {}{card}  [{}]",
+        w.decision(),
+        w.person().key,
+        w.summary()
+      );
+    }
+  }
+  if !problems.is_empty() {
+    println!("\nCannot be done:");
+    for p in problems {
+      println!("  {p}");
+    }
+  }
+  if let Some(b) = backup {
+    println!("\nBackup: {}", b.display());
   }
 }
 
