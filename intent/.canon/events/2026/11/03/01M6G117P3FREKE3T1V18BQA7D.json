@@ -1,0 +1,16 @@
+{
+  "id": "01M6G117P3FREKE3T1V18BQA7D",
+  "ts": "2026-11-03T06:20:06.211Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 2,
+    "text": "CI: both fixes are on main and vc verified main at 95a75e8 (decision 6): 3d6dec4 serialises the stub CMS port, and 95a75e8 (WP11 commit 1) drops the replay's Swift warm-up and makes plan native. Next: hv pushes main to upstream and local; then vc watches the first run. ubuntu's bats step runs for the first time under tests.yml, so a Linux layer may surface (the harness is dc's). dc's rename fix db45555 goes with this push."
+  }
+}
