@@ -1,0 +1,16 @@
+{
+  "id": "01M6GDYNNM54019WWFNP27K8TC",
+  "ts": "2026-11-03T10:05:53.716Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "hold",
+    "seq": 2,
+    "text": "WP13's parity record, its five sync rows (AC-00.5). The email rows are the same (hv's second run; WP13's body, 728465f). The sync rows need Contacts access, which hv's terminal app cannot be granted (it declares no NSContactsUsageDescription; iTerm.app does). Released when hv has run parity/hv-next.zsh contacts from iTerm and pasted its lines; then cc classifies the rows into WP13's body and deletes the outputs. If Contacts reads authorized plainly but not inside sandbox-exec, the rows also wait for vc's ruling on their write guard."
+  }
+}

@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 09:59Z
+heartbeat_at: 2026-11-03 10:05Z
 status: active
-focus: "WP13's AT-id commit is on main (7afa8a9) for vc to verify. hv's first run of the contacts and mail parity rows compared nothing; the runner is fixed and hv-next.zsh is hv's re-run (hold 2). Then dc's tools/ move and docs, hv's push, main's CI, and WP13's AC and AT rows, wp gate and done"
+focus: "WP13's AT-id commit is on main (7afa8a9) for vc to verify. The live parity's email rows are the same (728465f); the five sync rows wait for hv's run from iTerm (hold 2). Then dc's tools/ move and docs, hv's push, main's CI, and WP13's AC and AT rows, wp gate and done"
 claims: [ST0001/13]
 ---
 
@@ -21,7 +21,7 @@ claims: [ST0001/13]
 
 ## Holds
 
-- WP13's parity record, its contacts and mail rows (AC-00.5). hv's run 1 compared nothing: both sides refused Contacts (exit 3), and the legacy's email lacked mail-recent (the runner cleared PPLR_MAIL_RECENT; fixed and proved on synthetic data). Released when hv has run parity/hv-next.zsh and pasted its lines; then cc classifies the rows into WP13's body and deletes the outputs. If Contacts reads authorized plainly but not inside sandbox-exec, the contacts rows also wait for vc's ruling on their write guard.
+- WP13's parity record, its five sync rows (AC-00.5). The email rows are the same (hv's second run; WP13's body, 728465f). The sync rows need Contacts access, which hv's terminal app cannot be granted (it declares no NSContactsUsageDescription; iTerm.app does). Released when hv has run parity/hv-next.zsh contacts from iTerm and pasted its lines; then cc classifies the rows into WP13's body and deletes the outputs. If Contacts reads authorized plainly but not inside sandbox-exec, the rows also wait for vc's ruling on their write guard. (edited)
 
 ## Watch-outs
 
