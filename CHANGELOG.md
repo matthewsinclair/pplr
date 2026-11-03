@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0] - unreleased
+## [2.0.0] - 2026-11-03
 
 pplr is now one Rust binary. It replaces the bash scripts, the Python helpers and the Swift engine that was compiled at run time. Every command keeps its arguments and flags, and the files pplr writes in the People tree are byte for byte the ones the shell version wrote, apart from time stamps and the changes listed below.
 
