@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 07:29Z
+heartbeat_at: 2026-11-03 07:44Z
 status: active
-focus: "WP14 done (96c75fe). The ubuntu fixes are on main: the goldens lookup (64be72f) and the bats leg (3121fb9). Holding on the CI run after hv's next push (hold 2)"
+focus: "ubuntu CI green: run 41598011297 at 6464721, cargo and the first ubuntu bats run (102 ok, AC-00.7's Linux test ran). WP14 done. Free for vc's next assignment; the other claims wait on hv's steps"
 claims: [ST0001/02, ST0001/09, ST0002/02, ST0002/07, ST0002/04, ST0002/05, ST0001/08]
 ---
 
@@ -21,7 +21,7 @@ _(none)_
 
 ## Holds
 
-- ST0001 ubuntu: the goldens fix (64be72f, slot 01M6G4FCG0M6F769Q7MHJY1X0B verified by vc) and the bats fixes (3121fb9: no plutil, plus AC-00.7's Finder refusal test), both measured green on macOS. Released when the CI run carrying both (the run after hv's next push) passes ubuntu's cargo step, which needs sync-apply-plan, sync-link-all-names and sync-link-apply to replay, and its first bats step, where the new AC-00.7 test must run, not skip. Whatever either step exposes comes back to TODO (edited)
+_(none)_
 
 ## Watch-outs
 
