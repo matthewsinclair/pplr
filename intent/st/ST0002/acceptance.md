@@ -53,6 +53,10 @@ title: Create a homebrew distro for the new Rust version of Pplr
 - AC-07.1 Every macOS binary pplr ships (`pplr`, `pplr-contacts` and the `Pplr Links.app` from `pplr handler`) is signed with Developer ID Application: Geodica Pty Ltd (76BQL8L47U), with the hardened runtime and a secure timestamp, and passes `codesign --verify --strict -R <requirement>` and `spctl`. -- satisfied: no (computed)
 - AC-07.2 (non-test) The signer is project code in bash or zsh (`bin/.devbin/cmd/macos`, no Python). It runs on rhadamanth only, notarises every release build with `notarytool`, and the release cannot attach an unsigned macOS asset. -- satisfied: no
 
+### WP-08 -- tools/ becomes devbin project commands: bin/devbin the one entry point (status: Not Started)
+
+- AC-08.1 Every script that was in tools/ is a devbin project command in bin/.devbin/cmd/, reached through bin/devbin, and tools/ is gone. -- satisfied: no (computed)
+
 ## Acceptance Tests
 
 ### ST-level
@@ -86,6 +90,10 @@ _(no tests in this group)_
 _(no tests in this group)_
 
 ### WP-07 -- Developer ID signing and notarisation (status: WIP)
+
+_(no tests in this group)_
+
+### WP-08 -- tools/ becomes devbin project commands: bin/devbin the one entry point (status: Not Started)
 
 _(no tests in this group)_
 

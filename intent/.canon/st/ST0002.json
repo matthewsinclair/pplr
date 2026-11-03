@@ -219,6 +219,14 @@
       "state": {
         "is": "unsatisfied"
       }
+    },
+    {
+      "id": "AC-08.1",
+      "text": "Every script that was in tools/ is a devbin project command in bin/.devbin/cmd/, reached through bin/devbin, and tools/ is gone.",
+      "kind": "test",
+      "state": {
+        "is": "computed"
+      }
     }
   ],
   "tests": [
