@@ -1,8 +1,0 @@
-#!/bin/zsh
-# The legacy scripts' clock, pinned to PPLR_GOLDEN_NOW ("YYYY-MM-DD HH:MM:SS").
-# Options such as -u and -v-90d keep their meaning; they apply to the pinned time.
-opts=() fmt=()
-for a in "$@"; do
-  if [[ $a == +* ]]; then fmt+=("$a"); else opts+=("$a"); fi
-done
-exec /bin/date -j "${opts[@]}" -f '%Y-%m-%d %H:%M:%S' "$PPLR_GOLDEN_NOW" "${fmt[@]}"

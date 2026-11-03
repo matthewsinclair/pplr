@@ -505,8 +505,6 @@ fn replay(case: &std::path::Path) -> Result<()> {
       .env("PPLR_BACKUP_DIR", sb.join("backups"))
       .env("PPLR_CACHE_DIR", sb.join("cache"))
       .env("PPLR_REFS_DIR", &sb)
-      .env("PPLR_GOLDEN_NOW", GOLDEN_NOW)
-      .env("PPLR_GOLDEN_SANDBOX", &sb)
       .env("PPLR_GOLDEN_TRIPWIRE", root.join("tripwire.log"))
       .current_dir(&sb)
       .stdin(std::process::Stdio::null());
@@ -646,7 +644,8 @@ fn replay(case: &std::path::Path) -> Result<()> {
   Ok(())
 }
 
-/// Where the CMS-up scenarios put the CMS (tests/golden/scenarios.zsh).
+/// Where the CMS-up cases put the CMS: the PPLR_CMS_URL in their env files
+/// (tests/golden/cases/open-print-cms-up/env).
 const GOLDEN_CMS: &str = "127.0.0.1:47360";
 
 /// GOLDEN_CMS's port, one stub at a time. This lock covers one test process,
