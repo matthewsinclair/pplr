@@ -1,0 +1,16 @@
+{
+  "id": "01M6GFDB43BNTR1SG4ABHV4VMZ",
+  "ts": "2026-11-03T10:31:23.011Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "hold",
+    "seq": 5,
+    "text": "ST0001 WP09's AC-09.2 has two halves, each hv's from iTerm, which has Contacts: (a) the sidecar reads the live store, the live round trip run in vc's heavy slot, exit 0 with the round trip held; (b) the Rust pplr sync --check --json matches the legacy engine's report, the live parity's sync --check row, which differed by the port bug that cc's C11 fixes (b8f96b2), re-run the same once C11 lands. Released when both results are on vc's board; then ac satisfy with both, wp gate and wp done. AC-09.1 is covered by AT-09.1 (fd67819)"
+  }
+}

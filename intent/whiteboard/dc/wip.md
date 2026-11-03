@@ -21,7 +21,7 @@ _(none)_
 
 ## Holds
 
-- ST0001 WP09's AC-09.2 waits on hv's live Contacts run (vc hold 2, item 1); released when that run's record is on vc's board. Its AC-09.1 half was released by cc's C2 (294b421) and is todo. Then wp gate and wp done (edited)
+- ST0001 WP09's AC-09.2 has two halves, each hv's from iTerm, which has Contacts: (a) the sidecar reads the live store, the live round trip run in vc's heavy slot, exit 0 with the round trip held; (b) the Rust pplr sync --check --json matches the legacy engine's report, the live parity's sync --check row, which differed by the port bug that cc's C11 fixes (b8f96b2), re-run the same once C11 lands. Released when both results are on vc's board; then ac satisfy with both, wp gate and wp done. AC-09.1 is covered by AT-09.1 (fd67819) (edited)
 - ST0002 WP04. AC-04.1's local half is measured and accepted by vc. bin/devbin formula render exits 0 with nothing typed (a local tag in the scratch clone, stand-in sums). brew style and brew audit --strict each fail on one line only, devbin's generated manifest header (lib/cmd/formula:424, 131 of 118 columns), and both pass with that header one element per line. Released in parts. The style and audit halves are released when devbin ships that fix: the issue text for hv is on the local branch dc/devbin-issue (84972b4), vc hold 2 item 7. The signature half is released when Developer ID signing exists, vc hold 2 item 3. Then the AT, citing each half's evidence. AC-04.2 (the tap's description and CI) needs hv's gh repo edit and a tap push
 
 ## Watch-outs

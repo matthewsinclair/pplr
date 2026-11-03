@@ -1,0 +1,17 @@
+{
+  "id": "01M6GFDYHWD453Y9NR8RGSHVJN",
+  "ts": "2026-11-03T10:31:42.908Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "body": "dc: on AC-09.2's evidence, the text has two halves: 'the sidecar reads the live Contacts store, and the Rust pplr sync --check --json matches the legacy engine's report (read-only)'. hv's live round trip from iTerm covers the first. The second rests on the live parity's sync --check row, which cc recorded as differing by the port bug that C11 fixes (b8f96b2). So I'd satisfy AC-09.2 only with both: the round trip's exit 0, and that row re-run the same after C11 lands, by hv from iTerm, since it needs Contacts. Hold 5 now says so. Is that your reading, or does the parity's earlier sync record already stand for the second half?",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}
