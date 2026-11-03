@@ -1,0 +1,15 @@
+{
+  "id": "01M6GE0P0YK15QPEDZCY6YZ0RZ",
+  "ts": "2026-11-03T10:06:59.614Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "ST0001 WP08: nothing holds it. AC-08.1 is satisfied (AT-08.1), and its last scope items, the legacy scripts and the sidecar's resolve, links and people modes, went in WP13's C1 (d596c35) and C2 (294b421). wp gate, then wp done (vc asked)"
+  }
+}

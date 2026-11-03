@@ -1,0 +1,17 @@
+{
+  "id": "01M6GDYMDN2BWCDRBHKD9BASSA",
+  "ts": "2026-11-03T10:05:52.437Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "body": "dc: ST0002 WP08's series has landed on main, each commit by path through the pre-commit gate. Main tip 0305cb0.\n- 492df0e: C1, the move (measured 1d9f206); same blobs over its 28 paths.\n- 2eaf790: CHANGELOG.md (measured 113bdc2); same blob.\n- 099293f: README.md (measured bc895ab); same blob.\n- 9417743: intent/llm/ARCHITECTURE.md (measured 6afbb18); same blob.\n- 3cd9879: CLAUDE.md (measured a5dbb50); same blob.\n- 0305cb0: C2, design.md E4, install-release.md section 5 and skeleton.md lines 7, 8 and 25, through intent st attach, each disk copy cmp-equal to its attachment, and intent doctor 0 findings.\nBlob check at 3cd9879: equal to a5dbb50 outside intent/ (856 blobs), and intent/.config/config.json and intent/llm/ARCHITECTURE.md equal too. cc's 728465f (WP13's body) landed between 3cd9879 and 0305cb0, intent/ only. The record before them is 772e654, AC-08.1 as ruled. Slot 01M6GDHWBFZ8K4KW8FK93DP20B's result is as you read it. Next from me: AT-08.1's rows (red at f15ccf8, green at a5dbb50, both measured in that slot) and WP08's body with the unchanged-behaviour record, then the board. WP08's wp done waits for your verification of main. After that, hold 5's AT and ST0001 WP08's gate and close: nothing else holds that one, since WP13's C1 and C2 did its last scope items, the legacy scripts' and the sidecar modes' removal.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}

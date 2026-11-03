@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 09:43Z
+heartbeat_at: 2026-11-03 10:07Z
 status: active
-focus: "ST0002/08, the tools/ move (vc decision 17): mapping sent to vc for its ruling; the series follows in a clone on main after cc's 7afa8a9. WP13's docs held to land after it with the new paths (hold 4, dc/wp13-land 2d55e76). WP09 and WP04 holds unchanged (5, 6)"
+focus: "ST0002/08 landed (492df0e to 0305cb0, AT-08.1 green, gate PASS); wp done after vc verifies main, then hv's push. Next: ST0001 WP08's close and WP09 AC-09.1's AT (todo 4, 5); WP09 AC-09.2 and ST0002 WP04 held (holds 5, 6)"
 claims: [ST0001/09, ST0002/07, ST0002/04, ST0002/05, ST0001/08, ST0002/08]
 ---
 
@@ -13,16 +13,16 @@ claims: [ST0001/09, ST0002/07, ST0002/04, ST0002/05, ST0001/08, ST0002/08]
 
 ## DOING
 
-- ST0002/08 (vc decision 17): every tools/ script becomes a devbin project command in bin/.devbin/cmd/, so bin/devbin is the one entry point. The mapping went to vc for its ruling, in its inbox (2026-11-03 09:42Z) and live: the eight scripts, the fold-table wrapper, the gates kept as sealed config options, the references, the series and its measurement, and an AC. Next, on vc's ruling: the series in a fresh clone based on main after cc's 7afa8a9 (its AT-00.3 lines kept), measured with one cargo-and-bats ask, every commit through the pre-commit gate (edited)
+- ST0002/08 (vc decisions 17 and 18): landed on main by path through the gate. 492df0e is the move, then WP13's four docs on the new paths (2eaf790, 099293f, 9417743 and 3cd9879), then 0305cb0, ST0002's docs through st attach. The blobs equal the measured a5dbb50 outside intent/ (slot 01M6GDHWBFZ8K4KW8FK93DP20B, every gate exit as expected). AT-08.1 is red at f15ccf8 and green at a5dbb50, and wp gate passes. Its body records the behaviour as unchanged. wp done follows vc's verification of main; then hv pushes (edited)
 
 ## TODO
 
-_(none)_
+- ST0001 WP09 AC-09.1: a covering AT with a measured red, now that C2 (294b421) has the sidecar doing only dump, backup and group and IN-SW-CODE-006 is on again (vc, 2026-11-03)
+- ST0001 WP08: nothing holds it. AC-08.1 is satisfied (AT-08.1), and its last scope items, the legacy scripts and the sidecar's resolve, links and people modes, went in WP13's C1 (d596c35) and C2 (294b421). wp gate, then wp done (vc asked)
 
 ## Holds
 
-- WP13's docs, all approved by vc: CHANGELOG.md, README.md, intent/llm/ARCHITECTURE.md and CLAUDE.md's project section. Held by vc decision 17: they take the tools/ move's new paths and land once, after the move (ST0002/08), each as its own commit, measured with it. Released when the move's commits are on main, or in the same measured series. The approved drafts are on the local branch dc/wp13-docs (4c547e0); the four applied onto main c516fb6, CLAUDE.md's three bullets around cc's C1 and C4 build line, are on dc/wp13-land (2d55e76). Neither is ever pushed. At landing: the new paths in, then prettier and people-leak, commit by path, and send vc the tips (edited)
-- ST0001 WP09. AC-09.1 is released when cc's C2 lands on main (the sidecar does only dump, backup and group; IN-SW-CODE-006 back on); then a covering AT with a measured red. AC-09.2 waits on hv's live Contacts run (vc hold 2, item 1). Then wp gate and wp done
+- ST0001 WP09's AC-09.2 waits on hv's live Contacts run (vc hold 2, item 1); released when that run's record is on vc's board. Its AC-09.1 half was released by cc's C2 (294b421) and is todo. Then wp gate and wp done (edited)
 - ST0002 WP04. AC-04.1's local half is measured and accepted by vc. bin/devbin formula render exits 0 with nothing typed (a local tag in the scratch clone, stand-in sums). brew style and brew audit --strict each fail on one line only, devbin's generated manifest header (lib/cmd/formula:424, 131 of 118 columns), and both pass with that header one element per line. Released in parts. The style and audit halves are released when devbin ships that fix: the issue text for hv is on the local branch dc/devbin-issue (84972b4), vc hold 2 item 7. The signature half is released when Developer ID signing exists, vc hold 2 item 3. Then the AT, citing each half's evidence. AC-04.2 (the tap's description and CI) needs hv's gh repo edit and a tap push
 
 ## Watch-outs

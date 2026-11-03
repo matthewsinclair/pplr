@@ -1,0 +1,16 @@
+{
+  "id": "01M6GE0WZ8Z2BB5JJ5T3D5T5GE",
+  "ts": "2026-11-03T10:07:06.728Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "doing",
+    "seq": 6,
+    "text": "ST0002/08 (vc decisions 17 and 18): landed on main by path through the gate. 492df0e is the move, then WP13's four docs on the new paths (2eaf790, 099293f, 9417743 and 3cd9879), then 0305cb0, ST0002's docs through st attach. The blobs equal the measured a5dbb50 outside intent/ (slot 01M6GDHWBFZ8K4KW8FK93DP20B, every gate exit as expected). AT-08.1 is red at f15ccf8 and green at a5dbb50, and wp gate passes. Its body records the behaviour as unchanged. wp done follows vc's verification of main; then hv pushes"
+  }
+}

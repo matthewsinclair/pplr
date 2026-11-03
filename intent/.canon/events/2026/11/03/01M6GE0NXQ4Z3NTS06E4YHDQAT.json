@@ -1,0 +1,16 @@
+{
+  "id": "01M6GE0NXQ4Z3NTS06E4YHDQAT",
+  "ts": "2026-11-03T10:06:59.511Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "hold",
+    "seq": 5,
+    "text": "ST0001 WP09's AC-09.2 waits on hv's live Contacts run (vc hold 2, item 1); released when that run's record is on vc's board. Its AC-09.1 half was released by cc's C2 (294b421) and is todo. Then wp gate and wp done"
+  }
+}
