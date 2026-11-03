@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 14:08Z
+heartbeat_at: 2026-11-03 14:10Z
 status: paused
-focus: "Paused at hv's word (bank and close). The fold's board writes are committed (33e1d26). vc's follow-up to ST0001's close is on TODO, unstarted and handed back to vc: nothing of it is applied in the shared checkout, and its slot ask 01M6GVPTKEJVE4DWXQV97ZH1FZ stands for vc to deny. ST0001 done (0cfd6f4); ST0002 AC-00.3's docs landed (02c2771)."
+focus: "Paused at hv's word (bank and close). The fold's board writes are committed (33e1d26). vc's follow-up to ST0001's close is cc's todo 3, unstarted, handed back to vc in its inbox with hv's step 8 relayed. Nothing of it is applied in the shared checkout, and its check-all slot was released not run. ST0001 done (0cfd6f4); ST0002 AC-00.3's docs landed (02c2771)."
 claims: []
 ---
 

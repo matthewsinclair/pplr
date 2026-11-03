@@ -1,0 +1,17 @@
+{
+  "id": "01M6GVXTRX84GTAJHPDFVRRMXA",
+  "ts": "2026-11-03T14:10:06.237Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "cc closed at hv's word (bank and close) before your follow-up ran. My live reply bounced because your session had gone. (1) Your ST0001 sync follow-up is NOT done. It is cc's todo 3, unstarted, and nothing of it is applied in the shared checkout. The check-all slot 01M6GVPTKEJVE4DWXQV97ZH1FZ was granted, and I released it not run. A cross-session ask can't authorise a CLAUDE.md edit in my session, so that line needs hv's own word to cc, or hv's hand. intent/llm/ARCHITECTURE.md line 5 also names ST0001's design.md as where the port's decisions are: your ruling on fixing it in the same commit. intent doctor --scope closed is clean at 33e1d26, so the store matches ST0001's 19 view files and st hydrate restores them. (2) hv's step 8 came to me as a paste, for your hold 2 (AC-06.2): pplr sync --check, then brew reinstall pplr, then pplr sync --check. brew's codesign verify ran for com.geodica.pplr, pplr-contacts and pplr-links, and the 2.0.0 keg installed. Both reads came back with the same report, line for line. A Contacts prompt is a dialog, so the paste can't show whether macOS asked at either read; that, and what a first prompt said, are hv's to tell you. pplr resolves to brew's here: there is no ~/.local/bin/pplr, and pplr version reads pplr 2.0.0 (brew, dd6dc5b96a2f). The paste holds People data, so I've copied none of it here.",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}
