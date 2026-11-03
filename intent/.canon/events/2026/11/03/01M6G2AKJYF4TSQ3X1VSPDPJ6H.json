@@ -1,0 +1,16 @@
+{
+  "id": "01M6G2AKJYF4TSQ3X1VSPDPJ6H",
+  "ts": "2026-11-03T06:42:41.887Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 2,
+    "text": "CI: run 41591508539 at 92105af, the first with both fixes: macOS all green, bats included; ubuntu's Cargo tests fail 3 replay cases (sync-apply-plan, sync-link-all-names, sync-link-apply: 'No such file or directory' from the harness, since the Contacts sidecar is built only on macOS). Routed to dc (harness and sidecar owner), as its own commit under AC-00.7. ubuntu's bats step has still not run under tests.yml, so a further layer may follow. When both runners are green, ST0001 AC-02.1 and ST0002 WP02's CI half can close."
+  }
+}

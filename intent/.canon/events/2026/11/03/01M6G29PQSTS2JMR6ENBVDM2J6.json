@@ -1,0 +1,15 @@
+{
+  "id": "01M6G29PQSTS2JMR6ENBVDM2J6",
+  "ts": "2026-11-03T06:42:12.345Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "At dc's WP14 landing (rebased onto main as it stands then, measured once with cargo and bats together), check: WP14's body as ruled (usage exits 1; the Full Disk Access row warns and never fails; no OS gate; the legacy deletions are WP13's); the home field reads HOME through home(); AT-14.1 and AT-14.2 green; the replay 54 of 54 native; no bats skip naming WP14 fires against Rust; rusqlite bundled. Then vc's clean-clone run. Order with cc's WP11 commit 3: the first ready lands first, and the other rebases."
+  }
+}

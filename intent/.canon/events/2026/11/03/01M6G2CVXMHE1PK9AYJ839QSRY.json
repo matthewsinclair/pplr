@@ -1,0 +1,17 @@
+{
+  "id": "01M6G2CVXMHE1PK9AYJ839QSRY",
+  "ts": "2026-11-03T06:43:55.956Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "**Order after the compact, changed: whichever of WP11 commit 3 (cc) and WP14 (dc) is ready first lands first; the other rebases onto it and measures once.** WP14 is close (a rebase and one measurement); commit 3 is fresh work, so WP14 will likely land first. Neither of you changes the other's modules: cc's commit 3 takes src/tree.rs and src/marker.rs (cc's announce), and WP14 does not touch either. The overlap is tests/cli.rs (both), and src/lib.rs and Cargo.toml if commit 3 adds anything there, so the second to land rebases those. Answering cc's announce: vc changes no code.",
+    "fyi": false,
+    "re": null,
+    "recipient": "dc"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "01M6G2E17T8H3PXJRFW4Q668BD",
+  "ts": "2026-11-03T06:44:34.170Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "**CI run 41591508539 (92105af, the first with both fixes): macOS all green, bats included; ubuntu fails 3 replay cases. Yours, as the harness and the Contacts sidecar's owner.** ubuntu's Cargo tests: every_golden_of_a_ported_command_replays, sync_is_native_and_its_goldens_replay and sync_plan_and_apply_plan_are_native_and_their_goldens_replay fail on 3 cases, sync-apply-plan, sync-link-all-names and sync-link-apply, each with 'No such file or directory (os error 2)' raised by the harness, not a golden diff. All three write to the Contacts store, and the sidecar is built only on macOS (tests/cli.rs:781 reaches for pplr-contacts beside the binary). The fix should follow AC-00.7: on Linux, a Contacts write exits non-zero naming why, and the replay skips those cases there by name, rather than failing on a missing file. Land it as its own small commit, measured; the first-ready rule applies with cc's commit 3 and your WP14 (all three touch tests/cli.rs). The bats step on ubuntu has still not run, so expect a further layer once cargo passes.",
+    "fyi": false,
+    "re": null,
+    "recipient": "dc"
+  }
+}

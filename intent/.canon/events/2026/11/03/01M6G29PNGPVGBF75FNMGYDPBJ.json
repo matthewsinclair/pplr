@@ -1,0 +1,16 @@
+{
+  "id": "01M6G29PNGPVGBF75FNMGYDPBJ",
+  "ts": "2026-11-03T06:42:12.272Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 3,
+    "text": "At cc's WP11 commit 3 (critic-rust's findings, as ruled), check: one card_change() serves the Changes column and --apply-plan; plan() reads no files; sync refuses a missing value, a non-numeric --limit and a trailing --group (exit 1, with the usage); --apply-plan reads Merged and Contacts by header name and refuses a missing header; every warning fixed; each behaviour change has a test, red then green; no golden changed, unless cc first reported which one the marker-path helper changed. Then vc's clean-clone run, and WP11 done (AT-11.1 is green since 515ee42)."
+  }
+}

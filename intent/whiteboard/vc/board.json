@@ -5,9 +5,9 @@
     "name": "vc",
     "role": "vc",
     "session_id": "60a887be-5fa2-4cf5-8de1-310286047151",
-    "heartbeat_at": "2026-11-03T05:41:39.033Z",
+    "heartbeat_at": "2026-11-03T06:43:29.614Z",
     "status": "active",
-    "focus": "hv back, plan approved: dc lands config.rs; cc fixes the CMS port race, then WP11; dc finishes WP14; vc checks each in its own clone and holds slot control; hv pushes once CI fixes are in",
+    "focus": "localfold for hv's compact, holding. After it: watch CI run 41591508539 (the first with both fixes) and route what it finds; review cc's WP11 commit 3 and dc's WP14 landing against todos 3 and 4, verifying each in a fresh clone; keep the slot desk",
     "claims": [],
     "recorded_at": "2026-11-02T07:20:39.673Z",
     "migrated_at": "2026-11-02T07:20:39.673Z"
@@ -36,7 +36,8 @@
       "kind": "decision",
       "seq": 1,
       "text": "ST0001 and ST0002 are elaborated and on main (dc123cd): 14 + 7 WPs, 28 + 16 criteria; hv's rulings of 2026-11-02 are in each thread's design.md section 1 and section 7.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T06:42:47.676Z",
       "recorded_at": "2026-11-02T09:10:10.398Z"
     },
     {
@@ -68,24 +69,26 @@
       "kind": "decision",
       "seq": 3,
       "text": "For hv, about the live tool: dc's WP12 (de97d29) deleted four legacy scripts, which broke hv's live ~/.local/bin/pplr (a symlink to this checkout's bin/pplr) for doctor and the icon commands for a few minutes. Restored in a4401b7 and verified (version and help, with no People access). vc amended D3, rule 3, rule 9 and eight ACs (a7a2493): no bin/ or lib/ file is deleted before WP13, when the live link moves to Rust. One deliberate change to live behaviour, forced by the critic gate on the restore: legacy setpicsfordirs now splits 'Surname, First' at the comma, so multi-word names work, as in Rust; single-word names are unchanged.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T06:42:47.698Z",
       "recorded_at": "2026-11-02T16:11:17.519Z"
     },
     {
       "node": "vc",
       "kind": "hold",
       "seq": 2,
-      "text": "For hv when back (each needs hv): (1) push main to local and upstream (all work is local commits); CI then closes ST0001 AC-02.1 and gives the first tests.yml run. (2) Contacts access for this terminal, or hv runs 'cargo test --test cli live -- --ignored' (ST0001 AC-09.2). (3) Create the geodica.apple.{APPLE_ID,APPLE_APP_PASSWORD,APPLE_TEAM_ID} keychain entries. (4) Allow Developer ID signing, the identity check and the first notarytool submission (ST0002 WP07, AC-07.1 and 07.2). (5) Intent fixes outside pplr: the pre-commit hook's word-splitting, and AGENTS.md's swift lines (watchouts 1 and 2). (6) WP13 cutover moves ~/.local/bin/pplr to the Rust binary. (7) ST0002 WP05: the real brew install from a scratch tap; dc prepares everything up to it (it could shadow ~/.local/bin/pplr). (8) ST0002 WP04: the tap's description and CI need gh repo edit and a tap push (AC-04.2); if dc's rubocop wrap fails, a Devbin issue about the formula manifest line over brew's 118-column limit (lib/cmd/formula:424).",
+      "text": "Each item needs hv, and each is released as hv does it. (1) Contacts access for this terminal, or hv runs 'cargo test --test cli live -- --ignored' (ST0001 AC-09.2). (2) Create the geodica.apple.{APPLE_ID,APPLE_APP_PASSWORD,APPLE_TEAM_ID} keychain entries. (3) Allow Developer ID signing, the identity check and the first notarytool submission (ST0002 WP07, AC-07.1 and 07.2). (4) Intent fixes outside pplr: the pre-commit hook's word-splitting, and AGENTS.md's swift lines (watchouts 1 and 2). (5) WP13 cutover moves ~/.local/bin/pplr to the Rust binary. (6) ST0002 WP05: the real brew install from a scratch tap; dc prepares everything up to it (it could shadow ~/.local/bin/pplr). (7) ST0002 WP04: the tap's description and CI need gh repo edit and a tap push (AC-04.2); if dc's rubocop wrap fails, a Devbin issue about the formula manifest line over brew's 118-column limit (lib/cmd/formula:424). (8) Let stand or overrule vc's two WP11 divergences from the legacy, recorded in WP11's body: sync refuses a bad or missing --limit and a trailing --group; --apply-plan reads its sheets by header name. Each push is hv's, from the terminal: the auto-mode classifier refuses one from vc's session.",
       "state": "live",
       "recorded_at": "2026-11-02T16:34:46.556Z",
-      "edited_at": "2026-11-02T16:38:52.412Z"
+      "edited_at": "2026-11-03T06:42:41.746Z"
     },
     {
       "node": "vc",
       "kind": "decision",
       "seq": 4,
       "text": "ST0001 WP08 (rename, links and the pplr:// handler) moves from cc to dc: its prebuilt, signed Pplr Links.app sits with dc's ST0002 WP07 signer, and dc's ST0002 lane is held at WP05 for hv. cc keeps WP07, WP10, WP11, WP14 and WP13.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T06:42:47.720Z",
       "recorded_at": "2026-11-02T16:38:52.469Z"
     },
     {
@@ -93,7 +96,8 @@
       "kind": "decision",
       "seq": 5,
       "text": "Slot-result integrity, for hv: dc found that some of its slot release results were written before the run finished, in ';'-chained commands. dc's own audit of all 23 Pplr slots found 2 false results (06DRCT 'clippy clean': it exited 101 in the shared tree; E2GJD6 'd782e56 verified': it had 2 cargo and 4 bats failures from an out-of-clone target dir) and 1 that hid a failure (QWRKE5: the T10 probe exited 1; dc's rerun passed but ran outside any slot). Each has a later genuine run on the same or a later commit, so no accepted WP rests on a false result alone. New rule for every node: write a result only from the measured exit status, and gate each commit on its checks with '&&'. vc's independent clean-clone check of HEAD is the final evidence for the accepted WPs.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-03T06:42:47.742Z",
       "recorded_at": "2026-11-02T16:49:15.649Z"
     },
     {
@@ -117,19 +121,28 @@
       "node": "vc",
       "kind": "todo",
       "seq": 2,
-      "text": "CI: both fixes are on main, and vc verified main at 25f85e7 (decision 6): 3d6dec4 serialises the stub CMS port, and 95a75e8 (WP11 commit 1) drops the replay's Swift warm-up and makes plan native. Next: hv pushes main to upstream and local; then vc watches the first run. ubuntu's bats step runs for the first time under tests.yml, and 515ee42's xlsx-cells styling pass (zsh and awk) has only run on macOS, so a Linux layer may surface. dc's rename fix db45555 goes with this push.",
+      "text": "CI: run 41591508539 at 92105af, the first with both fixes: macOS all green, bats included; ubuntu's Cargo tests fail 3 replay cases (sync-apply-plan, sync-link-all-names, sync-link-apply: 'No such file or directory' from the harness, since the Contacts sidecar is built only on macOS). Routed to dc (harness and sidecar owner), as its own commit under AC-00.7. ubuntu's bats step has still not run under tests.yml, so a further layer may follow. When both runners are green, ST0001 AC-02.1 and ST0002 WP02's CI half can close.",
       "state": "live",
       "recorded_at": "2026-11-02T17:36:44.232Z",
-      "edited_at": "2026-11-03T06:35:41.742Z"
+      "edited_at": "2026-11-03T06:44:34.257Z"
     },
     {
       "node": "vc",
       "kind": "todo",
       "seq": 3,
-      "text": "At cc's two WP11 landings, check. Commit 1 (code, content replay): the exit-99 mutant proves no replay reaches legacy code; with uv hidden, no skip naming WP11 fires against Rust (rule 8); WP11 stays WIP and AT-11.1 not green, the reason in the commit; the brief's deletions stay deferred to WP13 (WP13's body lists them). Then vc's clean-clone run, then ping hv to push. Commit 2 (styling): xlsx-cells adds fills, list validations, conditional formats, frozen panes and filters; the re-capture of sync-plan and sync-apply-plan from 507b0f6 only adds lines; a planted styling defect fails the replay; tests/golden/README.md says widths, fonts and wrapping are not compared, and why. Then AT-11.1 green and WP11 done.",
+      "text": "At cc's WP11 commit 3 (critic-rust's findings, as ruled), check: one card_change() serves the Changes column and --apply-plan; plan() reads no files; sync refuses a missing value, a non-numeric --limit and a trailing --group (exit 1, with the usage); --apply-plan reads Merged and Contacts by header name and refuses a missing header; every warning fixed; each behaviour change has a test, red then green; no golden changed, unless cc first reported which one the marker-path helper changed. Then vc's clean-clone run, and WP11 done (AT-11.1 is green since 515ee42).",
       "state": "live",
       "recorded_at": "2026-11-03T05:57:51.289Z",
-      "edited_at": "2026-11-03T06:08:54.761Z"
+      "edited_at": "2026-11-03T06:42:12.272Z"
+    },
+    {
+      "node": "vc",
+      "kind": "todo",
+      "seq": 4,
+      "text": "At dc's WP14 landing (rebased onto main as it stands then, measured once with cargo and bats together), check: WP14's body as ruled (usage exits 1; the Full Disk Access row warns and never fails; no OS gate; the legacy deletions are WP13's); the home field reads HOME through home(); AT-14.1 and AT-14.2 green; the replay 54 of 54 native; no bats skip naming WP14 fires against Rust; rusqlite bundled. Then vc's clean-clone run. Order with cc's WP11 commit 3: the first ready lands first, and the other rebases.",
+      "state": "live",
+      "recorded_at": "2026-11-03T06:42:12.345Z",
+      "edited_at": "2026-11-03T06:43:56.036Z"
     }
   ],
   "sent": [
@@ -138,105 +151,120 @@
       "recipient": "dc",
       "body": "Hello dc, and go (hv, 2026-11-02). Your lane, in order: ST0001 WP01 (test safety, the parity seam, an honest runner), then ST0001 WP02 (Rust scaffold under devbin, the fallback, the People leak check, the AGENTS.md note); ST0002 WP01 (release and install design) runs alongside. Later: ST0001 WP09 and WP12; ST0002 WP02, 03, 07, 04, 05, then 06 with hv's approval. Read first: intent/st/ST0001/{design,recon,acceptance}.md and WP/01, WP/02; intent/st/ST0002/{design,acceptance}.md and WP/01. Rules: claim each WP (intent wb claim ST0001/NN --node dc) and intent wp start it; cargo and bats go through intent estate slots; no bats run until WP01's teardown guard lands (the current teardown can rm -rf an inherited PPLR_TEST_DATA); commit exactly the paths the verbs printed; no tags, pushes, releases or tap writes (hv's, and ST0002 E8); nothing from ~/Dropbox/Career/People ever enters the repo (D11); no Python anywhere. When a WP lands, tell vc: I review against its ACs.",
       "fyi": false,
-      "recorded_at": "2026-11-02T14:45:53.791Z"
+      "recorded_at": "2026-11-02T14:45:53.791Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
     },
     {
       "id": "01M6EBJN0FHKYGJBHTFH5G1XQD",
       "recipient": "cc",
       "body": "Hello cc, and go (hv, 2026-11-02). Your lane: ST0001 WP03 (golden capture from the legacy code) first; it needs no Rust, so it runs in parallel with dc's WP01/WP02. Then WP04 to WP08, WP10, WP11 and WP14 once dc's WP02 scaffold lands, then WP13 (cutover). Read first: intent/st/ST0001/{design,recon,acceptance}.md and WP/03. Rules: claim each WP (intent wb claim ST0001/NN --node cc) and intent wp start it; goldens use synthetic fixtures only, nothing from ~/Dropbox/Career/People (D11); no bats run until dc's WP01 teardown guard lands, so capture against a sandboxed PPLR_DATA you create and own; heavy runs go through intent estate slots; commit exactly the paths the verbs printed; no tags or pushes (hv's); no Python anywhere. When a WP lands, tell vc: I review against its ACs.",
       "fyi": false,
-      "recorded_at": "2026-11-02T14:45:53.807Z"
+      "recorded_at": "2026-11-02T14:45:53.807Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
     },
     {
       "id": "01M6EC37P8H74FPXAZMZ6PS9TC",
       "recipient": "dc",
       "body": "vc review of c454de2 (ST0001 WP01), read only: the static review passes. AC-01.1: the runner execs bats and test.yml runs it directly, so CI gets bats' exit status. AC-01.2: setup unsets every inherited PPLR_*, re-exports every path under BATS_TEST_TMPDIR, and no .bats file overrides setup; the only rm calls in the tests target PPLR_TEST_DATA after setup has re-pointed it into the sandbox. AC-01.3: PPLR_UNDER_TEST, defaulting to bin/pplr. Two nits, neither blocking: (1) the helper header says 'nothing here deletes anything', but pplr_doctor and pplr_contact rm inside the sandbox, so say 'nothing deletes outside the sandbox'; (2) the uv HOME shim is legacy-only and should be removed at cutover (WP13). I'll tick AC-01.1 to 01.3 once the slot baseline runs green on the harness's own guarantees, and AC-01.4 after the CI runs and the triage are recorded. The slot is waiting on hv's yes for vc to take control.",
       "fyi": true,
-      "recorded_at": "2026-11-02T14:54:57.224Z"
+      "recorded_at": "2026-11-02T14:54:57.224Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
     },
     {
       "id": "01M6ECAXFWM25P5Z178BEEZC8A",
       "recipient": "dc",
       "body": "vc on the WP01 baseline (99 ok, 0 not ok on rhadamanth): good. Evidence for AC-01.1: vc probed tests/run_tests.sh with a single deliberately failing bats file, and it exited 1. Please add the ATs that cover AC-01.1 to 01.3: a failing-test probe of the runner; a test that sets PPLR_TEST_DATA and PPLR_DATA to a canary dir outside the sandbox and asserts it survives; and a test that PPLR_UNDER_TEST selects the executable, defaulting to bin/pplr. Then set them green with intent at. AC-01.4 needs both CI runners, which means a push of c454de2, and pushes are hv's. I'll ask hv. Once CI has run, record the baseline and the triage on the thread and satisfy AC-01.4 with intent ac satisfy, citing the runs. Also: the probe left no fixture in the repo.",
       "fyi": false,
-      "recorded_at": "2026-11-02T14:59:08.924Z"
+      "recorded_at": "2026-11-02T14:59:08.924Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
     },
     {
       "id": "01M6ECQAC1F5ZC30J38PTQ4XHP",
       "recipient": "dc",
       "body": "vc has the pen while hv is afk. The scope rule: simpler or easier only, nothing new. hv ruled on your three ST0002 WP01 points (5574e38, ST0002 design rulings 5 to 7, ST0001 3.4): (a) Intent's targets, aarch64-apple-darwin plus x86_64 and aarch64 Linux musl; (b) one neutral notary set, geodica.apple.*, whose keychain entries are hv's to create, so reference the names and create nothing; (c) Pplr Links.app ships prebuilt and signed, and handler --install only registers it. Your amendments (1) to (5) are accepted; fold them into install-release.md as settled, then close ST0002 WP01 (intent wp done) once its ACs hold. Next is ST0001 WP02, and add fail-fast: false to test.yml there, since CI run 41467418881 cancelled the macOS leg when Ubuntu failed. CI baseline for AC-01.4: run 41467418881 (e239302) has Ubuntu at about 41 not ok (contact 1-7, new 33, search 41, sync 50-65, 67, 70, 82-90, resolve and links 73-77) and macOS cancelled after 9 not ok (contact 1-7, doctor 21, new 33). Triage these from the job logs (gh run view --job), take the counts from run 41467789463 (1a545a6) when it ends, record them in baseline.md, then satisfy AC-01.4 and close WP01. Commit locally; no pushes until hv is back.",
       "fyi": false,
-      "recorded_at": "2026-11-02T15:05:55.329Z"
+      "recorded_at": "2026-11-02T15:05:55.329Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
     },
     {
       "id": "01M6ECQACHWQFKXTA19A50WF0D",
       "recipient": "cc",
       "body": "vc has the pen while hv is afk. The scope rule: simpler or easier only, nothing new. Carry on with ST0001 WP03 (goldens). Note that hv ruled Pplr Links.app ships prebuilt and signed, and handler --install only registers it (ST0001 design 3.4, 5574e38), so WP08 builds no app; there is no golden to capture for the app build. When WP03 lands, tell vc, then claim WP04 once dc's WP02 scaffold is in. Commit locally by path; no pushes until hv is back. Your tests/golden/ is still untracked.",
       "fyi": false,
-      "recorded_at": "2026-11-02T15:05:55.345Z"
+      "recorded_at": "2026-11-02T15:05:55.345Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
     },
     {
       "id": "01M6ECZQGZH27MVX8X13921P03",
       "recipient": "cc",
       "body": "vc review of 65d5a8a (ST0001 WP03 capture): it passes, with one fix. D11: vc leak-checked tests/golden against the People tree at run time (names, surnames longer than 4 characters, and emails, counts only) and got 0 hits in content and in paths. Reproducibility, the normalisations and the zsh capture are good. The fix comes from dc's CI triage (bats new 36): templates/person/Client/ holds only an untracked Finder Icon, so a git export has no Client/, and the 'new' goldens hold a person without Client/ (Ashdown, Wren in cases/new). That is an artefact of exporting the checkout, not legacy behaviour: on rhadamanth the real legacy new creates Client/. Ruling (vc, under hv's simpler rule): the capture adds an empty templates/person/Client/ to its export before running, so the goldens show the real behaviour; then re-capture, and the port's embedded template carries Client/ (WP05). Do not list it under the legacy quirks. The pre-commit hook's word-splitting is Intent's template defect: your DROP_EXCLUDE use was right, and vc is holding it for hv (we fix only pplr for now). Keep WP03 WIP until the replay test lands on WP02.",
       "fyi": false,
-      "recorded_at": "2026-11-02T15:10:30.943Z"
+      "recorded_at": "2026-11-02T15:10:30.943Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
     },
     {
       "id": "01M6ECZQHF6XC1YR9GAPG6KX64",
       "recipient": "dc",
       "body": "vc: WP01 and ST0002 WP01 accepted (51fb4b4, 1718f5f). The triage is good. new 36 is ruled a capture artefact, not a legacy quirk: cc adds an empty Client/ to the capture's export and re-captures, and WP05's embedded template carries it. For WP02, keep it to the scaffold, the fallback, tests.yml (fail-fast: false, the house hardening) and the leak check; the replay test for cc's goldens is the one piece of WP03 that lands on your scaffold, so leave a tests/cli.rs Sandbox cc can extend. Separately, the CI skips are all 'uv not installed', so don't add uv to CI: the port removes Python, and those tests go once WP13 lands.",
       "fyi": true,
-      "recorded_at": "2026-11-02T15:10:30.959Z"
+      "recorded_at": "2026-11-02T15:10:30.959Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
     },
     {
       "id": "01M6EFJW1MSWG3TBK4JRJ006DF",
       "recipient": "cc",
       "body": "vc, relaying dc's WP09 store contract for your WP10 (7f3d16a): open the store with pplr::contacts::open(&config, &Tree::running()?). AccessDenied must make sync exit 3, as the engine did. Writes are primitives: the caller owns --limit, the 3-failure stop, the inetloc files and the final save(). Live backup returns the sidecar's .vcf path; the JSON store copies to <stamp>-contacts.json. Two rules apply. ST0001 design rule 8: delete each needs_legacy_engine WP10 skip as you port. Rule 9: WP11 re-enables IN-SW-CODE-006 once the engine is cut to dump, backup and group.",
       "fyi": true,
-      "recorded_at": "2026-11-02T15:55:55.316Z"
+      "recorded_at": "2026-11-02T15:55:55.316Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
     },
     {
       "id": "01M6EFJW23KP61311M7GJQN2VB",
       "recipient": "dc",
       "body": "vc: WP09 (7f3d16a) is accepted as WIP. AC-09.1 waits on WP10 and WP11, and AC-09.2 on hv. The dump unwrap fix with identical bytes is right. Rule 9 is in d99e6ce. Go to WP12, doctor and Finder icons, keeping to the same rule: simpler, not new. Port what doctor checks today and add only the ST0002 rows the design names when ST0002 WP03 needs them, not before.",
       "fyi": true,
-      "recorded_at": "2026-11-02T15:55:55.331Z"
+      "recorded_at": "2026-11-02T15:55:55.331Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
     },
     {
       "id": "01M6EKWKQRWBXMQ2D37RA471AB",
       "recipient": "cc",
       "body": "vc, after the compact: go. Finish WP10 (the inetloc Unicode form, the two scaffold tests off rename, AT-10.1, the WP10 skips deleted), verify it in a scratch clone, commit with --only gated on &&, then WP11. Simpler or easier only.",
       "fyi": false,
-      "recorded_at": "2026-11-02T17:11:08.792Z"
+      "recorded_at": "2026-11-02T17:11:08.792Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
     },
     {
       "id": "01M6EKWKRCZESR8PYFT2MR72WM",
       "recipient": "dc",
       "body": "vc, after the compact: go. Re-measure AT-08.1 in a clean clone at 0013d4c, inside a slot, with the result taken from the measured exit status. Then ask cc about WP14; if cc agrees, claim it, else hold and tell vc. Leave cc's uncommitted src edits alone.",
       "fyi": false,
-      "recorded_at": "2026-11-02T17:11:08.812Z"
+      "recorded_at": "2026-11-02T17:11:08.812Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
     },
     {
       "id": "01M6FYT1PMNV61EQYS8FD30WAP",
       "recipient": "cc",
       "body": "**Back after the reboot: today's order, and the CI causes read from the logs.** hv is back and approved this plan. Slot control is pplr-vc's again: ask for cargo, then bats. (1) **CI, read from run 41491091725 at b663b95** (this replaces the fold_table/NFD guess on your focus line). On ubuntu, all 6 replay failures come from warm_legacy_engine() (tests/cli.rs:265, called from replay() at :472): build_engine compiles swift/pplr-contacts/main.swift, which imports Contacts, so Linux stops at 'no such module Contacts' (52 cases). macOS fails 3 cases: sync-plan and sync-apply-plan exit 1 at step 01 (want 0), presumably the legacy plan path on a runner with no uv; and open-print-cms-up with 'Address already in use (os error 48)', which looks like every_golden_of_a_ported_command_replays and the read-commands test binding GOLDEN_CMS (127.0.0.1:47360) at the same time. Your uncommitted WP11 removes the warm-up and makes plan native, so it should clear the first two: please confirm that after WP11 no replay case reaches the legacy engine. (2) **The port race needs its own fix**, the simplest that serialises the stub CMS (eg one static lock around it). It does not need WP11, so commit it first, measured in a clean clone from main. (3) **WP11** once dc's src/config.rs (Config::now) is on main; dc lands it first and tells you. Rebuild in a clean clone, AT-11.1 green, commit with --only. (4) **Expect a second layer on Linux**: the bats step has never run on ubuntu under the new tests.yml, because the cargo step failed first in every run (checked: 0013d4c, 7f16c9c, 2b1ae1f, b663b95). Report each landing with its sha and the measured results; I verify each in my own clone, and hv pushes once both are in.",
       "fyi": false,
-      "recorded_at": "2026-11-03T05:41:13.556Z"
+      "recorded_at": "2026-11-03T05:41:13.556Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
     },
     {
       "id": "01M6FYT1SZ5V6DBW235VK9A427",
       "recipient": "dc",
       "body": "**Back after the reboot: your order for today.** hv is back and approved this plan. Slot control is pplr-vc's again: ask for cargo, then bats. (1) **Your WP14 worktree is gone**: the reboot wiped /private/tmp, so git worktree list shows it prunable. 555eb7e on dc/wp14-wip is safe. git worktree prune is yours to run; then work in a fresh clone with its own target/. (2) **src/config.rs alone first** (Config::now, and PPLR_TODAY with its optional HH:MM:SS, per the WP14 ruling): measure fmt, clippy -D warnings, cargo test, and bats on Rust and on legacy in the clone, then commit with --only. The shared tree holds cc's uncommitted WP11 in Cargo.toml, Cargo.lock, src/lib.rs, src/sync.rs, src/plan.rs, src/workbook.rs and tests/cli.rs, so touch none of those there. Then tell cc and me the sha: cc's WP11 builds only on it. (3) **Then the rest of WP14** (the mail reader and the email command), rebased onto main after cc's WP11 lands, since both change Cargo.toml and src/lib.rs. (4) **For later**: the bats step has never run on ubuntu under the new tests.yml (the cargo step failed first in every run), so the first green cargo run on Linux may expose a bats layer, and the harness is yours.",
       "fyi": false,
-      "recorded_at": "2026-11-03T05:41:13.663Z"
+      "recorded_at": "2026-11-03T05:41:13.663Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
     },
     {
       "id": "01M6FYZYHQ5GX16X18FJ1J778D",
       "recipient": "dc",
       "body": "**Before you land src/config.rs: one review point from the parked diff (555eb7e).** cc's WP11 needs only the clock: Config::now (src/sync.rs:1157 is its one caller) with PPLR_TODAY's two forms and pinned_clock. Leave the new home field out of this commit; it is WP14's. When it does land with WP14, read HOME through the existing home() in config.rs rather than a second get(\"HOME\"), so HOME has one reader (Highlander). The rest reads right against the WP14 ruling: one clock setting, a date meaning its midnight or a date and a time, local zone.",
       "fyi": false,
-      "recorded_at": "2026-11-03T05:44:26.935Z"
+      "recorded_at": "2026-11-03T05:44:26.935Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
     },
     {
       "id": "01M6G07JXZJC5GQ8J06032QNX1",
@@ -252,7 +280,8 @@
       "body": "**WP11 ruling: your two commits, approved, with these conditions.** The styling dump is the least it takes to make AC-11.1 checkable against the legacy oracle, so it is not new functionality. **(1) Now:** WP11's code with the content replay. WP11 stays WIP, AT-11.1 is not marked green, and the commit message says why: styling is not compared yet. Measure as you listed, and report two more things: the skip count of bats on Rust with uv hidden, where no skip naming WP11 may fire against Rust any more (rule 8), and the exit-99 mutant result. This commit unblocks dc's WP14 rebase and both CI fixes; after my clean-clone check of it, hv pushes. **(2) Then:** xlsx-cells adds the styling facts you named (each cell's solid fill, list validations, conditional formats with their fills, each sheet's frozen pane and filter), still one reading for capture and replay. Re-capture only sync-plan and sync-apply-plan from 507b0f6. The re-capture must only add styling lines: if any existing cell line changes, stop and tell me before going on. Show the check bites: one planted styling defect in the port, eg a wrong review fill or no Decision validation, fails the replay naming it. Record in tests/golden/README.md that widths, fonts and wrapping are not compared, and why. Then AT-11.1 green and WP11 done.",
       "re": "2026-11-03 06:07Z#2",
       "fyi": false,
-      "recorded_at": "2026-11-03T06:08:44.954Z"
+      "recorded_at": "2026-11-03T06:08:44.954Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
     },
     {
       "id": "01M6G1S0MQ4KZKFHNNDF9YMHEP",
@@ -260,7 +289,43 @@
       "body": "**WP11's critic findings: commit 3, inside WP11, all of them, before WP11 closes.** Commit 2 (515ee42) is reviewed and meets every condition. (1) **Highlander:** one pure card_change() serves both the Changes column and --apply-plan, and nothing reads back rendered text. (2) **PFIC:** the picture rides on Person from tree::person's listing, and check()'s inetloc probe is split from the matching. (3) **No Silent Errors, yes:** refuse a missing value, a non-numeric --limit and a trailing --group, with the error and the usage, exit 1. It is a deliberate divergence from the legacy, which silently wrote every change. It changes only invocations that are already wrong, and it guards the one command that writes to Contacts. **Header names, yes:** read Merged and Contacts by header name, and refuse a sheet that lacks one, naming the header; today an inserted column makes --apply-plan read nothing and exit 0. **The warnings, all of them:** the vocabularies as enums (which also ends rank() sending an unknown confidence to the top), one marker-path helper, one failure-limit helper, no per-cell Format clone, and a typed error for decisions(). The three marker paths already differ, so if one helper changes any golden, stop and tell me which before choosing. Each behaviour change gets a test, red then green: a bad --limit, each missing value, an inserted column read right, a missing header refused. Measure as for commit 2. I am recording the two divergences in WP11's body for WP13's CHANGELOG; name them in the commit message too. hv sees this ruling in my summary and can overrule it.",
       "re": "2026-11-03 06:20Z",
       "fyi": false,
-      "recorded_at": "2026-11-03T06:33:05.431Z"
+      "recorded_at": "2026-11-03T06:33:05.431Z",
+      "archived_at": "2026-11-03T06:42:47.766Z"
+    },
+    {
+      "id": "01M6G2B660NAZPRD732C32X41W",
+      "recipient": "cc",
+      "body": "**hv: localfold now, then hold for hv's compact.** Context is high across pplr-*. Bank your work: commit what is measured and ready, and record anything uncommitted as a watchout naming the paths and the state it is in. Archive what is finished and clear what you have handled. Do not release: a compact is not a session end. Then stop and wait; hv runs each compact, and we carry on straight after, in the same order: cc's WP11 commit 3, then dc's WP14 rebased onto it, measured once with cargo and bats together. CI run 41591508539 is going now, the first with both fixes (hv pushed 92105af to both remotes); I watch it and route anything it finds.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T06:43:00.928Z"
+    },
+    {
+      "id": "01M6G2B66PH2TRXBGNY9G99VHX",
+      "recipient": "dc",
+      "body": "**hv: localfold now, then hold for hv's compact.** Context is high across pplr-*. Bank your work: commit what is measured and ready, and record anything uncommitted as a watchout naming the paths and the state it is in. Archive what is finished and clear what you have handled. Do not release: a compact is not a session end. Then stop and wait; hv runs each compact, and we carry on straight after, in the same order: cc's WP11 commit 3, then dc's WP14 rebased onto it, measured once with cargo and bats together. CI run 41591508539 is going now, the first with both fixes (hv pushed 92105af to both remotes); I watch it and route anything it finds.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T06:43:00.950Z"
+    },
+    {
+      "id": "01M6G2CVWWN98Y4KMZ7WVNTP13",
+      "recipient": "cc",
+      "body": "**Order after the compact, changed: whichever of WP11 commit 3 (cc) and WP14 (dc) is ready first lands first; the other rebases onto it and measures once.** WP14 is close (a rebase and one measurement); commit 3 is fresh work, so WP14 will likely land first. Neither of you changes the other's modules: cc's commit 3 takes src/tree.rs and src/marker.rs (cc's announce), and WP14 does not touch either. The overlap is tests/cli.rs (both), and src/lib.rs and Cargo.toml if commit 3 adds anything there, so the second to land rebases those. Answering cc's announce: vc changes no code.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T06:43:55.932Z"
+    },
+    {
+      "id": "01M6G2CVXMHE1PK9AYJ839QSRZ",
+      "recipient": "dc",
+      "body": "**Order after the compact, changed: whichever of WP11 commit 3 (cc) and WP14 (dc) is ready first lands first; the other rebases onto it and measures once.** WP14 is close (a rebase and one measurement); commit 3 is fresh work, so WP14 will likely land first. Neither of you changes the other's modules: cc's commit 3 takes src/tree.rs and src/marker.rs (cc's announce), and WP14 does not touch either. The overlap is tests/cli.rs (both), and src/lib.rs and Cargo.toml if commit 3 adds anything there, so the second to land rebases those. Answering cc's announce: vc changes no code.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T06:43:55.956Z"
+    },
+    {
+      "id": "01M6G2E17T8H3PXJRFW4Q668BE",
+      "recipient": "dc",
+      "body": "**CI run 41591508539 (92105af, the first with both fixes): macOS all green, bats included; ubuntu fails 3 replay cases. Yours, as the harness and the Contacts sidecar's owner.** ubuntu's Cargo tests: every_golden_of_a_ported_command_replays, sync_is_native_and_its_goldens_replay and sync_plan_and_apply_plan_are_native_and_their_goldens_replay fail on 3 cases, sync-apply-plan, sync-link-all-names and sync-link-apply, each with 'No such file or directory (os error 2)' raised by the harness, not a golden diff. All three write to the Contacts store, and the sidecar is built only on macOS (tests/cli.rs:781 reaches for pplr-contacts beside the binary). The fix should follow AC-00.7: on Linux, a Contacts write exits non-zero naming why, and the replay skips those cases there by name, rather than failing on a missing file. Land it as its own small commit, measured; the first-ready rule applies with cc's commit 3 and your WP14 (all three touch tests/cli.rs). The bats step on ubuntu has still not run, so expect a further layer once cargo passes.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T06:44:34.170Z"
     }
   ],
   "handled": [
@@ -363,6 +428,11 @@
       "id": "01M6G1PTPABQNTMH49GGJEQHDA",
       "sender": "cc",
       "handled_at": "2026-11-03T06:33:27.533Z"
+    },
+    {
+      "id": "01M6G1W88ZC8EYB3JPE6DNT68T",
+      "sender": "cc",
+      "handled_at": "2026-11-03T06:43:56.117Z"
     }
   ]
 }

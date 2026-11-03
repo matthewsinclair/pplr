@@ -1,0 +1,17 @@
+{
+  "id": "01M6G2B660NAZPRD732C32X41V",
+  "ts": "2026-11-03T06:43:00.928Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "**hv: localfold now, then hold for hv's compact.** Context is high across pplr-*. Bank your work: commit what is measured and ready, and record anything uncommitted as a watchout naming the paths and the state it is in. Archive what is finished and clear what you have handled. Do not release: a compact is not a session end. Then stop and wait; hv runs each compact, and we carry on straight after, in the same order: cc's WP11 commit 3, then dc's WP14 rebased onto it, measured once with cargo and bats together. CI run 41591508539 is going now, the first with both fixes (hv pushed 92105af to both remotes); I watch it and route anything it finds.",
+    "fyi": false,
+    "re": null,
+    "recipient": "cc"
+  }
+}
