@@ -1,0 +1,14 @@
+{
+  "id": "01M6GHDF0XQNANA9N4NEF511ND",
+  "ts": "2026-11-03T11:06:24.157Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.withdraw",
+  "subject": {
+    "type": "ac",
+    "id": "ST0001/AC-02.2"
+  },
+  "payload": {
+    "reason": "The fallback went with the legacy code in WP13's C1 (d596c35): every command is native, so none runs a legacy script, and the fallback's test went with it (vc decisions 12 and 13)"
+  }
+}

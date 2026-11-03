@@ -1,9 +1,9 @@
 ---
 st_id: ST0001
 title: Port Pplr from shell scripts to Rust
-status: WIP
+status: Completed
 created: 2026-11-02
-completed:
+completed: 2026-11-03
 ---
 
 # ST0001: Port Pplr from shell scripts to Rust
@@ -55,7 +55,7 @@ Replace Pplr's bash scripts, Python helpers and run-time-compiled Swift engine w
 | WP-10 | Sync: check, link, pull, photos and backup        | L    | Done   |
 | WP-11 | The sync plan and its workbook                    | L    | Done   |
 | WP-12 | Doctor and Finder icons                           | S    | Done   |
-| WP-13 | Cutover                                           | M    | WIP    |
+| WP-13 | Cutover                                           | M    | Done   |
 | WP-14 | pplr's own mail reader                            | M    | Done   |
 
 ## Acceptance

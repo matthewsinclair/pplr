@@ -1,0 +1,16 @@
+{
+  "id": "01M6GHCV6XSH8FB6FDFE036T8E",
+  "ts": "2026-11-03T11:06:03.870Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "at.set",
+  "subject": {
+    "type": "at",
+    "id": "ST0001/AT-00.1"
+  },
+  "payload": {
+    "from": "to-write",
+    "note": true,
+    "to": "red"
+  }
+}

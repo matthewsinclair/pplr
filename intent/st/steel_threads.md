@@ -2,10 +2,10 @@
 
 An index of every steel thread in the project. A steel thread is a self-contained unit of work focused on implementing one piece of functionality.
 
-| ID     | Title                                                     | Status | Created    | Completed |
-| ------ | --------------------------------------------------------- | ------ | ---------- | --------- |
-| ST0002 | Create a homebrew distro for the new Rust version of Pplr | WIP    | 2026-11-02 |           |
-| ST0001 | Port Pplr from shell scripts to Rust                      | WIP    | 2026-11-02 |           |
+| ID     | Title                                                     | Status    | Created    | Completed  |
+| ------ | --------------------------------------------------------- | --------- | ---------- | ---------- |
+| ST0002 | Create a homebrew distro for the new Rust version of Pplr | WIP       | 2026-11-02 |            |
+| ST0001 | Port Pplr from shell scripts to Rust                      | Completed | 2026-11-02 | 2026-11-03 |
 
 ---
 
