@@ -1876,6 +1876,114 @@ fn sync_refuses_a_missing_value_or_a_bad_limit_and_writes_nothing() -> Result<()
   Ok(())
 }
 
+/// One card, as the JSON store holds it.
+fn card_json(given: &str, family: &str, emails: &str, phones: &str, urls: &str) -> String {
+  format!(
+    r#"[{{"id":"c1","given":"{given}","family":"{family}","organization":"","jobTitle":"","emails":[{emails}],"phones":[{phones}],"urls":[{urls}],"linkedin":[],"groups":[]}}]"#
+  )
+}
+
+/// vc decision 10: an About is read as the legacy's byte-wise reads took it,
+/// so one that is not UTF-8 keeps its header: here its email matches a card
+/// that shares nothing else with it.
+#[test]
+fn an_about_that_is_not_utf8_keeps_its_header() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let dir = sandbox.data().join("L/Lovelace, Ada/About");
+  fs::create_dir_all(&dir)?;
+  fs::write(
+    dir.join("Ada Lovelace (About).md"),
+    b"# Ada Lovelace (About)\n\n- Email:    [ada@engine.example](mailto:ada@engine.example)\n\nMet at the caf\xe9.\n",
+  )?;
+  let contacts = sandbox.path("contacts.json");
+  fs::write(
+    &contacts,
+    card_json("Augusta", "Byron", r#""ada@engine.example""#, "", ""),
+  )?;
+  let out = run(
+    sandbox
+      .pplr()
+      .env("PPLR_CONTACTS_JSON", &contacts)
+      .args(["sync", "--check", "--json"]),
+  )?;
+  assert_eq!(out.status.code(), Some(0), "{}", text(&out.stderr));
+  let report: serde_json::Value = serde_json::from_slice(&out.stdout)?;
+  assert_eq!(report["matched"][0]["how"], "email", "{report}");
+  Ok(())
+}
+
+/// vc decision 10: an About that is there but cannot be read fails the
+/// command, naming it, where it was once read as no header at all.
+#[test]
+fn an_about_that_cannot_be_read_fails_the_command_naming_it() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let dir = sandbox.data().join("K/Kemp, Jon/About");
+  fs::create_dir_all(&dir)?;
+  let about = dir.join("Jon Kemp (About).md");
+  fs::write(&about, "# Jon Kemp (About)\n")?;
+  fs::set_permissions(&about, fs::Permissions::from_mode(0o000))?;
+  assert!(
+    fs::read(&about).is_err(),
+    "the test needs a user that mode 000 keeps out"
+  );
+  let contacts = sandbox.path("contacts.json");
+  fs::write(&contacts, "[]")?;
+  let out = run(
+    sandbox
+      .pplr()
+      .env("PPLR_CONTACTS_JSON", &contacts)
+      .args(["sync", "--check"]),
+  )?;
+  let stderr = text(&out.stderr);
+  assert_eq!(out.status.code(), Some(1), "{}", text(&out.stdout));
+  assert!(
+    stderr.contains(&format!("cannot read {}: ", about.display())),
+    "{stderr}"
+  );
+  Ok(())
+}
+
+/// vc decision 10: --pull writes the About back, so one that is not UTF-8 is
+/// left byte for byte, and the failure names it rather than 'no About file'.
+#[test]
+fn pull_leaves_an_about_that_is_not_utf8_as_it_is_and_names_it() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let dir = sandbox.data().join("L/Lovelace, Ada/About");
+  fs::create_dir_all(&dir)?;
+  let about = dir.join("Ada Lovelace (About).md");
+  let bytes = b"# Ada Lovelace (About)\n\n- Phone:\n\nMet at the caf\xe9.\n";
+  fs::write(&about, bytes)?;
+  let contacts = sandbox.path("contacts.json");
+  fs::write(
+    &contacts,
+    card_json(
+      "Ada",
+      "Lovelace",
+      "",
+      r#""+447700900123""#,
+      r#"{"label":"pplr","value":"pplr://l/lovelace-ada"}"#,
+    ),
+  )?;
+  let out = run(
+    sandbox
+      .pplr()
+      .env("PPLR_CONTACTS_JSON", &contacts)
+      .env("PPLR_BACKUP_DIR", sandbox.path("backups"))
+      .args(["sync", "--pull", "--apply"]),
+  )?;
+  let stdout = text(&out.stdout);
+  assert_eq!(out.status.code(), Some(1), "{stdout}");
+  assert!(
+    stdout.contains(&format!(
+      "{} is not UTF-8, so it is left as it is",
+      about.display()
+    )),
+    "{stdout}"
+  );
+  assert_eq!(fs::read(&about)?, bytes);
+  Ok(())
+}
+
 #[test]
 fn publish_lays_out_an_app_bundle_file_by_file_with_each_mode_kept() -> Result<()> {
   use pplr::install::{MANIFEST, Manifest, drift};

@@ -3,6 +3,7 @@
 
 use crate::Result;
 use crate::config::Config;
+use crate::fs::read_text;
 use crate::tree::names;
 use regex::{Regex, RegexBuilder};
 use std::fs;
@@ -45,7 +46,7 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
         .take(TAG_LINES)
         .collect();
       if !lines.is_empty() {
-        show(&file, lines.join(" ").trim_end());
+        show(&file, lines.join(" ").trim_end())?;
         found = true;
       }
     }
@@ -56,7 +57,7 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
     println!("Searching for: {text}\n");
     for file in markdown_files(root) {
       for line in matching(&file, pattern.as_ref()) {
-        show(&file, &line);
+        show(&file, &line)?;
         found = true;
       }
     }
@@ -69,7 +70,7 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
 
 /// One match, under the person two folders above the file, with the role and
 /// company from their About header (each line's link text).
-fn show(file: &Path, text: &str) {
+fn show(file: &Path, text: &str) -> Result<()> {
   let person = file
     .parent()
     .and_then(Path::parent)
@@ -87,7 +88,11 @@ fn show(file: &Path, text: &str) {
     "\u{1f464} [{name}](<{}>)",
     about.as_deref().unwrap_or(&person).display()
   );
-  if let Some(header) = about.and_then(|a| fs::read_to_string(a).ok()) {
+  let header = match &about {
+    Some(a) => read_text(a)?,
+    None => None,
+  };
+  if let Some(header) = header {
     if let Some(role) = field(&header, "Role").filter(|r| !r.is_empty()) {
       println!("   {role}");
     }
@@ -96,6 +101,7 @@ fn show(file: &Path, text: &str) {
     }
   }
   println!("   \u{2192} {text}\n");
+  Ok(())
 }
 
 /// The first `- <name>:` line's value, or its link's text when it starts with one.

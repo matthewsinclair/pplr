@@ -4,6 +4,7 @@
 
 use crate::Result;
 use crate::config::Config;
+use crate::fs::read_exact;
 use crate::tree::{folder_of_name, names};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -59,7 +60,9 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
       continue;
     };
     let line = img_line(&picture, &config.picture_width);
-    let text = fs::read_to_string(&about)?;
+    let Some(text) = read_exact(&about)? else {
+      continue;
+    };
     if text.split('\n').any(|l| l == line) {
       same += 1;
       continue;

@@ -235,8 +235,9 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
       std::fs::rename(&moved, &renamed)?;
     }
     // The About file: its title, header and running text name the person
-    if let Some(about) = about_file(&new_dir) {
-      let text = std::fs::read_to_string(&about)?;
+    if let Some(about) = about_file(&new_dir)
+      && let Some(text) = crate::fs::read_exact(&about)?
+    {
       crate::fs::write_atomic(&about, text.replace(&old.full(), &new.full()).as_bytes())?;
     }
     // The person's own notes and meetings link to their About by file name
@@ -394,7 +395,7 @@ fn record_alias(dir: &Path, key: &str) -> Result<()> {
   let index = dir.join(".index");
   std::fs::create_dir_all(&index)?;
   let aliases = index.join("aliases");
-  let existing = std::fs::read_to_string(&aliases).unwrap_or_default();
+  let existing = crate::fs::read_exact(&aliases)?.unwrap_or_default();
   if existing.lines().any(|line| line == key) {
     return Ok(());
   }

@@ -54,7 +54,7 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
     return Ok(ExitCode::FAILURE);
   }
 
-  let people = tree::people(&config.data);
+  let people = tree::people(&config.data)?;
   let by_key = by_key(&people);
   let mut all = Vec::new();
   for file in markdown_files(&paths) {

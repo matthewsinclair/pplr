@@ -96,7 +96,7 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
     return Ok(ExitCode::SUCCESS);
   }
 
-  let who = people_by_address(&config.data);
+  let who = people_by_address(&config.data)?;
   let mut saved = Vec::new();
   for (i, m) in messages.into_iter().enumerate() {
     let (text, entry) = listing(i + 1, m, &who)?;
@@ -110,15 +110,15 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
 /// address -> (key, pplr:// URL), from the addresses on each person's About
 /// Email line, as every command reads them (about.rs); an address on two
 /// people's Abouts is the later one's.
-fn people_by_address(root: &Path) -> HashMap<String, (String, String)> {
+fn people_by_address(root: &Path) -> Result<HashMap<String, (String, String)>> {
   let mut out = HashMap::new();
-  for person in tree::people(root) {
+  for person in tree::people(root)? {
     let url = marker_url(&person.key);
     for address in person.header.emails {
       out.insert(address, (person.key.clone(), url.clone()));
     }
   }
-  out
+  Ok(out)
 }
 
 /// Message n's four lines and a blank one, and its entry in the saved listing.

@@ -1,7 +1,9 @@
 //! The People tree: its walk rules, its people and the ways a command names
 //! one (ST0001 recon sections 3 and 5).
 
+use crate::Result;
 use crate::about::{Header, header};
+use crate::fs::read_text;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -46,21 +48,22 @@ impl Person {
 
 /// Every person under `root`, as the legacy engine loaded them: each letter
 /// folder (a single upper-case letter) and each folder in it holding ", ",
-/// both by name.
-pub fn people(root: &Path) -> Vec<Person> {
+/// both by name. An About or aliases file that is there but cannot be read
+/// is the error, naming it.
+pub fn people(root: &Path) -> Result<Vec<Person>> {
   let mut out = Vec::new();
   for letter in names(root).into_iter().filter(|n| is_letter(n)) {
     let letter_dir = root.join(&letter);
     for name in names(&letter_dir).into_iter().filter(|n| n.contains(", ")) {
-      out.push(person(&letter_dir.join(&name), &letter, &name));
+      out.push(person(&letter_dir.join(&name), &letter, &name)?);
     }
   }
-  out
+  Ok(out)
 }
 
-fn person(dir: &Path, letter: &str, name: &str) -> Person {
+fn person(dir: &Path, letter: &str, name: &str) -> Result<Person> {
   let (family, given) = name.split_once(", ").unwrap_or((name, ""));
-  let aliases = fs::read_to_string(dir.join(".index/aliases"))
+  let aliases = read_text(&dir.join(".index/aliases"))?
     .unwrap_or_default()
     .split(['\n', '\r'])
     .map(str::trim)
@@ -77,12 +80,11 @@ fn person(dir: &Path, letter: &str, name: &str) -> Person {
     .iter()
     .find(|n| PICTURES.iter().any(|ending| n.ends_with(ending)))
     .map(|n| about_dir.join(n));
-  let header = about
-    .as_ref()
-    .and_then(|p| fs::read_to_string(p).ok())
-    .map(|text| header(&text))
-    .unwrap_or_default();
-  Person {
+  let text = match &about {
+    Some(path) => read_text(path)?,
+    None => None,
+  };
+  Ok(Person {
     key: format!("{letter}/{name}"),
     given: given.to_owned(),
     family: family.to_owned(),
@@ -90,8 +92,8 @@ fn person(dir: &Path, letter: &str, name: &str) -> Person {
     about,
     picture,
     aliases,
-    header,
-  }
+    header: text.map(|text| header(&text)).unwrap_or_default(),
+  })
 }
 
 /// A letter folder's name: one upper-case letter.

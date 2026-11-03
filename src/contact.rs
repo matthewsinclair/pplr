@@ -14,6 +14,7 @@
 
 use crate::Result;
 use crate::config::Config;
+use crate::fs::read_text;
 use crate::marker::marker_url;
 use crate::tags::read_tags;
 use crate::tree::{display_name, letter_of, names, person_dirs};
@@ -788,9 +789,10 @@ fn context(root: &Path, name: &str, today: Date) -> Result<ExitCode> {
   let about = names(&dir.join("About"))
     .into_iter()
     .find(|n| n.ends_with(" (About).md"));
-  let text = about
-    .map(|a| fs::read_to_string(dir.join("About").join(a)).unwrap_or_default())
-    .unwrap_or_default();
+  let text = match about {
+    Some(a) => read_text(&dir.join("About").join(a))?.unwrap_or_default(),
+    None => String::new(),
+  };
   println!("# {}\n", display_name(&dir));
   let link_text = Regex::new(r"\[(.*?)\]\(.*?\)")?;
   for field in ["Role", "Company", "Headline", "Email"] {

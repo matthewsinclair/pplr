@@ -117,7 +117,7 @@ pub fn run_open(args: &[String], config: &Config) -> Result<ExitCode> {
       .get(usize::from(print_only))
       .map(String::as_str)
       .unwrap_or_default();
-    let Some(path) = target_path(url, config) else {
+    let Some(path) = target_path(url, config)? else {
       eprintln!("pplr: no one answers to {url}");
       return Ok(ExitCode::FAILURE);
     };

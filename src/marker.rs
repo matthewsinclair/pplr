@@ -134,7 +134,7 @@ pub fn rewrite_args(command: &str, args: &[String], config: &Config) -> Result<V
   if TAKES_URLS.contains(&command) || !args.iter().any(|a| is_person_marker(a)) {
     return Ok(args.to_vec());
   }
-  let everyone = people(&config.data);
+  let everyone = people(&config.data)?;
   let by_marker = by_marker(&everyone);
   args
     .iter()
@@ -161,7 +161,7 @@ pub fn run_resolve(args: &[String], config: &Config) -> Result<ExitCode> {
     println!("Usage: pplr resolve pplr://<letter>/<surname-first>[/<path>]");
     return Ok(ExitCode::FAILURE);
   };
-  match target_path(url, config) {
+  match target_path(url, config)? {
     Some(path) => {
       println!("{}", path.display());
       Ok(ExitCode::SUCCESS)
@@ -174,12 +174,12 @@ pub fn run_resolve(args: &[String], config: &Config) -> Result<ExitCode> {
 }
 
 /// The file or folder a URL names: a tag's page, or a person's.
-pub fn target_path(url: &str, config: &Config) -> Option<PathBuf> {
+pub fn target_path(url: &str, config: &Config) -> Result<Option<PathBuf>> {
   if let Some(page) = tag_page(url, &config.data) {
-    return Some(page);
+    return Ok(Some(page));
   }
-  let everyone = people(&config.data);
-  resolve(url, &by_marker(&everyone)).map(|t| t.path)
+  let everyone = people(&config.data)?;
+  Ok(resolve(url, &by_marker(&everyone)).map(|t| t.path))
 }
 
 #[cfg(test)]

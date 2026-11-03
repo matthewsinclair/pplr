@@ -7,6 +7,7 @@
 use crate::Result;
 use crate::config::Config;
 use crate::contacts::{self, AccessDenied, Card, MarkerWrite, Store, linkedin_url, to_swift_json};
+use crate::fs::read_exact;
 use crate::layout::Layout;
 use crate::marker::{by_marker, marker_path, marker_paths, marker_url};
 use crate::normalise::{decompose, email_key, fold, percent_decode};
@@ -157,7 +158,7 @@ fn run_mode(mode: &str, o: &Options, config: &Config) -> Result<ExitCode> {
       Ok(ExitCode::SUCCESS)
     }
     "check" => {
-      let report = check(&people(&config.data), &store.cards()?, &group);
+      let report = check(&people(&config.data)?, &store.cards()?, &group);
       if o.json {
         println!("{}", to_swift_json(&report.to_json()));
       } else {
@@ -807,7 +808,7 @@ fn print_failed(bad: &[&(String, Option<String>)]) {
 }
 
 fn link(store: &mut dyn Store, o: &Options, group: &str, config: &Config) -> Result<ExitCode> {
-  let report = check(&people(&config.data), &store.cards()?, group);
+  let report = check(&people(&config.data)?, &store.cards()?, group);
   let plan = plan_link(&report, &o.names, o.all_names);
   let mut backup = None;
   let outcome = if !o.apply {
@@ -926,7 +927,7 @@ fn print_link(plan: &LinkPlan, group: &str, outcome: Option<&Outcome>, backup: O
 // --photos
 
 fn photos(store: &mut dyn Store, o: &Options, config: &Config) -> Result<ExitCode> {
-  let everyone = people(&config.data);
+  let everyone = people(&config.data)?;
   let keys = by_marker(&everyone);
   let cards = store.cards()?;
   let mut work: Vec<(&Person, &Card, &Path)> = cards
@@ -1150,7 +1151,7 @@ fn pulled_about(text: &str, w: &PullWork) -> String {
 }
 
 fn pull(store: &mut dyn Store, o: &Options, group: &str, config: &Config) -> Result<ExitCode> {
-  let everyone = people(&config.data);
+  let everyone = people(&config.data)?;
   let cards = store.cards()?;
   let report = matches(&everyone, &cards, group);
   let only: HashSet<String> = o.names.iter().map(|n| person_key(n)).collect();
@@ -1170,14 +1171,17 @@ fn pull(store: &mut dyn Store, o: &Options, group: &str, config: &Config) -> Res
   let chosen: Vec<&PullWork> = work.iter().take(o.limit.unwrap_or(usize::MAX)).collect();
   let mut outcome: Outcome = Vec::new();
   for w in &chosen {
-    let Some(text) = w
-      .person
-      .about
-      .as_ref()
-      .and_then(|a| fs::read_to_string(a).ok())
-    else {
-      outcome.push((w.person.key.clone(), Some("no About file".to_owned())));
-      continue;
+    // The About is written back, so it is read as exact text or not at all
+    let text = match w.person.about.as_deref().map_or(Ok(None), read_exact) {
+      Ok(Some(text)) => text,
+      Ok(None) => {
+        outcome.push((w.person.key.clone(), Some("no About file".to_owned())));
+        continue;
+      }
+      Err(e) => {
+        outcome.push((w.person.key.clone(), Some(e.to_string())));
+        continue;
+      }
     };
     let saved = dir.join(format!(
       "{}.md",
@@ -1222,7 +1226,7 @@ fn print_pull(work: &[&PullWork], outcome: Option<&Outcome>, backup: Option<&Pat
 fn plan_mode(store: &mut dyn Store, o: &Options, group: &str, config: &Config) -> Result<ExitCode> {
   let now = config.now()?;
   let plan = plan::plan(
-    &people(&config.data),
+    &people(&config.data)?,
     &store.cards()?,
     group,
     now.strftime("%Y-%m-%d %H:%M").to_string(),
@@ -1278,7 +1282,7 @@ fn apply_plan(
     .into_iter()
     .filter(|d| only.is_empty() || only.contains(&d.person))
     .collect();
-  let everyone = people(&config.data);
+  let everyone = people(&config.data)?;
   let cards = store.cards()?;
   let (work, problems) = plan::plan_work(&chosen, &everyone, &cards, group);
   let todo: Vec<&Work> = work.iter().filter(|w| !w.is_empty()).collect();

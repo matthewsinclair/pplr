@@ -6,6 +6,7 @@
 
 use crate::Result;
 use crate::config::Config;
+use crate::fs::{read_exact, read_text};
 use crate::marker::marker_url;
 use crate::tree::{display_name, letter_of, names, people, person_dirs};
 use crate::yaml::{self, Value};
@@ -601,7 +602,9 @@ fn render(root: &Path, dry: bool, config: &Config) -> Result<ExitCode> {
     let Some(about) = about_of(&dir) else {
       continue;
     };
-    let text = fs::read_to_string(&about)?;
+    let Some(text) = read_exact(&about)? else {
+      continue;
+    };
     let line = tags_line(&read_tags(&dir)?, &vocab);
     let new = with_tags_line(&text, line.as_deref())?;
     if new == text {
@@ -676,10 +679,10 @@ fn pages(root: &Path, vocab: &Vocabulary, day: &str) -> Result<()> {
       continue;
     }
     let about = about_of(&dir);
-    let text = about
-      .as_ref()
-      .and_then(|a| fs::read_to_string(a).ok())
-      .unwrap_or_default();
+    let text = match &about {
+      Some(a) => read_text(a)?.unwrap_or_default(),
+      None => String::new(),
+    };
     let (role, company) = (header_field(&text, "Role"), header_field(&text, "Company"));
     let what = [role, company]
       .into_iter()
@@ -900,11 +903,12 @@ fn index(root: &Path) -> Result<ExitCode> {
   let vocab = Vocabulary::load(root)?;
   let rel = |p: &Path| p.strip_prefix(root).unwrap_or(p).display().to_string();
   let mut out = Vec::new();
-  for p in people(root) {
+  for p in people(root)? {
     let about = p.about.as_deref();
-    let text = about
-      .and_then(|a| fs::read_to_string(a).ok())
-      .unwrap_or_default();
+    let text = match about {
+      Some(a) => read_text(a)?.unwrap_or_default(),
+      None => String::new(),
+    };
     let tags: Vec<String> = read_tags(&p.dir)?
       .into_iter()
       .map(|t| t.tag)
