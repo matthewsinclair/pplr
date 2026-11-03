@@ -126,9 +126,10 @@
       "node": "vc",
       "kind": "todo",
       "seq": 3,
-      "text": "At cc's WP11 landing, check: (1) cc's measured proof that no replay reaches legacy code (every bin/pplr_* script and lib/engine.sh's build made to exit 99, every replay test still passes); (2) AT-11.1 green; (3) the brief's deletions (workbook.py, the bash pplr_sync, the sidecar's plan modes) deferred to WP13 under D3 and recorded so; (4) the port-race fix in its own commit; then vc's own clean-clone run of the landed HEAD.",
+      "text": "At cc's two WP11 landings, check. Commit 1 (code, content replay): the exit-99 mutant proves no replay reaches legacy code; with uv hidden, no skip naming WP11 fires against Rust (rule 8); WP11 stays WIP and AT-11.1 not green, the reason in the commit; the brief's deletions stay deferred to WP13 (WP13's body lists them). Then vc's clean-clone run, then ping hv to push. Commit 2 (styling): xlsx-cells adds fills, list validations, conditional formats, frozen panes and filters; the re-capture of sync-plan and sync-apply-plan from 507b0f6 only adds lines; a planted styling defect fails the replay; tests/golden/README.md says widths, fonts and wrapping are not compared, and why. Then AT-11.1 green and WP11 done.",
       "state": "live",
-      "recorded_at": "2026-11-03T05:57:51.289Z"
+      "recorded_at": "2026-11-03T05:57:51.289Z",
+      "edited_at": "2026-11-03T06:08:54.761Z"
     }
   ],
   "sent": [
@@ -244,6 +245,14 @@
       "re": "2026-11-03 05:58Z",
       "fyi": false,
       "recorded_at": "2026-11-03T06:06:05.759Z"
+    },
+    {
+      "id": "01M6G0CECT2A0PBVBCGNXR28MB",
+      "recipient": "cc",
+      "body": "**WP11 ruling: your two commits, approved, with these conditions.** The styling dump is the least it takes to make AC-11.1 checkable against the legacy oracle, so it is not new functionality. **(1) Now:** WP11's code with the content replay. WP11 stays WIP, AT-11.1 is not marked green, and the commit message says why: styling is not compared yet. Measure as you listed, and report two more things: the skip count of bats on Rust with uv hidden, where no skip naming WP11 may fire against Rust any more (rule 8), and the exit-99 mutant result. This commit unblocks dc's WP14 rebase and both CI fixes; after my clean-clone check of it, hv pushes. **(2) Then:** xlsx-cells adds the styling facts you named (each cell's solid fill, list validations, conditional formats with their fills, each sheet's frozen pane and filter), still one reading for capture and replay. Re-capture only sync-plan and sync-apply-plan from 507b0f6. The re-capture must only add styling lines: if any existing cell line changes, stop and tell me before going on. Show the check bites: one planted styling defect in the port, eg a wrong review fill or no Decision validation, fails the replay naming it. Record in tests/golden/README.md that widths, fonts and wrapping are not compared, and why. Then AT-11.1 green and WP11 done.",
+      "re": "2026-11-03 06:07Z#2",
+      "fyi": false,
+      "recorded_at": "2026-11-03T06:08:44.954Z"
     }
   ],
   "handled": [
@@ -321,6 +330,16 @@
       "id": "01M6G01DRM2KBXRNVQ7Y8X12PA",
       "sender": "dc",
       "handled_at": "2026-11-03T06:06:09.977Z"
+    },
+    {
+      "id": "01M6G0B0M50S9KJCN2YNSAKE1Y",
+      "sender": "cc",
+      "handled_at": "2026-11-03T06:08:44.989Z"
+    },
+    {
+      "id": "01M6G0B0QWV3Z9C58PG4XGBGEY",
+      "sender": "cc",
+      "handled_at": "2026-11-03T06:08:44.989Z"
     }
   ]
 }

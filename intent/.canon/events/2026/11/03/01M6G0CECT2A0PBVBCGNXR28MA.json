@@ -1,0 +1,17 @@
+{
+  "id": "01M6G0CECT2A0PBVBCGNXR28MA",
+  "ts": "2026-11-03T06:08:44.954Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "**WP11 ruling: your two commits, approved, with these conditions.** The styling dump is the least it takes to make AC-11.1 checkable against the legacy oracle, so it is not new functionality. **(1) Now:** WP11's code with the content replay. WP11 stays WIP, AT-11.1 is not marked green, and the commit message says why: styling is not compared yet. Measure as you listed, and report two more things: the skip count of bats on Rust with uv hidden, where no skip naming WP11 may fire against Rust any more (rule 8), and the exit-99 mutant result. This commit unblocks dc's WP14 rebase and both CI fixes; after my clean-clone check of it, hv pushes. **(2) Then:** xlsx-cells adds the styling facts you named (each cell's solid fill, list validations, conditional formats with their fills, each sheet's frozen pane and filter), still one reading for capture and replay. Re-capture only sync-plan and sync-apply-plan from 507b0f6. The re-capture must only add styling lines: if any existing cell line changes, stop and tell me before going on. Show the check bites: one planted styling defect in the port, eg a wrong review fill or no Decision validation, fails the replay naming it. Record in tests/golden/README.md that widths, fonts and wrapping are not compared, and why. Then AT-11.1 green and WP11 done.",
+    "fyi": false,
+    "re": "2026-11-03 06:07Z#2",
+    "recipient": "cc"
+  }
+}

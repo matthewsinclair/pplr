@@ -1,0 +1,16 @@
+{
+  "id": "01M6G0CQZ965VDJF6NK8D0GRT8",
+  "ts": "2026-11-03T06:08:54.761Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 3,
+    "text": "At cc's two WP11 landings, check. Commit 1 (code, content replay): the exit-99 mutant proves no replay reaches legacy code; with uv hidden, no skip naming WP11 fires against Rust (rule 8); WP11 stays WIP and AT-11.1 not green, the reason in the commit; the brief's deletions stay deferred to WP13 (WP13's body lists them). Then vc's clean-clone run, then ping hv to push. Commit 2 (styling): xlsx-cells adds fills, list validations, conditional formats, frozen panes and filters; the re-capture of sync-plan and sync-apply-plan from 507b0f6 only adds lines; a planted styling defect fails the replay; tests/golden/README.md says widths, fonts and wrapping are not compared, and why. Then AT-11.1 green and WP11 done."
+  }
+}
