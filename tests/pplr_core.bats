@@ -82,3 +82,33 @@ assert_version_output() {
     [ "$status" -eq 0 ]
     assert_version_output
 }
+
+# ST0001 AC-00.7: on Linux, each command that needs a macOS service exits
+# non-zero and names why. One row per gate the binary has: the command, then
+# a phrase its message holds. On macOS the services are there, and each
+# command's own tests cover it.
+@test "AC-00.7 on Linux, every command that needs a macOS service exits non-zero naming why" {
+    [ "$(uname)" != Darwin ] || skip "checks the Linux refusals; on macOS the services are there"
+    create_test_person "Lovelace" "Ada" >/dev/null
+    local gates=(
+        "sync --check|the live Contacts store needs macOS"
+        "handler --status|so it needs macOS"
+        "applyicons Ada Lovelace|Finder icons need macOS"
+        "setpicfordir Ada Lovelace|Finder icons need macOS"
+        "setpicsfordirs|Finder icons need macOS"
+        "cp Ada Lovelace|the macOS clipboard"
+        "open Ada Lovelace|macOS's open"
+        "open pplr://l/lovelace-ada|macOS's open"
+        "linkedin Ada Lovelace|macOS's open"
+        "email|macOS Mail's own index"
+    )
+    local gate why
+    local -a argv
+    for gate in "${gates[@]}"; do
+        read -r -a argv <<< "${gate%%|*}"
+        why=${gate#*|}
+        run "$PPLR" "${argv[@]}"
+        [ "$status" -ne 0 ] || { echo "pplr ${argv[*]} exited 0: $output" >&2; return 1; }
+        assert_contains "$output" "$why" || { echo "pplr ${argv[*]} did not say why" >&2; return 1; }
+    done
+}

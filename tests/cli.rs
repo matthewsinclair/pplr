@@ -2006,3 +2006,138 @@ fn tags_and_contact_with_no_command_print_their_usage_naming_pplr() -> Result<()
   }
   Ok(())
 }
+
+/// AT-00.2 (ST0001 AC-00.2): one binary. Every command the shell pplr offered
+/// (recon section 4) is served here, held to its arguments and flags by the
+/// goldens and the bats suite (AT-00.4, AT-00.3), and the checkout keeps no
+/// legacy dispatcher, command script, fallback or run-time engine build.
+#[test]
+fn one_binary_serves_every_shell_command_and_no_legacy_script_remains() -> Result<()> {
+  // Recon section 4's catalogue: the commands the shell pplr offered
+  const SHELL_COMMANDS: &[&str] = &[
+    "about",
+    "applyicons",
+    "contact",
+    "count",
+    "cp",
+    "doctor",
+    "edit",
+    "email",
+    "grep",
+    "handler",
+    "help",
+    "index",
+    "json",
+    "linkedin",
+    "links",
+    "meetings",
+    "new",
+    "open",
+    "pictures",
+    "refresh",
+    "reindex",
+    "rename",
+    "resolve",
+    "search",
+    "setpicfordir",
+    "setpicsfordirs",
+    "sync",
+    "tag",
+    "tags",
+    "version",
+  ];
+  let unserved: Vec<&str> = SHELL_COMMANDS
+    .iter()
+    .copied()
+    .filter(|name| pplr::cli::native(name).is_none())
+    .collect();
+  assert!(unserved.is_empty(), "not served: {unserved:?}");
+
+  let checkout = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+  let scripts: Vec<String> = fs::read_dir(checkout.join("bin"))?
+    .map(|e| e.map(|e| e.file_name().to_string_lossy().into_owned()))
+    .collect::<std::io::Result<Vec<_>>>()?
+    .into_iter()
+    .filter(|name| name == "pplr" || name.starts_with("pplr_"))
+    .collect();
+  assert!(scripts.is_empty(), "legacy scripts in bin/: {scripts:?}");
+  for legacy in ["lib/engine.sh", "src/fallback.rs"] {
+    assert!(!checkout.join(legacy).exists(), "{legacy} remains");
+  }
+  Ok(())
+}
+
+/// AT-00.6 (ST0001 AC-00.6): an opt tree's pplr, run from outside any
+/// checkout with PPLR_ROOT, PPLR_BIN_DIR and PPLR_TEMPLATE_DIR naming a decoy
+/// legacy layout, runs nothing from it and reads nothing from it: an unknown
+/// command is refused, new writes the About the dev build writes from its own
+/// template, and help --details is the README the binary holds.
+#[test]
+fn an_installed_pplr_needs_no_checkout_and_no_legacy_setting() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let prefix = sandbox.path("opt");
+  publish_tree(&prefix, "pplr", false)?;
+  // The decoy: a command script that leaves a mark, a person template and a README
+  let decoy = sandbox.path("decoy");
+  let mark = sandbox.path("decoy-ran");
+  fs::create_dir_all(decoy.join("bin"))?;
+  let script = decoy.join("bin/pplr_decoy");
+  fs::write(&script, format!("#!/bin/sh\ntouch '{}'\n", mark.display()))?;
+  fs::set_permissions(&script, fs::Permissions::from_mode(0o755))?;
+  let template = decoy.join("templates/person/About");
+  fs::create_dir_all(&template)?;
+  fs::write(template.join("Firstname Surname (About).md"), "decoy\n")?;
+  fs::write(decoy.join("README.md"), "decoy\n")?;
+  let elsewhere = sandbox.path("elsewhere");
+  let (opt_data, dev_data) = (sandbox.path("opt-data"), sandbox.path("dev-data"));
+  for dir in [&elsewhere, &opt_data, &dev_data] {
+    fs::create_dir_all(dir)?;
+  }
+  let installed = |args: &[&str]| {
+    run(
+      Command::new(prefix.join("bin/pplr"))
+        .env_clear()
+        .env("PATH", std::env::var_os("PATH").unwrap_or_default())
+        .env("HOME", sandbox.path("home"))
+        .env("LANG", "en_GB.UTF-8")
+        .env("PPLR_DATA", &opt_data)
+        .env("PPLR_TODAY", GOLDEN_DAY)
+        .env("PPLR_ROOT", &decoy)
+        .env("PPLR_BIN_DIR", decoy.join("bin"))
+        .env("PPLR_TEMPLATE_DIR", decoy.join("templates"))
+        .current_dir(&elsewhere)
+        .args(args),
+    )
+  };
+
+  let unknown = installed(&["decoy"])?;
+  assert_eq!(
+    text(&unknown.stdout),
+    "Error: Command 'decoy' not found.\nUsage: pplr <cmd>\n"
+  );
+  assert_eq!(unknown.status.code(), Some(1));
+  assert!(!mark.exists(), "the decoy's script ran");
+
+  let new = installed(&["new", "Ada", "Lovelace"])?;
+  assert!(new.status.success(), "{}", text(&new.stderr));
+  let dev = run(
+    sandbox
+      .pplr()
+      .env("PPLR_DATA", &dev_data)
+      .env("PPLR_TODAY", GOLDEN_DAY)
+      .args(["new", "Ada", "Lovelace"]),
+  )?;
+  assert!(dev.status.success(), "{}", text(&dev.stderr));
+  let about = "L/Lovelace, Ada/About/Ada Lovelace (About).md";
+  assert_eq!(
+    fs::read_to_string(opt_data.join(about))?,
+    fs::read_to_string(dev_data.join(about))?
+  );
+
+  let details = installed(&["help", "--details"])?;
+  assert_eq!(
+    text(&details.stdout),
+    fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))?
+  );
+  Ok(())
+}

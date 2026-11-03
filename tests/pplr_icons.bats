@@ -17,21 +17,3 @@ load test_helper
     # The person's own folder is setpicfordir's, not applyicons'
     ! fileicon test -q "$person_dir"
 }
-
-# ST0001 AC-00.7: elsewhere, a command that needs Finder exits 1 and says why
-@test "AC-00.7 on Linux, applyicons, setpicfordir and setpicsfordirs exit 1 naming macOS" {
-    [ "$(uname)" != Darwin ] || skip "checks the Linux refusal; on macOS AT-12.2 checks the icons"
-    create_test_person "Lovelace" "Ada" >/dev/null
-
-    run "$PPLR" applyicons "Ada" "Lovelace"
-    [ "$status" -eq 1 ]
-    assert_contains "$output" "Finder icons need macOS"
-
-    run "$PPLR" setpicfordir "Ada" "Lovelace"
-    [ "$status" -eq 1 ]
-    assert_contains "$output" "Finder icons need macOS"
-
-    run "$PPLR" setpicsfordirs
-    [ "$status" -eq 1 ]
-    assert_contains "$output" "Finder icons need macOS"
-}
