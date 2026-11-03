@@ -350,7 +350,6 @@ fn tools(config: &Config) -> Vec<Row> {
       format!("{name} not found ({needed_for})"),
     )),
   };
-  tool("jq", "the commands not yet ported to Rust need it");
   tool("claude", "pplr search needs it");
   if cfg!(target_os = "macos") {
     tool(

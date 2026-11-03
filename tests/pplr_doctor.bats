@@ -63,3 +63,14 @@ load test_helper
     assert_contains "$output" "index.json is invalid JSON"
 }
 
+
+# ST0001 WP13: with the legacy scripts gone, no command runs jq, so doctor no
+# longer asks for it; its Dependencies rows name only what pplr itself runs
+@test "pplr doctor asks for no tool only the legacy scripts ran" {
+    run "$PPLR" doctor
+    assert_contains "$output" "Dependencies"
+    [[ "$output" != *"jq found"* && "$output" != *"jq not found"* ]] || {
+        echo "doctor still reports jq: $output" >&2
+        return 1
+    }
+}
