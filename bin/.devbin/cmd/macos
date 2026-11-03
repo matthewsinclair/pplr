@@ -16,7 +16,9 @@
 #                                           It is the one file in dist/release, which `bin/devbin
 #                                           release attach <tag> --from dist/release` takes whole;
 #                                           an ad hoc asset goes to dist/adhoc instead
-#   bin/devbin macos prepare [--adhoc]      stage, sign, verify, notarise (a dry run with --adhoc), pack
+#   bin/devbin macos prepare [--adhoc]      stage, sign, verify the signatures, notarise (a dry run with
+#                                           --adhoc), then pack, whose verify adds spctl: Gatekeeper
+#                                           refuses Developer ID code that is not notarised yet
 #
 # --adhoc signs with `codesign -s -`: no identity, no keychain, no timestamp,
 # and no spctl, which an ad-hoc signature cannot pass. It proves the steps on a
@@ -111,7 +113,8 @@ requirement() {
 # AT-07.1 (ST0002 AC-07.1): verify holds each binary to its designated
 # requirement, so an ad hoc build is refused and the Developer ID build passes.
 cmd_verify() {
-  local adhoc=$1 b
+  # gatekeeper=0 leaves out spctl, whose verdict needs the notarisation
+  local adhoc=$1 gatekeeper=${2:-1} b
   require_staged
   for b in $binaries; do
     step "verifying $b"
@@ -124,13 +127,13 @@ cmd_verify() {
       codesign -d --entitlements - --xml $stage/$b 2>/dev/null | grep -q $addressbook ||
         die "$b lacks the $addressbook entitlement, so the hardened runtime would deny it Contacts"
     fi
-    if (( ! adhoc )); then
+    if (( ! adhoc && gatekeeper )); then
       spctl -a -t open --context context:primary-signature $stage/$b ||
         die "Gatekeeper refuses $b (has it been notarised?)"
     fi
     local checked="requirement, hardened runtime"
     [[ $b == pplr-contacts ]] && checked+=", entitlement"
-    (( adhoc )) || checked+=", spctl"
+    (( adhoc || ! gatekeeper )) || checked+=", spctl"
     print "  ok: $checked"
   done
 }
@@ -212,9 +215,11 @@ case $sub in
   prepare)
     cmd_stage
     cmd_sign $adhoc
-    cmd_verify $adhoc
+    # The signatures alone: spctl waits for pack's verify, after notarize
+    cmd_verify $adhoc 0
     cmd_notarize $(( adhoc || dry ))
     cmd_pack $adhoc ;;
-  ""|-h|--help) sed -n '9,16p' ${0:A} | sed 's/^# \{0,1\}//' ;;
+  # The usage block above, from its first line to the bare # after it
+  ""|-h|--help) sed -n '/^#   bin\/devbin macos stage/,/^#$/p' ${0:A} | sed -e '$d' -e 's/^# \{0,1\}//' ;;
   *) die "unknown step: $sub (stage, sign, verify, notarize, pack, prepare)" ;;
 esac
