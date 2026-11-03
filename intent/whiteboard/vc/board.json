@@ -5,7 +5,7 @@
     "name": "vc",
     "role": "vc",
     "session_id": "60a887be-5fa2-4cf5-8de1-310286047151",
-    "heartbeat_at": "2026-11-03T10:49:41.314Z",
+    "heartbeat_at": "2026-11-03T10:52:34.458Z",
     "status": "active",
     "focus": "Localfold for hv's compact; status stays active. Main pushed at eb15640 (the code verified at 4beaa87), CI 41621882730 green on both runners; hv's dev link rebuilt with C11. ST0001 21 of 28: cc's WP13 close next (the AT-00 rows, AC-01.3, AC-02.2 and AT-02.2), then vc verifies the reds and greens before the thread closes. After the compact: /in-session (or wb pickup), re-arm the slot watch, read pending.",
     "claims": [],
@@ -77,10 +77,10 @@
       "node": "vc",
       "kind": "hold",
       "seq": 2,
-      "text": "Each item needs hv, and each is released as hv does it. (2) Create the geodica.apple.{APPLE_ID,APPLE_APP_PASSWORD,APPLE_TEAM_ID} keychain entries. (3) Allow Developer ID signing, the identity check and the first notarytool submission (ST0002 WP07, AC-07.1 and 07.2). (4) Intent fixes outside pplr: the pre-commit hook's word-splitting, AGENTS.md's swift lines, and the estate page's false orphaned holds (watchouts 1 to 3). (6) ST0002 WP05: the real brew install from a scratch tap; dc prepares everything up to it (it could shadow ~/.local/bin/pplr). (7) ST0002 WP04. The tap's description and CI need gh repo edit and a tap push (AC-04.2). For AC-04.1, dc measured the render clean, but brew style refuses the manifest header devbin generates (131 columns against brew's 118, lib/cmd/formula:424); Homebrew forbids the RuboCop wrap, and one element per line passes, so file the Devbin issue dc wrote (banked on the local branch dc/devbin-issue at 84972b4, as devbin-issue-formula-manifest; never pushed, never merged). brew audit --strict, run under the trust hv granted in dc's session and undone at once, has that same line as its one problem, so the issue's fix clears both. Each push is hv's, from the terminal: the auto-mode classifier refuses one from vc's session.",
+      "text": "hv's one release sitting, from dc's runbook (decision 24); each item is released as hv does it. (2) The three geodica.apple.{APPLE_ID,APPLE_APP_PASSWORD,APPLE_TEAM_ID} keychain entries. (3) The keychain Allow for codesign on the Developer ID key, already in the login keychain, and the first notarytool submission (ST0002 WP07). (5) The pushes: main, candidate/v2.0.0 for its CI, then the v2.0.0 tag and release (WP06). (6) The tap: formula publish and gh repo edit's description (AC-04.2); then brew install, brew test and pplr --version from the tap; pplr use brew and the handler; a reinstall and sync --check from iTerm (AC-06.2). Off the critical path: (4) the Intent fixes (watchouts 1 to 3); (7) the Devbin issue on dc/devbin-issue (84972b4), whose fix brings back brew style, brew audit --strict and the tap's CI. Each push is hv's, from the terminal: the auto-mode classifier refuses one from vc's session.",
       "state": "live",
       "recorded_at": "2026-11-02T16:34:46.556Z",
-      "edited_at": "2026-11-03T10:49:16.767Z"
+      "edited_at": "2026-11-03T11:03:51.258Z"
     },
     {
       "node": "vc",
@@ -330,6 +330,14 @@
       "state": "archived",
       "archived_at": "2026-11-03T10:48:58.882Z",
       "recorded_at": "2026-11-03T10:39:22.015Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 24,
+      "text": "hv, 2026-11-03 after the compact: 'I want you to be aggressive here. This is a simple tool with very little risk or blast radius. Don't go down stupid rabbit holes. Let's just push on and get it shipped asap.' Ruled under it and decision 2. (1) ST0001: vc re-made all seven AT-00 reds beside their greens in fresh clones (slot 01M6GGZR1QFQDVKABB7418NN3N; AT-00.7's from CI 41606822506's ubuntu log), and main's greens stand (4beaa87's fresh clone; CI 41619489383 and 41621882730), so cc closes WP13 and the thread at once, st done included, with no round trip to vc. (2) ST0002 drops ceremony that buys little risk. AC-05.1, the scratch-tap rehearsal, is withdrawn and WP05 cancelled: the real install from the tap proves the same path, and a fault there is fixed in the tap. AC-00.2 drops its Linux brew clause and AC-06.1 its kovacs gate: CI's ubuntu runner is the Linux gate. brew style, brew audit --strict and the tap's CI wait for devbin's manifest-header fix (the Devbin issue on dc/devbin-issue, 84972b4), so AC-04.1 drops that clause and AC-04.2 keeps the tap's description alone. Signing and notarisation stay: the Developer ID identity is in the login keychain. (3) dc makes the AC edits and writes hv one ordered runbook for a single sitting; cc, once ST0001 is closed, writes AC-00.3's docs before the 2.0.0 cut, since README.md is compiled into the binary.",
+      "state": "live",
+      "recorded_at": "2026-11-03T11:03:42.826Z"
     }
   ],
   "sent": [
@@ -674,6 +682,20 @@
       "body": "Main's CI on hv's second push is green on both runners: run 41621882730 at eb15640, the code vc verified at 4beaa87 (C11 and AT-09.1 on a18cc88). With run 41619489383 at a18cc88, also green, that is the CI evidence for the AT-00 rows after the compact. vc's local macOS runs are b245b53 and 4beaa87, each 106 of 106 with the Linux test the one skip; cite the commits and run ids. AC-00.5 is satisfied on 590162c, 728465f and aa42c5a, and AC-00.8 on the docs (aa42c5a carries it). ST0001 reads 21 of 28: the seven AT-00 criteria are yours to cover.",
       "fyi": true,
       "recorded_at": "2026-11-03T10:49:23.714Z"
+    },
+    {
+      "id": "01M6GH8SBJ2KH623R571RJWDY2",
+      "recipient": "cc",
+      "body": "Verified (vc decision 24): all seven AT-00 reds re-made beside their greens in fresh clones (slot 01M6GGZR1QFQDVKABB7418NN3N). AT-00.1: 28 findings at 42aa87e under 56055f4's tool and option. AT-00.2 and AT-00.6: main's tests/cli.rs compiles over 42aa87e, and each test fails by its own panic (cli.rs:2067 and 2118 in main's file). AT-00.3: pplr count off by one gives 104 of 106, the two count tests not ok. AT-00.4: one golden changed, exit 101 naming count-no-index step 01. AT-00.9: not ok with the match disabled. AT-00.7: CI 41606822506's ubuntu log, the Linux test the one not ok. hv now says be aggressive and ship asap, so close it all in one go: mint the rows as banked, satisfy each AC-00 criterion on its green AT if the verb does not (cite this verification), AC-01.3, AC-02.2 and AT-02.2, at lint, wp gate, wp done, then intent st done ST0001 yourself, with no round trip to vc. Then ST0002 AC-00.3's docs, which must land before the 2.0.0 cut because README.md is compiled into the binary: the user docs name brew alone (T1), and docs/releasing.md covers dev and opt for the maintainer. Tell vc when each lands; ask for slots as usual and vc grants at once.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T11:03:50.898Z"
+    },
+    {
+      "id": "01M6GH8SFK5ZXXKBY0DRH19MYH",
+      "recipient": "dc",
+      "body": "vc decision 24: hv says be aggressive and ship asap, so ST0002 drops its ceremony. In one commit on ST0002, please: (a) intent ac withdraw ST0002 AC-05.1 with the reason \"superseded by the real install from the tap (AC-00.1, AC-00.2): hv ruled no rehearsal, vc decision 24\", and cancel WP05 with the same reason. (b) intent ac edit AC-00.2 to: T10 holds on rhadamanth: `pplr use dev`, `use opt` and `use brew` each give the right version line, a clean doctor and a passing shadow check. (c) AC-06.1 to: 2.0.0 is cut by `bin/devbin release`. Its gates pass locally and in CI for candidate/v2.0.0, and the formula is published to the tap by `bin/devbin formula publish`. (d) AC-04.1 to: packaging/homebrew/pplr.rb is a devbin `assets` template, rendered through `bin/devbin formula render` with nothing typed. Its install verifies every macOS binary's signature against its designated requirement and writes the T3 manifest, and its test re-verifies the signatures and runs the version line. (e) AC-04.2 to: The tap matthewsinclair/homebrew-pplr is described as \"Homebrew tap for pplr\". Then run everything that needs no hv: the formula render, the signer as far as it goes before the keychain prompt, and any dry run devbin release offers. Then send hv one ordered runbook for a single sitting, each command as hv types it, with what it should print: the three geodica.apple.* keychain entries; the first signing (the keychain Allow) and notarytool submission; the pushes (main, candidate/v2.0.0 and its CI, then the tag and release); formula publish and gh repo edit's description; brew install, brew test and pplr --version from the tap; pplr use brew and the handler; a brew reinstall and sync --check from iTerm (AC-06.2). The release goes after cc's docs land (README.md ships in the binary). Ask vc for slots as usual and vc grants at once. If anything blocks, tell vc with the cut you propose; no rabbit holes.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T11:03:51.027Z"
     }
   ],
   "handled": [

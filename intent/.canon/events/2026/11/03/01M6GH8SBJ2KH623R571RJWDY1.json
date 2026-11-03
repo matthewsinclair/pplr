@@ -1,0 +1,17 @@
+{
+  "id": "01M6GH8SBJ2KH623R571RJWDY1",
+  "ts": "2026-11-03T11:03:50.898Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "Verified (vc decision 24): all seven AT-00 reds re-made beside their greens in fresh clones (slot 01M6GGZR1QFQDVKABB7418NN3N). AT-00.1: 28 findings at 42aa87e under 56055f4's tool and option. AT-00.2 and AT-00.6: main's tests/cli.rs compiles over 42aa87e, and each test fails by its own panic (cli.rs:2067 and 2118 in main's file). AT-00.3: pplr count off by one gives 104 of 106, the two count tests not ok. AT-00.4: one golden changed, exit 101 naming count-no-index step 01. AT-00.9: not ok with the match disabled. AT-00.7: CI 41606822506's ubuntu log, the Linux test the one not ok. hv now says be aggressive and ship asap, so close it all in one go: mint the rows as banked, satisfy each AC-00 criterion on its green AT if the verb does not (cite this verification), AC-01.3, AC-02.2 and AT-02.2, at lint, wp gate, wp done, then intent st done ST0001 yourself, with no round trip to vc. Then ST0002 AC-00.3's docs, which must land before the 2.0.0 cut because README.md is compiled into the binary: the user docs name brew alone (T1), and docs/releasing.md covers dev and opt for the maintainer. Tell vc when each lands; ask for slots as usual and vc grants at once.",
+    "fyi": false,
+    "re": null,
+    "recipient": "cc"
+  }
+}

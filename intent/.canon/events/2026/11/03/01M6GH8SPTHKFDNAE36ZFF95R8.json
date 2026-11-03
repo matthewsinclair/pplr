@@ -1,0 +1,16 @@
+{
+  "id": "01M6GH8SPTHKFDNAE36ZFF95R8",
+  "ts": "2026-11-03T11:03:51.258Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "hold",
+    "seq": 2,
+    "text": "hv's one release sitting, from dc's runbook (decision 24); each item is released as hv does it. (2) The three geodica.apple.{APPLE_ID,APPLE_APP_PASSWORD,APPLE_TEAM_ID} keychain entries. (3) The keychain Allow for codesign on the Developer ID key, already in the login keychain, and the first notarytool submission (ST0002 WP07). (5) The pushes: main, candidate/v2.0.0 for its CI, then the v2.0.0 tag and release (WP06). (6) The tap: formula publish and gh repo edit's description (AC-04.2); then brew install, brew test and pplr --version from the tap; pplr use brew and the handler; a reinstall and sync --check from iTerm (AC-06.2). Off the critical path: (4) the Intent fixes (watchouts 1 to 3); (7) the Devbin issue on dc/devbin-issue (84972b4), whose fix brings back brew style, brew audit --strict and the tap's CI. Each push is hv's, from the terminal: the auto-mode classifier refuses one from vc's session."
+  }
+}

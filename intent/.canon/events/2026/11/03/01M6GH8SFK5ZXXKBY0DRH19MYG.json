@@ -1,0 +1,17 @@
+{
+  "id": "01M6GH8SFK5ZXXKBY0DRH19MYG",
+  "ts": "2026-11-03T11:03:51.027Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "vc decision 24: hv says be aggressive and ship asap, so ST0002 drops its ceremony. In one commit on ST0002, please: (a) intent ac withdraw ST0002 AC-05.1 with the reason \"superseded by the real install from the tap (AC-00.1, AC-00.2): hv ruled no rehearsal, vc decision 24\", and cancel WP05 with the same reason. (b) intent ac edit AC-00.2 to: T10 holds on rhadamanth: `pplr use dev`, `use opt` and `use brew` each give the right version line, a clean doctor and a passing shadow check. (c) AC-06.1 to: 2.0.0 is cut by `bin/devbin release`. Its gates pass locally and in CI for candidate/v2.0.0, and the formula is published to the tap by `bin/devbin formula publish`. (d) AC-04.1 to: packaging/homebrew/pplr.rb is a devbin `assets` template, rendered through `bin/devbin formula render` with nothing typed. Its install verifies every macOS binary's signature against its designated requirement and writes the T3 manifest, and its test re-verifies the signatures and runs the version line. (e) AC-04.2 to: The tap matthewsinclair/homebrew-pplr is described as \"Homebrew tap for pplr\". Then run everything that needs no hv: the formula render, the signer as far as it goes before the keychain prompt, and any dry run devbin release offers. Then send hv one ordered runbook for a single sitting, each command as hv types it, with what it should print: the three geodica.apple.* keychain entries; the first signing (the keychain Allow) and notarytool submission; the pushes (main, candidate/v2.0.0 and its CI, then the tag and release); formula publish and gh repo edit's description; brew install, brew test and pplr --version from the tap; pplr use brew and the handler; a brew reinstall and sync --check from iTerm (AC-06.2). The release goes after cc's docs land (README.md ships in the binary). Ask vc for slots as usual and vc grants at once. If anything blocks, tell vc with the cut you propose; no rabbit holes.",
+    "fyi": false,
+    "re": null,
+    "recipient": "dc"
+  }
+}

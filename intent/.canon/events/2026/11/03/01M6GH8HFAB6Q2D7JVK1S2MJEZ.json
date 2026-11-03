@@ -1,0 +1,15 @@
+{
+  "id": "01M6GH8HFAB6Q2D7JVK1S2MJEZ",
+  "ts": "2026-11-03T11:03:42.826Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "hv, 2026-11-03 after the compact: 'I want you to be aggressive here. This is a simple tool with very little risk or blast radius. Don't go down stupid rabbit holes. Let's just push on and get it shipped asap.' Ruled under it and decision 2. (1) ST0001: vc re-made all seven AT-00 reds beside their greens in fresh clones (slot 01M6GGZR1QFQDVKABB7418NN3N; AT-00.7's from CI 41606822506's ubuntu log), and main's greens stand (4beaa87's fresh clone; CI 41619489383 and 41621882730), so cc closes WP13 and the thread at once, st done included, with no round trip to vc. (2) ST0002 drops ceremony that buys little risk. AC-05.1, the scratch-tap rehearsal, is withdrawn and WP05 cancelled: the real install from the tap proves the same path, and a fault there is fixed in the tap. AC-00.2 drops its Linux brew clause and AC-06.1 its kovacs gate: CI's ubuntu runner is the Linux gate. brew style, brew audit --strict and the tap's CI wait for devbin's manifest-header fix (the Devbin issue on dc/devbin-issue, 84972b4), so AC-04.1 drops that clause and AC-04.2 keeps the tap's description alone. Signing and notarisation stay: the Developer ID identity is in the login keychain. (3) dc makes the AC edits and writes hv one ordered runbook for a single sitting; cc, once ST0001 is closed, writes AC-00.3's docs before the 2.0.0 cut, since README.md is compiled into the binary."
+  }
+}
