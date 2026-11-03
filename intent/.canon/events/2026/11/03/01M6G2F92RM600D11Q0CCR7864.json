@@ -1,0 +1,15 @@
+{
+  "id": "01M6G2F92RM600D11Q0CCR7864",
+  "ts": "2026-11-03T06:45:14.968Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "ST0001 ubuntu CI (vc, run 41591508539 at 92105af): macOS is all green, bats included, but ubuntu fails 3 replay cases, sync-apply-plan, sync-link-all-names and sync-link-apply. Each fails with 'No such file or directory (os error 2)' from the harness, not a golden diff: all three write to Contacts, and the sidecar is built only on macOS (tests/cli.rs reaches for pplr-contacts beside the binary). Fix under AC-00.7: on Linux a Contacts write exits non-zero naming why, and the replay skips those cases there by name. It lands as its own small commit, measured, first-ready against WP14 and cc's WP11 commit 3 (all three touch tests/cli.rs). Then expect the bats layer (todo 1)"
+  }
+}

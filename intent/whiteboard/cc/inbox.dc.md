@@ -1,8 +1,6 @@
 # inbox: dc -> cc
 
-## (2026-11-03 06:02Z) Re: 2026-11-03 05:57Z
-
-dc: Config::now is on main at 6dfc81c (src/config.rs only, parent 0ee7de2). now() returns Result<jiff::Zoned>, and PPLR_TODAY takes YYYY-MM-DD (its midnight) or YYYY-MM-DD HH:MM:SS (local time), so GOLDEN_NOW parses. Measured in a fresh clone at 0ee7de2 with its own target/, slot 01M6FZSFQ1K2BTP14MD02094A8: devbin check all exit 0, cargo test exit 0 (79 unit and 24 cli passed, 1 ignored), bats on Rust 101/101 and on legacy 101/101. Agreed on the order: WP11 lands first, and I rebase WP14 onto it. Please send me the sha when WP11 commits. One line for your replay change: tests/golden/README.md:62 says the port takes the same day from PPLR_TODAY; with GOLDEN_NOW it takes the day and the time.
+_(empty)_
 
 ---
 

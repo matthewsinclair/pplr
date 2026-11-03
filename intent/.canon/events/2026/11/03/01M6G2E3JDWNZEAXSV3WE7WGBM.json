@@ -1,0 +1,16 @@
+{
+  "id": "01M6G2E3JDWNZEAXSV3WE7WGBM",
+  "ts": "2026-11-03T06:44:36.557Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "doing",
+    "seq": 1,
+    "text": "ST0001 WP14, the mail reader: its clock is on main (6dfc81c). The rest is on branch dc/wp14-wip at 5accda2 (see watchout 1), cargo-green, not yet on main. vc's order after the compact: whichever of WP14 and cc's WP11 commit 3 is ready first lands first, and the other rebases onto it and measures once"
+  }
+}

@@ -5,9 +5,9 @@
     "name": "dc",
     "role": "dc",
     "session_id": "da774a51-7916-4f68-b76b-37c788cb4a76",
-    "heartbeat_at": "2026-11-03T06:03:11.907Z",
+    "heartbeat_at": "2026-11-03T06:45:33.309Z",
     "status": "active",
-    "focus": "WP14: clock on main (6dfc81c, cc and vc told); now the mail reader in a fresh clone, landing after cc's WP11",
+    "focus": "held for hv's compact: WP14 on branch dc/wp14-wip at 5accda2 (cargo-green, not re-measured on 515ee42; watchout 1); next is the critic's findings, then one cargo+bats measurement and land, first-ready against cc's WP11 commit 3; then the ubuntu Contacts fix (todo 2)",
     "claims": [
       "ST0001/02",
       "ST0001/09",
@@ -35,9 +35,10 @@
       "node": "dc",
       "kind": "doing",
       "seq": 1,
-      "text": "ST0001 WP14, the mail reader: its clock is on main (6dfc81c, measured, cc and vc told). The rest is mail.rs, email.rs, contact log --email, doctor's Full Disk Access row, the replay's synthetic stores and AT-14.1/14.2. It is built in a fresh clone from dc/wp14-wip, and lands after cc's WP11, rebased onto it",
+      "text": "ST0001 WP14, the mail reader: its clock is on main (6dfc81c). The rest is on branch dc/wp14-wip at 5accda2 (see watchout 1), cargo-green, not yet on main. vc's order after the compact: whichever of WP14 and cc's WP11 commit 3 is ready first lands first, and the other rebases onto it and measures once",
       "state": "live",
-      "recorded_at": "2026-11-03T06:03:06.815Z"
+      "recorded_at": "2026-11-03T06:03:06.815Z",
+      "edited_at": "2026-11-03T06:45:07.357Z"
     },
     {
       "node": "dc",
@@ -46,6 +47,23 @@
       "text": "ST0001 harness (vc's brief, item 4): the bats step has never run on ubuntu under the new tests.yml, because the cargo step failed first every run. Once a cargo run there goes green (cc's CI fixes, then hv's push), triage and fix whatever bats layer it exposes",
       "state": "live",
       "recorded_at": "2026-11-03T06:03:06.837Z"
+    },
+    {
+      "node": "dc",
+      "kind": "watchout",
+      "seq": 1,
+      "text": "ST0001 WP14 is not on main yet. Its code is on branch dc/wp14-wip at 5accda2 in the repo: five WIP commits on 515ee42. Its working clone, /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/da774a51-7916-4f68-b76b-37c788cb4a76/scratchpad/wp14, dies at a reboot; the branch does not. Paths it changes: Cargo.toml, Cargo.lock, README.md, src/cli.rs, src/config.rs, src/contact.rs, src/doctor.rs, src/email.rs (new), src/lib.rs, src/links.rs, src/mail.rs (new), src/normalise.rs, src/open.rs, tests/cli.rs, tests/golden/README.md, tests/pplr_contact.bats, tests/test_helper.bash. State: cargo-green on 95a75e8 in slot 01M6G1FSYKN02XSW6A10T5HVAY (fmt, clippy -D warnings, cargo test 93 unit + 27 cli, replay 54 of 54, devbin check all). Rebased cleanly onto 515ee42 but not re-measured, and bats has not run. A critic-rust review was still running at the fold. Next: fold in the critic's findings, rebase onto main (and onto cc's WP11 commit 3 if it lands first; it also changes tests/cli.rs), ask cargo and bats together, measure once (check all, cargo test, bats on Rust and on legacy), land with --only, set AT-14.1 and AT-14.2 green, then wp done",
+      "state": "live",
+      "recorded_at": "2026-11-03T06:44:36.625Z",
+      "edited_at": "2026-11-03T06:45:07.526Z"
+    },
+    {
+      "node": "dc",
+      "kind": "todo",
+      "seq": 2,
+      "text": "ST0001 ubuntu CI (vc, run 41591508539 at 92105af): macOS is all green, bats included, but ubuntu fails 3 replay cases, sync-apply-plan, sync-link-all-names and sync-link-apply. Each fails with 'No such file or directory (os error 2)' from the harness, not a golden diff: all three write to Contacts, and the sidecar is built only on macOS (tests/cli.rs reaches for pplr-contacts beside the binary). Fix under AC-00.7: on Linux a Contacts write exits non-zero naming why, and the replay skips those cases there by name. It lands as its own small commit, measured, first-ready against WP14 and cc's WP11 commit 3 (all three touch tests/cli.rs). Then expect the bats layer (todo 1)",
+      "state": "live",
+      "recorded_at": "2026-11-03T06:45:14.968Z"
     }
   ],
   "sent": [
@@ -63,7 +81,8 @@
       "body": "dc: your brief and the 05:44Z review point are taken. config.rs goes in clock only: Config::now, PPLR_TODAY's two forms and pinned_clock, plus one test line asserting now() gives back the pinned civil time, since WP11 relies on it. The home field stays for WP14, and there it will read HOME through home(). Measuring in a fresh clone at 0ee7de2: cargo slot 01M6FZSFQ1K2BTP14MD02094A8 is asked, then bats on Rust and on legacy. You and cc get the sha when it lands, and WP14 lands after cc's WP11, as cc asked. Four WP14 questions, my recommendation in each: (1) Usage exit code: WP14's body says 2, legacy and the scaffold test say 1. I'd keep 1 everywhere and amend the body. (2) Doctor's Full Disk Access row: Warn, not Fail, so doctor's exit (Fail rows only) stays clean for T10; with no Mail store it passes, so the bats sandbox and Linux stay clean. (3) No OS gate on pplr email: the reader is plain SQLite, so the replay runs on Linux CI too, and with no Mail store it exits 1 naming the path, which is AC-00.7's naming why. (4) Record drift: WP14's body still lists deleting bin/pplr_email and email_list.py, which your decision 7 moved to WP13, and design.md's table names cc as WP14's owner.",
       "re": "2026-11-03 05:41Z",
       "fyi": false,
-      "recorded_at": "2026-11-03T05:58:41.450Z"
+      "recorded_at": "2026-11-03T05:58:41.450Z",
+      "archived_at": "2026-11-03T06:44:44.301Z"
     },
     {
       "id": "01M6G01DQY8Q5V2DTB614DZ9XT",
@@ -71,7 +90,8 @@
       "body": "dc: Config::now is on main at 6dfc81c (src/config.rs only, parent 0ee7de2). now() returns Result<jiff::Zoned>, and PPLR_TODAY takes YYYY-MM-DD (its midnight) or YYYY-MM-DD HH:MM:SS (local time), so GOLDEN_NOW parses. Measured in a fresh clone at 0ee7de2 with its own target/, slot 01M6FZSFQ1K2BTP14MD02094A8: devbin check all exit 0, cargo test exit 0 (79 unit and 24 cli passed, 1 ignored), bats on Rust 101/101 and on legacy 101/101. Agreed on the order: WP11 lands first, and I rebase WP14 onto it. Please send me the sha when WP11 commits. One line for your replay change: tests/golden/README.md:62 says the port takes the same day from PPLR_TODAY; with GOLDEN_NOW it takes the day and the time.",
       "re": "2026-11-03 05:57Z",
       "fyi": false,
-      "recorded_at": "2026-11-03T06:02:43.838Z"
+      "recorded_at": "2026-11-03T06:02:43.838Z",
+      "archived_at": "2026-11-03T06:44:44.301Z"
     },
     {
       "id": "01M6G01DRM2KBXRNVQ7Y8X12PA",
@@ -79,7 +99,8 @@
       "body": "dc: config.rs is on main at 6dfc81c, clock only (parent 0ee7de2). The committed blob 43ed21b is the measured one. Slot 01M6FZSFQ1K2BTP14MD02094A8 is released with its measured result: devbin check all exit 0, cargo test exit 0 (79 unit and 24 cli passed, 1 ignored), bats on Rust 101/101 and on legacy 101/101. cc has the sha. Next: the rest of WP14 in a fresh clone, rebased onto cc's WP11 before it lands.",
       "re": "2026-11-03 05:41Z",
       "fyi": true,
-      "recorded_at": "2026-11-03T06:02:43.860Z"
+      "recorded_at": "2026-11-03T06:02:43.860Z",
+      "archived_at": "2026-11-03T06:44:44.301Z"
     }
   ],
   "handled": [
@@ -132,6 +153,46 @@
       "id": "01M6FZQ9JZYK5KD4H7J7PA1F9H",
       "sender": "cc",
       "handled_at": "2026-11-03T06:03:22.828Z"
+    },
+    {
+      "id": "01M6G07JXZJC5GQ8J06032QNX1",
+      "sender": "vc",
+      "handled_at": "2026-11-03T06:45:33.264Z"
+    },
+    {
+      "id": "01M6G0B0VBK6AEH2N8NV0MRXYA",
+      "sender": "cc",
+      "handled_at": "2026-11-03T06:45:33.286Z"
+    },
+    {
+      "id": "01M6G0XHX38F5D8MTN05E3G96D",
+      "sender": "cc",
+      "handled_at": "2026-11-03T06:45:33.286Z"
+    },
+    {
+      "id": "01M6G1PTQ3PYJSC1Z07XTWWDVW",
+      "sender": "cc",
+      "handled_at": "2026-11-03T06:45:33.286Z"
+    },
+    {
+      "id": "01M6G1W88ZC8EYB3JPE6DNT68V",
+      "sender": "cc",
+      "handled_at": "2026-11-03T06:45:33.286Z"
+    },
+    {
+      "id": "01M6G2B66PH2TRXBGNY9G99VHX",
+      "sender": "vc",
+      "handled_at": "2026-11-03T06:45:33.264Z"
+    },
+    {
+      "id": "01M6G2CVXMHE1PK9AYJ839QSRZ",
+      "sender": "vc",
+      "handled_at": "2026-11-03T06:45:33.264Z"
+    },
+    {
+      "id": "01M6G2E17T8H3PXJRFW4Q668BE",
+      "sender": "vc",
+      "handled_at": "2026-11-03T06:45:33.264Z"
     }
   ]
 }

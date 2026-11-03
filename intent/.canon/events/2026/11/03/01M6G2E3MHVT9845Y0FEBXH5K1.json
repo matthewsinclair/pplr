@@ -1,0 +1,15 @@
+{
+  "id": "01M6G2E3MHVT9845Y0FEBXH5K1",
+  "ts": "2026-11-03T06:44:36.625Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "watchout",
+    "text": "ST0001 WP14 is not on main yet. Its code is on branch dc/wp14-wip at 5accda2 in the repo: five WIP commits on 515ee42. Its working clone, /private/tmp/claude-501/-Users-matts-Devel-prj-Pplr/da774a51-7916-4f68-b76b-37c788cb4a76/scratchpad/wp14, dies at a reboot; the branch does not. Paths it changes: Cargo.toml, Cargo.lock, README.md, src/cli.rs, src/config.rs, src/contact.rs, src/doctor.rs, src/email.rs (new), src/lib.rs, src/links.rs, src/mail.rs (new), src/normalise.rs, src/open.rs, tests/cli.rs, tests/golden/README.md, tests/pplr_contact.bats, tests/test_helper.bash. State: cargo-green on 95a75e8 in slot 01M6G1FSYKN02XSW6A10T5HVAY (fmt, clippy -D warnings, cargo test 93 unit + 27 cli, replay 54 of 54, devbin check all). Rebased cleanly onto 515ee42 but not re-measured, and bats has not run. A critic-rust review was still running at the fold. Next: fold in the critic's findings, rebase onto main (and onto cc's WP11 commit 3 if it lands first; it also changes tests/cli.rs), ask cargo and bats together, measure once (check all, cargo test, bats on Rust and on legacy), land with --only, set AT-14.1 and AT-14.2 green, then wp done"
+  }
+}
