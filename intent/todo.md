@@ -21,7 +21,7 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
   - [x] 10: Sync: check, link, pull, photos and backup
   - [x] 11: The sync plan and its workbook
   - [x] 12: Doctor and Finder icons
-  - [ ] 13: Cutover
+  - [-] 13: Cutover
   - [x] 14: pplr's own mail reader
 - [-] ST0002: Create a homebrew distro for the new Rust version of Pplr
   - [x] 01: Release and install design for pplr

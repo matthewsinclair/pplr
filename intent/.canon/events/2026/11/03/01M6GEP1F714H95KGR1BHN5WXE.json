@@ -1,0 +1,15 @@
+{
+  "id": "01M6GEP1F714H95KGR1BHN5WXE",
+  "ts": "2026-11-03T10:18:39.463Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "kind": "doing",
+    "text": "WP13 C11, a port bug the live parity found (hv's iTerm run): sync compares and keys email, phone and LinkedIn values as bytes, where the legacy's Swift sets and dictionaries compare by canonical equivalence, so sync --check and --check --json list extra people whose card holds a slug decomposed and whose About file holds it precomposed. Link, pull and photos dry runs are the same, the sandbox held, and the tree was unchanged. Fix: key and compare by normalise::decompose, displaying each original value; tests on synthetic values, red then green in a slot; landing on vc's go (asked, with sequencing against hv's push of b245b53). Then an opt build of C11, hv's iTerm re-run of the two check rows, and the sync rows into WP13's body."
+  }
+}

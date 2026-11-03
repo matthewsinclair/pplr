@@ -3,9 +3,9 @@ node: cc
 name: cc
 role: cc
 session_id: f3516df3-3c28-4ed2-820f-b9b34ea2e5f8
-heartbeat_at: 2026-11-03 10:05Z
+heartbeat_at: 2026-11-03 10:18Z
 status: active
-focus: "WP13's AT-id commit is on main (7afa8a9) for vc to verify. The live parity's email rows are the same (728465f); the five sync rows wait for hv's run from iTerm (hold 2). Then dc's tools/ move and docs, hv's push, main's CI, and WP13's AC and AT rows, wp gate and done"
+focus: "WP13 is WIP. hv's iTerm run of the sync rows: link, pull and photos the same; sync --check and --json differ by a port bug (bytes against Swift's canonical equivalence), fix C11 proposed to vc with the push sequencing. Main b245b53 is verified for hv's push (vc decision 20)"
 claims: [ST0001/13]
 ---
 
@@ -14,6 +14,7 @@ claims: [ST0001/13]
 ## DOING
 
 - WP13 (ST0001/13): C1 to C10 landed on main as d596c35 to 9268cf7 (vc decision 16), and the AT-id commit as 7afa8a9 (comments only; measured at tree bf1e7ad in slot 01M6GCB0M4E68FSY7FSAW1EEQN), sent to vc to verify. hv's rebuild is checked. Next: vc's check of 7afa8a9, dc's tools/ move (decision 17) and docs, hv's push, and main's CI (AT-00.3's and AT-00.7's Linux greens); then the AC and AT rows, wp gate and done (todo 2). The contacts and mail parity rows: hold 2. (edited)
+- WP13 C11, a port bug the live parity found (hv's iTerm run): sync compares and keys email, phone and LinkedIn values as bytes, where the legacy's Swift sets and dictionaries compare by canonical equivalence, so sync --check and --check --json list extra people whose card holds a slug decomposed and whose About file holds it precomposed. Link, pull and photos dry runs are the same, the sandbox held, and the tree was unchanged. Fix: key and compare by normalise::decompose, displaying each original value; tests on synthetic values, red then green in a slot; landing on vc's go (asked, with sequencing against hv's push of b245b53). Then an opt build of C11, hv's iTerm re-run of the two check rows, and the sync rows into WP13's body.
 
 ## TODO
 
@@ -21,7 +22,7 @@ claims: [ST0001/13]
 
 ## Holds
 
-- WP13's parity record, its five sync rows (AC-00.5). The email rows are the same (hv's second run; WP13's body, 728465f). The sync rows need Contacts access, which hv's terminal app cannot be granted (it declares no NSContactsUsageDescription; iTerm.app does). Released when hv has run parity/hv-next.zsh contacts from iTerm and pasted its lines; then cc classifies the rows into WP13's body and deletes the outputs. If Contacts reads authorized plainly but not inside sandbox-exec, the rows also wait for vc's ruling on their write guard. (edited)
+_(none)_
 
 ## Watch-outs
 

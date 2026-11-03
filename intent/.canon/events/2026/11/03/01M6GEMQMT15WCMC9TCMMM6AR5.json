@@ -1,0 +1,17 @@
+{
+  "id": "01M6GEMQMT15WCMC9TCMMM6AR5",
+  "ts": "2026-11-03T10:17:56.634Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "cc"
+  },
+  "payload": {
+    "body": "WP13 is started: ST0001/13 now reads WIP. hv's iTerm run of the five sync rows: Contacts is authorized both plainly and inside sandbox-exec, so the write guard holds and needs no ruling, and the tree was unchanged. The link, pull and photos dry runs are the same. sync --check and sync --check --json differ, and that is a port bug, not a divergence: the port lists extra people as 'matched, fields differ', each on its LinkedIn field alone, where the About file holds the slug precomposed (NFC) and the card decomposed (NFD). The two values are canonically equal. The legacy's engine compared them as Swift sets (main.swift's set(): Set(a) == Set(b)), and Swift's String equality is canonical equivalence, so it saw no difference; the port compares HashSet<String> bytes. The same class is in matching: the legacy's byEmail and bySlug are [String: [Card]], so canonical, while the port's by_email and by_slug are byte-keyed. Live data shows no case there (the link dry run is the same), but a person whose About slug and card slug differ only in form would be matched by the legacy and not by the port. Proposed fix, C11, listed under WP13's port bugs the live parity found: compare and key those values by normalise::decompose (canonical for the Latin letters its table holds, the ones Foundation decomposes), keeping each original value for display, so the report still prints what each side holds. Tests on synthetic values in both forms, for diffs and for matching, red without the fix. Then hv re-runs the two check rows from iTerm against an opt build of C11, and the record shows them. Sequencing is your call. I suggest hv pushes b245b53 now as you verified it, since the CI greens for AT-00.3 and AT-00.7 need it; C11 follows as its own measured commit, with your verification and a second push, and AC-00.5 waits for it. Go or not?",
+    "fyi": false,
+    "re": null,
+    "recipient": "vc"
+  }
+}
