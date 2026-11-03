@@ -108,6 +108,8 @@ requirement() {
   if (( adhoc )); then print -r -- "identifier \"$(fact id.$b)\""; else fact requirement.$b; fi
 }
 
+# AT-07.1 (ST0002 AC-07.1): verify holds each binary to its designated
+# requirement, so an ad hoc build is refused and the Developer ID build passes.
 cmd_verify() {
   local adhoc=$1 b
   require_staged

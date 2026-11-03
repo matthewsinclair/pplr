@@ -79,7 +79,7 @@ _(no tests in this group)_
 
 ### WP-04 -- Assets formula, tap and tap CI (status: WIP)
 
-_(no tests in this group)_
+- AT-04.1 `packaging/homebrew/pplr.rb` -- covers AC-04.1 -- status: red -- packaging/homebrew/pplr.rb: rendered by bin/devbin formula render with nothing typed, its install lays the asset out through devbin's @@INSTALL@@ (the T3 manifest, 0755, the link) and runs verify_signatures, codesign --verify --strict -R against REQUIREMENTS, which src/doctor.rs's the_formula_checks_the_same_requirements_the_signer_signs_to holds equal to packaging/macos/signing; its test re-verifies and runs the version line; red at 15eb284 (on main as ef9bb46) in slot 01M6GJ1NAVRTACSS8QGR6Y7XX0: those requirement strings refuse an ad hoc build (bin/devbin macos verify exit 1, pplr does not meet its designated requirement); the render from bin/devbin skeleton --adhoc exit 0, no placeholder left, ruby -c clean, macOS alone
 
 ### WP-05 -- Walking skeleton through a scratch tap (status: Cancelled)
 
@@ -91,7 +91,7 @@ _(no tests in this group)_
 
 ### WP-07 -- Developer ID signing and notarisation (status: WIP)
 
-_(no tests in this group)_
+- AT-07.1 `bin/.devbin/cmd/macos` -- covers AC-07.1 -- status: red -- bin/.devbin/cmd/macos verify: each binary pplr ships (pplr, pplr-contacts, Pplr Links.app) is held to its designated requirement from packaging/macos/signing (Developer ID Application: Geodica Pty Ltd (76BQL8L47U)) with codesign --verify --strict -R, the hardened runtime and the entitlement read back, and spctl; red at 15eb284 (on main as ef9bb46) in slot 01M6GJ1NAVRTACSS8QGR6Y7XX0: bin/devbin macos verify on an ad hoc build from bin/devbin skeleton --adhoc exit 1, pplr does not meet its designated requirement
 
 ### WP-08 -- tools/ becomes devbin project commands: bin/devbin the one entry point (status: Done)
 

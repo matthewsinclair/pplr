@@ -7,6 +7,10 @@
 #
 # REQUIREMENTS repeats packaging/macos/signing's designated requirements,
 # which a Ruby formula cannot read; a cargo test fails when the two differ.
+#
+# AT-04.1 (ST0002 AC-04.1): rendered with nothing typed, the formula installs
+# through @@INSTALL@@ and verify_signatures, which refuses a binary that does not
+# meet its requirement, and its test re-verifies and runs the version line.
 class Pplr < Formula
   desc "Personal relationship manager over a plain-text People tree"
   homepage "https://github.com/matthewsinclair/pplr"
