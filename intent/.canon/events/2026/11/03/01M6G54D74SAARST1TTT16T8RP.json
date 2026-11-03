@@ -1,0 +1,16 @@
+{
+  "id": "01M6G54D74SAARST1TTT16T8RP",
+  "ts": "2026-11-03T07:31:44.484Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "seq": 6,
+    "text": "vc's independent verification, measured: main 3121fb9 (ST0001 WP11 commit 3 fe4b677 and the ubuntu bats fixes, on WP14 and the golden replay's decomposed-name lookup) cloned fresh into vc's scratchpad, slot 01M6G5153R6DD6SZG3NA95TKJQ. format, clippy, autotests, targetdir, critic, cargo test (96 unit and 30 cli pass; 1 ignored in each, the live Mail and Contacts tests), the replay 54 of 54 cases native, bats on Rust and on legacy 102 ok each with 1 skip each, the AC-00.7 Linux refusal test by design on macOS: every gate exited 0. It supersedes the 64be72f run and is the evidence for every WP accepted so far, independent of the nodes' own slot results; cc's measurement of commit 3 (slot 01M6G4Q1MKP3S5271NFW66AKDK) and dc's of the bats fixes (slot 01M6G4WQ43E8DD0RQFSV6QB5D3) agree."
+  }
+}
