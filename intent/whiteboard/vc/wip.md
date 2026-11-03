@@ -3,8 +3,8 @@ node: vc
 name: vc
 role: vc
 session_id: 60a887be-5fa2-4cf5-8de1-310286047151
-heartbeat_at: 2026-11-03 14:07Z
-status: active
+heartbeat_at: 2026-11-03 14:08Z
+status: paused
 focus: "pplr 2.0.0 is out through brew (v2.0.0 at dd6dc5b; ST0002's evidence c244a76, 15 of 16). Open: hv's step 8, the Contacts check across a reinstall (AC-06.2, hold 2); then dc's design.md and WP04, WP06 and WP07 closes (dc's doing 7); then vc's st done ST0002. Next job: devbin's one-command release (decision 26, todo 8). Main's post-release commits are local until hv pushes."
 claims: []
 ---
