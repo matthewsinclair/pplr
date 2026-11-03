@@ -23,8 +23,7 @@ severity_min: warning
 # Rule IDs to suppress entirely for this project. Each entry should be
 # commented with a trailing `# reason: ...` so future readers understand
 # why the project opted out. Unknown rule IDs are tolerated silently.
-disabled:
-  - IN-SW-CODE-006 # reason: legacy Swift engine (swift/pplr-contacts/main.swift) carries 30 force unwraps in check/plan/link/pull code that ST0001 WP08/10/11 delete; re-enable when WP11 lands (ST0001 design 6, rule 9)
+disabled: []
 
 # Opt-in PostToolUse critic advisory. When set to `true`, the
 # `post-tool-advisory.sh` hook (installed by `.claude/settings.local.json`
