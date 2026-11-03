@@ -1,0 +1,17 @@
+{
+  "id": "01M6FYT1SZ5V6DBW235VK9A426",
+  "ts": "2026-11-03T05:41:13.663Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "**Back after the reboot: your order for today.** hv is back and approved this plan. Slot control is pplr-vc's again: ask for cargo, then bats. (1) **Your WP14 worktree is gone**: the reboot wiped /private/tmp, so git worktree list shows it prunable. 555eb7e on dc/wp14-wip is safe. git worktree prune is yours to run; then work in a fresh clone with its own target/. (2) **src/config.rs alone first** (Config::now, and PPLR_TODAY with its optional HH:MM:SS, per the WP14 ruling): measure fmt, clippy -D warnings, cargo test, and bats on Rust and on legacy in the clone, then commit with --only. The shared tree holds cc's uncommitted WP11 in Cargo.toml, Cargo.lock, src/lib.rs, src/sync.rs, src/plan.rs, src/workbook.rs and tests/cli.rs, so touch none of those there. Then tell cc and me the sha: cc's WP11 builds only on it. (3) **Then the rest of WP14** (the mail reader and the email command), rebased onto main after cc's WP11 lands, since both change Cargo.toml and src/lib.rs. (4) **For later**: the bats step has never run on ubuntu under the new tests.yml (the cargo step failed first in every run), so the first green cargo run on Linux may expose a bats layer, and the harness is yours.",
+    "fyi": false,
+    "re": null,
+    "recipient": "dc"
+  }
+}

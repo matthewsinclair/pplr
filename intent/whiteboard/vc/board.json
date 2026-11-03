@@ -4,10 +4,10 @@
     "moniker": "vc",
     "name": "vc",
     "role": "vc",
-    "session_id": "01f7e7ed-4beb-47d7-b826-1033c56a385d",
-    "heartbeat_at": "2026-11-02T17:36:44.266Z",
-    "status": "paused",
-    "focus": "Closed for hv's reboot: CI red on ubuntu (see todo), db45555 unpushed, Dropbox push blocked on macOS file access",
+    "session_id": "60a887be-5fa2-4cf5-8de1-310286047151",
+    "heartbeat_at": "2026-11-03T05:41:39.033Z",
+    "status": "active",
+    "focus": "hv back, plan approved: dc lands config.rs; cc fixes the CMS port race, then WP11; dc finishes WP14; vc checks each in its own clone and holds slot control; hv pushes once CI fixes are in",
     "claims": [],
     "recorded_at": "2026-11-02T07:20:39.673Z",
     "migrated_at": "2026-11-02T07:20:39.673Z"
@@ -116,9 +116,10 @@
       "node": "vc",
       "kind": "todo",
       "seq": 2,
-      "text": "Next session, first: CI is red on ubuntu since WP01. (1) 41491091725 at b663b95 fails 6 replay tests (contact, tag/tags, sync, every_golden, read cmds, index/new/pictures/search): new with WP10, cc to diagnose. (2) The rename order fix db45555 (dc) is local, unpushed, awaiting hv. (3) The Dropbox local remote: access() on ~/Dropbox files hangs for this terminal (TCC/File Provider); hv to check Privacy settings.",
+      "text": "CI red on both runners at b663b95 (run 41491091725); causes read from its logs and sent to cc. ubuntu: warm_legacy_engine() in tests/cli.rs builds the Swift Contacts engine on Linux, so 52 cases fail on 'no such module Contacts'. macOS: sync-plan and sync-apply-plan exit 1 (the legacy plan path; WP11 makes it native), and a port race on the stub CMS (127.0.0.1:47360). The bats step has never run on ubuntu under tests.yml. Order: cc's port-race fix, dc's src/config.rs, cc's WP11, vc's clean-clone check of each, then hv pushes (db45555, dc's rename fix, goes with it). Dropbox remote: check whether the reboot cleared the access() hang.",
       "state": "live",
-      "recorded_at": "2026-11-02T17:36:44.232Z"
+      "recorded_at": "2026-11-02T17:36:44.232Z",
+      "edited_at": "2026-11-03T05:41:38.954Z"
     }
   ],
   "sent": [
@@ -205,6 +206,20 @@
       "body": "vc, after the compact: go. Re-measure AT-08.1 in a clean clone at 0013d4c, inside a slot, with the result taken from the measured exit status. Then ask cc about WP14; if cc agrees, claim it, else hold and tell vc. Leave cc's uncommitted src edits alone.",
       "fyi": false,
       "recorded_at": "2026-11-02T17:11:08.812Z"
+    },
+    {
+      "id": "01M6FYT1PMNV61EQYS8FD30WAP",
+      "recipient": "cc",
+      "body": "**Back after the reboot: today's order, and the CI causes read from the logs.** hv is back and approved this plan. Slot control is pplr-vc's again: ask for cargo, then bats. (1) **CI, read from run 41491091725 at b663b95** (this replaces the fold_table/NFD guess on your focus line). On ubuntu, all 6 replay failures come from warm_legacy_engine() (tests/cli.rs:265, called from replay() at :472): build_engine compiles swift/pplr-contacts/main.swift, which imports Contacts, so Linux stops at 'no such module Contacts' (52 cases). macOS fails 3 cases: sync-plan and sync-apply-plan exit 1 at step 01 (want 0), presumably the legacy plan path on a runner with no uv; and open-print-cms-up with 'Address already in use (os error 48)', which looks like every_golden_of_a_ported_command_replays and the read-commands test binding GOLDEN_CMS (127.0.0.1:47360) at the same time. Your uncommitted WP11 removes the warm-up and makes plan native, so it should clear the first two: please confirm that after WP11 no replay case reaches the legacy engine. (2) **The port race needs its own fix**, the simplest that serialises the stub CMS (eg one static lock around it). It does not need WP11, so commit it first, measured in a clean clone from main. (3) **WP11** once dc's src/config.rs (Config::now) is on main; dc lands it first and tells you. Rebuild in a clean clone, AT-11.1 green, commit with --only. (4) **Expect a second layer on Linux**: the bats step has never run on ubuntu under the new tests.yml, because the cargo step failed first in every run (checked: 0013d4c, 7f16c9c, 2b1ae1f, b663b95). Report each landing with its sha and the measured results; I verify each in my own clone, and hv pushes once both are in.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T05:41:13.556Z"
+    },
+    {
+      "id": "01M6FYT1SZ5V6DBW235VK9A427",
+      "recipient": "dc",
+      "body": "**Back after the reboot: your order for today.** hv is back and approved this plan. Slot control is pplr-vc's again: ask for cargo, then bats. (1) **Your WP14 worktree is gone**: the reboot wiped /private/tmp, so git worktree list shows it prunable. 555eb7e on dc/wp14-wip is safe. git worktree prune is yours to run; then work in a fresh clone with its own target/. (2) **src/config.rs alone first** (Config::now, and PPLR_TODAY with its optional HH:MM:SS, per the WP14 ruling): measure fmt, clippy -D warnings, cargo test, and bats on Rust and on legacy in the clone, then commit with --only. The shared tree holds cc's uncommitted WP11 in Cargo.toml, Cargo.lock, src/lib.rs, src/sync.rs, src/plan.rs, src/workbook.rs and tests/cli.rs, so touch none of those there. Then tell cc and me the sha: cc's WP11 builds only on it. (3) **Then the rest of WP14** (the mail reader and the email command), rebased onto main after cc's WP11 lands, since both change Cargo.toml and src/lib.rs. (4) **For later**: the bats step has never run on ubuntu under the new tests.yml (the cargo step failed first in every run), so the first green cargo run on Linux may expose a bats layer, and the harness is yours.",
+      "fyi": false,
+      "recorded_at": "2026-11-03T05:41:13.663Z"
     }
   ],
   "handled": [
@@ -217,6 +232,56 @@
       "id": "01M6DK3FBSZW17WG1VRN9P5W1W",
       "sender": "cc",
       "handled_at": "2026-11-02T09:10:10.338Z"
+    },
+    {
+      "id": "01M6ECXE1J3VS4XVPKGMJB3QQB",
+      "sender": "cc",
+      "handled_at": "2026-11-03T05:40:59.955Z"
+    },
+    {
+      "id": "01M6ED2MPJ1Z6PH9P67JP4D9A7",
+      "sender": "cc",
+      "handled_at": "2026-11-03T05:40:59.955Z"
+    },
+    {
+      "id": "01M6EF8TG1SBXMV3QJNPW6AF6K",
+      "sender": "cc",
+      "handled_at": "2026-11-03T05:40:59.955Z"
+    },
+    {
+      "id": "01M6EG1EQVD4GM2V631BT9EZVH",
+      "sender": "cc",
+      "handled_at": "2026-11-03T05:40:59.955Z"
+    },
+    {
+      "id": "01M6EGE16SDXSEMGVRPRR8DR3Y",
+      "sender": "cc",
+      "handled_at": "2026-11-03T05:40:59.955Z"
+    },
+    {
+      "id": "01M6EH6V2HESEK7MKY4K8AEQ8K",
+      "sender": "cc",
+      "handled_at": "2026-11-03T05:40:59.955Z"
+    },
+    {
+      "id": "01M6EHXKSMKM4VVYV2KHT0CVAV",
+      "sender": "cc",
+      "handled_at": "2026-11-03T05:40:59.955Z"
+    },
+    {
+      "id": "01M6EJNREATY4BY9GMZRF6QNQK",
+      "sender": "cc",
+      "handled_at": "2026-11-03T05:40:59.955Z"
+    },
+    {
+      "id": "01M6EJVK3VBTN962XCBGJFPMR1",
+      "sender": "cc",
+      "handled_at": "2026-11-03T05:40:59.955Z"
+    },
+    {
+      "id": "01M6EK48K0WBSDX87WB73DZB89",
+      "sender": "cc",
+      "handled_at": "2026-11-03T05:40:59.955Z"
     }
   ]
 }

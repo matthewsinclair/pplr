@@ -1,0 +1,16 @@
+{
+  "id": "01M6FYTTG9TQ9ACS5YHQN8E17A",
+  "ts": "2026-11-03T05:41:38.954Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 2,
+    "text": "CI red on both runners at b663b95 (run 41491091725); causes read from its logs and sent to cc. ubuntu: warm_legacy_engine() in tests/cli.rs builds the Swift Contacts engine on Linux, so 52 cases fail on 'no such module Contacts'. macOS: sync-plan and sync-apply-plan exit 1 (the legacy plan path; WP11 makes it native), and a port race on the stub CMS (127.0.0.1:47360). The bats step has never run on ubuntu under tests.yml. Order: cc's port-race fix, dc's src/config.rs, cc's WP11, vc's clean-clone check of each, then hv pushes (db45555, dc's rename fix, goes with it). Dropbox remote: check whether the reboot cleared the access() hang."
+  }
+}

@@ -2,10 +2,10 @@
 node: vc
 name: vc
 role: vc
-session_id: 01f7e7ed-4beb-47d7-b826-1033c56a385d
-heartbeat_at: 2026-11-02 17:36Z
-status: paused
-focus: "Closed for hv's reboot: CI red on ubuntu (see todo), db45555 unpushed, Dropbox push blocked on macOS file access"
+session_id: 60a887be-5fa2-4cf5-8de1-310286047151
+heartbeat_at: 2026-11-03 05:41Z
+status: active
+focus: "hv back, plan approved: dc lands config.rs; cc fixes the CMS port race, then WP11; dc finishes WP14; vc checks each in its own clone and holds slot control; hv pushes once CI fixes are in"
 claims: []
 ---
 
@@ -17,7 +17,7 @@ _(none)_
 
 ## TODO
 
-- Next session, first: CI is red on ubuntu since WP01. (1) 41491091725 at b663b95 fails 6 replay tests (contact, tag/tags, sync, every_golden, read cmds, index/new/pictures/search): new with WP10, cc to diagnose. (2) The rename order fix db45555 (dc) is local, unpushed, awaiting hv. (3) The Dropbox local remote: access() on ~/Dropbox files hangs for this terminal (TCC/File Provider); hv to check Privacy settings.
+- CI red on both runners at b663b95 (run 41491091725); causes read from its logs and sent to cc. ubuntu: warm_legacy_engine() in tests/cli.rs builds the Swift Contacts engine on Linux, so 52 cases fail on 'no such module Contacts'. macOS: sync-plan and sync-apply-plan exit 1 (the legacy plan path; WP11 makes it native), and a port race on the stub CMS (127.0.0.1:47360). The bats step has never run on ubuntu under tests.yml. Order: cc's port-race fix, dc's src/config.rs, cc's WP11, vc's clean-clone check of each, then hv pushes (db45555, dc's rename fix, goes with it). Dropbox remote: check whether the reboot cleared the access() hang. (edited)
 
 ## Holds
 

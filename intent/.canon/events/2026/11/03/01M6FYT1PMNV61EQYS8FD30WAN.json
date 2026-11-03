@@ -1,0 +1,17 @@
+{
+  "id": "01M6FYT1PMNV61EQYS8FD30WAN",
+  "ts": "2026-11-03T05:41:13.556Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.ask",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "body": "**Back after the reboot: today's order, and the CI causes read from the logs.** hv is back and approved this plan. Slot control is pplr-vc's again: ask for cargo, then bats. (1) **CI, read from run 41491091725 at b663b95** (this replaces the fold_table/NFD guess on your focus line). On ubuntu, all 6 replay failures come from warm_legacy_engine() (tests/cli.rs:265, called from replay() at :472): build_engine compiles swift/pplr-contacts/main.swift, which imports Contacts, so Linux stops at 'no such module Contacts' (52 cases). macOS fails 3 cases: sync-plan and sync-apply-plan exit 1 at step 01 (want 0), presumably the legacy plan path on a runner with no uv; and open-print-cms-up with 'Address already in use (os error 48)', which looks like every_golden_of_a_ported_command_replays and the read-commands test binding GOLDEN_CMS (127.0.0.1:47360) at the same time. Your uncommitted WP11 removes the warm-up and makes plan native, so it should clear the first two: please confirm that after WP11 no replay case reaches the legacy engine. (2) **The port race needs its own fix**, the simplest that serialises the stub CMS (eg one static lock around it). It does not need WP11, so commit it first, measured in a clean clone from main. (3) **WP11** once dc's src/config.rs (Config::now) is on main; dc lands it first and tells you. Rebuild in a clean clone, AT-11.1 green, commit with --only. (4) **Expect a second layer on Linux**: the bats step has never run on ubuntu under the new tests.yml, because the cargo step failed first in every run (checked: 0013d4c, 7f16c9c, 2b1ae1f, b663b95). Report each landing with its sha and the measured results; I verify each in my own clone, and hv pushes once both are in.",
+    "fyi": false,
+    "re": null,
+    "recipient": "cc"
+  }
+}
