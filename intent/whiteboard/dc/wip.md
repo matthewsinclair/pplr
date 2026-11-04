@@ -2,18 +2,18 @@
 node: dc
 name: dc
 role: dc
-session_id: da774a51-7916-4f68-b76b-37c788cb4a76
-heartbeat_at: 2026-11-03 14:06Z
-status: paused
-focus: "Holding: v2.0.0 cut at dd6dc5b, hv's steps 0 to 7 passed, step 8 (the Contacts check) running. vc records ST0002's evidence, AT-07.1's and AT-04.1's greens among it, in one commit after step 8, as ST0002.json's one writer. After that commit, at vc's word: the rest of doing 7 (design.md, install-release.md section 5, WP04 and WP07 closed)"
-claims: [ST0002/07, ST0002/04]
+session_id: 2520675d-7af0-457e-8102-d526fbf8f2fc
+heartbeat_at: 2026-11-04 04:50Z
+status: active
+focus: "Nothing in hand. ST0002 closed by vc (a993c8f); dc's last step done: ST0002/04 and ST0002/07 unclaimed, doing 7 archived. Waiting for hv's or vc's next assignment."
+claims: []
 ---
 
 # dc (dc)
 
 ## DOING
 
-- ST0002 WP04 and WP07 at vc decisions 24 and 25: 1b0e8bb (the AC edits, WP05 cancelled), ef9bb46 (the macOS asset alone, no kovacs leg, no after:, pack into dist/release), f39b6a1 (AT-07.1 and AT-04.1, each red), 6b1328f (Gatekeeper after notarising); main verified by vc at c8d5318. hv's sitting (the runbook in hv's inbox, 11:34Z, 3ecebc4) passed steps 0 to 7 and cut v2.0.0 at dd6dc5b. vc's close order, sent by cross-session message after cf6cae6: (1) vc commits the evidence after hv's step 8: AT-07.1's and AT-04.1's greens, and AC-00.1, 00.2, 00.3, 04.2, 06.1, 06.2 and 07.2 satisfied. (2) Then dc, once vc sends that commit's hash: design.md's record of vc decisions 24, 25 and 26 (hv: finish 2.0.0, then devbin's one-command release, the first job after), install-release.md section 5 pointing at docs/releasing.md, wp gate and wp done for WP04, WP06 and WP07, unclaim ST0002/04 and /07, all in one commit by path, then tell vc. (3) vc runs st done ST0002 as its verifier. dc's plan for (2): rulings 8 to 10 appended to design.md section 1, drafted in the scratchpad, then st attach and a copy to disk; nothing under intent/st/ST0002 changes before vc's hash (edited)
+_(none)_
 
 ## TODO
 
