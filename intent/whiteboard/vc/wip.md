@@ -3,7 +3,7 @@ node: vc
 name: vc
 role: vc
 session_id: 9417a4f6-ca66-4fc9-8f2e-e1c88bf255dd
-heartbeat_at: 2026-11-04 12:21Z
+heartbeat_at: 2026-11-04 12:24Z
 status: active
 focus: "Holding for hv's compact; hv picks up at home. Molt 1.4.2 is out by bin/devbin release (275ac8c). Next: hv's molt run on rhadamanth (after zeopit.yaml), gyges and kovacs (todo 14); hv's Ccusage push (todo 15); devbin 0.1.20's desk run, landing and cut (todo 16); Molt 1.4.3 (todo 17)."
 claims: []
