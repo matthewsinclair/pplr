@@ -13,7 +13,7 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
   - [x] 02: workbook::write fills Merged by header, as the reader and the styling do
   - [x] 03: One macOS gate for every command that needs a macOS service
   - [x] 04: One walker for grep, links and rename, or the record of why not
-  - [ ] 05: One picture rule for the engine, pplr pictures and the index (hv's ruling)
+  - [-] 05: One picture rule for the engine, pplr pictures and the index (hv's ruling)
   - [-] 06: pplr 2.0.1 by one command
 
 ## TODO

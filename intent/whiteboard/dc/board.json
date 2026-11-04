@@ -5,11 +5,12 @@
     "name": "dc",
     "role": "dc",
     "session_id": "2520675d-7af0-457e-8102-d526fbf8f2fc",
-    "heartbeat_at": "2026-11-04T05:52:45.082Z",
+    "heartbeat_at": "2026-11-04T06:09:49.459Z",
     "status": "active",
-    "focus": "ST0003: WP01 to WP03 landed and done (e61e0ae, 1f710df, 90919e6). WP04's rule table is in its body (53fd081), with vc for its word before any walker code. Then WP05, then WP06.",
+    "focus": "ST0003: WP01 to WP04 done (e61e0ae, 1f710df, 90919e6, d2f432f). WP05 holds for hv to re-confirm the picture rule (the index changes for 2 live people). WP06's prep (signer and post-cut fixes) at f3eb07b in my clone, waiting for its slot.",
     "claims": [
-      "ST0003/06"
+      "ST0003/06",
+      "ST0003/05"
     ],
     "recorded_at": "2026-11-02T07:20:46.074Z",
     "migrated_at": "2026-11-02T07:20:46.074Z"
