@@ -1,0 +1,16 @@
+{
+  "id": "01M6M1ZP6D9874V787PHYMXGMN",
+  "ts": "2026-11-04T19:53:41.837Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 16,
+    "text": "devbin 0.1.20 (devbin-vc's): hv ruled no cut until the 19 open devbin issues are in it. Proven and landed on vc's desk: 0322 (d5b7872e), 0321, group B 0298, 0299, 0311, 0305 (82cba561; the GNU leg's backgrounded-SIGINT harness red fixed in the test, rerun green 19:22Z). In flight at EOD: 0319 (devbin-dc, heavy) and train 1 0308, 0309, 0312 (devbin-cc, bats; its one red, release.bats test 24, was main's own stale CHANGELOG/RELEASES views, fixed by devbin-vc at 1c291303). devbin-cc builds 0307 to 0316. Devbin main is unpushed (23+ ahead). Filed for after the cut: devbin 0323 (5d477b81), the core carries a Rust CLI's ship, retiring pplr's, cldr's and ccusage's bin/.devbin/cmd/{lock-sync,macos,post-cut}, with the notarytool keychain profile (todo 11); hv's word between 17:43Z and 17:47Z. After the cut: hv's brew upgrade devbin and devbin use brew, devbin-vc's fleet sweep, hv republishes the three taps without their CI exceptions."
+  }
+}

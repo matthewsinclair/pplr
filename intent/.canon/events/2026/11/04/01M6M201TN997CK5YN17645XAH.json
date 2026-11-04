@@ -1,0 +1,16 @@
+{
+  "id": "01M6M201TN997CK5YN17645XAH",
+  "ts": "2026-11-04T19:53:53.749Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 11,
+    "text": "Folds into devbin 0323 (hv, 4 Nov: the core carries a Rust CLI's ship, built by devbin's nodes after the 0.1.20 cut): pplr's, Cldr's and ccusage's signers move to one notarytool keychain profile (--keychain-profile), which hv creates once with xcrun notarytool store-credentials, and their bin/.devbin/cmd/{lock-sync,macos,post-cut} copies retire into the core. The review findings go into 0323's build, not into the three copies: fact()'s status lost under local and inside a command's arguments (cldr-dc's critic-shell review 4 Nov, macos:91/93/101/110: codesign can run with an empty identifier), require_identity reading a failure of security itself as 'not in this keychain', the TeamIdentifier check skipped under pipe_fail, '|| true' dropping notarytool's exit, '| head -1' exiting 141 under pipe_fail, a die() per file, post-cut's own sed of config.yaml. cldr-dc sent devbin-vc the full review (5 critical, 4 recommendation). Each fails closed today and cannot ship a wrong release."
+  }
+}

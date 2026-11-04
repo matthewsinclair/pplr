@@ -1,0 +1,16 @@
+{
+  "id": "01M6M1ZNP29PE6V7Z75G9PGYNW",
+  "ts": "2026-11-04T19:53:41.314Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 15,
+    "text": "Ccusage ISSUE:0003. Step 1 done (hv; ccusage-vc verified 17:30Z, launchctl CLAUDE_SECURESTORAGE_CONFIG_DIR equals ccusage dir, read by vc). Step 2 is Molt 1.4.3 (Molt 0088, design B, ccusage-vc's [ -d ] and case e in), merged on Molt main 0256d87 with 0089 and 0091; the merged tree cacef76 ran 648/648 under bash 5.3 and /bin/bash 3.2 (slot 01M6KZK8). hv's cut at 19:33Z stopped at the legs step at 19:49Z: GitHub cancelled the candidate's macos-latest job with no runner (4th strand of the day), nothing tagged, release commit 4e0714a local only. hv ruled (b) at 19:50Z: pin Molt's tests.yml macOS job to macos-15 (as Pplr 8a1760f), then re-cut; molt-vc owns the route (likely reset 4e0714a, land the pin, bin/devbin release v1.4.3 afresh). After the cut: hv's brew upgrade molt, molt-dc's cherry-pick of Molt-matts 2f95dfe (hold 16), Molt-matts homere.yaml committed or restored, hv's molt upgrade, hv's push of the pick, then step 3, ccusage-vc's restart slot 01M6K31TH20532K7NYN48GJE86 on hv's go; steps 4 and 5 (Keychain deletes) each on hv's OK."
+  }
+}
