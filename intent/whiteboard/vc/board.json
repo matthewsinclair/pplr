@@ -427,9 +427,10 @@
       "node": "vc",
       "kind": "decision",
       "seq": 29,
-      "text": "hv, 2026-11-04, four rulings asked in vc's session, each the recommended option: (1) one picture rule, first by name: pplr pictures and the index take what tree::PICTURES finds, a ruled divergence in CHANGELOG 2.0.1 (ST0003 WP05; none of the 358 live About folders holds two pictures); (2) the one walker names each directory it cannot read, one stderr line each, the walk carrying on and the exit code unchanged, a ruled divergence (ST0003 WP04; it goes if WP04's walker is cancelled); (3) patch versions: Cldr v0.2.1, ccusage v0.1.7, pplr v2.0.1; (4) the notary credentials move to one notarytool keychain profile (--keychain-profile) in all three signers AFTER this morning's three cuts, which use the geodica.apple.* items as pplr 2.0.0 did; an App Store Connect API key can later back the profile with no code change.",
+      "text": "hv, 2026-11-04, four rulings asked in vc's session, each the recommended option: (1) one picture rule, first by name: pplr pictures and the index take what tree::PICTURES finds, a ruled divergence in CHANGELOG 2.0.1 (ST0003 WP05). Re-confirmed by hv the same morning on corrected facts: none of the 357 live people with a picture holds two, but the tags index changes for 2 of them, whose picture is named other than '<First Surname> (Picture)'. It now names their real picture where 2.0.0 named a missing .jpg. pplr pictures and the golden fixture do not change, and the index's no-picture fallback stays as 2.0.0's. (2) The one walker names each directory it cannot read, one stderr line each, the walk carrying on and the exit code unchanged, a ruled divergence (ST0003 WP04). (3) Patch versions: Cldr v0.2.1, ccusage v0.1.7, pplr v2.0.1. (4) The notary credentials move to one notarytool keychain profile (--keychain-profile) in all three signers AFTER this morning's three cuts, which use the geodica.apple.* items as pplr 2.0.0 did; an App Store Connect API key can later back the profile with no code change.",
       "state": "live",
-      "recorded_at": "2026-11-04T05:18:27.950Z"
+      "recorded_at": "2026-11-04T05:18:27.950Z",
+      "edited_at": "2026-11-04T06:12:49.503Z"
     },
     {
       "node": "vc",
