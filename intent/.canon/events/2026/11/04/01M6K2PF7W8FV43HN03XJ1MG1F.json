@@ -1,0 +1,16 @@
+{
+  "id": "01M6K2PF7W8FV43HN03XJ1MG1F",
+  "ts": "2026-11-04T10:46:53.948Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "seq": 30,
+    "text": "hv, 2026-11-04, in vc's session: Molt releases with bin/devbin release, as pplr, cldr and ccusage do. The change is made now, and Molt's next release, v1.4.2, is the first cut that way. v1.4.1 stays tagged and pushed (bf441ba) with its formula unpublished, and the sleeves go straight to 1.4.2. hv agreed vc's three choices: 1.4.1's formula never published; a notes-only GitHub release for each Molt release (object local); the push to local, then upstream, as pplr and cldr."
+  }
+}

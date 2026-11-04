@@ -524,9 +524,10 @@
       "node": "vc",
       "kind": "decision",
       "seq": 30,
-      "text": "hv, 2026-11-04, in vc's session: Molt releases with bin/devbin release, as pplr, cldr and ccusage do. The change is made now, and Molt's next release, v1.4.2, is the first cut that way. v1.4.1 stays tagged and pushed (bf441ba) with its formula unpublished, and the sleeves go straight to 1.4.2.",
+      "text": "hv, 2026-11-04, in vc's session: Molt releases with bin/devbin release, as pplr, cldr and ccusage do. The change is made now, and Molt's next release, v1.4.2, is the first cut that way. v1.4.1 stays tagged and pushed (bf441ba) with its formula unpublished, and the sleeves go straight to 1.4.2. hv agreed vc's three choices: 1.4.1's formula never published; a notes-only GitHub release for each Molt release (object local); the push to local, then upstream, as pplr and cldr.",
       "state": "live",
-      "recorded_at": "2026-11-04T10:44:39.439Z"
+      "recorded_at": "2026-11-04T10:44:39.439Z",
+      "edited_at": "2026-11-04T10:46:53.948Z"
     }
   ],
   "sent": [
