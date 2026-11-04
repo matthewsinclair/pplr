@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: 2520675d-7af0-457e-8102-d526fbf8f2fc
-heartbeat_at: 2026-11-04 11:24Z
+heartbeat_at: 2026-11-04 11:27Z
 status: active
-focus: "Molt 0087 landed on Molt's main as 450affc, unpushed and untagged: Molt releases with bin/devbin release, and 1.4.2 is cut that way. The dry run of v1.4.2 in Molt's checkout waits on GitHub's ssh incident (tries spaced 150 seconds apart); its output goes to vc. hv's cut waits on GitHub."
+focus: "Molt 0087 landed on Molt's main as 450affc, unpushed and untagged, and bin/devbin release v1.4.2 --dry-run passes in Molt's checkout (11:26Z, no step failed, porcelain empty); output sent to vc. hv's cut waits on GitHub's ssh incident. Nothing in hand."
 claims: []
 ---
 
