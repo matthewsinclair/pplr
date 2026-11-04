@@ -2,7 +2,7 @@
 wp_id: WP-03
 title: One macOS gate for every command that needs a macOS service
 scope: S
-status: WIP
+status: Done
 ---
 
 # WP-03: One macOS gate for every command that needs a macOS service

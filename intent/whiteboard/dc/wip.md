@@ -6,7 +6,7 @@ session_id: 2520675d-7af0-457e-8102-d526fbf8f2fc
 heartbeat_at: 2026-11-04 05:16Z
 status: active
 focus: "ST0003 WP01 written: b335c08 on st3-wp01 in my clone (banked in the shared repo, with two mutants for AT-01.1's red). Measuring check all and test all in a slot from vc next, then the hand-over. WP02, WP03, then WP04 follow."
-claims: [ST0003/03]
+claims: [ST0003/04]
 ---
 
 # dc (dc)

@@ -11,8 +11,8 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
 - [-] ST0003: Post-port simplifications, then 2.0.1 by one command
   - [x] 01: Pair: how as an enum, and has_inetloc's not-read state its own
   - [x] 02: workbook::write fills Merged by header, as the reader and the styling do
-  - [-] 03: One macOS gate for every command that needs a macOS service
-  - [ ] 04: One walker for grep, links and rename, or the record of why not
+  - [x] 03: One macOS gate for every command that needs a macOS service
+  - [-] 04: One walker for grep, links and rename, or the record of why not
   - [ ] 05: One picture rule for the engine, pplr pictures and the index (hv's ruling)
   - [ ] 06: pplr 2.0.1 by one command
 
