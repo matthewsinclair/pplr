@@ -18,7 +18,7 @@ claims: []
 
 ## TODO
 
-- After the three cuts (vc decision 29, item 4): pplr's, Cldr's and ccusage's signers move to one notarytool keychain profile (--keychain-profile), which hv creates once with xcrun notarytool store-credentials, and which an App Store Connect API key can back later with no code change. The same commit takes cldr-vc's nit (b) in all three: fact()'s failures are lost under local and inside a command's arguments, so a missing signing fact surfaces later under a misleading message (it cannot ship: verify's requirement or Apple refuses).
+- After the three cuts (vc decision 29, item 4): pplr's, Cldr's and ccusage's signers move to one notarytool keychain profile (--keychain-profile), which hv creates once with xcrun notarytool store-credentials, and which an App Store Connect API key can back later with no code change. The same commit takes the diagnostics the reviews left in all three: fact()'s failures lost under local and inside a command's arguments (cldr-vc's nit (b)), and require_identity reading a failure of security itself (eg a locked keychain) as 'not in this keychain'. Each fails closed, under a misleading message, and cannot ship a wrong release. (edited)
 
 ## Holds
 
