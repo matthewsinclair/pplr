@@ -1,0 +1,14 @@
+{
+  "id": "01M6JVM7GNHFA7EWMBXYVK11BH",
+  "ts": "2026-11-04T08:43:20.469Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.satisfy",
+  "subject": {
+    "type": "ac",
+    "id": "ST0003/AC-06.1"
+  },
+  "payload": {
+    "evidence": "hv's one command, bin/devbin release v2.0.1, re-run at 97713b7 on 2026-11-04 after its first run stopped at test all (a version written by hand in tests/cli.rs, fixed by 97713b7): release commit 733e127, tag v2.0.1, candidate CI 41800550695 green on macOS and Linux. Its after:, bin/devbin post-cut, signed and notarised the asset and published the release https://github.com/matthewsinclair/pplr/releases/tag/v2.0.1 (2026-11-04T08:37:35Z) with pplr-2.0.1-aarch64-apple-darwin.tar.gz and SHA256SUMS 4f6593acc2cf149aced3c3798ab34e92c697f51739f70b9528e608a6f7170bb0. dc checked a fresh download: shasum -c OK; codesign --verify --strict and spctl accept pplr, pplr-contacts and Pplr Links.app (team 76BQL8L47U); no ._ entry. The formula went to matthewsinclair/homebrew-pplr as bf5b108 with that sha256, version 2.0.1 and source_commit 733e127, and this machine's tap was pulled. Then hv's brew upgrade pplr took 2.0.0 to 2.0.1, brew's codesign verify running at install for all three. dc re-read it: brew info reads installed 2.0.1; the keg /opt/homebrew/Cellar/pplr/2.0.1's pplr, pplr-contacts and Pplr Links.app pass codesign --verify --strict (team 76BQL8L47U); and pplr --version, pplr on PATH being brew's, prints pplr 2.0.1 (brew, 733e12742185)."
+  }
+}

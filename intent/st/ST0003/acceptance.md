@@ -37,9 +37,9 @@ title: Post-port simplifications, then 2.0.1 by one command
 
 - AC-05.1 The engine, pplr pictures and the index choose a person's picture by one rule, and CHANGELOG's divergences name it. -- satisfied: yes (computed)
 
-### WP-06 -- pplr 2.0.1 by one command (status: WIP)
+### WP-06 -- pplr 2.0.1 by one command (status: Done)
 
-- AC-06.1 (non-test) pplr 2.0.1 is released by bin/devbin release v2.0.1 alone: the signed and notarised asset attached, the formula published to the tap, and brew upgrade pplr reading 2.0.1. -- satisfied: no
+- AC-06.1 (non-test) pplr 2.0.1 is released by bin/devbin release v2.0.1 alone: the signed and notarised asset attached, the formula published to the tap, and brew upgrade pplr reading 2.0.1. -- evidence: hv's one command, bin/devbin release v2.0.1, re-run at 97713b7 on 2026-11-04 after its first run stopped at test all (a version written by hand in tests/cli.rs, fixed by 97713b7): release commit 733e127, tag v2.0.1, candidate CI 41800550695 green on macOS and Linux. Its after:, bin/devbin post-cut, signed and notarised the asset and published the release https://github.com/matthewsinclair/pplr/releases/tag/v2.0.1 (2026-11-04T08:37:35Z) with pplr-2.0.1-aarch64-apple-darwin.tar.gz and SHA256SUMS 4f6593acc2cf149aced3c3798ab34e92c697f51739f70b9528e608a6f7170bb0. dc checked a fresh download: shasum -c OK; codesign --verify --strict and spctl accept pplr, pplr-contacts and Pplr Links.app (team 76BQL8L47U); no ._ entry. The formula went to matthewsinclair/homebrew-pplr as bf5b108 with that sha256, version 2.0.1 and source_commit 733e127, and this machine's tap was pulled. Then hv's brew upgrade pplr took 2.0.0 to 2.0.1, brew's codesign verify running at install for all three. dc re-read it: brew info reads installed 2.0.1; the keg /opt/homebrew/Cellar/pplr/2.0.1's pplr, pplr-contacts and Pplr Links.app pass codesign --verify --strict (team 76BQL8L47U); and pplr --version, pplr on PATH being brew's, prints pplr 2.0.1 (brew, 733e12742185). -- satisfied: yes
 
 ## Acceptance Tests
 
@@ -68,7 +68,7 @@ _(no tests in this group)_
 
 - AT-05.1 `src/tree.rs` -- covers AC-05.1 -- status: green -- tree::tests::the_engine_pictures_and_the_index_take_one_picture: on one tree, two pictures, one named otherwise and none, the engine (tree::people), the index (index::letters) and pplr pictures (its img line) take the same file, the first picture in About/ by name; with none the index names <First Surname> (Picture).jpg, as 2.0.0 did; red at ea6ed7b, 2.0.0's pplr pictures and index with the test, in slot 01M6JKBDGVM723DT43DAE776NB: exit 101, the index naming ./L/Lovelace, Ada/About/Ada Lovelace (Picture).jpg where the engine takes A (Picture).png; green at 585cb6d (on main as 2dab7ed) in the same slot: check all exit 0, test all exit 0 (cargo lib 113 passed 1 ignored, cli 39 passed 1 ignored with the golden replay unchanged, bats 107 ok 0 not ok 1 skip)
 
-### WP-06 -- pplr 2.0.1 by one command (status: WIP)
+### WP-06 -- pplr 2.0.1 by one command (status: Done)
 
 _(no tests in this group)_
 

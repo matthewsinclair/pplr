@@ -59,7 +59,7 @@
       "seq": 6,
       "title": "pplr 2.0.1 by one command",
       "scope": "S",
-      "status": "wip",
+      "status": "done",
       "objective": "pplr 2.0.1 released by bin/devbin release v2.0.1 alone, the first real run of post-cut: the signed and notarised asset attached, the formula published, and brew upgrade pplr reading 2.0.1 (AC-06.1).",
       "body": "pplr 2.0.1 by one command (AC-06.1). Before the cut, one prep commit carries three fixes to the signer and the release notes:\n\n- The signer reads its three notary credentials by plain assignment before anything is signed, so a missing one refuses by name. ccusage-vc's F1, 2026-11-04: `bin/.devbin/cmd/macos` line 170 passes `$(secret NAME)` inside notarytool's arguments, where `die` ends only the substitution's subshell, so notarytool runs with an empty value and the failure surfaces only as \"not Accepted\", after signing.\n- `require_identity` captures `security find-identity`'s output before matching it, because `grep -q` under `pipe_fail` can lose to SIGPIPE and refuse an identity that is present. And pack's `tar` runs with `COPYFILE_DISABLE=1`, so no `._` entry can reach the asset. Both are cldr-vc's F6, and Cldr's signer already has them. pplr 2.0.0's tarball carries no `._` entry, so the second is a guard.\n- An empty credential refuses by name too, before anything is signed (cldr-vc's nit (a), 2026-11-04).\n- `secret()` quotes its account, `-a \"$USER\"`, because native zsh drops an empty word and `-a` would take `-s` as its account. And post-cut's tap pull names what it looked for on each skip branch (no brew, no tap clone), so its last line claims only what ran. Both come from critic-shell on ccusage's copies of these handlers (R1 and R2, 2026-11-04).\n- CHANGELOG.md's `## [2.0.1] - unreleased` section, which WP04 opens with the walker's divergence and to which WP05 adds the picture rule's, gets the rest of the release's notes.\n\nThen main is verified in a fresh clone (check all, test all), the boards are committed and frozen, vc holds the slot, and hv runs one command: `bin/devbin release v2.0.1`.\n",
       "preamble": ""
@@ -119,7 +119,8 @@
       "text": "pplr 2.0.1 is released by bin/devbin release v2.0.1 alone: the signed and notarised asset attached, the formula published to the tap, and brew upgrade pplr reading 2.0.1.",
       "kind": "non-test",
       "state": {
-        "is": "unsatisfied"
+        "is": "satisfied",
+        "evidence": "hv's one command, bin/devbin release v2.0.1, re-run at 97713b7 on 2026-11-04 after its first run stopped at test all (a version written by hand in tests/cli.rs, fixed by 97713b7): release commit 733e127, tag v2.0.1, candidate CI 41800550695 green on macOS and Linux. Its after:, bin/devbin post-cut, signed and notarised the asset and published the release https://github.com/matthewsinclair/pplr/releases/tag/v2.0.1 (2026-11-04T08:37:35Z) with pplr-2.0.1-aarch64-apple-darwin.tar.gz and SHA256SUMS 4f6593acc2cf149aced3c3798ab34e92c697f51739f70b9528e608a6f7170bb0. dc checked a fresh download: shasum -c OK; codesign --verify --strict and spctl accept pplr, pplr-contacts and Pplr Links.app (team 76BQL8L47U); no ._ entry. The formula went to matthewsinclair/homebrew-pplr as bf5b108 with that sha256, version 2.0.1 and source_commit 733e127, and this machine's tap was pulled. Then hv's brew upgrade pplr took 2.0.0 to 2.0.1, brew's codesign verify running at install for all three. dc re-read it: brew info reads installed 2.0.1; the keg /opt/homebrew/Cellar/pplr/2.0.1's pplr, pplr-contacts and Pplr Links.app pass codesign --verify --strict (team 76BQL8L47U); and pplr --version, pplr on PATH being brew's, prints pplr 2.0.1 (brew, 733e12742185)."
       }
     }
   ],

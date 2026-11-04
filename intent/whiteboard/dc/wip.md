@@ -3,10 +3,10 @@ node: dc
 name: dc
 role: dc
 session_id: 2520675d-7af0-457e-8102-d526fbf8f2fc
-heartbeat_at: 2026-11-04 08:41Z
+heartbeat_at: 2026-11-04 08:43Z
 status: active
-focus: "ST0003: WP01 to WP05 done; pplr 2.0.1 released (v2.0.1 at 733e127, tap bf5b108), its asset verified (sum, signatures, spctl). WP06 waits for hv's brew upgrade reading 2.0.1, then AC-06.1, gate, done and unclaim. Mutant and proof branches deleted; the eight measured branches kept."
-claims: [ST0003/06]
+focus: "Nothing in hand. ST0003's six packages are done: WP06 closed on pplr 2.0.1 released (v2.0.1 at 733e127, tap bf5b108) and brew's pplr reading 2.0.1. vc runs st done ST0003."
+claims: []
 ---
 
 # dc (dc)

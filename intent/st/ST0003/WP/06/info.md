@@ -2,7 +2,7 @@
 wp_id: WP-06
 title: pplr 2.0.1 by one command
 scope: S
-status: WIP
+status: Done
 ---
 
 # WP-06: pplr 2.0.1 by one command
