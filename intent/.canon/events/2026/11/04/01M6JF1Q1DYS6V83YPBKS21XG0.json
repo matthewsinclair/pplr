@@ -1,0 +1,15 @@
+{
+  "id": "01M6JF1Q1DYS6V83YPBKS21XG0",
+  "ts": "2026-11-04T05:03:30.861Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wp.new",
+  "subject": {
+    "type": "wp",
+    "id": "ST0003/02"
+  },
+  "payload": {
+    "scope": "S",
+    "title": "workbook::write fills Merged by header, as the reader and the styling do"
+  }
+}

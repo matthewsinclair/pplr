@@ -4,6 +4,7 @@ An index of every steel thread in the project. A steel thread is a self-containe
 
 | ID     | Title                                                     | Status    | Created    | Completed  |
 | ------ | --------------------------------------------------------- | --------- | ---------- | ---------- |
+| ST0003 | Post-port simplifications, then 2.0.1 by one command      | WIP       | 2026-11-04 |            |
 | ST0002 | Create a homebrew distro for the new Rust version of Pplr | Completed | 2026-11-02 | 2026-11-03 |
 | ST0001 | Port Pplr from shell scripts to Rust                      | Completed | 2026-11-02 | 2026-11-03 |
 

@@ -1,0 +1,15 @@
+{
+  "id": "01M6JF2HFZR2PEE2WQTRDVZMXZ",
+  "ts": "2026-11-04T05:03:57.952Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.decide",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "text": "hv, 2026-11-04, in vc's session: 'you have the pen here with pplr and cldr... I want both properly finished this morning', then ccusage-vc and ccusage-dc added: 'I want all three of these rust cli utils to operate in the same way (ie signed and notarised, and be able to be built from a single devbin command)'. vc drives pplr-dc, cldr-vc, cldr-dc, ccusage-vc and ccusage-dc. The shape, decision 27's, for all three: bin/devbin release vX.Y.Z is the whole release, project.version_from: Cargo.toml with derived: bin/devbin lock-sync, a CHANGELOG section the cut dates, and one after: line, bin/devbin post-cut, that signs and notarises with the neutral credentials geodica.apple.*, attaches, publishes the formula and pulls the tap, stopping at the first failure. ccusage keeps CI's four archives, so its post-cut runs macos finalize on CI's draft. pplr's todo 6 becomes ST0003, released as 2.0.1. Cuts, tags and pushes stay hv's."
+  }
+}

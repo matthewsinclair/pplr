@@ -1,0 +1,126 @@
+{
+  "schema": "intent/thread@3.0",
+  "id": "ST0003",
+  "title": "Post-port simplifications, then 2.0.1 by one command",
+  "slug": "post-port-simplifications-then-2-0-1-by-one-comm",
+  "status": "wip",
+  "created": "2026-11-04",
+  "objective": "Make pplr simpler without changing what it does, from the candidates that critic-rust's second read of ST0001 WP11 commit 3 (fe4b677) left on vc's board, under hv's rule that a change now makes pplr simpler or easier and adds nothing (vc decision 2). Then release the result as pplr 2.0.1 with one command, `bin/devbin release v2.0.1`, the first real run of its `after:`, `bin/devbin post-cut` (vc decision 27).",
+  "context": "hv, 2026-11-04: vc has the pen on pplr, cldr and ccusage. All three are to be properly finished this morning, each releasing signed and notarised by one devbin command. pplr's part is this thread. pplr-dc implements it and vc reviews it.\n\nThe candidates. Each one preserves behaviour unless it says otherwise:\n\n- `Pair.how` (src/sync.rs) is a `&'static str` over five words: linked, email, linkedin, phone and name. An enum names them once, and the JSON and the report print the same words.\n- `Pair.has_inetloc`: `check()` reads it and `matches()` leaves it false, so false means both \"absent\" and \"not read\". \"Not read\" becomes a state of its own.\n- `workbook::write` fills Merged's rows by position, while the reader and the styling go by header. It fills them by header too.\n- One macOS gate: contacts/mod.rs, handler.rs and icons.rs each test `cfg!(target_os = \"macos\")` with their own message, beside open.rs's `macos_only(why)`. One helper serves every gate, and every message stays as it is.\n- One walker: grep.rs, links.rs and rename.rs each recurse on their own, with different rules for order, dot names and symlinks, each matching the legacy tool it replaced. They share one walk only if it keeps every rule and reads simpler. Otherwise the package records why and is cancelled.\n- One picture rule, a divergence that needs hv's ruling: `tree::PICTURES` takes the first file in About/ by name with any picture ending, while `pplr pictures` and the index try the extensions in turn, so a folder with two pictures can give a different one to each. On the live tree on 2026-11-04, none of the 358 About folders with a picture holds two, so unifying the rules changes no output there today.\n- The walks pass over a directory they cannot read without a word, where the legacy's `grep -r` and `find` named it on stderr. Saying so is a divergence, and hv's ruling.",
+  "body": "",
+  "preamble": "",
+  "wps": [
+    {
+      "seq": 1,
+      "title": "Pair: how as an enum, and has_inetloc's not-read state its own",
+      "scope": "S",
+      "status": "not-started",
+      "objective": "",
+      "body": "",
+      "preamble": ""
+    },
+    {
+      "seq": 2,
+      "title": "workbook::write fills Merged by header, as the reader and the styling do",
+      "scope": "S",
+      "status": "not-started",
+      "objective": "",
+      "body": "",
+      "preamble": ""
+    },
+    {
+      "seq": 3,
+      "title": "One macOS gate for every command that needs a macOS service",
+      "scope": "S",
+      "status": "not-started",
+      "objective": "",
+      "body": "",
+      "preamble": ""
+    },
+    {
+      "seq": 4,
+      "title": "One walker for grep, links and rename, or the record of why not",
+      "scope": "S",
+      "status": "not-started",
+      "objective": "",
+      "body": "",
+      "preamble": ""
+    },
+    {
+      "seq": 5,
+      "title": "One picture rule for the engine, pplr pictures and the index (hv's ruling)",
+      "scope": "S",
+      "status": "not-started",
+      "objective": "",
+      "body": "",
+      "preamble": ""
+    },
+    {
+      "seq": 6,
+      "title": "pplr 2.0.1 by one command",
+      "scope": "S",
+      "status": "not-started",
+      "objective": "",
+      "body": "",
+      "preamble": ""
+    }
+  ],
+  "criteria": [
+    {
+      "id": "AC-00.1",
+      "text": "Behaviour is preserved: every frozen golden replays unchanged, apart from a ruled divergence's, which changes in its own commit naming the ruling; check all and test all exit 0 at the thread's tip, measured in a fresh clone.",
+      "kind": "test",
+      "state": {
+        "is": "computed"
+      }
+    },
+    {
+      "id": "AC-01.1",
+      "text": "Pair.how is an enum that names the five ways once, and the JSON and the report print 2.0.0's words; has_inetloc tells not read from absent.",
+      "kind": "test",
+      "state": {
+        "is": "computed"
+      }
+    },
+    {
+      "id": "AC-02.1",
+      "text": "workbook::write places each Merged cell by its column's header, as the reader and the styling do, and a written workbook reads back as at 2.0.0.",
+      "kind": "test",
+      "state": {
+        "is": "computed"
+      }
+    },
+    {
+      "id": "AC-03.1",
+      "text": "One helper gates every command that needs a macOS service, and each refusal keeps 2.0.0's message and exit code.",
+      "kind": "test",
+      "state": {
+        "is": "computed"
+      }
+    },
+    {
+      "id": "AC-04.1",
+      "text": "grep, links and rename walk through one walker that keeps each command's order, dot-name and symlink rules, or the package records why one walker is not simpler.",
+      "kind": "test",
+      "state": {
+        "is": "computed"
+      }
+    },
+    {
+      "id": "AC-05.1",
+      "text": "The engine, pplr pictures and the index choose a person's picture by one rule, and CHANGELOG's divergences name it.",
+      "kind": "test",
+      "state": {
+        "is": "computed"
+      }
+    },
+    {
+      "id": "AC-06.1",
+      "text": "pplr 2.0.1 is released by bin/devbin release v2.0.1 alone: the signed and notarised asset attached, the formula published to the tap, and brew upgrade pplr reading 2.0.1.",
+      "kind": "non-test",
+      "state": {
+        "is": "unsatisfied"
+      }
+    }
+  ]
+}

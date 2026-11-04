@@ -1,0 +1,15 @@
+{
+  "id": "01M6JF2T35BJXQS1ZQPT38ZRQH",
+  "ts": "2026-11-04T05:04:06.757Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "doing",
+    "text": "The three one-command releases (vc decision 28): Cldr v0.2.1, its first signed one (cldr-dc's prep commit: version_from, lock-sync, doctor gate, CHANGELOG; then its signer proof; cldr-vc validates and dry-runs). ccusage v0.1.7 (ccusage-dc: post-cut over macos finalize and formula publish, notarised always with geodica.apple.*; ccusage-vc validates and dry-runs). pplr v2.0.1 after ST0003. Each cut is hv's one command. Cldr's CI on f382994 is green (run 41694524688). Lamplight's move to Geodica/Certificates' APPLE_APP_PASSWORD, then its own revoked, stays hv's."
+  }
+}

@@ -2,10 +2,10 @@
 node: vc
 name: vc
 role: vc
-session_id: 60a887be-5fa2-4cf5-8de1-310286047151
-heartbeat_at: 2026-11-03 18:23Z
+session_id: 9417a4f6-ca66-4fc9-8f2e-e1c88bf255dd
+heartbeat_at: 2026-11-04 05:04Z
 status: active
-focus: "Paused for hv's compact and close. pplr (89f3c62, pushed) and Cldr (f382994, local) each release signed and notarised with one command, bin/devbin release vX.Y.Z, whose after: is bin/devbin post-cut (decision 27). Neither has had a real run yet; todo 10 holds the first runs and Cldr's push."
+focus: "Driving pplr, cldr and ccusage to one release shape this morning (vc decision 28): signed and notarised, one devbin command each. ST0003 open for pplr-dc (todo 6, then 2.0.1); Cldr v0.2.1 prep with cldr-dc and cldr-vc; ccusage v0.1.7 post-cut with ccusage-dc and ccusage-vc. vc holds slot control."
 claims: []
 ---
 
@@ -13,12 +13,12 @@ claims: []
 
 ## DOING
 
-_(none)_
+- ST0003 (vc decision 28): todo 6's candidates as WP01 to WP05, pplr-dc implementing and vc reviewing each against its criterion, then WP06, pplr 2.0.1 by bin/devbin release v2.0.1, the first real run of post-cut. WP05 (one picture rule) and the stderr note in WP04 wait for hv's rulings.
+- The three one-command releases (vc decision 28): Cldr v0.2.1, its first signed one (cldr-dc's prep commit: version_from, lock-sync, doctor gate, CHANGELOG; then its signer proof; cldr-vc validates and dry-runs). ccusage v0.1.7 (ccusage-dc: post-cut over macos finalize and formula publish, notarised always with geodica.apple.*; ccusage-vc validates and dry-runs). pplr v2.0.1 after ST0003. Each cut is hv's one command. Cldr's CI on f382994 is green (run 41694524688). Lamplight's move to Geodica/Certificates' APPLE_APP_PASSWORD, then its own revoked, stays hv's.
 
 ## TODO
 
-- After the WP13 cutover, candidates under hv's simpler-or-easier rule, none in WP11 commit 3 (fe4b677; critic-rust's second read, via cc): (a) unify the three picture rules, the engine's, pplr_pictures' and the index's, which differ as their legacy scripts did; that changes behaviour on real data, so it is a divergence and needs hv's ruling (a comment on tree::PICTURES records the difference); (b) Pair.how's vocabulary as an enum, behaviour-preserving; (c) matches() leaves has_inetloc false to mean 'not read', a plain bool documented on the field; (d) workbook write() fills Merged's rows by position while the reader and the styling go by header. (e) One macOS gate: contacts/mod.rs, handler.rs and icons.rs each test cfg!(target_os) with their own message, beside open.rs's macos_only(why); one helper for every gate, behaviour-preserving if the messages stay. (f) One walker: grep.rs, links.rs and rename.rs each recurse on their own (C10 fixed links' to pass over symlinked directories, as grep's and rename's already did); one walk for all, behaviour-preserving. Left as is by vc's ruling: an option taken as another's value (sync --link --group --apply) falls to a dry run, which is safe. (edited)
-- First real runs of the one-command release: pplr's next release and Cldr's next (Cldr f382994, pushed; its CI run on build.yml was queued at the push, so check it is green). Cldr's first signed release moves its tap from source to assets; the tap clone at ../Brew/homebrew-cldr may need a pull. Lamplight moves to Geodica/Certificates' APPLE_APP_PASSWORD, then its own is revoked. (edited)
+_(none)_
 
 ## Holds
 
@@ -34,6 +34,7 @@ _(none)_
 
 - hv, 2026-11-02 ~15:05, going afk for a few hours: 'I want VC to take the pen and push on as far as you can get... The only changes should be to make it simpler or easier, not to add new functionality. DC and [cc] are to follow instruction.' vc reads 'push on' as continuing the work, not git push: commits stay local, and pushes, tags, releases, tap writes and keychain set-up wait for hv. Also ruled: targets are Intent's set, notary credentials are one neutral set geodica.apple.*, and Pplr Links.app ships prebuilt and signed (5574e38).
 - hv, 2026-11-03 after ST0002's close: a release is one command, and pplr and cldr both release signed and notarised the same way. Utilz already does (its after: runs tools/post-cut), so this is pplr's config, not devbin's: release.after: is one line, bin/devbin post-cut, which in a detached worktree at the tag builds, runs macos prepare, attaches with release attach --from dist/release, then formula publish, and pulls this machine's tap, stopping at the first failure; a re-run skips what is done. Reverses decision 25's by-hand formula publish and supersedes decision 26's devbin changes. Next: Cldr gets the same (devbin installed, a signer and a post-cut), in Cldr's repo.
+- hv, 2026-11-04, in vc's session: 'you have the pen here with pplr and cldr... I want both properly finished this morning', then ccusage-vc and ccusage-dc added: 'I want all three of these rust cli utils to operate in the same way (ie signed and notarised, and be able to be built from a single devbin command)'. vc drives pplr-dc, cldr-vc, cldr-dc, ccusage-vc and ccusage-dc. The shape, decision 27's, for all three: bin/devbin release vX.Y.Z is the whole release, project.version_from: Cargo.toml with derived: bin/devbin lock-sync, a CHANGELOG section the cut dates, and one after: line, bin/devbin post-cut, that signs and notarises with the neutral credentials geodica.apple.*, attaches, publishes the formula and pulls the tap, stopping at the first failure. ccusage keeps CI's four archives, so its post-cut runs macos finalize on CI's draft. pplr's todo 6 becomes ST0003, released as 2.0.1. Cuts, tags and pushes stay hv's.
 
 ---
 

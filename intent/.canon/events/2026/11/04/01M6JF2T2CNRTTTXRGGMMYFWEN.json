@@ -1,0 +1,15 @@
+{
+  "id": "01M6JF2T2CNRTTTXRGGMMYFWEN",
+  "ts": "2026-11-04T05:04:06.732Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "doing",
+    "text": "ST0003 (vc decision 28): todo 6's candidates as WP01 to WP05, pplr-dc implementing and vc reviewing each against its criterion, then WP06, pplr 2.0.1 by bin/devbin release v2.0.1, the first real run of post-cut. WP05 (one picture rule) and the stderr note in WP04 wait for hv's rulings."
+  }
+}
