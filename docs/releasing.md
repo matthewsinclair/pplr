@@ -2,7 +2,7 @@
 
 This page is for the maintainer of a pplr checkout: its trees, building and testing, signing, and cutting a release. A user installs pplr with Homebrew alone, as the README says.
 
-pplr follows devbin's dev, opt and brew contract (T1 to T10 in devbin's `docs/dev-opt-brew.md`), as Molt, Utilz, Intent and devbin do. ST0002's `design.md` records how it applies to pplr, and its `install-release.md` the release and signing design.
+pplr follows devbin's dev, opt and brew contract (T1 to T10 in devbin's `docs/dev-opt-brew.md`), as Molt, Utilz, Intent and devbin do. ST0002's `design.md` records how it applies to pplr, and its `install-release.md` the release and signing design; ST0002 is done, so both live in the store, and `intent st hydrate ST0002` puts them back on disk.
 
 ## The three trees
 

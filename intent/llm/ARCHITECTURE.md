@@ -2,7 +2,7 @@
 
 How Pplr is shaped, and why.
 
-The decisions are recorded where they were made: ST0001's `design.md` (D1 to D11, the module map, the Contacts boundary) for the port, and ST0002's `design.md` with `install-release.md` for the install and the release. ST0001 is done, so its documents live in the store, and `intent st hydrate ST0001` puts them back on disk. This page is the shape they produced, the reason for each part, and what breaks if someone quietly undoes it. The source says what exists and where: `intent search` and each module's doc comment answer that.
+The decisions are recorded where they were made: ST0001's `design.md` (D1 to D11, the module map, the Contacts boundary) for the port, and ST0002's `design.md` with `install-release.md` for the install and the release. Both threads are done, so their documents live in the store, and `intent st hydrate ST0001` or `intent st hydrate ST0002` puts them back on disk. This page is the shape they produced, the reason for each part, and what breaks if someone quietly undoes it. The source says what exists and where: `intent search` and each module's doc comment answer that.
 
 ## One binary, and the data outside it
 
