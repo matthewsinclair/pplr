@@ -204,6 +204,14 @@
       "archived_at": "2026-11-04T10:15:25.841Z",
       "recorded_at": "2026-11-04T08:57:25.242Z",
       "edited_at": "2026-11-04T08:59:44.339Z"
+    },
+    {
+      "node": "dc",
+      "kind": "todo",
+      "seq": 7,
+      "text": "When vc says the sleeves have run Molt 1.4.1 (rhadamanth, gyges, kovacs): delete the banked branches issue-0086 (8384180), issue-0086-red (5c7aa30) and release-1.4.1 (2fab7ac) from ~/Devel/prj/Molt by name, then remove the scratch clones molt-pplr and molt-rel. Molt issue 0086's as-built note cites 5c7aa30 and 8384180, so their going is vc's call.",
+      "state": "live",
+      "recorded_at": "2026-11-04T10:16:26.990Z"
     }
   ],
   "sent": [
