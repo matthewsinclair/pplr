@@ -5,9 +5,9 @@
     "name": "dc",
     "role": "dc",
     "session_id": "2520675d-7af0-457e-8102-d526fbf8f2fc",
-    "heartbeat_at": "2026-11-04T09:18:19.693Z",
+    "heartbeat_at": "2026-11-04T10:15:25.871Z",
     "status": "active",
-    "focus": "Molt 1.4.1 (todo 6, hv via vc): the pplr liberator moves to Homebrew in cldr's shape, with pplr's own dev or opt tree named, not faulted (hv's 27 Oct rule in Molt 0071), as Molt issue 0086 filed and closed in the code commit; then Molt's Release v1.4.1 commit, which hv has said ships all of main. Building in a fresh Molt clone.",
+    "focus": "Molt 1.4.1 landed on Molt's main, unpushed and untagged: 0df2401 (issue 0086 filed and closed, the pplr liberator from Homebrew) and bf441ba (Release v1.4.1), each equal to its measured commit. vc gives hv the hand cut. Nothing in hand.",
     "claims": [],
     "recorded_at": "2026-11-02T07:20:46.074Z",
     "migrated_at": "2026-11-02T07:20:46.074Z"
@@ -200,7 +200,8 @@
       "kind": "todo",
       "seq": 6,
       "text": "After hv's compact, at hv's word via vc, under Molt's own rules (its AGENTS.md, CLAUDE.md and usage-rules.md read first), with an Intent issue in Molt closed by the commit, devbin gates in a fresh Molt clone in a slot from vc, no Molt board, every commit by path on Molt's main, unpushed, and each hash to vc. (1) Rewrite Molt's pplr liberator (~/Devel/prj/Molt/liberators/pplr.sh) in liberators/cldr.sh's Homebrew shape: molt_brew_install matthewsinclair/pplr/pplr; check and verify through molt_brew_faults that brew's pplr is what PATH runs; no ~/.local/bin link and no upgrade hook. The install removes the old checkout link (MOLT_LOCAL_BIN/pplr into a Pplr checkout's bin/pplr), and check reports one. MOLT_PPLR_HOME goes if nothing else reads it. Rewrite test/liberators/pplr.bats and every Molt doc on the pplr liberator; CHANGELOG gets ## [1.4.1] - unreleased. (2) Then Molt's release commit by its documented hand cut (Molt's intent/llm/ARCHITECTURE.md line 34), as d0a4518 made 1.4.0's: VERSION 1.4.1, CHANGELOG's Unreleased section closed as 1.4.1 and dated the day it lands, message Release v1.4.1. hv then tags, pushes, reads CI on the tag and runs tools/formula publish. hv's goal: molt upgrade --self && molt upgrade && molt maintain clean on rhadamanth, gyges and kovacs.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-04T10:15:25.841Z",
       "recorded_at": "2026-11-04T08:57:25.242Z",
       "edited_at": "2026-11-04T08:59:44.339Z"
     }
