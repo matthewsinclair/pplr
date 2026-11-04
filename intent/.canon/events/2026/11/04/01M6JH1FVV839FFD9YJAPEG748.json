@@ -1,0 +1,15 @@
+{
+  "id": "01M6JH1FVV839FFD9YJAPEG748",
+  "ts": "2026-11-04T05:38:20.667Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "watchout",
+    "text": "For hv, cldr-vc's F8, 2026-11-04: devbin's formula finish_ruby writes the install manifest as one line of 131 columns (with a 40-hex commit), over brew style's 118. So a tap whose CI runs brew style or brew audit goes red at publish. Cldr's tap carries --except-cops Layout/LineLength until devbin wraps the line. pplr 2.0.0's formula has the same line, unseen because homebrew-pplr has no CI, and ccusage's tap has style and audit off for devbin's formula:424. The fix is devbin's."
+  }
+}

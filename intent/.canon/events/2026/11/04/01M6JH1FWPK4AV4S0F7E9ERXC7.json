@@ -1,0 +1,15 @@
+{
+  "id": "01M6JH1FWPK4AV4S0F7E9ERXC7",
+  "ts": "2026-11-04T05:38:20.694Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "After the three cuts (vc decision 29, item 4): pplr's, Cldr's and ccusage's signers move to one notarytool keychain profile (--keychain-profile), which hv creates once with xcrun notarytool store-credentials, and which an App Store Connect API key can back later with no code change. The same commit takes cldr-vc's nit (b) in all three: fact()'s failures are lost under local and inside a command's arguments, so a missing signing fact surfaces later under a misleading message (it cannot ship: verify's requirement or Apple refuses)."
+  }
+}

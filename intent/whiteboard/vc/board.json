@@ -438,6 +438,22 @@
       "text": "For hv, cldr-vc's finding 2026-11-04: Intent's generated AGENTS.md has no user block and calls intent/llm/RULES.md and ARCHITECTURE.md 'seeded empty by intent init' even once a project has written them. An agent that reads AGENTS.md alone (Codex, Cursor) misses the project's contract, including Cldr's public-repo rule against personal data. Claude Code loads it through CLAUDE.md's imports, and pplr is in the same state. The fix is Intent's, out of scope here.",
       "state": "live",
       "recorded_at": "2026-11-04T05:20:47.603Z"
+    },
+    {
+      "node": "vc",
+      "kind": "watchout",
+      "seq": 5,
+      "text": "For hv, cldr-vc's F8, 2026-11-04: devbin's formula finish_ruby writes the install manifest as one line of 131 columns (with a 40-hex commit), over brew style's 118. So a tap whose CI runs brew style or brew audit goes red at publish. Cldr's tap carries --except-cops Layout/LineLength until devbin wraps the line. pplr 2.0.0's formula has the same line, unseen because homebrew-pplr has no CI, and ccusage's tap has style and audit off for devbin's formula:424. The fix is devbin's.",
+      "state": "live",
+      "recorded_at": "2026-11-04T05:38:20.667Z"
+    },
+    {
+      "node": "vc",
+      "kind": "todo",
+      "seq": 11,
+      "text": "After the three cuts (vc decision 29, item 4): pplr's, Cldr's and ccusage's signers move to one notarytool keychain profile (--keychain-profile), which hv creates once with xcrun notarytool store-credentials, and which an App Store Connect API key can back later with no code change. The same commit takes cldr-vc's nit (b) in all three: fact()'s failures are lost under local and inside a command's arguments, so a missing signing fact surfaces later under a misleading message (it cannot ship: verify's requirement or Apple refuses).",
+      "state": "live",
+      "recorded_at": "2026-11-04T05:38:20.694Z"
     }
   ],
   "sent": [
