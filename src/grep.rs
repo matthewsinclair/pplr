@@ -3,7 +3,7 @@
 
 use crate::Result;
 use crate::config::Config;
-use crate::fs::read_text;
+use crate::fs::{Order, read_text, walk};
 use crate::tree::names;
 use regex::{Regex, RegexBuilder};
 use std::fs;
@@ -130,30 +130,26 @@ fn matching(file: &Path, pattern: Option<&Regex>) -> Vec<String> {
 }
 
 /// Every .md file under each top-level folder (`grep -r <root>/*/`), by path,
-/// not following symlinks below the top.
-fn markdown_files(root: &Path) -> Vec<PathBuf> {
+/// not following symlinks below the top. A name that is not UTF-8 is passed
+/// over, as 2.0.0 joined each name back from its lossy form and found nothing.
+pub(crate) fn markdown_files(root: &Path) -> Vec<PathBuf> {
   let mut out = Vec::new();
   for top in names(root) {
     let dir = root.join(&top);
     if !top.starts_with('.') && dir.is_dir() {
-      walk(&dir, &mut out);
+      walk(&dir, Order::Name, &mut |entry| {
+        let name = entry.file_name();
+        let Some(name) = name.to_str() else {
+          return false;
+        };
+        if entry.file_type().is_ok_and(|t| t.is_file()) && name.ends_with(".md") {
+          out.push(entry.path());
+        }
+        true
+      });
     }
   }
   out
-}
-
-fn walk(dir: &Path, out: &mut Vec<PathBuf>) {
-  for name in names(dir) {
-    let path = dir.join(&name);
-    let Ok(meta) = fs::symlink_metadata(&path) else {
-      continue;
-    };
-    if meta.is_dir() {
-      walk(&path, out);
-    } else if meta.is_file() && name.ends_with(".md") {
-      out.push(path);
-    }
-  }
 }
 
 /// `<root>/<top>/<person>/About/tags.yaml`, outside any `_` folder, by path.

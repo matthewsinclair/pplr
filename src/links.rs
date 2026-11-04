@@ -7,6 +7,7 @@
 use crate::Result;
 use crate::config::Config;
 use crate::contacts::to_swift_json;
+use crate::fs::{Order, walk};
 use crate::marker::marker_url;
 use crate::normalise::percent_decode;
 use crate::tree::{self, Person};
@@ -223,7 +224,20 @@ pub fn markdown_files(roots: &[PathBuf]) -> Vec<PathBuf> {
       raw.push(root.clone());
     } else if root.is_dir() {
       let base = root.canonicalize().unwrap_or_else(|_| root.clone());
-      walk(&base, &mut raw);
+      walk(&base, Order::Folder, &mut |entry| {
+        if entry.file_name().to_string_lossy().starts_with('.') {
+          return false;
+        }
+        // The entry's own type: a symlinked note is kept, as any non-folder is
+        let Ok(kind) = entry.file_type() else {
+          return false;
+        };
+        let path = entry.path();
+        if !kind.is_dir() && path.extension().is_some_and(|e| e == "md") {
+          raw.push(path);
+        }
+        true
+      });
     }
   }
   let mut seen = std::collections::BTreeSet::new();
@@ -238,27 +252,6 @@ pub fn markdown_files(roots: &[PathBuf]) -> Vec<PathBuf> {
       .cmp(b.as_os_str().as_encoded_bytes())
   });
   files
-}
-
-fn walk(dir: &Path, out: &mut Vec<PathBuf>) {
-  let Ok(entries) = std::fs::read_dir(dir) else {
-    return;
-  };
-  for entry in entries.flatten() {
-    let path = entry.path();
-    if entry.file_name().to_string_lossy().starts_with('.') {
-      continue;
-    }
-    // The entry's own type: a symlink is never a directory here
-    let Ok(kind) = entry.file_type() else {
-      continue;
-    };
-    if kind.is_dir() {
-      walk(&path, out);
-    } else if path.extension().is_some_and(|e| e == "md") {
-      out.push(path);
-    }
-  }
 }
 
 #[cfg(test)]

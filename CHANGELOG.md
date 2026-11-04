@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - unreleased
+
+### Changed
+
+- Where pplr 2.0.1 deliberately differs from 2.0.0, by hv's ruling of 2026-11-04 (vc decision 29):
+  - `pplr grep`, `pplr links` and `pplr rename` name each folder they cannot read on stderr, one line each (`pplr: cannot read <folder>: <why>`), and carry on, with their exit code unchanged. 2.0.0 passed over such a folder without a word, where the shell version's `grep -r` and `find` named it.
+
 ## [2.0.0] - 2026-11-03
 
 pplr is now one Rust binary. It replaces the bash scripts, the Python helpers and the Swift engine that was compiled at run time. Every command keeps its arguments and flags, and the files pplr writes in the People tree are byte for byte the ones the shell version wrote, apart from time stamps and the changes listed below.

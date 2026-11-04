@@ -7,6 +7,7 @@
 
 use crate::Result;
 use crate::config::Config;
+use crate::fs::{Order, walk};
 use crate::tree::letter_of;
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
@@ -306,33 +307,23 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
 /// Text files under `roots` with one of `extensions`, in directory order,
 /// passing over `skip` directories and every symlink below a root, as
 /// `grep -r --include --exclude-dir` walks.
-fn search(roots: &[PathBuf], extensions: &[&str], skip: &[&str]) -> Vec<PathBuf> {
-  fn walk(dir: &Path, extensions: &[&str], skip: &[&str], out: &mut Vec<PathBuf>) {
-    let Ok(entries) = std::fs::read_dir(dir) else {
-      return;
-    };
-    for entry in entries.flatten() {
-      let path = entry.path();
+pub(crate) fn search(roots: &[PathBuf], extensions: &[&str], skip: &[&str]) -> Vec<PathBuf> {
+  let mut out = Vec::new();
+  for root in roots {
+    walk(root, Order::Folder, &mut |entry| {
       let Ok(kind) = entry.file_type() else {
-        continue;
+        return false;
       };
-      let name = entry.file_name();
-      if kind.is_dir() {
-        if !skip.iter().any(|s| name == *s) {
-          walk(&path, extensions, skip, out);
-        }
-      } else if kind.is_file()
+      let path = entry.path();
+      if kind.is_file()
         && path
           .extension()
           .is_some_and(|e| extensions.iter().any(|x| e == *x))
       {
         out.push(path);
       }
-    }
-  }
-  let mut out = Vec::new();
-  for root in roots {
-    walk(root, extensions, skip, &mut out);
+      !skip.iter().any(|s| entry.file_name() == *s)
+    });
   }
   out
 }
@@ -361,24 +352,16 @@ fn rewrite(path: &Path, pairs: &[(String, String)]) -> Result<()> {
 }
 
 /// Files and folders inside `dir` whose names start with `prefix`, in the
-/// order `find` meets them.
-fn named_after(dir: &Path, prefix: &str) -> Vec<PathBuf> {
-  fn walk(dir: &Path, prefix: &str, out: &mut Vec<PathBuf>) {
-    let Ok(entries) = std::fs::read_dir(dir) else {
-      return;
-    };
-    for entry in entries.flatten() {
-      let path = entry.path();
-      if entry.file_name().to_string_lossy().starts_with(prefix) {
-        out.push(path.clone());
-      }
-      if entry.file_type().is_ok_and(|t| t.is_dir()) {
-        walk(&path, prefix, out);
-      }
-    }
-  }
+/// order `find` meets them, a folder before its contents; a match whose type
+/// cannot be read is still kept.
+pub(crate) fn named_after(dir: &Path, prefix: &str) -> Vec<PathBuf> {
   let mut out = Vec::new();
-  walk(dir, prefix, &mut out);
+  walk(dir, Order::Folder, &mut |entry| {
+    if entry.file_name().to_string_lossy().starts_with(prefix) {
+      out.push(entry.path());
+    }
+    true
+  });
   out
 }
 
