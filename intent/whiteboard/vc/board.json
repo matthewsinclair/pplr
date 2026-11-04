@@ -482,7 +482,8 @@
       "kind": "todo",
       "seq": 12,
       "text": "Molt 1.4.2 by bin/devbin release (decision 30). On ~/Devel/prj/Molt main, unpushed: 450affc (issue 0087, Molt's move onto devbin release: release and formula enabled; gates check all, test all as suite (bash 5) then bash32 (tools/test-bash32, /bin/bash 3.2), and doctor; tests.yml started by candidate/**, macOS included; object local; after bin/devbin formula publish; tools/formula and test/formula.bats gone; CHANGELOG [1.4.2] - unreleased), on bf441ba (v1.4.1, tagged and pushed, formula unpublished). vc measured e07c199 green (check all, doctor, both passes 644 of 644), and 450affc equals it outside issue 0087's records. pplr-dc's dry run in Molt's checkout passes (11:26Z), only the confirm not reached. Next: hv runs bin/devbin release v1.4.2 in ~/Devel/prj/Molt once GitHub's incident (Git Operations and Actions degraded since about 10:38Z) clears, in a slot from vc. Then the molt run on rhadamanth, gyges and kovacs (todo 14). For 1.4.3: tests.yml's tag trigger goes, as pplr's, and ISSUE:0003's step 2 (todo 15). pplr-dc's banked branches go once the sleeves have run.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-04T12:18:57.873Z",
       "recorded_at": "2026-11-04T09:00:28.645Z",
       "edited_at": "2026-11-04T11:39:25.047Z"
     },
@@ -544,6 +545,14 @@
       "text": "devbin 0.1.20, hv 2026-11-04: the formula line-length fix (finish_ruby's one-line manifest header, 131 columns for cldr against brew style's 118) plus everything on Devbin's main since v0.1.19, 0320 included (directive 13's batch); the 19 open issues ride later releases. devbin-dc builds under pplr-vc (hv: 'ping pplr-vc for instructions'): issue, fix, a red-then-green test with no magic number, brew style and audit --strict on pplr's, cldr's and ccusage's renders (a trusted scratch tap is hv's call), critic, gates in slots from vc. devbin-vc validates under devbin's rules. hv cuts once GitHub's incident clears. Then devbin-vc's fleet sweep vendors 0.1.20 into pplr, cldr and ccusage (after Molt 1.4.2's cut), hv republishes the three taps' formulae, and homebrew-cldr's and homebrew-ccusage's CI exceptions go (Ccusage's hold 3).",
       "state": "live",
       "recorded_at": "2026-11-04T11:39:25.123Z"
+    },
+    {
+      "node": "vc",
+      "kind": "todo",
+      "seq": 17,
+      "text": "Molt 1.4.3 (pplr-dc, from 2026-11-04 12:20Z): Molt 1.4.2 is out (hv's bin/devbin release v1.4.2: 275ac8c, gates and candidate CI green, formula at homebrew-molt 4e7e77d). 1.4.3 carries Ccusage ISSUE:0003's step 2 (lib/env.sh publishes CLAUDE_SECURESTORAGE_CONFIG_DIR from ccusage dir, evaluated at each shell start and each login, unset never empty, ccusage by absolute path in the LaunchAgent, ccusage-vc's acceptance) and tests.yml's tag trigger gone, as pplr's. pplr-dc proposes how the env liberator learns of ccusage before building. Same done-bar as 0087, vc reviews, hv cuts with bin/devbin release. pplr-dc's banked branches (issue-0086, issue-0086-red, release-1.4.1, issue-0087) go once the sleeves have run 1.4.2.",
+      "state": "live",
+      "recorded_at": "2026-11-04T12:18:57.902Z"
     }
   ],
   "sent": [

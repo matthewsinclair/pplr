@@ -1,0 +1,15 @@
+{
+  "id": "01M6K7Z1QEE28CWNJZN906X8Y9",
+  "ts": "2026-11-04T12:18:57.902Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "Molt 1.4.3 (pplr-dc, from 2026-11-04 12:20Z): Molt 1.4.2 is out (hv's bin/devbin release v1.4.2: 275ac8c, gates and candidate CI green, formula at homebrew-molt 4e7e77d). 1.4.3 carries Ccusage ISSUE:0003's step 2 (lib/env.sh publishes CLAUDE_SECURESTORAGE_CONFIG_DIR from ccusage dir, evaluated at each shell start and each login, unset never empty, ccusage by absolute path in the LaunchAgent, ccusage-vc's acceptance) and tests.yml's tag trigger gone, as pplr's. pplr-dc proposes how the env liberator learns of ccusage before building. Same done-bar as 0087, vc reviews, hv cuts with bin/devbin release. pplr-dc's banked branches (issue-0086, issue-0086-red, release-1.4.1, issue-0087) go once the sleeves have run 1.4.2."
+  }
+}
