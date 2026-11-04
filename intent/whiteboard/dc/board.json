@@ -5,9 +5,9 @@
     "name": "dc",
     "role": "dc",
     "session_id": "2520675d-7af0-457e-8102-d526fbf8f2fc",
-    "heartbeat_at": "2026-11-04T09:03:17.889Z",
+    "heartbeat_at": "2026-11-04T09:18:19.693Z",
     "status": "active",
-    "focus": "Ready for hv's compact. pplr's views off disk (d100637), doc pass (7be2aef) and 2.0.2's notes (eca6ed1) landed, each reviewed by vc. Next after the compact: todo 6, Molt's pplr liberator in brew's shape, then Molt's 1.4.1 release commit by its hand cut.",
+    "focus": "Molt 1.4.1 (todo 6, hv via vc): the pplr liberator moves to Homebrew in cldr's shape, with pplr's own dev or opt tree named, not faulted (hv's 27 Oct rule in Molt 0071), as Molt issue 0086 filed and closed in the code commit; then Molt's Release v1.4.1 commit, which hv has said ships all of main. Building in a fresh Molt clone.",
     "claims": [],
     "recorded_at": "2026-11-02T07:20:46.074Z",
     "migrated_at": "2026-11-02T07:20:46.074Z"
