@@ -2,7 +2,7 @@
 wp_id: WP-01
 title: Pair: how as an enum, and has_inetloc's not-read state its own
 scope: S
-status: WIP
+status: Done
 ---
 
 # WP-01: Pair: how as an enum, and has_inetloc's not-read state its own

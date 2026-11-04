@@ -30,8 +30,8 @@ The candidates. Each one preserves behaviour unless it says otherwise:
 
 | WP    | Title                                                                      | Size | Status      |
 | ----- | -------------------------------------------------------------------------- | ---- | ----------- |
-| WP-01 | Pair: how as an enum, and has_inetloc's not-read state its own             | S    | WIP         |
-| WP-02 | workbook::write fills Merged by header, as the reader and the styling do   | S    | Not Started |
+| WP-01 | Pair: how as an enum, and has_inetloc's not-read state its own             | S    | Done        |
+| WP-02 | workbook::write fills Merged by header, as the reader and the styling do   | S    | WIP         |
 | WP-03 | One macOS gate for every command that needs a macOS service                | S    | Not Started |
 | WP-04 | One walker for grep, links and rename, or the record of why not            | S    | Not Started |
 | WP-05 | One picture rule for the engine, pplr pictures and the index (hv's ruling) | S    | Not Started |

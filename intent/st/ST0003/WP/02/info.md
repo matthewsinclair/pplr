@@ -2,7 +2,7 @@
 wp_id: WP-02
 title: workbook::write fills Merged by header, as the reader and the styling do
 scope: S
-status: Not Started
+status: WIP
 ---
 
 # WP-02: workbook::write fills Merged by header, as the reader and the styling do

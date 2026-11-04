@@ -17,9 +17,9 @@ title: Post-port simplifications, then 2.0.1 by one command
 
 - AC-00.1 Behaviour is preserved: every frozen golden replays unchanged, apart from a ruled divergence's, which changes in its own commit naming the ruling; check all and test all exit 0 at the thread's tip, measured in a fresh clone. -- satisfied: no (computed)
 
-### WP-01 -- Pair: how as an enum, and has_inetloc's not-read state its own (status: WIP)
+### WP-01 -- Pair: how as an enum, and has_inetloc's not-read state its own (status: Done)
 
-- AC-01.1 Pair.how is an enum that names the five ways once, and the JSON and the report print 2.0.0's words; has_inetloc tells not read from absent. -- satisfied: no (computed)
+- AC-01.1 Pair.how is an enum that names the five ways once, and the JSON and the report print 2.0.0's words; has_inetloc tells not read from absent. -- satisfied: yes (computed)
 
 ### WP-02 -- workbook::write fills Merged by header, as the reader and the styling do (status: WIP)
 
@@ -47,9 +47,9 @@ title: Post-port simplifications, then 2.0.1 by one command
 
 _(no tests in this group)_
 
-### WP-01 -- Pair: how as an enum, and has_inetloc's not-read state its own (status: WIP)
+### WP-01 -- Pair: how as an enum, and has_inetloc's not-read state its own (status: Done)
 
-_(no tests in this group)_
+- AT-01.1 `src/sync.rs` -- covers AC-01.1 -- status: green -- sync::tests::each_way_has_its_word_and_an_inetloc_not_read_is_not_absent: five people, one matched each of the five ways, the JSON's (person, how, hasInetloc) rows against 2.0.0's words; matches() leaves every .inetloc None, check() reads a written .inetloc as Some(true) and the others as Some(false), and hasInetloc reads false for not read and absent alike; red at two mutants of b335c08 in slot 01M6JFTPZQKGNGPP0YDMJXYSGE: f3c8b2c (as_str gives Phone) exit 101, the JSON row for P/Phone, Pat reading Phone, and 9121e93 (matches() sets Some(false)) exit 101, matches() read an .inetloc; green at b335c08 (on main as e61e0ae) in the same slot: check all exit 0, test all exit 0 (cargo lib 108 passed 1 ignored, cli 39 passed 1 ignored with the golden replay, bats 106 ok 0 not ok 1 skip)
 
 ### WP-02 -- workbook::write fills Merged by header, as the reader and the styling do (status: WIP)
 
