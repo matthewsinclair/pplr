@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: 2520675d-7af0-457e-8102-d526fbf8f2fc
-heartbeat_at: 2026-11-04 06:18Z
+heartbeat_at: 2026-11-04 08:41Z
 status: active
-focus: "ST0003: WP01 to WP04 done; WP06's prep landed (d09ddd7). WP05 (one picture rule, hv re-confirmed) at 585cb6d in my clone, waiting for its slot; then AT-05.1 and AT-04.2's records. WP06's notes and hv's cut after it."
+focus: "ST0003: WP01 to WP05 done; pplr 2.0.1 released (v2.0.1 at 733e127, tap bf5b108), its asset verified (sum, signatures, spctl). WP06 waits for hv's brew upgrade reading 2.0.1, then AC-06.1, gate, done and unclaim. Mutant and proof branches deleted; the eight measured branches kept."
 claims: [ST0003/06]
 ---
 
