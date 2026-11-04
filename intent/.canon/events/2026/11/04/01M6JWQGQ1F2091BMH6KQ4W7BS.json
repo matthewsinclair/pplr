@@ -1,0 +1,15 @@
+{
+  "id": "01M6JWQGQ1F2091BMH6KQ4W7BS",
+  "ts": "2026-11-04T09:02:36.769Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "doing",
+    "text": "hv's end-to-end test, 2026-11-04: bin/devbin release --patch in pplr (2.0.2), Cldr (0.2.2) and ccusage (0.1.8), one after another, then Molt 1.4.1 (todo 12) and molt upgrade --self && molt upgrade && molt maintain on rhadamanth, gyges and kovacs. Before each go: the tip verified in a fresh clone with the stamped run (vc's scratchpad verify-main.zsh <tag> for pplr; cldr-vc and ccusage-vc for theirs); a dry run in the shared checkout itself (porcelain empty, and only the two NOT REACHED lines: a third names dirt the stamp would refuse); that project's nodes frozen (no wb verb or pickup there); a slot booked for hv. After each: hv's brew upgrade and --version, the slot released, the freeze lifted, hv pushes the record commits. At 09:02Z: pplr 4b521af verifying in slot 01M6JWM8AJ4VEQT4DVNGCGDSMA; ccusage 27709bc verified by ccusage-vc, which is frozen, while ccusage-dc commits its dirty board and freezes; Cldr waits for cldr-dc's 0.2.2 notes (with cldr-vc's R1 and R2) and its board commit, then cldr-vc's stamped verify. pplr-dc does Molt's liberator after hv's compact."
+  }
+}

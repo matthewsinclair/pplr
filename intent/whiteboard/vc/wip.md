@@ -3,9 +3,9 @@ node: vc
 name: vc
 role: vc
 session_id: 9417a4f6-ca66-4fc9-8f2e-e1c88bf255dd
-heartbeat_at: 2026-11-04 08:44Z
+heartbeat_at: 2026-11-04 09:02Z
 status: active
-focus: "Nothing in hand. 2026-11-04: pplr 2.0.1, Cldr 0.2.1 and ccusage 0.1.7 each released, signed and notarised, by one devbin command (vc decisions 28 and 29); ST0003 done. Next, when hv says: todo 11, the three signers on one notarytool keychain profile."
+focus: "Driving hv's end-to-end test (doing 3): a patch of pplr, Cldr and ccusage by bin/devbin release --patch, one after another, then Molt 1.4.1 and the molt run on rhadamanth, gyges and kovacs. vc holds slot control."
 claims: []
 ---
 
@@ -13,7 +13,7 @@ claims: []
 
 ## DOING
 
-_(none)_
+- hv's end-to-end test, 2026-11-04: bin/devbin release --patch in pplr (2.0.2), Cldr (0.2.2) and ccusage (0.1.8), one after another, then Molt 1.4.1 (todo 12) and molt upgrade --self && molt upgrade && molt maintain on rhadamanth, gyges and kovacs. Before each go: the tip verified in a fresh clone with the stamped run (vc's scratchpad verify-main.zsh <tag> for pplr; cldr-vc and ccusage-vc for theirs); a dry run in the shared checkout itself (porcelain empty, and only the two NOT REACHED lines: a third names dirt the stamp would refuse); that project's nodes frozen (no wb verb or pickup there); a slot booked for hv. After each: hv's brew upgrade and --version, the slot released, the freeze lifted, hv pushes the record commits. At 09:02Z: pplr 4b521af verifying in slot 01M6JWM8AJ4VEQT4DVNGCGDSMA; ccusage 27709bc verified by ccusage-vc, which is frozen, while ccusage-dc commits its dirty board and freezes; Cldr waits for cldr-dc's 0.2.2 notes (with cldr-vc's R1 and R2) and its board commit, then cldr-vc's stamped verify. pplr-dc does Molt's liberator after hv's compact. (edited)
 
 ## TODO
 
@@ -37,8 +37,6 @@ _(none)_
 ## Decisions
 
 - hv, 2026-11-02 ~15:05, going afk for a few hours: 'I want VC to take the pen and push on as far as you can get... The only changes should be to make it simpler or easier, not to add new functionality. DC and [cc] are to follow instruction.' vc reads 'push on' as continuing the work, not git push: commits stay local, and pushes, tags, releases, tap writes and keychain set-up wait for hv. Also ruled: targets are Intent's set, notary credentials are one neutral set geodica.apple.*, and Pplr Links.app ships prebuilt and signed (5574e38).
-- hv, 2026-11-03 after ST0002's close: a release is one command, and pplr and cldr both release signed and notarised the same way. Utilz already does (its after: runs tools/post-cut), so this is pplr's config, not devbin's: release.after: is one line, bin/devbin post-cut, which in a detached worktree at the tag builds, runs macos prepare, attaches with release attach --from dist/release, then formula publish, and pulls this machine's tap, stopping at the first failure; a re-run skips what is done. Reverses decision 25's by-hand formula publish and supersedes decision 26's devbin changes. Next: Cldr gets the same (devbin installed, a signer and a post-cut), in Cldr's repo.
-- hv, 2026-11-04, in vc's session: 'you have the pen here with pplr and cldr... I want both properly finished this morning', then ccusage-vc and ccusage-dc added: 'I want all three of these rust cli utils to operate in the same way (ie signed and notarised, and be able to be built from a single devbin command)'. vc drives pplr-dc, cldr-vc, cldr-dc, ccusage-vc and ccusage-dc. The shape, decision 27's, for all three: bin/devbin release vX.Y.Z is the whole release, project.version_from: Cargo.toml with derived: bin/devbin lock-sync, a CHANGELOG section the cut dates, and one after: line, bin/devbin post-cut, that signs and notarises with the neutral credentials geodica.apple.*, attaches, publishes the formula and pulls the tap, stopping at the first failure. ccusage keeps CI's four archives, so its post-cut runs macos finalize on CI's draft. pplr's todo 6 becomes ST0003, released as 2.0.1. Cuts, tags and pushes stay hv's.
 - hv, 2026-11-04, four rulings asked in vc's session, each the recommended option: (1) one picture rule, first by name: pplr pictures and the index take what tree::PICTURES finds, a ruled divergence in CHANGELOG 2.0.1 (ST0003 WP05). Re-confirmed by hv the same morning on corrected facts: none of the 357 live people with a picture holds two, but the tags index changes for 2 of them, whose picture is named other than '<First Surname> (Picture)'. It now names their real picture where 2.0.0 named a missing .jpg. pplr pictures and the golden fixture do not change, and the index's no-picture fallback stays as 2.0.0's. (2) The one walker names each directory it cannot read, one stderr line each, the walk carrying on and the exit code unchanged, a ruled divergence (ST0003 WP04). (3) Patch versions: Cldr v0.2.1, ccusage v0.1.7, pplr v2.0.1. (4) The notary credentials move to one notarytool keychain profile (--keychain-profile) in all three signers AFTER this morning's three cuts, which use the geodica.apple.* items as pplr 2.0.0 did; an App Store Connect API key can later back the profile with no code change. (edited)
 
 ---
