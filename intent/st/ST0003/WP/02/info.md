@@ -9,7 +9,7 @@ status: WIP
 
 ## Objective
 
-_(not yet written)_
+workbook::write fills the Merged and Contacts sheets by column header, through the column table the reader and the styling use, so a reordered table cannot misfile a cell; the written workbook is 2.0.0's, apart from core.xml's write stamp (AC-02.1).
 
 ## Acceptance
 

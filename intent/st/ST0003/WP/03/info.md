@@ -9,7 +9,7 @@ status: Not Started
 
 ## Objective
 
-_(not yet written)_
+One helper gates every command that needs a macOS service (contacts, handler, icons and open), and each refusal keeps 2.0.0's message and exit code (AC-03.1).
 
 ## Acceptance
 

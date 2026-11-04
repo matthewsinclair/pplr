@@ -9,7 +9,7 @@ status: Done
 
 ## Objective
 
-_(not yet written)_
+Pair.how names matches()'s five ways once, as an enum whose as_str prints 2.0.0's words, and has_inetloc tells not read (None, from matches()) from absent (Some(false), from check()); every reader sees what it saw at 2.0.0 (AC-01.1).
 
 ## Acceptance
 

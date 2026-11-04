@@ -9,7 +9,7 @@ status: Not Started
 
 ## Objective
 
-_(not yet written)_
+The engine, pplr pictures and the index choose a person's picture by one rule, the first picture in About/ by name (hv's ruling, vc decision 29), and CHANGELOG's 2.0.1 divergences name it (AC-05.1).
 
 ## Acceptance
 

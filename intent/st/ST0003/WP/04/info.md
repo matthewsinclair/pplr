@@ -9,7 +9,7 @@ status: Not Started
 
 ## Objective
 
-_(not yet written)_
+grep, links and rename walk through one walker that keeps each command's order, dot-name and symlink rules, and names each directory it cannot read on stderr (hv's ruling, vc decision 29); or the package records why one walker is not simpler, and is cancelled (AC-04.1).
 
 ## Acceptance
 

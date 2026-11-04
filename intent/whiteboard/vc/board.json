@@ -430,6 +430,14 @@
       "text": "hv, 2026-11-04, four rulings asked in vc's session, each the recommended option: (1) one picture rule, first by name: pplr pictures and the index take what tree::PICTURES finds, a ruled divergence in CHANGELOG 2.0.1 (ST0003 WP05; none of the 358 live About folders holds two pictures); (2) the one walker names each directory it cannot read, one stderr line each, the walk carrying on and the exit code unchanged, a ruled divergence (ST0003 WP04; it goes if WP04's walker is cancelled); (3) patch versions: Cldr v0.2.1, ccusage v0.1.7, pplr v2.0.1; (4) the notary credentials move to one notarytool keychain profile (--keychain-profile) in all three signers AFTER this morning's three cuts, which use the geodica.apple.* items as pplr 2.0.0 did; an App Store Connect API key can later back the profile with no code change.",
       "state": "live",
       "recorded_at": "2026-11-04T05:18:27.950Z"
+    },
+    {
+      "node": "vc",
+      "kind": "watchout",
+      "seq": 4,
+      "text": "For hv, cldr-vc's finding 2026-11-04: Intent's generated AGENTS.md has no user block and calls intent/llm/RULES.md and ARCHITECTURE.md 'seeded empty by intent init' even once a project has written them. An agent that reads AGENTS.md alone (Codex, Cursor) misses the project's contract, including Cldr's public-repo rule against personal data. Claude Code loads it through CLAUDE.md's imports, and pplr is in the same state. The fix is Intent's, out of scope here.",
+      "state": "live",
+      "recorded_at": "2026-11-04T05:20:47.603Z"
     }
   ],
   "sent": [

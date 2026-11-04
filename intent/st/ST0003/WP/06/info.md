@@ -9,7 +9,7 @@ status: Not Started
 
 ## Objective
 
-_(not yet written)_
+pplr 2.0.1 released by bin/devbin release v2.0.1 alone, the first real run of post-cut: the signed and notarised asset attached, the formula published, and brew upgrade pplr reading 2.0.1 (AC-06.1).
 
 pplr 2.0.1 by one command (AC-06.1). Before the cut, one prep commit carries three fixes to the signer and the release notes:
 

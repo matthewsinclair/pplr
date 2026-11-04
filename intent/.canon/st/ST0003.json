@@ -15,7 +15,7 @@
       "title": "Pair: how as an enum, and has_inetloc's not-read state its own",
       "scope": "S",
       "status": "done",
-      "objective": "",
+      "objective": "Pair.how names matches()'s five ways once, as an enum whose as_str prints 2.0.0's words, and has_inetloc tells not read (None, from matches()) from absent (Some(false), from check()); every reader sees what it saw at 2.0.0 (AC-01.1).",
       "body": "",
       "preamble": ""
     },
@@ -24,7 +24,7 @@
       "title": "workbook::write fills Merged by header, as the reader and the styling do",
       "scope": "S",
       "status": "wip",
-      "objective": "",
+      "objective": "workbook::write fills the Merged and Contacts sheets by column header, through the column table the reader and the styling use, so a reordered table cannot misfile a cell; the written workbook is 2.0.0's, apart from core.xml's write stamp (AC-02.1).",
       "body": "",
       "preamble": ""
     },
@@ -33,7 +33,7 @@
       "title": "One macOS gate for every command that needs a macOS service",
       "scope": "S",
       "status": "not-started",
-      "objective": "",
+      "objective": "One helper gates every command that needs a macOS service (contacts, handler, icons and open), and each refusal keeps 2.0.0's message and exit code (AC-03.1).",
       "body": "",
       "preamble": ""
     },
@@ -42,7 +42,7 @@
       "title": "One walker for grep, links and rename, or the record of why not",
       "scope": "S",
       "status": "not-started",
-      "objective": "",
+      "objective": "grep, links and rename walk through one walker that keeps each command's order, dot-name and symlink rules, and names each directory it cannot read on stderr (hv's ruling, vc decision 29); or the package records why one walker is not simpler, and is cancelled (AC-04.1).",
       "body": "",
       "preamble": ""
     },
@@ -51,7 +51,7 @@
       "title": "One picture rule for the engine, pplr pictures and the index (hv's ruling)",
       "scope": "S",
       "status": "not-started",
-      "objective": "",
+      "objective": "The engine, pplr pictures and the index choose a person's picture by one rule, the first picture in About/ by name (hv's ruling, vc decision 29), and CHANGELOG's 2.0.1 divergences name it (AC-05.1).",
       "body": "",
       "preamble": ""
     },
@@ -60,7 +60,7 @@
       "title": "pplr 2.0.1 by one command",
       "scope": "S",
       "status": "not-started",
-      "objective": "",
+      "objective": "pplr 2.0.1 released by bin/devbin release v2.0.1 alone, the first real run of post-cut: the signed and notarised asset attached, the formula published, and brew upgrade pplr reading 2.0.1 (AC-06.1).",
       "body": "pplr 2.0.1 by one command (AC-06.1). Before the cut, one prep commit carries three fixes to the signer and the release notes:\n\n- The signer reads its three notary credentials by plain assignment before anything is signed, so a missing one refuses by name. ccusage-vc's F1, 2026-11-04: `bin/.devbin/cmd/macos` line 170 passes `$(secret NAME)` inside notarytool's arguments, where `die` ends only the substitution's subshell, so notarytool runs with an empty value and the failure surfaces only as \"not Accepted\", after signing.\n- `require_identity` captures `security find-identity`'s output before matching it, because `grep -q` under `pipe_fail` can lose to SIGPIPE and refuse an identity that is present. And pack's `tar` runs with `COPYFILE_DISABLE=1`, so no `._` entry can reach the asset. Both are cldr-vc's F6, and Cldr's signer already has them. pplr 2.0.0's tarball carries no `._` entry, so the second is a guard.\n- CHANGELOG.md gets `## [2.0.1] - unreleased`, naming WP05's divergence and the walker's stderr line if hv rules either in.\n\nThen main is verified in a fresh clone (check all, test all), the boards are committed and frozen, vc holds the slot, and hv runs one command: `bin/devbin release v2.0.1`.\n",
       "preamble": ""
     }
