@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.1] - unreleased
+## [2.0.1] - 2026-11-04
 
 The same pplr, simpler inside: one directory walk, one macOS gate, one picture rule, and the review workbook filled by column name. What changes for a reader of its output is below.
 
