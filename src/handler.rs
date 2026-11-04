@@ -27,9 +27,7 @@ pub fn run(args: &[String], _config: &Config) -> Result<ExitCode> {
       ExitCode::FAILURE
     });
   }
-  if !cfg!(target_os = "macos") {
-    return Err("the pplr:// handler is a macOS app, so it needs macOS".into());
-  }
+  crate::tools::macos_only("the pplr:// handler is a macOS app, so it needs macOS")?;
   let app = stable(&Layout::running()?.app());
   match mode {
     Some("--install") => {

@@ -1,6 +1,7 @@
 #!/usr/bin/env bats
 
 load test_helper
+bats_require_minimum_version 1.5.0
 
 @test "pplr command exists and is executable" {
     [ -x "$PPLR" ]
@@ -84,31 +85,34 @@ assert_version_output() {
 }
 
 # AT-00.7 (ST0001 AC-00.7): on Linux, each command that needs a macOS service
-# exits non-zero and names why. One row per gate the binary has: the command,
-# then a phrase its message holds. On macOS the services are there, and each
-# command's own tests cover it.
-@test "AC-00.7 on Linux, every command that needs a macOS service exits non-zero naming why" {
+# exits non-zero and names why. Since ST0003 AC-03.1 each row holds the
+# refusal as 2.0.0 gave it: exit 1, and its whole stderr line. One row per
+# gate the binary has: the command, then that line. On macOS the services are
+# there, and each command's own tests cover it.
+@test "AC-00.7 on Linux, every command that needs a macOS service exits 1 with its refusal" {
     [ "$(uname)" != Darwin ] || skip "checks the Linux refusals; on macOS the services are there"
     create_test_person "Lovelace" "Ada" >/dev/null
+    local icons="pplr: Finder icons need macOS"
+    local opens="pplr: pplr open hands files and URLs to macOS's open, which this system does not have"
     local gates=(
-        "sync --check|the live Contacts store needs macOS"
-        "handler --status|so it needs macOS"
-        "applyicons Ada Lovelace|Finder icons need macOS"
-        "setpicfordir Ada Lovelace|Finder icons need macOS"
-        "setpicsfordirs|Finder icons need macOS"
-        "cp Ada Lovelace|the macOS clipboard"
-        "open Ada Lovelace|macOS's open"
-        "open pplr://l/lovelace-ada|macOS's open"
-        "linkedin Ada Lovelace|macOS's open"
-        "email|macOS Mail's own index"
+        "sync --check|pplr: the live Contacts store needs macOS; elsewhere pplr reaches Contacts only through a dump file named by PPLR_CONTACTS_JSON"
+        "handler --status|pplr: the pplr:// handler is a macOS app, so it needs macOS"
+        "applyicons Ada Lovelace|$icons"
+        "setpicfordir Ada Lovelace|$icons"
+        "setpicsfordirs|$icons"
+        "cp Ada Lovelace|pplr: pplr cp (without -o) copies to the macOS clipboard with pbcopy, which this system does not have"
+        "open Ada Lovelace|$opens"
+        "open pplr://l/lovelace-ada|$opens"
+        "linkedin Ada Lovelace|$opens"
+        "email|pplr: no Mail store at $HOME/Library/Mail/V10/MailData/Envelope Index (pplr email reads macOS Mail's own index)"
     )
-    local gate why
+    local gate line
     local -a argv
     for gate in "${gates[@]}"; do
         read -r -a argv <<< "${gate%%|*}"
-        why=${gate#*|}
-        run "$PPLR" "${argv[@]}"
-        [ "$status" -ne 0 ] || { echo "pplr ${argv[*]} exited 0: $output" >&2; return 1; }
-        assert_contains "$output" "$why" || { echo "pplr ${argv[*]} did not say why" >&2; return 1; }
+        line=${gate#*|}
+        run --separate-stderr "$PPLR" "${argv[@]}"
+        [ "$status" -eq 1 ] || { echo "pplr ${argv[*]} exited $status, not 1: $stderr" >&2; return 1; }
+        [ "$stderr" = "$line" ] || { echo "pplr ${argv[*]} said: $stderr" >&2; return 1; }
     done
 }

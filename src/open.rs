@@ -5,6 +5,7 @@ use crate::Result;
 use crate::config::Config;
 use crate::marker::target_path;
 use crate::normalise::percent_encode;
+use crate::tools::macos_only;
 use crate::tree::about_file;
 use std::io::{Read, Write};
 use std::net::{TcpStream, ToSocketAddrs};
@@ -96,7 +97,9 @@ pub fn run_cp(args: &[String], config: &Config) -> Result<ExitCode> {
     println!("{quoted}");
     return Ok(ExitCode::SUCCESS);
   }
-  macos_only("pplr cp (without -o) copies to the macOS clipboard with pbcopy")?;
+  macos_only(
+    "pplr cp (without -o) copies to the macOS clipboard with pbcopy, which this system does not have",
+  )?;
   let mut copy = Command::new("pbcopy")
     .stdin(std::process::Stdio::piped())
     .spawn()?;
@@ -229,17 +232,8 @@ fn answers(cms_url: &str) -> bool {
 
 /// Hands a file or URL to macOS's `open`.
 fn open_target(target: &str) -> Result<ExitCode> {
-  macos_only("pplr open hands files and URLs to macOS's open")?;
+  macos_only("pplr open hands files and URLs to macOS's open, which this system does not have")?;
   exit_of(Command::new("open").arg(target).status()?)
-}
-
-/// Refuses, naming why, where the macOS service a command needs is absent (design D9).
-fn macos_only(why: &str) -> Result<()> {
-  if cfg!(target_os = "macos") {
-    Ok(())
-  } else {
-    Err(format!("{why}, which this system does not have").into())
-  }
 }
 
 fn exit_of(status: std::process::ExitStatus) -> Result<ExitCode> {

@@ -224,9 +224,7 @@ fn sorted_entries(dir: &Path) -> Result<Vec<PathBuf>> {
 
 /// Icons need Finder, and `fileicon` to reach it.
 fn macos_with_fileicon() -> Result<()> {
-  if !cfg!(target_os = "macos") {
-    return Err("Finder icons need macOS".into());
-  }
+  crate::tools::macos_only("Finder icons need macOS")?;
   if crate::tools::on_path("fileicon").is_none() {
     return Err(
       "'fileicon' command not found. Please install it using: brew install fileicon".into(),

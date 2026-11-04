@@ -108,12 +108,9 @@ pub fn open(config: &Config, layout: &Layout) -> Result<Box<dyn Store>> {
   if let Some(path) = &config.contacts_json {
     return Ok(Box::new(JsonStore::open(path)?));
   }
-  if !cfg!(target_os = "macos") {
-    return Err(
-      "the live Contacts store needs macOS; elsewhere pplr reaches Contacts only through a dump file named by PPLR_CONTACTS_JSON"
-        .into(),
-    );
-  }
+  crate::tools::macos_only(
+    "the live Contacts store needs macOS; elsewhere pplr reaches Contacts only through a dump file named by PPLR_CONTACTS_JSON",
+  )?;
   Ok(Box::new(SidecarStore::new(layout.sidecar())?))
 }
 
