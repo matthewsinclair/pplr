@@ -3,10 +3,10 @@ node: dc
 name: dc
 role: dc
 session_id: 2520675d-7af0-457e-8102-d526fbf8f2fc
-heartbeat_at: 2026-11-04 04:50Z
+heartbeat_at: 2026-11-04 04:56Z
 status: active
-focus: "Nothing in hand. ST0002 closed by vc (a993c8f); dc's last step done: ST0002/04 and ST0002/07 unclaimed, doing 7 archived. Waiting for hv's or vc's next assignment."
-claims: []
+focus: "Booted; holding for vc's instructions, at hv's word. Nothing claimed or started. dc's last ST0002 step (ST0002/04 and /07 unclaimed, doing 7 archived) is 134b440, local."
+claims: [ST0003/01]
 ---
 
 # dc (dc)

@@ -17,7 +17,7 @@ title: Post-port simplifications, then 2.0.1 by one command
 
 - AC-00.1 Behaviour is preserved: every frozen golden replays unchanged, apart from a ruled divergence's, which changes in its own commit naming the ruling; check all and test all exit 0 at the thread's tip, measured in a fresh clone. -- satisfied: no (computed)
 
-### WP-01 -- Pair: how as an enum, and has_inetloc's not-read state its own (status: Not Started)
+### WP-01 -- Pair: how as an enum, and has_inetloc's not-read state its own (status: WIP)
 
 - AC-01.1 Pair.how is an enum that names the five ways once, and the JSON and the report print 2.0.0's words; has_inetloc tells not read from absent. -- satisfied: no (computed)
 
@@ -47,7 +47,7 @@ title: Post-port simplifications, then 2.0.1 by one command
 
 _(no tests in this group)_
 
-### WP-01 -- Pair: how as an enum, and has_inetloc's not-read state its own (status: Not Started)
+### WP-01 -- Pair: how as an enum, and has_inetloc's not-read state its own (status: WIP)
 
 _(no tests in this group)_
 
