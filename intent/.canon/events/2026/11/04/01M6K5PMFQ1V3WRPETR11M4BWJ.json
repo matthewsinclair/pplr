@@ -1,0 +1,16 @@
+{
+  "id": "01M6K5PMFQ1V3WRPETR11M4BWJ",
+  "ts": "2026-11-04T11:39:25.047Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 12,
+    "text": "Molt 1.4.2 by bin/devbin release (decision 30). On ~/Devel/prj/Molt main, unpushed: 450affc (issue 0087, Molt's move onto devbin release: release and formula enabled; gates check all, test all as suite (bash 5) then bash32 (tools/test-bash32, /bin/bash 3.2), and doctor; tests.yml started by candidate/**, macOS included; object local; after bin/devbin formula publish; tools/formula and test/formula.bats gone; CHANGELOG [1.4.2] - unreleased), on bf441ba (v1.4.1, tagged and pushed, formula unpublished). vc measured e07c199 green (check all, doctor, both passes 644 of 644), and 450affc equals it outside issue 0087's records. pplr-dc's dry run in Molt's checkout passes (11:26Z), only the confirm not reached. Next: hv runs bin/devbin release v1.4.2 in ~/Devel/prj/Molt once GitHub's incident (Git Operations and Actions degraded since about 10:38Z) clears, in a slot from vc. Then the molt run on rhadamanth, gyges and kovacs (todo 14). For 1.4.3: tests.yml's tag trigger goes, as pplr's, and ISSUE:0003's step 2 (todo 15). pplr-dc's banked branches go once the sleeves have run."
+  }
+}

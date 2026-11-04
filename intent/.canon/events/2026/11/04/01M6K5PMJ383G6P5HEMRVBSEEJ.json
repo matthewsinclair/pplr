@@ -1,0 +1,15 @@
+{
+  "id": "01M6K5PMJ383G6P5HEMRVBSEEJ",
+  "ts": "2026-11-04T11:39:25.123Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "devbin 0.1.20, hv 2026-11-04: the formula line-length fix (finish_ruby's one-line manifest header, 131 columns for cldr against brew style's 118) plus everything on Devbin's main since v0.1.19, 0320 included (directive 13's batch); the 19 open issues ride later releases. devbin-dc builds under pplr-vc (hv: 'ping pplr-vc for instructions'): issue, fix, a red-then-green test with no magic number, brew style and audit --strict on pplr's, cldr's and ccusage's renders (a trusted scratch tap is hv's call), critic, gates in slots from vc. devbin-vc validates under devbin's rules. hv cuts once GitHub's incident clears. Then devbin-vc's fleet sweep vendors 0.1.20 into pplr, cldr and ccusage (after Molt 1.4.2's cut), hv republishes the three taps' formulae, and homebrew-cldr's and homebrew-ccusage's CI exceptions go (Ccusage's hold 3)."
+  }
+}
