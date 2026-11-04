@@ -35,7 +35,7 @@ The candidates. Each one preserves behaviour unless it says otherwise:
 | WP-03 | One macOS gate for every command that needs a macOS service                | S    | Done        |
 | WP-04 | One walker for grep, links and rename, or the record of why not            | S    | Done        |
 | WP-05 | One picture rule for the engine, pplr pictures and the index (hv's ruling) | S    | Not Started |
-| WP-06 | pplr 2.0.1 by one command                                                  | S    | Not Started |
+| WP-06 | pplr 2.0.1 by one command                                                  | S    | WIP         |
 
 ## Acceptance
 

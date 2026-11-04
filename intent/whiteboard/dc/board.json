@@ -8,7 +8,9 @@
     "heartbeat_at": "2026-11-04T05:52:45.082Z",
     "status": "active",
     "focus": "ST0003: WP01 to WP03 landed and done (e61e0ae, 1f710df, 90919e6). WP04's rule table is in its body (53fd081), with vc for its word before any walker code. Then WP05, then WP06.",
-    "claims": [],
+    "claims": [
+      "ST0003/06"
+    ],
     "recorded_at": "2026-11-02T07:20:46.074Z",
     "migrated_at": "2026-11-02T07:20:46.074Z"
   },

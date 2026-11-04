@@ -6,7 +6,7 @@ session_id: 2520675d-7af0-457e-8102-d526fbf8f2fc
 heartbeat_at: 2026-11-04 05:52Z
 status: active
 focus: "ST0003: WP01 to WP03 landed and done (e61e0ae, 1f710df, 90919e6). WP04's rule table is in its body (53fd081), with vc for its word before any walker code. Then WP05, then WP06."
-claims: []
+claims: [ST0003/06]
 ---
 
 # dc (dc)

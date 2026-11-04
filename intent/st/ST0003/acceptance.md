@@ -37,7 +37,7 @@ title: Post-port simplifications, then 2.0.1 by one command
 
 - AC-05.1 The engine, pplr pictures and the index choose a person's picture by one rule, and CHANGELOG's divergences name it. -- satisfied: no (computed)
 
-### WP-06 -- pplr 2.0.1 by one command (status: Not Started)
+### WP-06 -- pplr 2.0.1 by one command (status: WIP)
 
 - AC-06.1 (non-test) pplr 2.0.1 is released by bin/devbin release v2.0.1 alone: the signed and notarised asset attached, the formula published to the tap, and brew upgrade pplr reading 2.0.1. -- satisfied: no
 
@@ -67,7 +67,7 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-06 -- pplr 2.0.1 by one command (status: Not Started)
+### WP-06 -- pplr 2.0.1 by one command (status: WIP)
 
 _(no tests in this group)_
 
