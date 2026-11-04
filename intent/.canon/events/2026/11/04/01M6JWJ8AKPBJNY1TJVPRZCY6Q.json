@@ -1,0 +1,16 @@
+{
+  "id": "01M6JWJ8AKPBJNY1TJVPRZCY6Q",
+  "ts": "2026-11-04T08:59:44.339Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 6,
+    "text": "After hv's compact, at hv's word via vc, under Molt's own rules (its AGENTS.md, CLAUDE.md and usage-rules.md read first), with an Intent issue in Molt closed by the commit, devbin gates in a fresh Molt clone in a slot from vc, no Molt board, every commit by path on Molt's main, unpushed, and each hash to vc. (1) Rewrite Molt's pplr liberator (~/Devel/prj/Molt/liberators/pplr.sh) in liberators/cldr.sh's Homebrew shape: molt_brew_install matthewsinclair/pplr/pplr; check and verify through molt_brew_faults that brew's pplr is what PATH runs; no ~/.local/bin link and no upgrade hook. The install removes the old checkout link (MOLT_LOCAL_BIN/pplr into a Pplr checkout's bin/pplr), and check reports one. MOLT_PPLR_HOME goes if nothing else reads it. Rewrite test/liberators/pplr.bats and every Molt doc on the pplr liberator; CHANGELOG gets ## [1.4.1] - unreleased. (2) Then Molt's release commit by its documented hand cut (Molt's intent/llm/ARCHITECTURE.md line 34), as d0a4518 made 1.4.0's: VERSION 1.4.1, CHANGELOG's Unreleased section closed as 1.4.1 and dated the day it lands, message Release v1.4.1. hv then tags, pushes, reads CI on the tag and runs tools/formula publish. hv's goal: molt upgrade --self && molt upgrade && molt maintain clean on rhadamanth, gyges and kovacs."
+  }
+}

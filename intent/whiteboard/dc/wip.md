@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: 2520675d-7af0-457e-8102-d526fbf8f2fc
-heartbeat_at: 2026-11-04 08:43Z
+heartbeat_at: 2026-11-04 08:59Z
 status: active
-focus: "Nothing in hand. ST0003's six packages are done: WP06 closed on pplr 2.0.1 released (v2.0.1 at 733e127, tap bf5b108) and brew's pplr reading 2.0.1. vc runs st done ST0003."
+focus: "Ready for hv's compact. pplr's views off disk (d100637), doc pass (7be2aef) and 2.0.2's notes (eca6ed1) landed, each reviewed by vc. Next after the compact: todo 6, Molt's pplr liberator in brew's shape, then Molt's 1.4.1 release commit by its hand cut."
 claims: []
 ---
 
@@ -17,7 +17,7 @@ _(none)_
 
 ## TODO
 
-- After hv's compact, at hv's word via vc: rewrite Molt's pplr liberator (~/Devel/prj/Molt/liberators/pplr.sh) in liberators/cldr.sh's Homebrew shape (molt_brew_install matthewsinclair/pplr/pplr; check and verify via molt_brew_faults that brew's pplr is what PATH runs; no ~/.local/bin link, no upgrade hook; install removes the old checkout link, check reports one), drop MOLT_PPLR_HOME if unread, rewrite test/liberators/pplr.bats, update Molt's docs, CHANGELOG 1.4.1 unreleased. Under Molt's own rules (AGENTS.md, CLAUDE.md, usage-rules.md read first), an Intent issue in Molt closed by the commit, devbin gates in a fresh Molt clone in a slot from vc, no Molt board, commit by path unpushed, each hash to vc. hv's goal: molt upgrade --self && molt upgrade && molt maintain clean on rhadamanth, gyges and kovacs.
+- After hv's compact, at hv's word via vc, under Molt's own rules (its AGENTS.md, CLAUDE.md and usage-rules.md read first), with an Intent issue in Molt closed by the commit, devbin gates in a fresh Molt clone in a slot from vc, no Molt board, every commit by path on Molt's main, unpushed, and each hash to vc. (1) Rewrite Molt's pplr liberator (~/Devel/prj/Molt/liberators/pplr.sh) in liberators/cldr.sh's Homebrew shape: molt_brew_install matthewsinclair/pplr/pplr; check and verify through molt_brew_faults that brew's pplr is what PATH runs; no ~/.local/bin link and no upgrade hook. The install removes the old checkout link (MOLT_LOCAL_BIN/pplr into a Pplr checkout's bin/pplr), and check reports one. MOLT_PPLR_HOME goes if nothing else reads it. Rewrite test/liberators/pplr.bats and every Molt doc on the pplr liberator; CHANGELOG gets ## [1.4.1] - unreleased. (2) Then Molt's release commit by its documented hand cut (Molt's intent/llm/ARCHITECTURE.md line 34), as d0a4518 made 1.4.0's: VERSION 1.4.1, CHANGELOG's Unreleased section closed as 1.4.1 and dated the day it lands, message Release v1.4.1. hv then tags, pushes, reads CI on the tag and runs tools/formula publish. hv's goal: molt upgrade --self && molt upgrade && molt maintain clean on rhadamanth, gyges and kovacs. (edited)
 
 ## Holds
 
