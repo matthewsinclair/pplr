@@ -33,8 +33,9 @@ PFIC holds across the crate. The rules are pure functions:
 
 The I/O sits at the edges:
 
-- `fs.rs`, the one file reader and writer;
-- `tree.rs`, the walks;
+- `fs.rs`, the one file reader and writer, and the one walk down a folder;
+- `tree.rs`, the People tree: its people and their pictures;
+- `tools.rs`, the tools pplr runs, and the one macOS gate;
 - `contacts/`, the stores;
 - `mail.rs`, Mail's SQLite;
 - the command modules, which coordinate: parse, call, render.
@@ -42,10 +43,12 @@ The I/O sits at the edges:
 A library function returns its error to the coordinator and never prints it (No Silent Errors).
 
 - **One About reader** (`fs.rs`; a3ab0fb, vc decision 10). `read_text` decodes lossily, for the reads, so an About that is not UTF-8 keeps its header, as the shell's byte-wise reads did. `read_exact` refuses a file that is not UTF-8, for every command that writes the About back (`sync --pull`, `rename`, `tags render`, `pictures`), so pplr never rewrites a byte it could not decode. A file that is missing is `None`. Any other failure names the file. Every write goes through a temporary file beside the target (`write_atomic`), so a reader never sees half a file.
+- **One walk** (`fs::walk`; d2f432f). grep, links and rename walk through it, each keeping its own order, dot names and what it keeps in the visit it passes. The walk enters a real folder alone, never a symlink to one, and names a folder it cannot read on stderr, carrying on: the one library function that prints, since that folder is a warning to carry on past, not an error to return. Undo it and the walks drift apart again, each with its own silent failure.
+- **One picture rule** (`tree::picture`; 2dab7ed). A person's picture is the first file in `About/`, by name, ending `(Picture).jpg`, `.png` or `.jpeg`, for the engine, `pplr pictures` and the index alike.
 
 ## Byte for byte with the legacy
 
-The People tree is live, synced and versioned, so a format drift would rewrite hundreds of files on the first run (D4). Every file the binary writes under `PPLR_DATA` matches what the shell version wrote for the same input. The proof is the goldens in `tests/golden/cases/`, one case per scenario, captured from the legacy code over a synthetic tree, which `tests/cli.rs` replays against the binary: stdout, stderr, the exit code and the resulting tree. The goldens are frozen as the legacy's record, and a golden changes only in the commit of a ruled divergence, which names the ruling. The divergences are listed in the CHANGELOG's 2.0.0 section.
+The People tree is live, synced and versioned, so a format drift would rewrite hundreds of files on the first run (D4). Every file the binary writes under `PPLR_DATA` matches what the shell version wrote for the same input. The proof is the goldens in `tests/golden/cases/`, one case per scenario, captured from the legacy code over a synthetic tree, which `tests/cli.rs` replays against the binary: stdout, stderr, the exit code and the resulting tree. The goldens are frozen as the legacy's record, and a golden changes only in the commit of a ruled divergence, which names the ruling. The divergences are listed in the CHANGELOG, each in its release's section.
 
 That is why the writers are hand-written rather than a library's defaults:
 
@@ -84,7 +87,7 @@ pplr follows devbin's dev/opt/brew contract (T1 to T10, ST0002 `install-release.
 
 ## Platforms
 
-macOS is the target. Linux builds, tests and runs everything except what needs a macOS service (D9): the live Contacts store, `handler`, the Finder icon commands (through `fileicon`), `open`, `linkedin` and `cp` without `-o`. Each of those exits 1, naming why, rather than half-working. CI runs the cargo gates and the bats suite on both.
+macOS is the target. Linux builds, tests and runs everything except what needs a macOS service (D9): the live Contacts store, `handler`, the Finder icon commands (through `fileicon`), `open`, `linkedin` and `cp` without `-o`. Each refuses through one gate, `tools::macos_only` (90919e6), exiting 1 with its own message, rather than half-working. CI runs the cargo gates and the bats suite on both.
 
 ## Tests and gates
 

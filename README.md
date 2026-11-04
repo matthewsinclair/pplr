@@ -84,7 +84,7 @@ People/                                   # $PPLR_DATA
   _out/                                   # generated workbooks (pplr sync --plan)
 ```
 
-Every walk of the tree skips a folder whose name starts with `_` or `.`, so pplr's own folders never read as people. The tree's `_pplr/templates/person` and `_pplr/icons`, when present, override the template and icons inside the binary.
+pplr's own folders start with `_` or `.`, and the people commands and the index skip such a folder at the top of the tree, so it never reads as a person; `pplr grep` searches the `_` ones too. `pplr grep`, `pplr links` and `pplr rename` name each folder they cannot read on stderr, and carry on. The tree's `_pplr/templates/person` and `_pplr/icons`, when present, override the template and icons inside the binary.
 
 ## Commands
 
@@ -192,7 +192,7 @@ pplr rename "Grifiths, Glen" "Griffiths, Glen" --refs ~/Dropbox/Writing/Journal
 
 #### `pplr pictures [--dry-run] ["Surname, First"]...`
 
-Show each person's photo at the top of their About page: an `<img>` line under the title, floated right, pointing at `About/<First Surname> (Picture).jpg` (or `.jpeg`, or `.png`). It is idempotent: run it again after adding people or pictures. People with no picture get no line. `PPLR_PICTURE_WIDTH` sets the width (default 160).
+Show each person's photo at the top of their About page: an `<img>` line under the title, floated right, pointing at their picture: the first file in `About/`, by name, ending `(Picture).jpg`, `(Picture).png` or `(Picture).jpeg`, the one every command takes. It is idempotent: run it again after adding people or pictures. People with no picture get no line. `PPLR_PICTURE_WIDTH` sets the width (default 160).
 
 #### `pplr count`
 
@@ -408,7 +408,7 @@ A number saved in Contacts without its country code is read as UK, so an Austral
 
 #### `pplr sync --photos [--apply] [--limit N]`
 
-Give each linked card that has no photo at all the person's pplr picture (`About/<First Surname> (Picture).jpg`). A card that already has a photo is never touched. A dry run unless `--apply`, with a `.vcf` backup first. Photos set by script are stored as the card's thumbnail, which is what Contacts shows.
+Give each linked card that has no photo at all the person's pplr picture, the one `pplr pictures` shows. A card that already has a photo is never touched. A dry run unless `--apply`, with a `.vcf` backup first. Photos set by script are stored as the card's thumbnail, which is what Contacts shows.
 
 #### `pplr sync --link [options]`
 

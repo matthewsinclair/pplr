@@ -31,7 +31,7 @@ pplr pictures "Smith, John"                              # their photo at the to
 - Each person's tags are in `About/tags.yaml`, a list under `tags:`.
   - A bare word is a hand tag: yours, and never rewritten.
   - `{tag: founder, source: auto}` and `{tag: mentor, source: inferred, evidence: ...}` come from a reviewed list through `pplr tags apply`, which keeps the hand tags already there. An inferred tag must be a relationship tag.
-- Every tag is one word of lowercase letters and digits, and must be in `_pplr/vocabulary.yaml`. The vocabulary gives each tag its facet (role, function, sector, org, relationship, place or cadence), and its `also` lists and `split` map name the old words it folds in.
+- Every tag is one word of lowercase letters and digits, and must be in `_pplr/vocabulary.yaml`, so add a new tag there first. The vocabulary gives each tag its facet (role, function, sector, org, relationship, place or cadence), and its `also` lists and `split` map name the old words it folds in.
 - The cadence tags (eg `3month`) set how often to get in touch: see Contact cadence.
 
 ```bash
@@ -97,10 +97,7 @@ pplr doctor                         # the tree, its indexes, the settings and th
 
 ## Anti-patterns to Avoid
 
-- NEVER move or rename a person's folder by hand: use `pplr rename`.
-- NEVER start a folder's name with `_` or `.` unless pplr owns it (`_pplr/`, `_tags/`, `.index/`): every walk of the tree skips them.
-- NEVER mix the name orders: `<first> <surname>` for the two-argument commands, `"Surname, First"` for the rest.
-- NEVER put a tag in `tags.yaml` that the vocabulary lacks: add it to `_pplr/vocabulary.yaml` first.
+- NEVER start a folder's name with `_` or `.` unless pplr owns it (`_pplr/`, `_tags/`, `.index/`): the people commands and the index skip such a folder at the top of the tree.
 - NEVER store secrets (passwords, keys) in the tree.
 
 ## Integration Notes
