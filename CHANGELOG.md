@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.1] - unreleased
 
+The same pplr, simpler inside: one directory walk, one macOS gate, one picture rule, and the review workbook filled by column name. What changes for a reader of its output is below.
+
 ### Changed
 
 - Where 2.0.1 deliberately differs from 2.0.0:
