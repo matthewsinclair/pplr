@@ -21,11 +21,11 @@ title: Post-port simplifications, then 2.0.1 by one command
 
 - AC-01.1 Pair.how is an enum that names the five ways once, and the JSON and the report print 2.0.0's words; has_inetloc tells not read from absent. -- satisfied: yes (computed)
 
-### WP-02 -- workbook::write fills Merged by header, as the reader and the styling do (status: WIP)
+### WP-02 -- workbook::write fills Merged by header, as the reader and the styling do (status: Done)
 
-- AC-02.1 workbook::write places each cell of the sheets the reader reads, Merged and Contacts, by its column's header, as the reader and the styling do, and a written workbook reads back as at 2.0.0. -- satisfied: no (computed)
+- AC-02.1 workbook::write places each cell of the sheets the reader reads, Merged and Contacts, by its column's header, as the reader and the styling do, and a written workbook reads back as at 2.0.0. -- satisfied: yes (computed)
 
-### WP-03 -- One macOS gate for every command that needs a macOS service (status: Not Started)
+### WP-03 -- One macOS gate for every command that needs a macOS service (status: WIP)
 
 - AC-03.1 One helper gates every command that needs a macOS service, and each refusal keeps 2.0.0's message and exit code. -- satisfied: no (computed)
 
@@ -51,11 +51,11 @@ _(no tests in this group)_
 
 - AT-01.1 `src/sync.rs` -- covers AC-01.1 -- status: green -- sync::tests::each_way_has_its_word_and_an_inetloc_not_read_is_not_absent: five people, one matched each of the five ways, the JSON's (person, how, hasInetloc) rows against 2.0.0's words; matches() leaves every .inetloc None, check() reads a written .inetloc as Some(true) and the others as Some(false), and hasInetloc reads false for not read and absent alike; red at two mutants of b335c08 in slot 01M6JFTPZQKGNGPP0YDMJXYSGE: f3c8b2c (as_str gives Phone) exit 101, the JSON row for P/Phone, Pat reading Phone, and 9121e93 (matches() sets Some(false)) exit 101, matches() read an .inetloc; green at b335c08 (on main as e61e0ae) in the same slot: check all exit 0, test all exit 0 (cargo lib 108 passed 1 ignored, cli 39 passed 1 ignored with the golden replay, bats 106 ok 0 not ok 1 skip)
 
-### WP-02 -- workbook::write fills Merged by header, as the reader and the styling do (status: WIP)
+### WP-02 -- workbook::write fills Merged by header, as the reader and the styling do (status: Done)
 
-_(no tests in this group)_
+- AT-02.1 `src/workbook.rs` -- covers AC-02.1 -- status: green -- workbook::tests::each_cell_is_written_under_its_header_whatever_the_table_order: Merged and Contacts written through sheet() with both column tables reversed; each cell read back under its own header, and the decision and its card through decisions(); red at mutant 2e16260 of 0bf1482 (by_header fills by position) in slot 01M6JGP5MNCGNGF5E6Z33RWT5N: exit 101, decisions() refusing BadDecision for Other candidates of Jon; green at 0bf1482 (on main as 1f710df) in the same slot: check all exit 0, test all exit 0 (cargo lib 110 passed 1 ignored, cli 39 passed 1 ignored with the golden replay, bats 106 ok 0 not ok 1 skip); sync --plan on the golden fixture against brew's 2.0.0: the same 13 zip parts, only docProps/core.xml's write stamps differ, xlsx-cells the same 364 lines
 
-### WP-03 -- One macOS gate for every command that needs a macOS service (status: Not Started)
+### WP-03 -- One macOS gate for every command that needs a macOS service (status: WIP)
 
 _(no tests in this group)_
 

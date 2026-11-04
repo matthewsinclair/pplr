@@ -23,7 +23,7 @@
       "seq": 2,
       "title": "workbook::write fills Merged by header, as the reader and the styling do",
       "scope": "S",
-      "status": "wip",
+      "status": "done",
       "objective": "workbook::write fills the Merged and Contacts sheets by column header, through the column table the reader and the styling use, so a reordered table cannot misfile a cell; the written workbook is 2.0.0's, apart from core.xml's write stamp (AC-02.1).",
       "body": "",
       "preamble": ""
@@ -32,7 +32,7 @@
       "seq": 3,
       "title": "One macOS gate for every command that needs a macOS service",
       "scope": "S",
-      "status": "not-started",
+      "status": "wip",
       "objective": "One helper gates every command that needs a macOS service (contacts, handler, icons and open), and each refusal keeps 2.0.0's message and exit code (AC-03.1).",
       "body": "",
       "preamble": ""
@@ -133,6 +133,16 @@
       ],
       "status": "green",
       "note": "sync::tests::each_way_has_its_word_and_an_inetloc_not_read_is_not_absent: five people, one matched each of the five ways, the JSON's (person, how, hasInetloc) rows against 2.0.0's words; matches() leaves every .inetloc None, check() reads a written .inetloc as Some(true) and the others as Some(false), and hasInetloc reads false for not read and absent alike; red at two mutants of b335c08 in slot 01M6JFTPZQKGNGPP0YDMJXYSGE: f3c8b2c (as_str gives Phone) exit 101, the JSON row for P/Phone, Pat reading Phone, and 9121e93 (matches() sets Some(false)) exit 101, matches() read an .inetloc; green at b335c08 (on main as e61e0ae) in the same slot: check all exit 0, test all exit 0 (cargo lib 108 passed 1 ignored, cli 39 passed 1 ignored with the golden replay, bats 106 ok 0 not ok 1 skip)"
+    },
+    {
+      "id": "AT-02.1",
+      "kind": "test",
+      "file": "src/workbook.rs",
+      "covers": [
+        "AC-02.1"
+      ],
+      "status": "green",
+      "note": "workbook::tests::each_cell_is_written_under_its_header_whatever_the_table_order: Merged and Contacts written through sheet() with both column tables reversed; each cell read back under its own header, and the decision and its card through decisions(); red at mutant 2e16260 of 0bf1482 (by_header fills by position) in slot 01M6JGP5MNCGNGF5E6Z33RWT5N: exit 101, decisions() refusing BadDecision for Other candidates of Jon; green at 0bf1482 (on main as 1f710df) in the same slot: check all exit 0, test all exit 0 (cargo lib 110 passed 1 ignored, cli 39 passed 1 ignored with the golden replay, bats 106 ok 0 not ok 1 skip); sync --plan on the golden fixture against brew's 2.0.0: the same 13 zip parts, only docProps/core.xml's write stamps differ, xlsx-cells the same 364 lines"
     }
   ]
 }
