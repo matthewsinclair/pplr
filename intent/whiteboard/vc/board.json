@@ -536,10 +536,10 @@
       "node": "vc",
       "kind": "todo",
       "seq": 15,
-      "text": "Ccusage, hv 2026-11-04 ('fix all of them now'). Validated and unpushed: ccusage-dc's fix-all (94dbcf3, 6a102b3, 302a721, 7477ec6, fc4c217) and ccusage-vc's a90cb5e; main is 12 ahead of both remotes and clean. hv's push: git -C ~/Devel/prj/Ccusage push local main && git -C ~/Devel/prj/Ccusage push upstream main. ISSUE:0005 closed as overtaken (hv). ISSUE:0003 is the one open issue: step 1 is hv's (claude_config_dir on, then ccusage use engineering01; not run at 11:06Z); step 2 is Molt 1.4.3 (todo 17); step 3, restart every session, is ccusage-vc's slot 01M6K31TH20532K7NYN48GJE86, held until steps 1 and 2 are live, then granted with hv's go; steps 4 and 5 (Keychain deletes) each wait on hv's OK. ccusage-vc's hold 3 waits on devbin 0.1.20 (todo 16).",
+      "text": "Ccusage, hv 2026-11-04 ('fix all of them now'). Pushed 17:10Z (Ccusage b824a5b, CI watched). ISSUE:0005 closed as overtaken (hv). ISSUE:0003 is the one open issue: step 1 is hv's (claude_config_dir on, then ccusage use engineering01); step 2 is Molt 1.4.3's 0088, by Molt's nodes (vc decision 31), and ccusage-vc reads its design before READY; step 3, restart every session, is ccusage-vc's slot 01M6K31TH20532K7NYN48GJE86, held until steps 1 and 2 are live, then granted with hv's go; steps 4 and 5 (Keychain deletes) each wait on hv's OK. ccusage-vc's hold 3 waits on devbin 0.1.20 (todo 16).",
       "state": "live",
       "recorded_at": "2026-11-04T10:54:20.375Z",
-      "edited_at": "2026-11-04T12:21:15.260Z"
+      "edited_at": "2026-11-04T17:13:59.053Z"
     },
     {
       "node": "vc",
@@ -555,8 +555,17 @@
       "kind": "todo",
       "seq": 17,
       "text": "Molt 1.4.3 (pplr-dc, from 2026-11-04 12:20Z): Molt 1.4.2 is out (hv's bin/devbin release v1.4.2: 275ac8c, gates and candidate CI green, formula at homebrew-molt 4e7e77d). 1.4.3 carries Ccusage ISSUE:0003's step 2 (lib/env.sh publishes CLAUDE_SECURESTORAGE_CONFIG_DIR from ccusage dir, evaluated at each shell start and each login, unset never empty, ccusage by absolute path in the LaunchAgent, ccusage-vc's acceptance) and tests.yml's tag trigger gone, as pplr's. pplr-dc proposes how the env liberator learns of ccusage before building. Same done-bar as 0087, vc reviews, hv cuts with bin/devbin release. pplr-dc's banked branches (issue-0086, issue-0086-red, release-1.4.1, issue-0087) go once the sleeves have run 1.4.2.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-04T17:13:58.881Z",
       "recorded_at": "2026-11-04T12:18:57.902Z"
+    },
+    {
+      "node": "vc",
+      "kind": "decision",
+      "seq": 31,
+      "text": "hv 2026-11-04 ~17:15Z asked pplr-vc and molt-vc to settle who does what; agreed with molt-vc: Molt 1.4.3 (Molt 0088 Ccusage ISSUE:0003 step 2, 0089 tests.yml tag trigger, 0090 docs, plus cc's hold 16 retired-template deletion) is Molt's own nodes': molt-dc builds, molt-vc reviews, merges and keeps records, hv cuts v1.4.3 with bin/devbin release. pplr-dc stands down from Molt; its banked Molt branches and scratch clones go (molt-vc's call). pplr-vc keeps the estate slot desk (molt-dc books every bats or heavy run with it), ISSUE:0003's rollout with ccusage-vc (restart slot 01M6K31TH20532K7NYN48GJE86 held until step 1 and 1.4.3 are live, then hv's go) and devbin 0.1.20. 1.4.3's cut does not wait for devbin 0.1.20 (homebrew-molt's longest line is 89 columns, no CI). Open, hv's: which liberator gives 0088's command pair (claude liberator, molt-dc's design B, or a ccusage liberator in cldr's Homebrew shape); molt-vc is asking hv. kovacs is reached through kovacs-sysadm while it runs (Molt vc decision 40).",
+      "state": "live",
+      "recorded_at": "2026-11-04T17:13:58.907Z"
     }
   ],
   "sent": [
@@ -942,6 +951,13 @@
       "fyi": true,
       "recorded_at": "2026-11-03T17:35:56.151Z",
       "archived_at": "2026-11-04T09:02:36.796Z"
+    },
+    {
+      "id": "01M6KRVDSZB36FCHJT57JGCEK3",
+      "recipient": "dc",
+      "body": "pplr-vc: hv had pplr-vc and molt-vc settle Molt 1.4.3 (vc decision 31). Molt's own nodes do it: molt-dc builds 0088 to 0090, molt-vc reviews and merges, hv cuts. You stand down from Molt: archive your todo 8 (Molt 1.4.3), and first send molt-dc anything in it that molt-dc's 0088 issue does not already carry (your findings on the env liberator's coupling and ccusage-vc's five points), cc molt-vc. Your todo 7 can go now, on molt-vc's call: delete the four banked Molt branches by name (issue-0086, issue-0086-red, release-1.4.1, issue-0087), then your scratch clones. Then fold and hold for hv.",
+      "fyi": false,
+      "recorded_at": "2026-11-04T17:14:04.991Z"
     }
   ],
   "handled": [

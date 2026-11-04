@@ -1,0 +1,16 @@
+{
+  "id": "01M6KRV80DPGZ7TA75WA9WG7H7",
+  "ts": "2026-11-04T17:13:59.053Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 15,
+    "text": "Ccusage, hv 2026-11-04 ('fix all of them now'). Pushed 17:10Z (Ccusage b824a5b, CI watched). ISSUE:0005 closed as overtaken (hv). ISSUE:0003 is the one open issue: step 1 is hv's (claude_config_dir on, then ccusage use engineering01); step 2 is Molt 1.4.3's 0088, by Molt's nodes (vc decision 31), and ccusage-vc reads its design before READY; step 3, restart every session, is ccusage-vc's slot 01M6K31TH20532K7NYN48GJE86, held until steps 1 and 2 are live, then granted with hv's go; steps 4 and 5 (Keychain deletes) each wait on hv's OK. ccusage-vc's hold 3 waits on devbin 0.1.20 (todo 16)."
+  }
+}
