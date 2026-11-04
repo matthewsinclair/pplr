@@ -1283,13 +1283,17 @@ fn reindex_writes_index_json_as_jq_prints_it_and_index_md() -> Result<()> {
 
 // ST0002 WP03: the dev/opt/brew trees, the manifest, `install` and `use`.
 
+/// The crate's version, which each tree here is published and printed at: a
+/// version written by hand passes only until the release stamps the next.
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+
 /// The running test binary's own pplr, laid out as a tree at `prefix`.
 fn publish_tree(prefix: &std::path::Path, managed_by: &str, force: bool) -> Result<()> {
   let sources = [("bin/pplr", PathBuf::from(env!("CARGO_BIN_EXE_pplr")))];
   pplr::install::publish(
     &sources,
     prefix,
-    "2.0.0",
+    VERSION,
     "0123456789abcdef0123456789abcdef01234567",
     managed_by,
     force,
@@ -1390,7 +1394,7 @@ fn install_needs_a_prefix_and_runs_only_from_dev() -> Result<()> {
 /// A fake Homebrew prefix holding pplr's keg, linked as brew links it.
 fn fake_brew(sandbox: &Sandbox) -> Result<PathBuf> {
   let brew = sandbox.path("brew");
-  let keg = brew.join("Cellar/pplr/2.0.0");
+  let keg = brew.join("Cellar/pplr").join(VERSION);
   publish_tree(&keg.join("libexec"), "brew", false)?;
   fs::create_dir_all(brew.join("opt"))?;
   fs::create_dir_all(brew.join("bin"))?;
@@ -1428,7 +1432,7 @@ fn use_points_the_one_link_and_use_brew_hands_back_to_homebrew() -> Result<()> {
   let to_opt = run(pplr().args(["use", "opt"]))?;
   assert!(to_opt.status.success(), "{}", text(&to_opt.stderr));
   assert!(
-    text(&to_opt.stdout).starts_with("pplr 2.0.0 (opt, 0123456789ab)"),
+    text(&to_opt.stdout).starts_with(&format!("pplr {VERSION} (opt, 0123456789ab)")),
     "{}",
     text(&to_opt.stdout)
   );
@@ -1443,7 +1447,7 @@ fn use_points_the_one_link_and_use_brew_hands_back_to_homebrew() -> Result<()> {
   let to_brew = run(pplr().args(["use", "brew"]))?;
   assert!(to_brew.status.success(), "{}", text(&to_brew.stderr));
   assert!(
-    text(&to_brew.stdout).starts_with("pplr 2.0.0 (brew, 0123456789ab)"),
+    text(&to_brew.stdout).starts_with(&format!("pplr {VERSION} (brew, 0123456789ab)")),
     "{}",
     text(&to_brew.stdout)
   );
@@ -1937,7 +1941,7 @@ fn publish_lays_out_an_app_bundle_file_by_file_with_each_mode_kept() -> Result<(
   pplr::install::publish(
     &sources,
     &prefix,
-    "2.0.0",
+    VERSION,
     "0123456789abcdef0123456789abcdef01234567",
     "pplr",
     false,
