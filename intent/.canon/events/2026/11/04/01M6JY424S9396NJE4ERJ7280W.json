@@ -1,0 +1,16 @@
+{
+  "id": "01M6JY424S9396NJE4ERJ7280W",
+  "ts": "2026-11-04T09:26:56.409Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 12,
+    "text": "Molt 1.4.1, hv 2026-11-04. pplr-dc's fix for Molt issue 0086 (8384180 in its scratch clone molt-pplr) puts the pplr liberator in cldr.sh's Homebrew shape. A dev or opt tree that pplr use chose is info, not a fault (hv's 27 Oct rule in 0071, which stays open and deferred). Install removes only Molt's old checkout link, and the upgrade hook, pplr_repo and MOLT_PPLR_HOME are gone. vc reviewed it. At 09:26Z it is measuring in slot 01M6JXYPJVWNKJEB4HZ5200V72: pplr.bats red at 5c7aa30 and green at 8384180, then the whole suite under bash 5 and /bin/bash 3.2. Next: it lands on Molt main by path. Then the 'Release v1.4.1' commit, VERSION 1.4.1 and CHANGELOG's Unreleased closed as 1.4.1 with the clock's date, shipping 0083 to 0085 too (hv's yes). Then vc verifies Molt's tip in a fresh clone. Then hv's hand cut in ~/Devel/prj/Molt: git tag -a v1.4.1 -m 'v1.4.1: <issues, as v1.4.0's message lists them>' at the release commit; git push upstream main v1.4.1 && git push local main v1.4.1; tests.yml's run on the tag green; tools/formula publish. Then molt upgrade --self && molt upgrade && molt maintain on rhadamanth, gyges and kovacs (--self brew-upgrades molt first)."
+  }
+}

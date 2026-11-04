@@ -3,9 +3,9 @@ node: vc
 name: vc
 role: vc
 session_id: 9417a4f6-ca66-4fc9-8f2e-e1c88bf255dd
-heartbeat_at: 2026-11-04 09:02Z
+heartbeat_at: 2026-11-04 09:26Z
 status: active
-focus: "Driving hv's end-to-end test (doing 3): a patch of pplr, Cldr and ccusage by bin/devbin release --patch, one after another, then Molt 1.4.1 and the molt run on rhadamanth, gyges and kovacs. vc holds slot control."
+focus: "pplr 2.0.2, Cldr 0.2.2 and ccusage 0.1.8 are out, end to end by one command each, and everything is pushed. Next, todo 12: Molt 1.4.1 (pplr-dc's fix 8384180 measuring), hv's hand cut, then the molt run on rhadamanth, gyges and kovacs."
 claims: []
 ---
 
@@ -13,12 +13,13 @@ claims: []
 
 ## DOING
 
-- hv's end-to-end test, 2026-11-04: bin/devbin release --patch in pplr (2.0.2), Cldr (0.2.2) and ccusage (0.1.8), one after another, then Molt 1.4.1 (todo 12) and molt upgrade --self && molt upgrade && molt maintain on rhadamanth, gyges and kovacs. Before each go: the tip verified in a fresh clone with the stamped run (vc's scratchpad verify-main.zsh <tag> for pplr; cldr-vc and ccusage-vc for theirs); a dry run in the shared checkout itself (porcelain empty, and only the two NOT REACHED lines: a third names dirt the stamp would refuse); that project's nodes frozen (no wb verb or pickup there); a slot booked for hv. After each: hv's brew upgrade and --version, the slot released, the freeze lifted, hv pushes the record commits. At 09:02Z: pplr 4b521af verifying in slot 01M6JWM8AJ4VEQT4DVNGCGDSMA; ccusage 27709bc verified by ccusage-vc, which is frozen, while ccusage-dc commits its dirty board and freezes; Cldr waits for cldr-dc's 0.2.2 notes (with cldr-vc's R1 and R2) and its board commit, then cldr-vc's stamped verify. pplr-dc does Molt's liberator after hv's compact. (edited)
+_(none)_
 
 ## TODO
 
 - After the three cuts (vc decision 29, item 4): pplr's, Cldr's and ccusage's signers move to one notarytool keychain profile (--keychain-profile), which hv creates once with xcrun notarytool store-credentials, and which an App Store Connect API key can back later with no code change. The same commit takes the diagnostics the reviews left in all three: fact()'s failures lost under local and inside a command's arguments (cldr-vc's nit (b)), and require_identity reading a failure of security itself (eg a locked keychain) as 'not in this keychain'. Each fails closed, under a misleading message, and cannot ship a wrong release. (edited)
-- Molt 1.4.1, hv 2026-11-04: pplr-dc rewrites Molt's pplr liberator in cldr.sh's Homebrew shape (pplr 2.x has no bin/pplr, so molt upgrade fails on rhadamanth and gyges), then prepares the 'Release v1.4.1' commit. vc verifies it, and hv cuts by Molt's documented hand steps (tag, push, CI on the tag, tools/formula publish). Then hv runs molt upgrade --self && molt upgrade && molt maintain on rhadamanth, gyges and kovacs. Moving Molt onto devbin's one-command release is a later job, for Molt's own nodes.
+- Molt 1.4.1, hv 2026-11-04. pplr-dc's fix for Molt issue 0086 (8384180 in its scratch clone molt-pplr) puts the pplr liberator in cldr.sh's Homebrew shape. A dev or opt tree that pplr use chose is info, not a fault (hv's 27 Oct rule in 0071, which stays open and deferred). Install removes only Molt's old checkout link, and the upgrade hook, pplr_repo and MOLT_PPLR_HOME are gone. vc reviewed it. At 09:26Z it is measuring in slot 01M6JXYPJVWNKJEB4HZ5200V72: pplr.bats red at 5c7aa30 and green at 8384180, then the whole suite under bash 5 and /bin/bash 3.2. Next: it lands on Molt main by path. Then the 'Release v1.4.1' commit, VERSION 1.4.1 and CHANGELOG's Unreleased closed as 1.4.1 with the clock's date, shipping 0083 to 0085 too (hv's yes). Then vc verifies Molt's tip in a fresh clone. Then hv's hand cut in ~/Devel/prj/Molt: git tag -a v1.4.1 -m 'v1.4.1: <issues, as v1.4.0's message lists them>' at the release commit; git push upstream main v1.4.1 && git push local main v1.4.1; tests.yml's run on the tag green; tools/formula publish. Then molt upgrade --self && molt upgrade && molt maintain on rhadamanth, gyges and kovacs (--self brew-upgrades molt first). (edited)
+- For hv's call: cldr and ccusage have no version subcommand. hv typed 'cldr version' and 'ccusage version' on 2026-11-04, and both answered 'unknown command'; only pplr has one. Both answer --version. A version subcommand, and -v, in each is a small patch, so the three answer alike.
 
 ## Holds
 

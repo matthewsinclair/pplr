@@ -1,0 +1,15 @@
+{
+  "id": "01M6JY4204HA4NGP6BNE20BH61",
+  "ts": "2026-11-04T09:26:56.260Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.archive",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "doing",
+    "seq": 3
+  }
+}

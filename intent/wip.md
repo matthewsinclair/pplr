@@ -1,5 +1,5 @@
 ---
-verblock: "2026-11-04:v1.2: matts - a patch of each end to end, then Molt 1.4.1 and the molt run"
+verblock: "2026-11-04:v1.3: matts - Molt 1.4.1 and the molt run on every sleeve"
 ---
 
 # Work In Progress
@@ -8,10 +8,9 @@ DOING and TODO only; finished work lives in its commit, its closed issue or its 
 
 ## Current Focus
 
-**Release: a patch of each, end to end by one command, then Molt 1.4.1 and the molt run on every sleeve**
+**Molt 1.4.1, then the molt run on every sleeve**
 
-- hv's end-to-end test from pristine trees: `bin/devbin release --patch` in pplr (2.0.2), Cldr (0.2.2) and ccusage (0.1.8), one after another, each tip verified first in a fresh clone with the stamped test run.
-- Molt 1.4.1: its pplr liberator in the Homebrew shape (vc todo 12), cut by Molt's own hand steps; then `molt upgrade --self && molt upgrade && molt maintain` on rhadamanth, gyges and kovacs.
+- Molt 1.4.1: its pplr liberator in the Homebrew shape, with pplr's own dev or opt tree named and never faulted (vc todo 12), cut by Molt's own hand steps. Then `molt upgrade --self && molt upgrade && molt maintain` on rhadamanth, gyges and kovacs.
 - vc holds the pen and slot control. Scope rule: simpler or easier only (vc decision 2).
 
 ## Active Steel Threads
@@ -21,6 +20,7 @@ DOING and TODO only; finished work lives in its commit, its closed issue or its 
 ## Upcoming Work
 
 - The notary credentials: all three signers move to one notarytool keychain profile (`--keychain-profile`), which hv creates once, together with the signer diagnostics the reviews left (vc todo 11).
+- hv's call: a `version` subcommand for cldr and ccusage, as pplr has (vc todo 13).
 - The Linux release assets and their workflow, in a later release.
 
 ## Notes
