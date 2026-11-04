@@ -34,7 +34,7 @@ The candidates. Each one preserves behaviour unless it says otherwise:
 | WP-02 | workbook::write fills Merged by header, as the reader and the styling do   | S    | Done   |
 | WP-03 | One macOS gate for every command that needs a macOS service                | S    | Done   |
 | WP-04 | One walker for grep, links and rename, or the record of why not            | S    | Done   |
-| WP-05 | One picture rule for the engine, pplr pictures and the index (hv's ruling) | S    | WIP    |
+| WP-05 | One picture rule for the engine, pplr pictures and the index (hv's ruling) | S    | Done   |
 | WP-06 | pplr 2.0.1 by one command                                                  | S    | WIP    |
 
 ## Acceptance

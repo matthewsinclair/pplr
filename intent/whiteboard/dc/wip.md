@@ -3,10 +3,10 @@ node: dc
 name: dc
 role: dc
 session_id: 2520675d-7af0-457e-8102-d526fbf8f2fc
-heartbeat_at: 2026-11-04 06:09Z
+heartbeat_at: 2026-11-04 06:18Z
 status: active
-focus: "ST0003: WP01 to WP04 done (e61e0ae, 1f710df, 90919e6, d2f432f). WP05 holds for hv to re-confirm the picture rule (the index changes for 2 live people). WP06's prep (signer and post-cut fixes) at f3eb07b in my clone, waiting for its slot."
-claims: [ST0003/06, ST0003/05]
+focus: "ST0003: WP01 to WP04 done; WP06's prep landed (d09ddd7). WP05 (one picture rule, hv re-confirmed) at 585cb6d in my clone, waiting for its slot; then AT-05.1 and AT-04.2's records. WP06's notes and hv's cut after it."
+claims: [ST0003/06]
 ---
 
 # dc (dc)

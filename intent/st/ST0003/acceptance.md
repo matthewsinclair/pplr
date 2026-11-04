@@ -33,9 +33,9 @@ title: Post-port simplifications, then 2.0.1 by one command
 
 - AC-04.1 grep, links and rename walk through one walker that keeps each command's order, dot-name and symlink rules and names each folder it cannot read on stderr, one line each, carrying on with the exit code unchanged; or the package records why one walker is not simpler. -- satisfied: yes (computed)
 
-### WP-05 -- One picture rule for the engine, pplr pictures and the index (hv's ruling) (status: WIP)
+### WP-05 -- One picture rule for the engine, pplr pictures and the index (hv's ruling) (status: Done)
 
-- AC-05.1 The engine, pplr pictures and the index choose a person's picture by one rule, and CHANGELOG's divergences name it. -- satisfied: no (computed)
+- AC-05.1 The engine, pplr pictures and the index choose a person's picture by one rule, and CHANGELOG's divergences name it. -- satisfied: yes (computed)
 
 ### WP-06 -- pplr 2.0.1 by one command (status: WIP)
 
@@ -62,10 +62,11 @@ _(no tests in this group)_
 ### WP-04 -- One walker for grep, links and rename, or the record of why not (status: Done)
 
 - AT-04.1 `src/fs.rs` -- covers AC-04.1 -- status: green -- fs::tests::each_walk_keeps_its_commands_rules: on one tree, grep's list in name order with dot names below the top, links' with no dot name and a symlinked note kept as its file, search's with dot names, no symlink and a skip folder passed over, named_after's by prefix, a symlink too, a folder before its contents; none enters a symlinked folder; red at two mutants of d1ee974 in slot 01M6JJ8NE9K011PKR0R11S2C1B: 9054310 (the walk enters a symlinked folder) exit 101, grep's list gaining A/link-dir/b.md, and 73f0083 (no name order) exit 101, grep's list in the folder's order; green at 69b17c0, 2.0.0's own four walks with the test, exit 0; green at d1ee974 (on main as d2f432f) in the same slot: check all exit 0, test all exit 0 (cargo lib 112 passed 1 ignored, cli 39 passed 1 ignored with the golden replay, bats 107 ok 0 not ok 1 skip)
+- AT-04.2 `tests/pplr_search.bats` -- covers AC-04.1 -- status: green -- tests/pplr_search.bats, pplr grep names a folder it cannot read on stderr, and still searches the rest: a chmod 000 folder beside a person; exit 0, the person's match, and exactly pplr: cannot read <folder>: Permission denied (os error 13) on stderr; skipped under uid 0, which reads such a folder; red against brew's pplr 2.0.0 (dd6dc5b) in slot 01M6JJ8NE9K011PKR0R11S2C1B: not ok on the stderr line, exit 1; green at d1ee974 (on main as d2f432f) in the same slot, ok in test all's bats run (107 ok, 0 not ok); its id joined the test's comment in 585cb6d (on main as 2dab7ed), whose bats run in slot 01M6JKBDGVM723DT43DAE776NB was 107 ok, 0 not ok
 
-### WP-05 -- One picture rule for the engine, pplr pictures and the index (hv's ruling) (status: WIP)
+### WP-05 -- One picture rule for the engine, pplr pictures and the index (hv's ruling) (status: Done)
 
-_(no tests in this group)_
+- AT-05.1 `src/tree.rs` -- covers AC-05.1 -- status: green -- tree::tests::the_engine_pictures_and_the_index_take_one_picture: on one tree, two pictures, one named otherwise and none, the engine (tree::people), the index (index::letters) and pplr pictures (its img line) take the same file, the first picture in About/ by name; with none the index names <First Surname> (Picture).jpg, as 2.0.0 did; red at ea6ed7b, 2.0.0's pplr pictures and index with the test, in slot 01M6JKBDGVM723DT43DAE776NB: exit 101, the index naming ./L/Lovelace, Ada/About/Ada Lovelace (Picture).jpg where the engine takes A (Picture).png; green at 585cb6d (on main as 2dab7ed) in the same slot: check all exit 0, test all exit 0 (cargo lib 113 passed 1 ignored, cli 39 passed 1 ignored with the golden replay unchanged, bats 107 ok 0 not ok 1 skip)
 
 ### WP-06 -- pplr 2.0.1 by one command (status: WIP)
 

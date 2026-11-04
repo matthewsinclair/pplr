@@ -2,7 +2,7 @@
 wp_id: WP-05
 title: One picture rule for the engine, pplr pictures and the index (hv's ruling)
 scope: S
-status: WIP
+status: Done
 ---
 
 # WP-05: One picture rule for the engine, pplr pictures and the index (hv's ruling)
