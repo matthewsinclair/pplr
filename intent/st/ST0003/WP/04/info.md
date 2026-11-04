@@ -2,7 +2,7 @@
 wp_id: WP-04
 title: One walker for grep, links and rename, or the record of why not
 scope: S
-status: WIP
+status: Done
 ---
 
 # WP-04: One walker for grep, links and rename, or the record of why not

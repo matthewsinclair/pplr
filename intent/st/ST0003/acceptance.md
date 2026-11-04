@@ -29,9 +29,9 @@ title: Post-port simplifications, then 2.0.1 by one command
 
 - AC-03.1 One helper gates every command that needs a macOS service, and each refusal keeps 2.0.0's message and exit code. -- satisfied: yes (computed)
 
-### WP-04 -- One walker for grep, links and rename, or the record of why not (status: WIP)
+### WP-04 -- One walker for grep, links and rename, or the record of why not (status: Done)
 
-- AC-04.1 grep, links and rename walk through one walker that keeps each command's order, dot-name and symlink rules and names each folder it cannot read on stderr, one line each, carrying on with the exit code unchanged; or the package records why one walker is not simpler. -- satisfied: no (computed)
+- AC-04.1 grep, links and rename walk through one walker that keeps each command's order, dot-name and symlink rules and names each folder it cannot read on stderr, one line each, carrying on with the exit code unchanged; or the package records why one walker is not simpler. -- satisfied: yes (computed)
 
 ### WP-05 -- One picture rule for the engine, pplr pictures and the index (hv's ruling) (status: Not Started)
 
@@ -59,9 +59,9 @@ _(no tests in this group)_
 
 - AT-03.1 `src/tools.rs` -- covers AC-03.1 -- status: green -- tools::tests::the_gate_passes_on_macos_and_elsewhere_refuses_with_the_message_alone: tools::macos_only, the one gate, is Ok on macOS and elsewhere an Err displaying exactly the command's message, which main prints before exit 1; beside it AT-00.7 in tests/pplr_core.bats holds each gate's whole 2.0.0 stderr line and exit 1 on CI's Linux leg; red at mutant 1994dff of 34a130f (macos_only refuses on macOS too) in slot 01M6JHGVSWP34ZRH39C8VM3GMT: exit 101, Err against Ok; green at 34a130f (on main as 90919e6) in the same slot: check all exit 0, test all exit 0 (cargo lib 111 passed 1 ignored, cli 39 passed 1 ignored, bats 106 ok 0 not ok 1 skip); AT-00.7's rows proven on macOS at that mutant with its Darwin skip lifted, 1 of 1 ok; each of 2.0.0's five refusal texts verbatim once as macos_only's argument
 
-### WP-04 -- One walker for grep, links and rename, or the record of why not (status: WIP)
+### WP-04 -- One walker for grep, links and rename, or the record of why not (status: Done)
 
-_(no tests in this group)_
+- AT-04.1 `src/fs.rs` -- covers AC-04.1 -- status: green -- fs::tests::each_walk_keeps_its_commands_rules: on one tree, grep's list in name order with dot names below the top, links' with no dot name and a symlinked note kept as its file, search's with dot names, no symlink and a skip folder passed over, named_after's by prefix, a symlink too, a folder before its contents; none enters a symlinked folder; red at two mutants of d1ee974 in slot 01M6JJ8NE9K011PKR0R11S2C1B: 9054310 (the walk enters a symlinked folder) exit 101, grep's list gaining A/link-dir/b.md, and 73f0083 (no name order) exit 101, grep's list in the folder's order; green at 69b17c0, 2.0.0's own four walks with the test, exit 0; green at d1ee974 (on main as d2f432f) in the same slot: check all exit 0, test all exit 0 (cargo lib 112 passed 1 ignored, cli 39 passed 1 ignored with the golden replay, bats 107 ok 0 not ok 1 skip)
 
 ### WP-05 -- One picture rule for the engine, pplr pictures and the index (hv's ruling) (status: Not Started)
 
