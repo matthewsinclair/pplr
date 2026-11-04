@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.2] - unreleased
+
+### Fixed
+
+- The README that `pplr help --details` prints describes the walks and the picture rule as 2.0.1 built them: which folders the people commands, the index and `pplr grep` skip, the line `grep`, `links` and `rename` give for a folder they cannot read, and the one picture `pplr pictures` and `sync --photos` take.
+
 ## [2.0.1] - 2026-11-04
 
 The same pplr, simpler inside: one directory walk, one macOS gate, one picture rule, and the review workbook filled by column name. What changes for a reader of its output is below.
