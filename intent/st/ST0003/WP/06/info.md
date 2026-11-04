@@ -15,7 +15,9 @@ pplr 2.0.1 by one command (AC-06.1). Before the cut, one prep commit carries thr
 
 - The signer reads its three notary credentials by plain assignment before anything is signed, so a missing one refuses by name. ccusage-vc's F1, 2026-11-04: `bin/.devbin/cmd/macos` line 170 passes `$(secret NAME)` inside notarytool's arguments, where `die` ends only the substitution's subshell, so notarytool runs with an empty value and the failure surfaces only as "not Accepted", after signing.
 - `require_identity` captures `security find-identity`'s output before matching it, because `grep -q` under `pipe_fail` can lose to SIGPIPE and refuse an identity that is present. And pack's `tar` runs with `COPYFILE_DISABLE=1`, so no `._` entry can reach the asset. Both are cldr-vc's F6, and Cldr's signer already has them. pplr 2.0.0's tarball carries no `._` entry, so the second is a guard.
-- CHANGELOG.md gets `## [2.0.1] - unreleased`, naming WP05's divergence and the walker's stderr line if hv rules either in.
+- An empty credential refuses by name too, before anything is signed (cldr-vc's nit (a), 2026-11-04).
+- `secret()` quotes its account, `-a "$USER"`, because native zsh drops an empty word and `-a` would take `-s` as its account. And post-cut's tap pull names what it looked for on each skip branch (no brew, no tap clone), so its last line claims only what ran. Both come from critic-shell on ccusage's copies of these handlers (R1 and R2, 2026-11-04).
+- CHANGELOG.md's `## [2.0.1] - unreleased` section, which WP04 opens with the walker's divergence and to which WP05 adds the picture rule's, gets the rest of the release's notes.
 
 Then main is verified in a fresh clone (check all, test all), the boards are committed and frozen, vc holds the slot, and hv runs one command: `bin/devbin release v2.0.1`.
 
