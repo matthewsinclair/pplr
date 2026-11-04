@@ -18,6 +18,7 @@ _(none)_
 ## TODO
 
 - After the three cuts (vc decision 29, item 4): pplr's, Cldr's and ccusage's signers move to one notarytool keychain profile (--keychain-profile), which hv creates once with xcrun notarytool store-credentials, and which an App Store Connect API key can back later with no code change. The same commit takes the diagnostics the reviews left in all three: fact()'s failures lost under local and inside a command's arguments (cldr-vc's nit (b)), and require_identity reading a failure of security itself (eg a locked keychain) as 'not in this keychain'. Each fails closed, under a misleading message, and cannot ship a wrong release. (edited)
+- Molt 1.4.1, hv 2026-11-04: pplr-dc rewrites Molt's pplr liberator in cldr.sh's Homebrew shape (pplr 2.x has no bin/pplr, so molt upgrade fails on rhadamanth and gyges), then prepares the 'Release v1.4.1' commit. vc verifies it, and hv cuts by Molt's documented hand steps (tag, push, CI on the tag, tools/formula publish). Then hv runs molt upgrade --self && molt upgrade && molt maintain on rhadamanth, gyges and kovacs. Moving Molt onto devbin's one-command release is a later job, for Molt's own nodes.
 
 ## Holds
 
@@ -31,6 +32,7 @@ _(none)_
 - For hv, cldr-vc's finding 2026-11-04: Intent's generated AGENTS.md has no user block and calls intent/llm/RULES.md and ARCHITECTURE.md 'seeded empty by intent init' even once a project has written them. An agent that reads AGENTS.md alone (Codex, Cursor) misses the project's contract, including Cldr's public-repo rule against personal data. Claude Code loads it through CLAUDE.md's imports, and pplr is in the same state. The fix is Intent's, out of scope here.
 - For hv, cldr-vc's F8, 2026-11-04: devbin's formula finish_ruby writes the install manifest as one line of 131 columns (with a 40-hex commit), over brew style's 118. So a tap whose CI runs brew style or brew audit goes red at publish. Cldr's tap carries --except-cops Layout/LineLength until devbin wraps the line. pplr 2.0.0's formula has the same line, unseen because homebrew-pplr has no CI, and ccusage's tap has style and audit off for devbin's formula:424. The fix is devbin's.
 - For hv, cldr-vc's finding 2026-11-04: declaring shell makes Intent's generated AGENTS.md list 'Bats testing framework' and 'bats -r tests/', and say shell scripts are 'POSIX-compliant where practical'. In Cldr, which has no bats suite and zsh scripts by design, the command exits 1 ('Found no tests'). Cldr's intent/llm/RULES.md, imported by CLAUDE.md, says the lines do not apply, as pplr's CLAUDE.md does for its generated swift lines. The template fix is Intent's.
+- For hv, another project's: Lamplight moves to Geodica/Certificates' APPLE_APP_PASSWORD (the one Conflab's CI already uses), and then its own password is revoked.
 
 ## Decisions
 

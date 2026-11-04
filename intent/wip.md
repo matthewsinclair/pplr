@@ -1,5 +1,5 @@
 ---
-verblock: "2026-11-04:v1.1: matts - pplr 2.0.1, Cldr 0.2.1 and ccusage 0.1.7 released, one command each"
+verblock: "2026-11-04:v1.2: matts - a patch of each end to end, then Molt 1.4.1 and the molt run"
 ---
 
 # Work In Progress
@@ -8,9 +8,10 @@ DOING and TODO only; finished work lives in its commit, its closed issue or its 
 
 ## Current Focus
 
-**Release: pplr, Cldr and ccusage each release signed and notarised by one command**
+**Release: a patch of each, end to end by one command, then Molt 1.4.1 and the molt run on every sleeve**
 
-- Nothing is in progress. pplr 2.0.1 (733e127), Cldr 0.2.1 and ccusage 0.1.7 were each released by `bin/devbin release vX.Y.Z` alone on 2026-11-04 (vc decisions 28 and 29); ST0003 is done.
+- hv's end-to-end test from pristine trees: `bin/devbin release --patch` in pplr (2.0.2), Cldr (0.2.2) and ccusage (0.1.8), one after another, each tip verified first in a fresh clone with the stamped test run.
+- Molt 1.4.1: its pplr liberator in the Homebrew shape (vc todo 12), cut by Molt's own hand steps; then `molt upgrade --self && molt upgrade && molt maintain` on rhadamanth, gyges and kovacs.
 - vc holds the pen and slot control. Scope rule: simpler or easier only (vc decision 2).
 
 ## Active Steel Threads
@@ -20,7 +21,6 @@ DOING and TODO only; finished work lives in its commit, its closed issue or its 
 ## Upcoming Work
 
 - The notary credentials: all three signers move to one notarytool keychain profile (`--keychain-profile`), which hv creates once, together with the signer diagnostics the reviews left (vc todo 11).
-- Credentials: Lamplight moves to `Geodica/Certificates`' `APPLE_APP_PASSWORD` (the one Conflab's CI already uses), then its own password is revoked.
 - The Linux release assets and their workflow, in a later release.
 
 ## Notes

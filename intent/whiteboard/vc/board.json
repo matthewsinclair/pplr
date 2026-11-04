@@ -466,6 +466,22 @@
       "text": "For hv, cldr-vc's finding 2026-11-04: declaring shell makes Intent's generated AGENTS.md list 'Bats testing framework' and 'bats -r tests/', and say shell scripts are 'POSIX-compliant where practical'. In Cldr, which has no bats suite and zsh scripts by design, the command exits 1 ('Found no tests'). Cldr's intent/llm/RULES.md, imported by CLAUDE.md, says the lines do not apply, as pplr's CLAUDE.md does for its generated swift lines. The template fix is Intent's.",
       "state": "live",
       "recorded_at": "2026-11-04T08:39:57.499Z"
+    },
+    {
+      "node": "vc",
+      "kind": "watchout",
+      "seq": 7,
+      "text": "For hv, another project's: Lamplight moves to Geodica/Certificates' APPLE_APP_PASSWORD (the one Conflab's CI already uses), and then its own password is revoked.",
+      "state": "live",
+      "recorded_at": "2026-11-04T09:00:28.619Z"
+    },
+    {
+      "node": "vc",
+      "kind": "todo",
+      "seq": 12,
+      "text": "Molt 1.4.1, hv 2026-11-04: pplr-dc rewrites Molt's pplr liberator in cldr.sh's Homebrew shape (pplr 2.x has no bin/pplr, so molt upgrade fails on rhadamanth and gyges), then prepares the 'Release v1.4.1' commit. vc verifies it, and hv cuts by Molt's documented hand steps (tag, push, CI on the tag, tools/formula publish). Then hv runs molt upgrade --self && molt upgrade && molt maintain on rhadamanth, gyges and kovacs. Moving Molt onto devbin's one-command release is a later job, for Molt's own nodes.",
+      "state": "live",
+      "recorded_at": "2026-11-04T09:00:28.645Z"
     }
   ],
   "sent": [
