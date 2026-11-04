@@ -1,0 +1,14 @@
+{
+  "id": "01M6JJDRMHYS2D9VVTSNN1E5GR",
+  "ts": "2026-11-04T06:02:31.441Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.edit",
+  "subject": {
+    "type": "ac",
+    "id": "ST0003/AC-04.1"
+  },
+  "payload": {
+    "text": "grep, links and rename walk through one walker that keeps each command's order, dot-name and symlink rules and names each folder it cannot read on stderr, one line each, carrying on with the exit code unchanged; or the package records why one walker is not simpler."
+  }
+}

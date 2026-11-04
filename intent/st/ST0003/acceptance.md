@@ -31,7 +31,7 @@ title: Post-port simplifications, then 2.0.1 by one command
 
 ### WP-04 -- One walker for grep, links and rename, or the record of why not (status: WIP)
 
-- AC-04.1 grep, links and rename walk through one walker that keeps each command's order, dot-name and symlink rules, or the package records why one walker is not simpler. -- satisfied: no (computed)
+- AC-04.1 grep, links and rename walk through one walker that keeps each command's order, dot-name and symlink rules and names each folder it cannot read on stderr, one line each, carrying on with the exit code unchanged; or the package records why one walker is not simpler. -- satisfied: no (computed)
 
 ### WP-05 -- One picture rule for the engine, pplr pictures and the index (hv's ruling) (status: Not Started)
 
