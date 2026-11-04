@@ -1,0 +1,15 @@
+{
+  "id": "01M6K832PF4J2CGZ6GH5BS3BDD",
+  "ts": "2026-11-04T12:21:09.967Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "todo",
+    "text": "Molt 1.4.3 (hv via vc, 4 Nov), not started: at hv's word after the compact, in a fresh Molt clone at 275ac8c, a new Molt issue filed and closed in the code commit, the done-bar as 0087's (the suite under both bashes in slots from vc, release check, the dry run in Molt's checkout after landing), and vc reviews before hv cuts. (1) Ccusage ISSUE:0003 step 2: Molt publishes CLAUDE_SECURESTORAGE_CONFIG_DIR wherever it publishes CLAUDE_CONFIG_DIR (env.sh and the LaunchAgent com.molt.env, from lib/env.sh), evaluated from ccusage dir at each shell start and each login, never rendered: exported only when it exits 0 with output, else unset, never empty; in the agent by absolute path, with launchctl setenv or unsetenv to match; Molt's CLAUDE_CONFIG_DIR must name ccusage's claude_config_dir; ccusage-vc's acceptance includes ccusage doctor clean. Send vc the design first: how env learns of ccusage with the least coupling. Found so far: lib/env.sh renders only static NAME<TAB>scope<TAB>value pairs, and its session check compares launchd's values with them; ccusage 0.1.8 is Homebrew's /opt/homebrew/bin/ccusage; shared mode is off on rhadamanth, so ccusage dir exits 1; Molt-matts names no ccusage; RULES.md keeps one user's tools out of the framework. Options: an evaluated-variable hook the instance's vars.sh declares, or a guarded command -v ccusage in the env liberator. (2) tests.yml drops its tag trigger, as pplr's has none, minding test-macos's ref_type and Test Summary's MACOS_REQUIRED. CHANGELOG: ## [1.4.3] - unreleased."
+  }
+}
