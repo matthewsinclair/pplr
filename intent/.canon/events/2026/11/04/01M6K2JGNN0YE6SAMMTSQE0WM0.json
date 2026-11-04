@@ -1,0 +1,16 @@
+{
+  "id": "01M6K2JGNN0YE6SAMMTSQE0WM0",
+  "ts": "2026-11-04T10:44:44.341Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 12,
+    "text": "Molt 1.4.2 by bin/devbin release (decision 30). v1.4.1 is tagged and pushed at bf441ba, on 0df2401 (issue 0086, the pplr liberator from Homebrew; both measured green under bash 5.3 and /bin/bash 3.2), with its formula unpublished. pplr-dc builds Molt's devbin adoption in a fresh clone: release and formula enabled (remotes local and upstream; gates check all, test all under both bashes, doctor; ci tests.yml, which a candidate/** push starts, the macOS job included; object local; after bin/devbin formula publish); tools/formula and test/formula.bats go once devbin's render of v1.4.1 byte-equals theirs; the docs follow; CHANGELOG's [Unreleased] becomes [1.4.2] - unreleased; a Molt issue filed and closed in the commit. vc reviews, then hv runs bin/devbin release v1.4.2 in ~/Devel/prj/Molt. Then the molt run on rhadamanth, gyges and kovacs (todo 14). pplr-dc's banked branches issue-0086, issue-0086-red and release-1.4.1 go once the sleeves have run."
+  }
+}
