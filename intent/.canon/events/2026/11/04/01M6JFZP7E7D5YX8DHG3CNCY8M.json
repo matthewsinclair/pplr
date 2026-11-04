@@ -1,0 +1,14 @@
+{
+  "id": "01M6JFZP7E7D5YX8DHG3CNCY8M",
+  "ts": "2026-11-04T05:19:53.070Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "ac.edit",
+  "subject": {
+    "type": "ac",
+    "id": "ST0003/AC-02.1"
+  },
+  "payload": {
+    "text": "workbook::write places each cell of the sheets the reader reads, Merged and Contacts, by its column's header, as the reader and the styling do, and a written workbook reads back as at 2.0.0."
+  }
+}

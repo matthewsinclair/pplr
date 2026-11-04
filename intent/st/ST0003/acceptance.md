@@ -21,9 +21,9 @@ title: Post-port simplifications, then 2.0.1 by one command
 
 - AC-01.1 Pair.how is an enum that names the five ways once, and the JSON and the report print 2.0.0's words; has_inetloc tells not read from absent. -- satisfied: no (computed)
 
-### WP-02 -- workbook::write fills Merged by header, as the reader and the styling do (status: Not Started)
+### WP-02 -- workbook::write fills Merged by header, as the reader and the styling do (status: WIP)
 
-- AC-02.1 workbook::write places each Merged cell by its column's header, as the reader and the styling do, and a written workbook reads back as at 2.0.0. -- satisfied: no (computed)
+- AC-02.1 workbook::write places each cell of the sheets the reader reads, Merged and Contacts, by its column's header, as the reader and the styling do, and a written workbook reads back as at 2.0.0. -- satisfied: no (computed)
 
 ### WP-03 -- One macOS gate for every command that needs a macOS service (status: Not Started)
 
@@ -51,7 +51,7 @@ _(no tests in this group)_
 
 _(no tests in this group)_
 
-### WP-02 -- workbook::write fills Merged by header, as the reader and the styling do (status: Not Started)
+### WP-02 -- workbook::write fills Merged by header, as the reader and the styling do (status: WIP)
 
 _(no tests in this group)_
 

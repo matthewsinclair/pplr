@@ -23,7 +23,7 @@
       "seq": 2,
       "title": "workbook::write fills Merged by header, as the reader and the styling do",
       "scope": "S",
-      "status": "not-started",
+      "status": "wip",
       "objective": "",
       "body": "",
       "preamble": ""
@@ -84,7 +84,7 @@
     },
     {
       "id": "AC-02.1",
-      "text": "workbook::write places each Merged cell by its column's header, as the reader and the styling do, and a written workbook reads back as at 2.0.0.",
+      "text": "workbook::write places each cell of the sheets the reader reads, Merged and Contacts, by its column's header, as the reader and the styling do, and a written workbook reads back as at 2.0.0.",
       "kind": "test",
       "state": {
         "is": "computed"
