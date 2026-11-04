@@ -3,7 +3,7 @@ node: dc
 name: dc
 role: dc
 session_id: 2520675d-7af0-457e-8102-d526fbf8f2fc
-heartbeat_at: 2026-11-04 08:59Z
+heartbeat_at: 2026-11-04 09:03Z
 status: active
 focus: "Ready for hv's compact. pplr's views off disk (d100637), doc pass (7be2aef) and 2.0.2's notes (eca6ed1) landed, each reviewed by vc. Next after the compact: todo 6, Molt's pplr liberator in brew's shape, then Molt's 1.4.1 release commit by its hand cut."
 claims: []
