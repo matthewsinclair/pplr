@@ -528,6 +528,14 @@
       "state": "live",
       "recorded_at": "2026-11-04T10:44:39.439Z",
       "edited_at": "2026-11-04T10:46:53.948Z"
+    },
+    {
+      "node": "vc",
+      "kind": "todo",
+      "seq": 15,
+      "text": "Ccusage's open issues, hv 2026-11-04 ('fix all of them now', via ccusage-vc). ISSUE:0003's rollout: step 1 is hv's (claude_config_dir on, then ccusage use engineering01; ccusage-vc gave hv the commands). Step 2 is a Molt framework change: lib/env.sh, which renders Molt's shell env and its launchd LaunchAgent com.molt.env, also publishes CLAUDE_SECURESTORAGE_CONFIG_DIR from ccusage dir when that succeeds, unset otherwise, never empty. A value rendered at molt's run goes stale at the next login once ccusage use changes the profile, unless the agent asks ccusage dir at login. vc routes it to pplr-dc as a Molt issue after Molt 1.4.2's cut, for 1.4.3 by bin/devbin release. Step 3, restart every session: ccusage-vc's slot 01M6K31TH20532K7NYN48GJE86 stays queued until steps 1 and 2 are live, Molt 1.4.2 is cut and the molt run is done, then is granted with hv's go. Steps 4 and 5 (Keychain deletes) each wait on hv's OK. ISSUE:0005: ccusage-vc recommends closing it as overtaken by upstream v1.16; hv rules. Hold 3 waits on devbin's formula:424 (watchout 5), which hv routes.",
+      "state": "live",
+      "recorded_at": "2026-11-04T10:54:20.375Z"
     }
   ],
   "sent": [
