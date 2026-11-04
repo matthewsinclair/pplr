@@ -1,0 +1,16 @@
+{
+  "id": "01M6K4TMM455SPH2AQNHC21MV0",
+  "ts": "2026-11-04T11:24:07.684Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 7,
+    "text": "When vc says the sleeves have run Molt 1.4.2 (rhadamanth, gyges, kovacs): delete the banked branches issue-0086 (8384180), issue-0086-red (5c7aa30), release-1.4.1 (2fab7ac) and issue-0087 (e07c199) from ~/Devel/prj/Molt by name, then remove the scratch clones molt-pplr, molt-rel, molt-devbin and molt-dryrun. Molt issues 0086 and 0087 cite 5c7aa30, 8384180 and e07c199, so their going is vc's call."
+  }
+}

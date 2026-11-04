@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: 2520675d-7af0-457e-8102-d526fbf8f2fc
-heartbeat_at: 2026-11-04 10:45Z
+heartbeat_at: 2026-11-04 11:24Z
 status: active
-focus: "Molt onto bin/devbin release (hv via vc, 4 Nov): release and formula enabled in Molt's devbin config, candidate/** CI, tools/formula retired once devbin's render byte-equals it, docs, CHANGELOG [1.4.2] - unreleased; a new Molt issue filed and closed in the code commit; then a dry run of v1.4.2 in Molt's checkout. Reading devbin's release surface first."
+focus: "Molt 0087 landed on Molt's main as 450affc, unpushed and untagged: Molt releases with bin/devbin release, and 1.4.2 is cut that way. The dry run of v1.4.2 in Molt's checkout waits on GitHub's ssh incident (tries spaced 150 seconds apart); its output goes to vc. hv's cut waits on GitHub."
 claims: []
 ---
 
@@ -17,7 +17,7 @@ _(none)_
 
 ## TODO
 
-- When vc says the sleeves have run Molt 1.4.1 (rhadamanth, gyges, kovacs): delete the banked branches issue-0086 (8384180), issue-0086-red (5c7aa30) and release-1.4.1 (2fab7ac) from ~/Devel/prj/Molt by name, then remove the scratch clones molt-pplr and molt-rel. Molt issue 0086's as-built note cites 5c7aa30 and 8384180, so their going is vc's call.
+- When vc says the sleeves have run Molt 1.4.2 (rhadamanth, gyges, kovacs): delete the banked branches issue-0086 (8384180), issue-0086-red (5c7aa30), release-1.4.1 (2fab7ac) and issue-0087 (e07c199) from ~/Devel/prj/Molt by name, then remove the scratch clones molt-pplr, molt-rel, molt-devbin and molt-dryrun. Molt issues 0086 and 0087 cite 5c7aa30, 8384180 and e07c199, so their going is vc's call. (edited)
 
 ## Holds
 
