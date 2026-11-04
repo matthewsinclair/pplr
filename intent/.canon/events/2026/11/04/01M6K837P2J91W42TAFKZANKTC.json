@@ -1,0 +1,16 @@
+{
+  "id": "01M6K837P2J91W42TAFKZANKTC",
+  "ts": "2026-11-04T12:21:15.075Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 14,
+    "text": "The molt run, hv's: molt upgrade --self && molt upgrade && molt maintain on rhadamanth, gyges and kovacs, now to Molt 1.4.2 (released 12:17Z, formula at homebrew-molt 4e7e77d). Read-only pre-flight at 1.4.1's code, which 1.4.2 carries: rhadamanth's doctor and dry-run resleeve pass, pplr and cldr included. One blocker, hv's: Molt-matts' config/arngz/desks/zeopit.yaml is modified and uncommitted (still at 12:20Z), and molt upgrade refuses a user config repo with uncommitted changes. gyges and kovacs: every repo the run pulls is clean. gyges' resleeve installs brew pplr and removes Molt's old link ~/.local/bin/pplr -> ~/Devel/prj/Pplr/bin/pplr; its maintain takes cldr 0.2.0 and ccusage 0.1.5 to 0.2.2 and 0.1.8. kovacs enables neither pplr nor cldr. vc confirms each sleeve read-only over ssh after its run."
+  }
+}

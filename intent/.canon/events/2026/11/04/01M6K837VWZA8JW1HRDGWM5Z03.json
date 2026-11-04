@@ -1,0 +1,16 @@
+{
+  "id": "01M6K837VWZA8JW1HRDGWM5Z03",
+  "ts": "2026-11-04T12:21:15.260Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 15,
+    "text": "Ccusage, hv 2026-11-04 ('fix all of them now'). Validated and unpushed: ccusage-dc's fix-all (94dbcf3, 6a102b3, 302a721, 7477ec6, fc4c217) and ccusage-vc's a90cb5e; main is 12 ahead of both remotes and clean. hv's push: git -C ~/Devel/prj/Ccusage push local main && git -C ~/Devel/prj/Ccusage push upstream main. ISSUE:0005 closed as overtaken (hv). ISSUE:0003 is the one open issue: step 1 is hv's (claude_config_dir on, then ccusage use engineering01; not run at 11:06Z); step 2 is Molt 1.4.3 (todo 17); step 3, restart every session, is ccusage-vc's slot 01M6K31TH20532K7NYN48GJE86, held until steps 1 and 2 are live, then granted with hv's go; steps 4 and 5 (Keychain deletes) each wait on hv's OK. ccusage-vc's hold 3 waits on devbin 0.1.20 (todo 16)."
+  }
+}

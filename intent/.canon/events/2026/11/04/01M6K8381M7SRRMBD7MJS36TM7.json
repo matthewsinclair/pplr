@@ -1,0 +1,16 @@
+{
+  "id": "01M6K8381M7SRRMBD7MJS36TM7",
+  "ts": "2026-11-04T12:21:15.444Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 16,
+    "text": "devbin 0.1.20, hv 2026-11-04 (devbin-vc's decision 133 agrees): the formula line-length fix, devbin#0322, plus Devbin's main since v0.1.19 (0320 included); the 19 open issues wait. devbin-dc, under pplr-vc: unit 28f94c39 on 64566fba, banked, unpushed. Its arm runs brew style itself: red at main (131/118), green at the fix, BSD and GNU. Fleet proof clean: brew style and brew audit --strict on pplr 2.0.2's, cldr 0.2.2's and ccusage 0.1.8's renders, in a scratch trust store (hv's choice a), with ~/.homebrew/trust.json unchanged (vc checked e0f6ec4b). Next, at hv's return: dc's run on vc's desk (bats lane); devbin-vc lands it with land-stack.sh and 0322 closes in the next commit; hv's cut, which needs kovacs up with kovacs-sysadm and CI's whole matrix; hv's brew upgrade devbin, then devbin use brew; devbin-vc's sweep vendors 0.1.20 fleet-wide; hv republishes the three taps, and homebrew-cldr's and homebrew-ccusage's CI exceptions go."
+  }
+}

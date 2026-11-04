@@ -1,5 +1,5 @@
 ---
-verblock: "2026-11-04:v1.3: matts - Molt 1.4.1 and the molt run on every sleeve"
+verblock: "2026-11-04:v1.4: matts - the molt run on every sleeve, devbin 0.1.20 and Molt 1.4.3"
 ---
 
 # Work In Progress
@@ -8,10 +8,13 @@ DOING and TODO only; finished work lives in its commit, its closed issue or its 
 
 ## Current Focus
 
-**Molt 1.4.1, then the molt run on every sleeve**
+**The molt run on every sleeve, then devbin 0.1.20 and Molt 1.4.3**
 
-- Molt 1.4.1: its pplr liberator in the Homebrew shape, with pplr's own dev or opt tree named and never faulted (vc todo 12), cut by Molt's own hand steps. Then `molt upgrade --self && molt upgrade && molt maintain` on rhadamanth, gyges and kovacs.
-- vc holds the pen and slot control. Scope rule: simpler or easier only (vc decision 2).
+- hv runs `molt upgrade --self && molt upgrade && molt maintain` on rhadamanth, gyges and kovacs, to Molt 1.4.2. On rhadamanth, Molt-matts' uncommitted `config/arngz/desks/zeopit.yaml` is committed or restored first (vc todo 14).
+- hv pushes Ccusage's validated fix-all (vc todo 15).
+- devbin 0.1.20, the formula renderer's line-length fix (devbin#0322, built by devbin-dc under vc), then the fleet's vendored devbin and the three taps republished without their CI exceptions (vc todo 16).
+- Molt 1.4.3: Ccusage ISSUE:0003's step 2 and tests.yml's tag trigger, by pplr-dc (vc todo 17), then ISSUE:0003's rollout (vc todo 15).
+- vc holds the pen for pplr, cldr, ccusage, Molt's release and devbin-dc, and slot control. Scope rule: simpler or easier only (vc decision 2).
 
 ## Active Steel Threads
 
