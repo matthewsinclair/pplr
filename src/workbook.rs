@@ -26,7 +26,7 @@ const TITLE_SIZE: u32 = 13;
 const MERGED_TITLE: &str = "Merged";
 const CONTACTS_TITLE: &str = "Contacts";
 
-/// The headers --apply-plan reads, and those the writer places by name.
+/// The headers --apply-plan reads, and those the styling names.
 const PERSON: &str = "Person";
 const DECISION: &str = "Decision";
 const CARD: &str = "Card";
@@ -107,13 +107,33 @@ fn col(columns: &[(&str, u16, bool)], header: &str) -> Result<u16> {
   Ok(u16::try_from(at)?)
 }
 
-/// One sheet: a bold header row, the rows top-aligned (wrapped where the
-/// column says), the widths, the panes frozen at B2 and a filter over it all.
-fn sheet<'a>(
+/// A row's cells in its sheet's column order, each found by its header in
+/// the table, as the reader and the styling find a column. N cells for N
+/// columns, none of them twice, so each column is filled once.
+fn by_header<const N: usize>(
+  columns: &[(&str, u16, bool); N],
+  cells: &[(&str, String); N],
+) -> Result<Vec<String>> {
+  let mut row = vec![String::new(); N];
+  let mut filled = [false; N];
+  for (header, value) in cells {
+    let at = usize::from(col(columns, header)?);
+    if std::mem::replace(&mut filled[at], true) {
+      return Err(format!("the workbook has two cells for its {header} column").into());
+    }
+    row[at].clone_from(value);
+  }
+  Ok(row)
+}
+
+/// One sheet: a bold header row, each row's cells under their headers
+/// (`by_header`), top-aligned and wrapped where the column says, the widths,
+/// the panes frozen at B2 and a filter over it all.
+fn sheet<'a, const N: usize>(
   wb: &'a mut Workbook,
   title: &str,
-  columns: &[(&str, u16, bool)],
-  rows: &[Vec<String>],
+  columns: &[(&str, u16, bool); N],
+  rows: &[[(&str, String); N]],
   fill: Option<(RangeInclusive<u16>, u32)>,
 ) -> Result<&'a mut Worksheet> {
   let ws = wb.add_worksheet();
@@ -134,8 +154,8 @@ fn sheet<'a>(
     }
     formats.push(format);
   }
-  for (row, values) in (1u32..).zip(rows) {
-    for ((col, value), format) in (0u16..).zip(values).zip(&formats) {
+  for (row, cells) in (1u32..).zip(rows) {
+    for ((col, value), format) in (0u16..).zip(by_header(columns, cells)?).zip(&formats) {
       if value.is_empty() {
         ws.write_blank(row, col, format)?;
       } else {
@@ -156,7 +176,7 @@ pub fn write(plan: &Plan, out: &Path) -> Result<()> {
   let cards: HashMap<&str, _> = plan.cards.iter().map(|c| (c.r#ref.as_str(), c)).collect();
   let mut wb = Workbook::new();
 
-  let merged: Vec<Vec<String>> = plan
+  let merged: Vec<_> = plan
     .rows
     .iter()
     .map(|r| {
@@ -165,32 +185,35 @@ pub fn write(plan: &Plan, out: &Path) -> Result<()> {
       let of_p =
         |f: &dyn Fn(&crate::plan::PlanPerson) -> String| p.map(|p| f(p)).unwrap_or_default();
       let of_c = |f: &dyn Fn(&crate::plan::PlanCard) -> String| c.map(|c| f(c)).unwrap_or_default();
-      vec![
-        r.person.clone(),
-        r.decision.as_str().to_owned(),
-        r.card.clone().unwrap_or_default(),
-        r.dupes.join(", "),
-        String::new(),
-        r.confidence.as_str().to_owned(),
-        r.why.clone(),
-        lines(&r.changes),
-        of_c(&|c| c.name.clone()),
-        of_p(&|p| p.company.clone()),
-        of_c(&|c| c.organization.clone()),
-        of_p(&|p| p.role.clone()),
-        of_c(&|c| c.job_title.clone()),
-        of_p(&|p| lines(&p.emails)),
-        of_c(&|c| lines(&c.emails)),
-        of_p(&|p| lines(&p.phones)),
-        of_c(&|c| lines(&c.phones)),
-        of_p(&|p| p.linkedin.clone()),
-        of_c(&|c| lines(&c.linkedin)),
-        of_c(&|c| c.account.clone()),
-        lines(
-          &r.candidates
-            .iter()
-            .map(|k| format!("{} {} ({}: {})", k.r#ref, k.name, k.score, k.why))
-            .collect::<Vec<_>>(),
+      [
+        (PERSON, r.person.clone()),
+        (DECISION, r.decision.as_str().to_owned()),
+        (CARD, r.card.clone().unwrap_or_default()),
+        ("Dupes", r.dupes.join(", ")),
+        (NOTES, String::new()),
+        (CONFIDENCE, r.confidence.as_str().to_owned()),
+        ("Why", r.why.clone()),
+        ("Changes", lines(&r.changes)),
+        ("Card name", of_c(&|c| c.name.clone())),
+        ("Company (pplr)", of_p(&|p| p.company.clone())),
+        ("Company (card)", of_c(&|c| c.organization.clone())),
+        ("Role (pplr)", of_p(&|p| p.role.clone())),
+        ("Role (card)", of_c(&|c| c.job_title.clone())),
+        ("Emails (pplr)", of_p(&|p| lines(&p.emails))),
+        ("Emails (card)", of_c(&|c| lines(&c.emails))),
+        ("Phones (pplr)", of_p(&|p| lines(&p.phones))),
+        ("Phones (card)", of_c(&|c| lines(&c.phones))),
+        ("LinkedIn (pplr)", of_p(&|p| p.linkedin.clone())),
+        ("LinkedIn (card)", of_c(&|c| lines(&c.linkedin))),
+        ("Card account", of_c(&|c| c.account.clone())),
+        (
+          "Other candidates",
+          lines(
+            &r.candidates
+              .iter()
+              .map(|k| format!("{} {} ({}: {})", k.r#ref, k.name, k.score, k.why))
+              .collect::<Vec<_>>(),
+          ),
         ),
       ]
     })
@@ -230,44 +253,47 @@ pub fn write(plan: &Plan, out: &Path) -> Result<()> {
     }
   }
 
-  let pplr: Vec<Vec<String>> = plan
+  let pplr: Vec<_> = plan
     .people
     .iter()
     .map(|p| {
-      vec![
-        p.key.clone(),
-        p.given.clone(),
-        p.family.clone(),
-        p.company.clone(),
-        p.role.clone(),
-        lines(&p.emails),
-        lines(&p.phones),
-        p.linkedin.clone(),
-        p.marker.clone(),
-        if p.picture.is_some() { "yes" } else { "" }.to_owned(),
-        p.dir.display().to_string(),
+      [
+        (PERSON, p.key.clone()),
+        ("Given", p.given.clone()),
+        ("Family", p.family.clone()),
+        ("Company", p.company.clone()),
+        ("Role", p.role.clone()),
+        ("Emails", lines(&p.emails)),
+        ("Phones", lines(&p.phones)),
+        ("LinkedIn", p.linkedin.clone()),
+        ("pplr URL", p.marker.clone()),
+        (
+          "Photo",
+          if p.picture.is_some() { "yes" } else { "" }.to_owned(),
+        ),
+        ("Folder", p.dir.display().to_string()),
       ]
     })
     .collect();
   sheet(&mut wb, "pplr", &PPLR, &pplr, None)?;
 
-  let contacts: Vec<Vec<String>> = plan
+  let contacts: Vec<_> = plan
     .cards
     .iter()
     .map(|c| {
-      vec![
-        c.r#ref.clone(),
-        c.name.clone(),
-        c.organization.clone(),
-        c.job_title.clone(),
-        lines(&c.emails),
-        lines(&c.phones),
-        lines(&c.linkedin),
-        c.account.clone(),
-        c.groups.join(", "),
-        c.marker.clone().unwrap_or_default(),
-        c.proposed_for.clone().unwrap_or_default(),
-        c.id.clone(),
+      [
+        (CARD, c.r#ref.clone()),
+        ("Name", c.name.clone()),
+        ("Company", c.organization.clone()),
+        ("Role", c.job_title.clone()),
+        ("Emails", lines(&c.emails)),
+        ("Phones", lines(&c.phones)),
+        ("LinkedIn", lines(&c.linkedin)),
+        ("Account", c.account.clone()),
+        ("Groups", c.groups.join(", ")),
+        ("pplr URL", c.marker.clone().unwrap_or_default()),
+        ("Proposed for", c.proposed_for.clone().unwrap_or_default()),
+        (CARD_ID, c.id.clone()),
       ]
     })
     .collect();
@@ -519,5 +545,104 @@ mod tests {
         "{sheet} without {header}"
       );
     }
+  }
+
+  /// AT-02.1 (ST0003 AC-02.1): the writer places each cell of Merged and
+  /// Contacts under its column's header, as the reader finds a column, so
+  /// with both tables in another order every cell is still under its own
+  /// header and the reader reads the decision and its card back.
+  #[test]
+  fn each_cell_is_written_under_its_header_whatever_the_table_order() -> Result<()> {
+    let merged = MERGED.map(|(header, _, _)| {
+      let value = match header {
+        PERSON => "K/Kemp, Jon".to_owned(),
+        DECISION => "Update".to_owned(),
+        CARD => "C0001".to_owned(),
+        _ => format!("{header} of Jon"),
+      };
+      (header, value)
+    });
+    let contacts = CONTACTS.map(|(header, _, _)| {
+      let value = match header {
+        CARD => "C0001".to_owned(),
+        CARD_ID => "card-1".to_owned(),
+        _ => format!("{header} of C0001"),
+      };
+      (header, value)
+    });
+    let mut merged_columns = MERGED;
+    merged_columns.reverse();
+    let mut contacts_columns = CONTACTS;
+    contacts_columns.reverse();
+    let out = std::env::temp_dir().join(format!("pplr-workbook-order-{}.xlsx", std::process::id()));
+    let mut wb = Workbook::new();
+    sheet(
+      &mut wb,
+      MERGED_TITLE,
+      &merged_columns,
+      std::slice::from_ref(&merged),
+      None,
+    )?;
+    sheet(
+      &mut wb,
+      CONTACTS_TITLE,
+      &contacts_columns,
+      std::slice::from_ref(&contacts),
+      None,
+    )?;
+    wb.save(&out)?;
+
+    assert_eq!(
+      decisions(&out)?,
+      vec![Reviewed {
+        person: "K/Kemp, Jon".to_owned(),
+        decision: Decision::Update,
+        card: Some("card-1".to_owned()),
+      }]
+    );
+    let mut book: Xlsx<_> = open_workbook(&out)?;
+    for (title, cells) in [(MERGED_TITLE, &merged[..]), (CONTACTS_TITLE, &contacts[..])] {
+      let rows: Vec<Vec<String>> = book
+        .worksheet_range(title)?
+        .rows()
+        .map(|row| row.iter().map(ToString::to_string).collect())
+        .collect();
+      let [header, row] = rows.as_slice() else {
+        return Err(
+          format!(
+            "{title} holds {} rows, not a header and one row",
+            rows.len()
+          )
+          .into(),
+        );
+      };
+      for (name, value) in cells {
+        let at = header
+          .iter()
+          .position(|h| h == *name)
+          .ok_or_else(|| format!("{title} has no {name} column"))?;
+        assert_eq!(cell(row, at), value.as_str(), "{title}'s {name}");
+      }
+    }
+    std::fs::remove_file(&out)?;
+    Ok(())
+  }
+
+  #[test]
+  fn a_cell_for_no_column_or_a_second_for_one_is_refused() {
+    let mut stray = MERGED.map(|(header, _, _)| (header, String::new()));
+    stray[0].0 = "Mine";
+    assert_eq!(
+      by_header(&MERGED, &stray).map_err(|e| e.to_string()),
+      Err("the workbook has no Mine column".to_owned())
+    );
+    let mut twice = MERGED.map(|(header, _, _)| (header, String::new()));
+    twice[1].0 = PERSON;
+    assert_eq!(
+      by_header(&MERGED, &twice).map_err(|e| e.to_string()),
+      Err(format!(
+        "the workbook has two cells for its {PERSON} column"
+      ))
+    );
   }
 }
