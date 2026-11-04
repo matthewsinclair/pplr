@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: 2520675d-7af0-457e-8102-d526fbf8f2fc
-heartbeat_at: 2026-11-04 12:21Z
+heartbeat_at: 2026-11-04 17:15Z
 status: active
-focus: "Holding for hv's compact, nothing in hand. Next, at hv's word: todo 8, Molt 1.4.3, its design to vc first. Shipped today: Molt 0086 (0df2401) in 1.4.1, and 0087 (450affc) in 1.4.2 (275ac8c), by hv's bin/devbin release."
+focus: "Holding for hv, nothing in hand. Stood down from Molt 1.4.3 (vc decision 31): molt-dc builds 0088 to 0090; molt-dc has the five points 0088 lacked (cc molt-vc). Molt's four banked branches and my scratch clones are gone."
 claims: []
 ---
 
@@ -17,8 +17,7 @@ _(none)_
 
 ## TODO
 
-- When vc says the sleeves have run Molt 1.4.2 (rhadamanth, gyges, kovacs): delete the banked branches issue-0086 (8384180), issue-0086-red (5c7aa30), release-1.4.1 (2fab7ac) and issue-0087 (e07c199) from ~/Devel/prj/Molt by name, then remove the scratch clones molt-pplr, molt-rel, molt-devbin and molt-dryrun. Molt issues 0086 and 0087 cite 5c7aa30, 8384180 and e07c199, so their going is vc's call. (edited)
-- Molt 1.4.3 (hv via vc, 4 Nov), not started: at hv's word after the compact, in a fresh Molt clone at 275ac8c, a new Molt issue filed and closed in the code commit, the done-bar as 0087's (the suite under both bashes in slots from vc, release check, the dry run in Molt's checkout after landing), and vc reviews before hv cuts. (1) Ccusage ISSUE:0003 step 2: Molt publishes CLAUDE_SECURESTORAGE_CONFIG_DIR wherever it publishes CLAUDE_CONFIG_DIR (env.sh and the LaunchAgent com.molt.env, from lib/env.sh), evaluated from ccusage dir at each shell start and each login, never rendered: exported only when it exits 0 with output, else unset, never empty; in the agent by absolute path, with launchctl setenv or unsetenv to match; Molt's CLAUDE_CONFIG_DIR must name ccusage's claude_config_dir; ccusage-vc's acceptance includes ccusage doctor clean. Send vc the design first: how env learns of ccusage with the least coupling. Found so far: lib/env.sh renders only static NAME<TAB>scope<TAB>value pairs, and its session check compares launchd's values with them; ccusage 0.1.8 is Homebrew's /opt/homebrew/bin/ccusage; shared mode is off on rhadamanth, so ccusage dir exits 1; Molt-matts names no ccusage; RULES.md keeps one user's tools out of the framework. Options: an evaluated-variable hook the instance's vars.sh declares, or a guarded command -v ccusage in the env liberator. (2) tests.yml drops its tag trigger, as pplr's has none, minding test-macos's ref_type and Test Summary's MACOS_REQUIRED. CHANGELOG: ## [1.4.3] - unreleased.
+_(none)_
 
 ## Holds
 
