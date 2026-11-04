@@ -503,6 +503,14 @@
       "text": "For hv's call: cldr and ccusage have no version subcommand. hv typed 'cldr version' and 'ccusage version' on 2026-11-04, and both answered 'unknown command'; only pplr has one. Both answer --version. A version subcommand, and -v, in each is a small patch, so the three answer alike.",
       "state": "live",
       "recorded_at": "2026-11-04T09:26:56.497Z"
+    },
+    {
+      "node": "vc",
+      "kind": "todo",
+      "seq": 14,
+      "text": "The molt run's pre-flight, read-only, for todo 12. rhadamanth: Molt 1.4.1's own doctor and dry-run resleeve (a scratch clone of 2fab7ac) pass, pplr and cldr included; one blocker, hv's: Molt-matts has config/arngz/desks/zeopit.yaml modified and uncommitted, and molt upgrade (with --self too) refuses a user config repo with uncommitted changes. gyges and kovacs (molt 1.4.0's dry runs over ssh): every repo the run pulls is clean. gyges has no brew pplr and still has Molt's old link ~/.local/bin/pplr -> ~/Devel/prj/Pplr/bin/pplr, whose checkout holds .git, so 1.4.1's resleeve installs pplr from the tap and removes the link. maintain's brew upgrade takes gyges' cldr 0.2.0 and ccusage 0.1.5 to 0.2.2 and 0.1.8 (both trusted there). kovacs enables neither pplr nor cldr, and has no ccusage.",
+      "state": "live",
+      "recorded_at": "2026-11-04T09:44:07.901Z"
     }
   ],
   "sent": [
