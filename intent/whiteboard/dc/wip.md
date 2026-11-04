@@ -3,9 +3,9 @@ node: dc
 name: dc
 role: dc
 session_id: 2520675d-7af0-457e-8102-d526fbf8f2fc
-heartbeat_at: 2026-11-04 10:15Z
+heartbeat_at: 2026-11-04 10:45Z
 status: active
-focus: "Molt 1.4.1 landed on Molt's main, unpushed and untagged: 0df2401 (issue 0086 filed and closed, the pplr liberator from Homebrew) and bf441ba (Release v1.4.1), each equal to its measured commit. vc gives hv the hand cut. Nothing in hand."
+focus: "Molt onto bin/devbin release (hv via vc, 4 Nov): release and formula enabled in Molt's devbin config, candidate/** CI, tools/formula retired once devbin's render byte-equals it, docs, CHANGELOG [1.4.2] - unreleased; a new Molt issue filed and closed in the code commit; then a dry run of v1.4.2 in Molt's checkout. Reading devbin's release surface first."
 claims: []
 ---
 
