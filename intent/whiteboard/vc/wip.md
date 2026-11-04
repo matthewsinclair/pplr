@@ -14,7 +14,6 @@ claims: []
 ## DOING
 
 - ST0003 (vc decision 28): todo 6's candidates as WP01 to WP05, pplr-dc implementing and vc reviewing each against its criterion, then WP06, pplr 2.0.1 by bin/devbin release v2.0.1, the first real run of post-cut. WP05 (one picture rule) and the stderr note in WP04 wait for hv's rulings.
-- The three one-command releases (vc decision 28): Cldr v0.2.1, its first signed one (cldr-dc's prep commit: version_from, lock-sync, doctor gate, CHANGELOG; then its signer proof; cldr-vc validates and dry-runs). ccusage v0.1.7 (ccusage-dc: post-cut over macos finalize and formula publish, notarised always with geodica.apple.*; ccusage-vc validates and dry-runs). pplr v2.0.1 after ST0003. Each cut is hv's one command. Cldr's CI on f382994 is green (run 41694524688). Lamplight's move to Geodica/Certificates' APPLE_APP_PASSWORD, then its own revoked, stays hv's.
 
 ## TODO
 
@@ -31,6 +30,7 @@ _(none)_
 - For hv, dc's finding: the estate page draws every slot hold as orphaned, because intentd runs under launchd without CLAUDE_CONFIG_DIR and so finds no Claude session files. The CLI is right: read slot state from intent estate status and intent estate slots watch, not the page. The fix is Intent's, out of pplr's scope (hold 2 item 4).
 - For hv, cldr-vc's finding 2026-11-04: Intent's generated AGENTS.md has no user block and calls intent/llm/RULES.md and ARCHITECTURE.md 'seeded empty by intent init' even once a project has written them. An agent that reads AGENTS.md alone (Codex, Cursor) misses the project's contract, including Cldr's public-repo rule against personal data. Claude Code loads it through CLAUDE.md's imports, and pplr is in the same state. The fix is Intent's, out of scope here.
 - For hv, cldr-vc's F8, 2026-11-04: devbin's formula finish_ruby writes the install manifest as one line of 131 columns (with a 40-hex commit), over brew style's 118. So a tap whose CI runs brew style or brew audit goes red at publish. Cldr's tap carries --except-cops Layout/LineLength until devbin wraps the line. pplr 2.0.0's formula has the same line, unseen because homebrew-pplr has no CI, and ccusage's tap has style and audit off for devbin's formula:424. The fix is devbin's.
+- For hv, cldr-vc's finding 2026-11-04: declaring shell makes Intent's generated AGENTS.md list 'Bats testing framework' and 'bats -r tests/', and say shell scripts are 'POSIX-compliant where practical'. In Cldr, which has no bats suite and zsh scripts by design, the command exits 1 ('Found no tests'). Cldr's intent/llm/RULES.md, imported by CLAUDE.md, says the lines do not apply, as pplr's CLAUDE.md does for its generated swift lines. The template fix is Intent's.
 
 ## Decisions
 
