@@ -1,0 +1,16 @@
+{
+  "id": "01M6K0Y7DNXAMZ3X7E7M1WPFDE",
+  "ts": "2026-11-04T10:16:10.933Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 12,
+    "text": "Molt 1.4.1, hv 2026-11-04. Landed by pplr-dc on Molt main, unpushed: 0df2401 (issue 0086: the pplr liberator installs pplr from Homebrew in cldr's shape; a dev or opt tree that pplr use chose is named, never faulted; install removes only Molt's old checkout link; the upgrade hook, pplr_repo and MOLT_PPLR_HOME are gone; issue 0086 filed and closed) and bf441ba (Release v1.4.1, shipping 0083 to 0086). Measured: pplr.bats red at 5c7aa30 and green at 8384180; the whole suite green under bash 5.3 and /bin/bash 3.2 at 8384180 (pplr-dc) and at 2fab7ac (vc, side by side, 650 of 650 each). Each landed tree equals its measured one outside intent/, where issue 0086's four records are the only addition, which no test reads. Next, hv's hand cut in ~/Devel/prj/Molt: git tag -a v1.4.1 bf441ba; git push upstream main v1.4.1 && git push local main v1.4.1; CI green on main and on the tag; tools/formula publish. Then the molt run on rhadamanth, gyges and kovacs (todo 14). pplr-dc's banked branches issue-0086, issue-0086-red and release-1.4.1 go once the sleeves have run 1.4.1."
+  }
+}

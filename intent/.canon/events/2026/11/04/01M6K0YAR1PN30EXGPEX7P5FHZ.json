@@ -1,0 +1,15 @@
+{
+  "id": "01M6K0YAR1PN30EXGPEX7P5FHZ",
+  "ts": "2026-11-04T10:16:14.337Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "watchout",
+    "text": "For hv, pplr-dc's finding landing Molt 0086, 2026-11-04: intent's issue verbs (new and close) each printed 'wrote: intent/.intentfiles' and left the file as HEAD had it, so a landing script that takes its path set from the wrote: lines expects a change that is not there. pplr-dc confirmed the fix commit by hand and landed the release by the same script. The fix is Intent's: a wrote: line only for a file the verb changed."
+  }
+}

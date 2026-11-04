@@ -481,10 +481,10 @@
       "node": "vc",
       "kind": "todo",
       "seq": 12,
-      "text": "Molt 1.4.1, hv 2026-11-04. pplr-dc's fix for Molt issue 0086 (8384180 in its scratch clone molt-pplr) puts the pplr liberator in cldr.sh's Homebrew shape. A dev or opt tree that pplr use chose is info, not a fault (hv's 27 Oct rule in 0071, which stays open and deferred). Install removes only Molt's old checkout link, and the upgrade hook, pplr_repo and MOLT_PPLR_HOME are gone. vc reviewed it. At 09:26Z it is measuring in slot 01M6JXYPJVWNKJEB4HZ5200V72: pplr.bats red at 5c7aa30 and green at 8384180, then the whole suite under bash 5 and /bin/bash 3.2. Next: it lands on Molt main by path. Then the 'Release v1.4.1' commit, VERSION 1.4.1 and CHANGELOG's Unreleased closed as 1.4.1 with the clock's date, shipping 0083 to 0085 too (hv's yes). Then vc verifies Molt's tip in a fresh clone. Then hv's hand cut in ~/Devel/prj/Molt: git tag -a v1.4.1 -m 'v1.4.1: <issues, as v1.4.0's message lists them>' at the release commit; git push upstream main v1.4.1 && git push local main v1.4.1; tests.yml's run on the tag green; tools/formula publish. Then molt upgrade --self && molt upgrade && molt maintain on rhadamanth, gyges and kovacs (--self brew-upgrades molt first).",
+      "text": "Molt 1.4.1, hv 2026-11-04. Landed by pplr-dc on Molt main, unpushed: 0df2401 (issue 0086: the pplr liberator installs pplr from Homebrew in cldr's shape; a dev or opt tree that pplr use chose is named, never faulted; install removes only Molt's old checkout link; the upgrade hook, pplr_repo and MOLT_PPLR_HOME are gone; issue 0086 filed and closed) and bf441ba (Release v1.4.1, shipping 0083 to 0086). Measured: pplr.bats red at 5c7aa30 and green at 8384180; the whole suite green under bash 5.3 and /bin/bash 3.2 at 8384180 (pplr-dc) and at 2fab7ac (vc, side by side, 650 of 650 each). Each landed tree equals its measured one outside intent/, where issue 0086's four records are the only addition, which no test reads. Next, hv's hand cut in ~/Devel/prj/Molt: git tag -a v1.4.1 bf441ba; git push upstream main v1.4.1 && git push local main v1.4.1; CI green on main and on the tag; tools/formula publish. Then the molt run on rhadamanth, gyges and kovacs (todo 14). pplr-dc's banked branches issue-0086, issue-0086-red and release-1.4.1 go once the sleeves have run 1.4.1.",
       "state": "live",
       "recorded_at": "2026-11-04T09:00:28.645Z",
-      "edited_at": "2026-11-04T09:26:56.409Z"
+      "edited_at": "2026-11-04T10:16:10.933Z"
     },
     {
       "node": "vc",
@@ -511,6 +511,14 @@
       "text": "The molt run's pre-flight, read-only, for todo 12. rhadamanth: Molt 1.4.1's own doctor and dry-run resleeve (a scratch clone of 2fab7ac) pass, pplr and cldr included; one blocker, hv's: Molt-matts has config/arngz/desks/zeopit.yaml modified and uncommitted, and molt upgrade (with --self too) refuses a user config repo with uncommitted changes. gyges and kovacs (molt 1.4.0's dry runs over ssh): every repo the run pulls is clean. gyges has no brew pplr and still has Molt's old link ~/.local/bin/pplr -> ~/Devel/prj/Pplr/bin/pplr, whose checkout holds .git, so 1.4.1's resleeve installs pplr from the tap and removes the link. maintain's brew upgrade takes gyges' cldr 0.2.0 and ccusage 0.1.5 to 0.2.2 and 0.1.8 (both trusted there). kovacs enables neither pplr nor cldr, and has no ccusage.",
       "state": "live",
       "recorded_at": "2026-11-04T09:44:07.901Z"
+    },
+    {
+      "node": "vc",
+      "kind": "watchout",
+      "seq": 8,
+      "text": "For hv, pplr-dc's finding landing Molt 0086, 2026-11-04: intent's issue verbs (new and close) each printed 'wrote: intent/.intentfiles' and left the file as HEAD had it, so a landing script that takes its path set from the wrote: lines expects a change that is not there. pplr-dc confirmed the fix commit by hand and landed the release by the same script. The fix is Intent's: a wrote: line only for a file the verb changed.",
+      "state": "live",
+      "recorded_at": "2026-11-04T10:16:14.337Z"
     }
   ],
   "sent": [
