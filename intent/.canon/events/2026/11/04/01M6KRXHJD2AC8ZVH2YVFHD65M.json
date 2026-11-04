@@ -1,0 +1,16 @@
+{
+  "id": "01M6KRXHJD2AC8ZVH2YVFHD65M",
+  "ts": "2026-11-04T17:15:14.381Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "decision",
+    "seq": 31,
+    "text": "hv 2026-11-04 ~17:15Z asked pplr-vc and molt-vc to settle who does what; agreed with molt-vc: Molt 1.4.3 (Molt 0088 Ccusage ISSUE:0003 step 2, 0089 tests.yml tag trigger, 0090 docs, plus cc's hold 16 retired-template deletion) is Molt's own nodes': molt-dc builds, molt-vc reviews, merges and keeps records, hv cuts v1.4.3 with bin/devbin release. pplr-dc stands down from Molt; its banked Molt branches and scratch clones go (molt-vc's call). pplr-vc keeps the estate slot desk (molt-dc books every bats or heavy run with it), ISSUE:0003's rollout with ccusage-vc (restart slot 01M6K31TH20532K7NYN48GJE86 held until step 1 and 1.4.3 are live, then hv's go) and devbin 0.1.20. 1.4.3's cut does not wait for devbin 0.1.20 (homebrew-molt's longest line is 89 columns, no CI). hv then chose 0088's design B in molt-vc's session: the claude liberator gives CLAUDE_SECURESTORAGE_CONFIG_DIR as a command pair read from ccusage dir, on a sleeve where ccusage is on PATH; no ccusage liberator. ccusage-vc reads 0088 as written before molt-dc's READY. kovacs is reached through kovacs-sysadm while it runs (Molt vc decision 40)."
+  }
+}
