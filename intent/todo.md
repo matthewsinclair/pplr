@@ -8,13 +8,7 @@ A DOING / TODO / DONE view, projected from steel-thread and work-package status:
 
 ## DOING
 
-- [-] ST0003: Post-port simplifications, then 2.0.1 by one command
-  - [x] 01: Pair: how as an enum, and has_inetloc's not-read state its own
-  - [x] 02: workbook::write fills Merged by header, as the reader and the styling do
-  - [x] 03: One macOS gate for every command that needs a macOS service
-  - [x] 04: One walker for grep, links and rename, or the record of why not
-  - [x] 05: One picture rule for the engine, pplr pictures and the index (hv's ruling)
-  - [x] 06: pplr 2.0.1 by one command
+_(none)_
 
 ## TODO
 
@@ -46,6 +40,13 @@ _(none)_
   - [x] 06: Release 2.0.0 and move rhadamanth to brew
   - [x] 07: Developer ID signing and notarisation
   - [x] 08: tools/ becomes devbin project commands: bin/devbin the one entry point
+- [x] ST0003: Post-port simplifications, then 2.0.1 by one command
+  - [x] 01: Pair: how as an enum, and has_inetloc's not-read state its own
+  - [x] 02: workbook::write fills Merged by header, as the reader and the styling do
+  - [x] 03: One macOS gate for every command that needs a macOS service
+  - [x] 04: One walker for grep, links and rename, or the record of why not
+  - [x] 05: One picture rule for the engine, pplr pictures and the index (hv's ruling)
+  - [x] 06: pplr 2.0.1 by one command
 
 ---
 

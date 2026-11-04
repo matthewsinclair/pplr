@@ -3,9 +3,9 @@ node: vc
 name: vc
 role: vc
 session_id: 9417a4f6-ca66-4fc9-8f2e-e1c88bf255dd
-heartbeat_at: 2026-11-04 05:04Z
+heartbeat_at: 2026-11-04 08:44Z
 status: active
-focus: "Driving pplr, cldr and ccusage to one release shape this morning (vc decision 28): signed and notarised, one devbin command each. ST0003 open for pplr-dc (todo 6, then 2.0.1); Cldr v0.2.1 prep with cldr-dc and cldr-vc; ccusage v0.1.7 post-cut with ccusage-dc and ccusage-vc. vc holds slot control."
+focus: "Nothing in hand. 2026-11-04: pplr 2.0.1, Cldr 0.2.1 and ccusage 0.1.7 each released, signed and notarised, by one devbin command (vc decisions 28 and 29); ST0003 done. Next, when hv says: todo 11, the three signers on one notarytool keychain profile."
 claims: []
 ---
 
@@ -13,7 +13,7 @@ claims: []
 
 ## DOING
 
-- ST0003 (vc decision 28): todo 6's candidates as WP01 to WP05, pplr-dc implementing and vc reviewing each against its criterion, then WP06, pplr 2.0.1 by bin/devbin release v2.0.1, the first real run of post-cut. WP05 (one picture rule) and the stderr note in WP04 wait for hv's rulings.
+_(none)_
 
 ## TODO
 

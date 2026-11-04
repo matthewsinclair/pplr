@@ -3,8 +3,9 @@
   "id": "ST0003",
   "title": "Post-port simplifications, then 2.0.1 by one command",
   "slug": "post-port-simplifications-then-2-0-1-by-one-comm",
-  "status": "wip",
+  "status": "completed",
   "created": "2026-11-04",
+  "completed": "2026-11-04",
   "objective": "Make pplr simpler without changing what it does, from the candidates that critic-rust's second read of ST0001 WP11 commit 3 (fe4b677) left on vc's board, under hv's rule that a change now makes pplr simpler or easier and adds nothing (vc decision 2). Then release the result as pplr 2.0.1 with one command, `bin/devbin release v2.0.1`, the first real run of its `after:`, `bin/devbin post-cut` (vc decision 27).",
   "context": "hv, 2026-11-04: vc has the pen on pplr, cldr and ccusage. All three are to be properly finished this morning, each releasing signed and notarised by one devbin command. pplr's part is this thread. pplr-dc implements it and vc reviews it.\n\nThe candidates. Each one preserves behaviour unless it says otherwise:\n\n- `Pair.how` (src/sync.rs) is a `&'static str` over five words: linked, email, linkedin, phone and name. An enum names them once, and the JSON and the report print the same words.\n- `Pair.has_inetloc`: `check()` reads it and `matches()` leaves it false, so false means both \"absent\" and \"not read\". \"Not read\" becomes a state of its own.\n- `workbook::write` fills Merged's rows by position, while the reader and the styling go by header. It fills them by header too.\n- One macOS gate: contacts/mod.rs, handler.rs and icons.rs each test `cfg!(target_os = \"macos\")` with their own message, beside open.rs's `macos_only(why)`. One helper serves every gate, and every message stays as it is.\n- One walker: grep.rs, links.rs and rename.rs each recurse on their own, with different rules for order, dot names and symlinks, each matching the legacy tool it replaced. They share one walk only if it keeps every rule and reads simpler. Otherwise the package records why and is cancelled.\n- One picture rule, a divergence that needs hv's ruling: `tree::PICTURES` takes the first file in About/ by name with any picture ending, while `pplr pictures` and the index try the extensions in turn, so a folder with two pictures can give a different one to each. On the live tree on 2026-11-04, none of the 358 About folders with a picture holds two, so unifying the rules changes no output there today.\n- The walks pass over a directory they cannot read without a word, where the legacy's `grep -r` and `find` named it on stderr. Saying so is a divergence, and hv's ruling.",
   "body": "",
@@ -71,7 +72,18 @@
       "text": "Behaviour is preserved: every frozen golden replays unchanged, apart from a ruled divergence's, which changes in its own commit naming the ruling; check all and test all exit 0 at the thread's tip, measured in a fresh clone.",
       "kind": "test",
       "state": {
-        "is": "computed"
+        "is": "withdrawn",
+        "reason": "Created as kind test by mistake: it is judged on measured runs and on the goldens left unchanged, not on one test, as ST0002's thread-level criteria were. Re-created as the non-test AC-00.2, with the same text.",
+        "by": "vc"
+      }
+    },
+    {
+      "id": "AC-00.2",
+      "text": "Behaviour is preserved: every frozen golden replays unchanged, apart from a ruled divergence's, which changes in its own commit naming the ruling; check all and test all exit 0 at the thread's tip, measured in a fresh clone.",
+      "kind": "non-test",
+      "state": {
+        "is": "satisfied",
+        "evidence": "No file under tests/golden changed across ST0003 (git diff 39ab698 733e127 -- tests/golden is empty), and neither ruled divergence moved a golden. vc's fresh-clone verification of 97713b7, the thread's code tip, in slot 01M6JTFJFQKM0S4DSP6YRM0W7Z: check all 0, and test all 0 with the golden replay among the 39 cli tests and 107 bats, then stamped to 2.0.1 (version set, lock-sync) with test all 0 again. hv's cut of v2.0.1 at 733e127: its gates green, and candidate CI 41800550695 green on macOS and Linux."
       }
     },
     {

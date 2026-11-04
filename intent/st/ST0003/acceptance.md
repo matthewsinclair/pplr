@@ -15,7 +15,8 @@ title: Post-port simplifications, then 2.0.1 by one command
 
 ### ST-level
 
-- AC-00.1 Behaviour is preserved: every frozen golden replays unchanged, apart from a ruled divergence's, which changes in its own commit naming the ruling; check all and test all exit 0 at the thread's tip, measured in a fresh clone. -- satisfied: no (computed)
+- AC-00.1 Behaviour is preserved: every frozen golden replays unchanged, apart from a ruled divergence's, which changes in its own commit naming the ruling; check all and test all exit 0 at the thread's tip, measured in a fresh clone. -- WITHDRAWN: Created as kind test by mistake: it is judged on measured runs and on the goldens left unchanged, not on one test, as ST0002's thread-level criteria were. Re-created as the non-test AC-00.2, with the same text. (by vc)
+- AC-00.2 (non-test) Behaviour is preserved: every frozen golden replays unchanged, apart from a ruled divergence's, which changes in its own commit naming the ruling; check all and test all exit 0 at the thread's tip, measured in a fresh clone. -- evidence: No file under tests/golden changed across ST0003 (git diff 39ab698 733e127 -- tests/golden is empty), and neither ruled divergence moved a golden. vc's fresh-clone verification of 97713b7, the thread's code tip, in slot 01M6JTFJFQKM0S4DSP6YRM0W7Z: check all 0, and test all 0 with the golden replay among the 39 cli tests and 107 bats, then stamped to 2.0.1 (version set, lock-sync) with test all 0 again. hv's cut of v2.0.1 at 733e127: its gates green, and candidate CI 41800550695 green on macOS and Linux. -- satisfied: yes
 
 ### WP-01 -- Pair: how as an enum, and has_inetloc's not-read state its own (status: Done)
 

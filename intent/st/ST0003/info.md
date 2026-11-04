@@ -1,9 +1,9 @@
 ---
 st_id: ST0003
 title: Post-port simplifications, then 2.0.1 by one command
-status: WIP
+status: Completed
 created: 2026-11-04
-completed:
+completed: 2026-11-04
 ---
 
 # ST0003: Post-port simplifications, then 2.0.1 by one command
