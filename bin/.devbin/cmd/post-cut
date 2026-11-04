@@ -78,12 +78,17 @@ bin/devbin formula publish ||
 
 # This machine's clone of the tap, pulled so brew upgrade sees the release:
 # brew's auto-update can leave a third-party tap behind. The upgrade is hv's.
-if (( $+commands[brew] )); then
+# Each skip names what it looked for, so the lines claim only what ran.
+if (( ! $+commands[brew] )); then
+  say "no brew on PATH, so no tap clone to pull"
+else
   tapdir=$(brew --repository)/Library/Taps/matthewsinclair/homebrew-pplr
   if [[ -d $tapdir/.git ]]; then
     git -C $tapdir pull -q --ff-only ||
       die "cannot pull $tapdir; $asset is attached and the tap published. Pull it by hand before brew upgrade"
     say "this machine's tap: $(git -C $tapdir log -1 --format=%s)"
+  else
+    say "no tap clone at $tapdir, so none was pulled"
   fi
 fi
 say "pplr $tag: $asset attached and the tap published"

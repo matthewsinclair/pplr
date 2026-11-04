@@ -28,7 +28,8 @@
 # IT RUNS ON THE MAINTAINER'S MAC ONLY. It refuses on CI ($CI set), off macOS,
 # and, for a real signature, when the Developer ID identity is not in the
 # keychain. The notary credentials are read from the login keychain, under
-# packaging/macos/signing's `keychain` prefix, only by a real notarize.
+# packaging/macos/signing's `keychain` prefix, by a real notarize alone, and by
+# prepare before anything is signed.
 
 emulate -L zsh
 setopt err_exit no_unset pipe_fail
@@ -57,10 +58,12 @@ guard() {
   [[ $(uname) == Darwin ]] || die "signing needs macOS"
 }
 
+# The listing is read whole before it is matched: grep -q under pipe_fail can
+# lose to SIGPIPE and refuse an identity that is there
 require_identity() {
-  local identity=$(fact identity)
-  security find-identity -v -p codesigning 2>/dev/null | grep -qF "\"$identity\"" ||
-    die "the signing identity is not in this keychain: $identity"
+  local identity=$(fact identity) found
+  found=$(security find-identity -v -p codesigning 2>/dev/null) || true
+  [[ $found == *"\"$identity\""* ]] || die "the signing identity is not in this keychain: $identity"
 }
 
 version() { sed -n 's/^version = "\(.*\)"$/\1/p' Cargo.toml | head -1 }
@@ -138,10 +141,27 @@ cmd_verify() {
   done
 }
 
-# A notary credential from the login keychain, under the signing file's prefix
+# A notary credential from the login keychain, under the signing file's prefix;
+# an empty one is refused by name. The account is quoted: native zsh drops an
+# empty word, and -a would take -s as its account.
 secret() {
-  local keychain=$(fact keychain)
-  security find-generic-password -a $USER -s "$keychain.$1" -w 2>/dev/null || die "no $keychain.$1 in the login keychain"
+  local keychain=$(fact keychain) value
+  value=$(security find-generic-password -a "$USER" -s "$keychain.$1" -w 2>/dev/null) ||
+    die "no $keychain.$1 in the login keychain"
+  [[ -n $value ]] || die "$keychain.$1 in the login keychain is empty"
+  print -r -- $value
+}
+
+# The three notary credentials, each read by plain assignment, so a missing or
+# empty one stops the run by name. Inside notarytool's arguments, or under
+# `local`, the status of secret's die is lost, and notarytool runs with an
+# empty value.
+apple_id='' apple_password='' apple_team=''
+credentials() {
+  [[ -z $apple_id ]] || return 0
+  apple_id=$(secret APPLE_ID) || exit 1
+  apple_password=$(secret APPLE_APP_PASSWORD) || exit 1
+  apple_team=$(secret APPLE_TEAM_ID) || exit 1
 }
 
 cmd_notarize() {
@@ -155,6 +175,7 @@ cmd_notarize() {
     print "  (the <...> values are read from the login keychain, service prefix $keychain, at submission)"
     return
   fi
+  credentials
   require_identity
   local b
   for b in $binaries; do
@@ -167,7 +188,7 @@ cmd_notarize() {
   /usr/bin/ditto -c -k --keepParent --sequesterRsrc $payload $zip
   step "submitting to Apple (notarytool waits)"
   local out
-  out=$(xcrun notarytool submit $zip --apple-id "$(secret APPLE_ID)" --password "$(secret APPLE_APP_PASSWORD)" --team-id "$(secret APPLE_TEAM_ID)" --wait 2>&1) || true
+  out=$(xcrun notarytool submit $zip --apple-id "$apple_id" --password "$apple_password" --team-id "$apple_team" --wait 2>&1) || true
   print -r -- $out
   [[ $out == *"status: Accepted"* ]] || die "notarisation was not Accepted"
   rm -rf $payload $zip
@@ -190,7 +211,8 @@ cmd_pack() {
     if [[ $b == *.app ]]; then /usr/bin/ditto $stage/$b $tree/$b; else /usr/bin/ditto $stage/$b $tree/bin/$b; fi
   done
   local out=$PWD/$asset
-  ( cd $tree && tar -czf $out * )
+  # COPYFILE_DISABLE keeps macOS tar from adding a ._ entry for any extended attribute
+  ( cd $tree && COPYFILE_DISABLE=1 tar -czf $out * )
   rm -rf $tree
   print "packed: $asset ($( (( adhoc )) && print 'ad-hoc: never a release asset' || print 'signed and notarised' ))"
 }
@@ -213,6 +235,8 @@ case $sub in
   notarize) cmd_notarize $dry ;;
   pack) cmd_pack $adhoc ;;
   prepare)
+    # The notary credentials first, so a missing one refuses with nothing signed
+    if (( ! adhoc && ! dry )); then credentials; fi
     cmd_stage
     cmd_sign $adhoc
     # The signatures alone: spctl waits for pack's verify, after notarize
