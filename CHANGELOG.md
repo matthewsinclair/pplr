@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Where pplr 2.0.1 deliberately differs from 2.0.0, by hv's ruling of 2026-11-04 (vc decision 29):
+- Where 2.0.1 deliberately differs from 2.0.0:
   - `pplr grep`, `pplr links` and `pplr rename` name each folder they cannot read on stderr, one line each (`pplr: cannot read <folder>: <why>`), and carry on, with their exit code unchanged. 2.0.0 passed over such a folder without a word, where the shell version's `grep -r` and `find` named it.
+  - Every command takes a person's picture by one rule, the first picture in About/ by name. So the index (`pplr index`, `pplr json` and the `index.json` and `index.md` that `pplr reindex` writes) names a person's picture whatever its file is called, where 2.0.0 looked only for `<First Surname> (Picture)` and named a `.jpg` that was not there; a person with no picture keeps that `.jpg`'s name, as before. `pplr pictures` takes the same picture where a folder holds two.
 
 ## [2.0.0] - 2026-11-03
 

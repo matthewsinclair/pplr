@@ -10,9 +10,6 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-/// The picture extensions, in the order a picture is looked for.
-const EXTENSIONS: [&str; 3] = ["jpg", "jpeg", "png"];
-
 pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
   let mut dry = false;
   let mut wanted = Vec::new();
@@ -52,10 +49,8 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
       continue;
     };
     let about = about_dir.join(about);
-    let Some(picture) = EXTENSIONS.iter().find_map(|ext| {
-      let suffix = format!("(Picture).{ext}");
-      files.iter().find(|n| n.ends_with(&suffix)).cloned()
-    }) else {
+    // The one picture rule, the engine's and the index's too
+    let Some(picture) = crate::tree::picture(&files).cloned() else {
       none += 1;
       continue;
     };

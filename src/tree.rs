@@ -7,11 +7,17 @@ use crate::fs::read_text;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-/// The endings of a picture's name in About/, as the engine found it: the
-/// first file by name with any of them. `pplr pictures` and the index keep
-/// their own scripts' rules (src/pictures.rs, src/index.rs), which try the
-/// extensions in turn, so with two pictures they can pick the other one.
+/// The endings of a picture's name in About/.
 const PICTURES: [&str; 3] = ["(Picture).jpg", "(Picture).png", "(Picture).jpeg"];
+
+/// A person's picture among their About/ folder's names, sorted: the first
+/// with a picture's ending, as the engine found it. The one rule: the engine,
+/// `pplr pictures` and the index all take it.
+pub fn picture(names: &[String]) -> Option<&String> {
+  names
+    .iter()
+    .find(|n| PICTURES.iter().any(|ending| n.ends_with(ending)))
+}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Person {
@@ -76,10 +82,7 @@ fn person(dir: &Path, letter: &str, name: &str) -> Result<Person> {
     .iter()
     .find(|n| n.ends_with("(About).md"))
     .map(|n| about_dir.join(n));
-  let picture = files
-    .iter()
-    .find(|n| PICTURES.iter().any(|ending| n.ends_with(ending)))
-    .map(|n| about_dir.join(n));
+  let picture = picture(&files).map(|n| about_dir.join(n));
   let text = match &about {
     Some(path) => read_text(path)?,
     None => None,
@@ -211,5 +214,85 @@ mod tests {
         .to_string(),
       "/p/K/Kemp, Jon/About/Jon Kemp (About).md"
     );
+  }
+
+  /// AT-05.1 (ST0003 AC-05.1): the engine, pplr pictures and the index take a
+  /// person's picture by one rule, the first picture in About/ by name: with
+  /// two pictures, and with one not named after the person. With none, the
+  /// index names "<First Surname> (Picture).jpg", as 2.0.0 did.
+  #[test]
+  fn the_engine_pictures_and_the_index_take_one_picture() -> Result<()> {
+    let root = std::env::temp_dir().join(format!("pplr-picture-rule-{}", std::process::id()));
+    // Each person's key, their About's stem, their pictures, and the picture
+    // each command should take
+    let cases = [
+      (
+        "L/Lovelace, Ada",
+        "Ada Lovelace",
+        &["A (Picture).png", "Ada Lovelace (Picture).jpg"][..],
+        Some("A (Picture).png"),
+      ),
+      (
+        "B/Babbage, Charles",
+        "Charles Babbage",
+        &["Old Name (Picture).jpg"][..],
+        Some("Old Name (Picture).jpg"),
+      ),
+      ("S/Somerville, Mary", "Mary Somerville", &[][..], None),
+    ];
+    for (key, stem, pictures, _) in cases {
+      let about = root.join(key).join("About");
+      fs::create_dir_all(&about)?;
+      fs::write(
+        about.join(format!("{stem} (About).md")),
+        format!("# {stem} (About)\n"),
+      )?;
+      for picture in pictures {
+        fs::write(about.join(picture), "")?;
+      }
+    }
+    let config = crate::config::Config::from_lookup(|name| match name {
+      "HOME" | "PPLR_DATA" => Some(root.clone()),
+      _ => None,
+    })?;
+    let people = people(&root)?;
+    let index = crate::index::letters(&root);
+    crate::pictures::run(&[], &config)?;
+    for (key, stem, _, want) in cases {
+      let engine = people
+        .iter()
+        .find(|p| p.key == key)
+        .and_then(|p| p.picture.as_ref())
+        .and_then(|p| p.file_name())
+        .map(|n| n.to_string_lossy().into_owned());
+      assert_eq!(engine.as_deref(), want, "the engine's picture for {key}");
+      let (letter, name) = key.split_once('/').ok_or("a key with no letter")?;
+      let indexed = index
+        .iter()
+        .find(|l| l.name == letter)
+        .and_then(|l| l.people.iter().find(|e| e.name == name))
+        .map(|e| e.picture.clone())
+        .ok_or_else(|| format!("the index has no {key}"))?;
+      let file = want.map_or_else(|| format!("{stem} (Picture).jpg"), str::to_owned);
+      assert_eq!(
+        indexed,
+        format!("./{key}/About/{file}"),
+        "the index's picture for {key}"
+      );
+      let text = fs::read_to_string(
+        root
+          .join(key)
+          .join("About")
+          .join(format!("{stem} (About).md")),
+      )?;
+      let shown = text
+        .lines()
+        .find_map(|l| l.strip_prefix("<img src=\""))
+        .and_then(|rest| rest.split_once('"'))
+        .map(|(src, _)| src.to_owned());
+      assert_eq!(shown.as_deref(), want, "pplr pictures' picture for {key}");
+    }
+    fs::remove_dir_all(&root)?;
+    Ok(())
   }
 }

@@ -62,9 +62,6 @@ pub struct Entry {
   pub meetings: Vec<(String, String)>,
 }
 
-/// The extensions a picture is probed for, in order.
-const PICTURE_EXTENSIONS: [&str; 3] = ["jpg", "png", "jpeg"];
-
 pub fn letters(root: &Path) -> Vec<Letter> {
   names(root)
     .into_iter()
@@ -87,10 +84,10 @@ fn entry(root: &Path, letter: &str, name: &str) -> Entry {
   let stem = format!("{first} {surname}");
   let dir = format!("./{letter}/{name}");
   let about_dir = root.join(letter).join(name).join("About");
-  let picture = PICTURE_EXTENSIONS
-    .iter()
-    .map(|ext| format!("{stem} (Picture).{ext}"))
-    .find(|file| about_dir.join(file).is_file())
+  // The one picture rule, whatever the file is called; with none, the name a
+  // picture of the person's would have, as 2.0.0 gave it
+  let picture = crate::tree::picture(&names(&about_dir))
+    .cloned()
     .unwrap_or_else(|| format!("{stem} (Picture).jpg"));
   let meetings_dir = root.join(letter).join(name).join("Meetings");
   let meetings = names(&meetings_dir)

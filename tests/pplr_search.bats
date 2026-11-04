@@ -70,10 +70,9 @@ EOF
     assert_contains "$output" "Grep, Gary"
 }
 
-# hv's ruling of 2026-11-04 (ST0003 WP04, CHANGELOG 2.0.1): a folder a walk
-# cannot read is named on stderr, one line, and the walk carries on, its exit
-# code unchanged. uid 0 reads a folder with no permissions, so the test skips
-# there.
+# AT-04.2 (ST0003 AC-04.1): a folder a walk cannot read is named on stderr,
+# one line, and the walk carries on, its exit code unchanged (CHANGELOG
+# 2.0.1). uid 0 reads a folder with no permissions, so the test skips there.
 @test "pplr grep names a folder it cannot read on stderr, and still searches the rest" {
     [ "$(id -u)" -ne 0 ] || skip "uid 0 reads a folder with no permissions, so none is unreadable"
     create_test_person "Grep" "Gary" >/dev/null
