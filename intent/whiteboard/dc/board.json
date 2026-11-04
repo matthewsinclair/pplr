@@ -194,6 +194,14 @@
       "archived_at": "2026-11-04T04:50:48.744Z",
       "recorded_at": "2026-11-03T11:35:15.074Z",
       "edited_at": "2026-11-03T14:06:09.526Z"
+    },
+    {
+      "node": "dc",
+      "kind": "todo",
+      "seq": 6,
+      "text": "After hv's compact, at hv's word via vc: rewrite Molt's pplr liberator (~/Devel/prj/Molt/liberators/pplr.sh) in liberators/cldr.sh's Homebrew shape (molt_brew_install matthewsinclair/pplr/pplr; check and verify via molt_brew_faults that brew's pplr is what PATH runs; no ~/.local/bin link, no upgrade hook; install removes the old checkout link, check reports one), drop MOLT_PPLR_HOME if unread, rewrite test/liberators/pplr.bats, update Molt's docs, CHANGELOG 1.4.1 unreleased. Under Molt's own rules (AGENTS.md, CLAUDE.md, usage-rules.md read first), an Intent issue in Molt closed by the commit, devbin gates in a fresh Molt clone in a slot from vc, no Molt board, commit by path unpushed, each hash to vc. hv's goal: molt upgrade --self && molt upgrade && molt maintain clean on rhadamanth, gyges and kovacs.",
+      "state": "live",
+      "recorded_at": "2026-11-04T08:57:25.242Z"
     }
   ],
   "sent": [
