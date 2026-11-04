@@ -1,0 +1,16 @@
+{
+  "id": "01M6KTZ3RWKMJ97WX0X7E2W3S8",
+  "ts": "2026-11-04T17:51:02.940Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 16,
+    "text": "devbin 0.1.20 (devbin-vc's). 0322 (formula line-length fix) is proven on vc's desk (rc 0, 17:20Z to 17:26Z) and landed at d5b7872e, closed in 2eac8890, unpushed. hv then ruled in devbin-vc's window: no v0.1.20 cut until the 19 open devbin issues are fixed into it ('Hold, fix them all first', devbin directive 13); devbin-vc books each unit's run on vc's desk. Also filed: devbin 0323 (5d477b81), the core carries a Rust CLI's ship (lock-sync, macOS sign, notarise, pack, attach), retiring pplr's, cldr's and ccusage's bin/.devbin/cmd copies, with the notarytool keychain profile (todo 11); hv's word between 17:43Z and 17:47Z, 'for fixing now (by devbin)'. After the cut: hv's brew upgrade devbin and devbin use brew; devbin-vc's fleet sweep; hv republishes the three taps without their CI exceptions."
+  }
+}

@@ -545,10 +545,10 @@
       "node": "vc",
       "kind": "todo",
       "seq": 16,
-      "text": "devbin 0.1.20, hv 2026-11-04 (devbin-vc's decision 133 agrees): the formula line-length fix, devbin#0322, plus Devbin's main since v0.1.19 (0320 included); the 19 open issues wait. devbin-dc, under pplr-vc: unit 28f94c39 on 64566fba, banked, unpushed. Its arm runs brew style itself: red at main (131/118), green at the fix, BSD and GNU. Fleet proof clean: brew style and brew audit --strict on pplr 2.0.2's, cldr 0.2.2's and ccusage 0.1.8's renders, in a scratch trust store (hv's choice a), with ~/.homebrew/trust.json unchanged (vc checked e0f6ec4b). Next, at hv's return: dc's run on vc's desk (bats lane); devbin-vc lands it with land-stack.sh and 0322 closes in the next commit; hv's cut, which needs kovacs up with kovacs-sysadm and CI's whole matrix; hv's brew upgrade devbin, then devbin use brew; devbin-vc's sweep vendors 0.1.20 fleet-wide; hv republishes the three taps, and homebrew-cldr's and homebrew-ccusage's CI exceptions go.",
+      "text": "devbin 0.1.20 (devbin-vc's). 0322 (formula line-length fix) is proven on vc's desk (rc 0, 17:20Z to 17:26Z) and landed at d5b7872e, closed in 2eac8890, unpushed. hv then ruled in devbin-vc's window: no v0.1.20 cut until the 19 open devbin issues are fixed into it ('Hold, fix them all first', devbin directive 13); devbin-vc books each unit's run on vc's desk. Also filed: devbin 0323 (5d477b81), the core carries a Rust CLI's ship (lock-sync, macOS sign, notarise, pack, attach), retiring pplr's, cldr's and ccusage's bin/.devbin/cmd copies, with the notarytool keychain profile (todo 11); hv's word between 17:43Z and 17:47Z, 'for fixing now (by devbin)'. After the cut: hv's brew upgrade devbin and devbin use brew; devbin-vc's fleet sweep; hv republishes the three taps without their CI exceptions.",
       "state": "live",
       "recorded_at": "2026-11-04T11:39:25.123Z",
-      "edited_at": "2026-11-04T12:21:15.444Z"
+      "edited_at": "2026-11-04T17:51:02.940Z"
     },
     {
       "node": "vc",
