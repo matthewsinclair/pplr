@@ -6,7 +6,7 @@ name: Tests
 #
 # AT-00.3 (ST0001 AC-00.3): the last step, the bats suite against the Rust
 # pplr, passes on both runners. On Linux only a test that needs a macOS service
-# skips, naming why. macos-latest has no fileicon, so the icon tests run under
+# skips, naming why. macos-15 has no fileicon, so the icon tests run under
 # bin/devbin test shell on a Mac that has it.
 
 on:
@@ -26,7 +26,7 @@ jobs:
       # One runner's failure must not hide the other's result
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-15]
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
