@@ -7,7 +7,7 @@ use crate::contacts::{Card, CardChange, MarkerWrite, NewCard};
 use crate::marker::{marker_paths, marker_url};
 use crate::normalise::{decompose, email_key, fold};
 use crate::sync::{
-  card_name, display_name, is_home, marker_write, matches, needs_group, pplr_marker, same_text,
+  How, card_name, display_name, is_home, marker_write, matches, needs_group, pplr_marker, same_text,
 };
 use crate::tree::Person;
 use serde::{Serialize, Serializer};
@@ -573,12 +573,15 @@ fn add_changes(card: &NewCard, group: &str) -> Vec<String> {
 
 // The plan
 
-fn tier(how: &str) -> &'static str {
+/// A strict tier's words. plan() reads the linked and matched pairs alone,
+/// so a name-only pair never comes here, and Name shares phone's words, as
+/// it did under 2.0.0's catch-all.
+fn tier(how: How) -> &'static str {
   match how {
-    "linked" => "linked by pplr URL",
-    "email" => "same email",
-    "linkedin" => "same LinkedIn",
-    _ => "same phone",
+    How::Linked => "linked by pplr URL",
+    How::Email => "same email",
+    How::Linkedin => "same LinkedIn",
+    How::Phone | How::Name => "same phone",
   }
 }
 

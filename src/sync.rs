@@ -184,14 +184,41 @@ pub struct FieldDiff {
   pub contacts: Vec<String>,
 }
 
+/// How matches() found a person's card, in the order it tries the ways.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum How {
+  /// The pplr URL on the card.
+  Linked,
+  /// An email that one card alone shares.
+  Email,
+  /// A LinkedIn slug that one card alone shares.
+  Linkedin,
+  /// A phone that one card alone shares.
+  Phone,
+  /// The name alone, which a person confirms before linking.
+  Name,
+}
+
+impl How {
+  /// The way's word, as 2.0.0 printed it in the JSON and the report.
+  pub fn as_str(self) -> &'static str {
+    match self {
+      How::Linked => "linked",
+      How::Email => "email",
+      How::Linkedin => "linkedin",
+      How::Phone => "phone",
+      How::Name => "name",
+    }
+  }
+}
+
 /// A pplr person and the card they match, and what a link still needs.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Pair {
   pub person: String,
   pub contact: String,
   pub contact_name: String,
-  /// linked | email | linkedin | phone | name
-  pub how: &'static str,
+  pub how: How,
   pub in_group: bool,
   /// An iCloud card not yet in the group.
   pub needs_group: bool,
@@ -204,8 +231,9 @@ pub struct Pair {
   /// The card has a pplr URL in an older form, to replace.
   pub marker_stale: bool,
   pub inetloc: PathBuf,
-  /// It exists and opens this card: check() reads it, matches() leaves it false.
-  pub has_inetloc: bool,
+  /// Whether it exists and opens this card: None until check() reads it,
+  /// since matches() reads nothing from disk.
+  pub has_inetloc: Option<bool>,
   pub diffs: Vec<FieldDiff>,
 }
 
@@ -232,10 +260,10 @@ impl Report {
         ps.iter()
           .map(|p| {
             json!({
-              "person": p.person, "contact": p.contact, "contactName": p.contact_name, "how": p.how,
+              "person": p.person, "contact": p.contact, "contactName": p.contact_name, "how": p.how.as_str(),
               "inGroup": p.in_group, "needsGroup": p.needs_group, "noAccount": p.no_account,
               "otherAccount": p.other_account, "hasMarker": p.has_marker, "markerStale": p.marker_stale,
-              "inetloc": p.inetloc.display().to_string(), "hasInetloc": p.has_inetloc,
+              "inetloc": p.inetloc.display().to_string(), "hasInetloc": p.has_inetloc == Some(true),
               "diffs": p.diffs.iter().map(|d| json!({"field": d.field, "pplr": d.pplr, "contacts": d.contacts})).collect::<Vec<_>>(),
             })
           })
@@ -464,14 +492,14 @@ pub fn check(people: &[Person], cards: &[Card], group: &str) -> Report {
     .chain(&mut r.matched)
     .chain(&mut r.name_only)
   {
-    p.has_inetloc = inetloc_opens(&p.inetloc, &p.contact);
+    p.has_inetloc = Some(inetloc_opens(&p.inetloc, &p.contact));
   }
   r
 }
 
 /// Every person matched to a card: the pplr URL first, then a unique email,
 /// LinkedIn or phone, then the name alone; ambiguity and orphans reported.
-/// Nothing is read from disk, so no .inetloc is known to open its card.
+/// Nothing is read from disk, so every .inetloc is left not read.
 pub fn matches(people: &[Person], cards: &[Card], group: &str) -> Report {
   // A card's pplr URL names a person by a marker path, or by the key itself,
   // each keyed as `same_text` compares
@@ -532,7 +560,7 @@ pub fn matches(people: &[Person], cards: &[Card], group: &str) -> Report {
     group_orphans: Vec::new(),
   };
   let mut claimed: HashSet<String> = HashSet::new();
-  let mut pair = |p: &Person, c: &Card, how: &'static str| -> Pair {
+  let mut pair = |p: &Person, c: &Card, how: How| -> Pair {
     claimed.insert(c.id.clone());
     let marker = marker_write(c, &p.key);
     let account = c.account.as_deref();
@@ -548,7 +576,7 @@ pub fn matches(people: &[Person], cards: &[Card], group: &str) -> Report {
       has_marker: marker.is_none(),
       marker_stale: marker.is_some_and(|m| m.replace),
       inetloc: inetloc_path(p),
-      has_inetloc: false,
+      has_inetloc: None,
       diffs: diffs(p, c),
     }
   };
@@ -559,7 +587,7 @@ pub fn matches(people: &[Person], cards: &[Card], group: &str) -> Report {
   };
   for p in people {
     if let Some(c) = by_marker.get(&p.key) {
-      r.linked.push(pair(p, c, "linked"));
+      r.linked.push(pair(p, c, How::Linked));
       continue;
     }
     let via_email = uniq(
@@ -596,15 +624,15 @@ pub fn matches(people: &[Person], cards: &[Card], group: &str) -> Report {
       .cloned()
       .unwrap_or_default();
     if via_email.len() == 1 {
-      r.matched.push(pair(p, via_email[0], "email"));
+      r.matched.push(pair(p, via_email[0], How::Email));
     } else if via_email.len() > 1 {
       r.ambiguous.push((p.key.clone(), names_of(&via_email)));
     } else if via_slug.len() == 1 {
-      r.matched.push(pair(p, via_slug[0], "linkedin"));
+      r.matched.push(pair(p, via_slug[0], How::Linkedin));
     } else if via_phone.len() == 1 {
-      r.matched.push(pair(p, via_phone[0], "phone"));
+      r.matched.push(pair(p, via_phone[0], How::Phone));
     } else if via_name.len() == 1 {
-      r.name_only.push(pair(p, via_name[0], "name"));
+      r.name_only.push(pair(p, via_name[0], How::Name));
     } else if via_name.len() > 1 {
       r.ambiguous.push((p.key.clone(), names_of(&via_name)));
     } else {
@@ -629,7 +657,7 @@ fn print_report(r: &Report, verbose: bool) {
     .copied()
     .filter(|p| !p.diffs.is_empty())
     .collect();
-  let how = |h: &str| r.matched.iter().filter(|p| p.how == h).count();
+  let how = |h: How| r.matched.iter().filter(|p| p.how == h).count();
   println!("pplr sync --check (read-only)\n");
   println!("  pplr people             {}", r.people);
   println!("  Contacts cards          {}", r.contacts);
@@ -642,9 +670,9 @@ fn print_report(r: &Report, verbose: bool) {
       "    in another account    {elsewhere}  (marked by the pplr URL; the group is iCloud's only)"
     );
   }
-  println!("  matched by email        {}", how("email"));
-  println!("  matched by LinkedIn     {}", how("linkedin"));
-  println!("  matched by phone        {}", how("phone"));
+  println!("  matched by email        {}", how(How::Email));
+  println!("  matched by LinkedIn     {}", how(How::Linkedin));
+  println!("  matched by phone        {}", how(How::Phone));
   println!("  name only (confirm)     {}", r.name_only.len());
   println!("  ambiguous               {}", r.ambiguous.len());
   println!("  only in pplr            {}", r.pplr_only.len());
@@ -679,7 +707,7 @@ fn print_report(r: &Report, verbose: bool) {
         "{}  <->  {}  [{}{}{}]",
         p.person,
         p.contact_name,
-        p.how,
+        p.how.as_str(),
         if p.in_group { ", in group" } else { "" },
         if p.other_account {
           ", other account"
@@ -760,7 +788,7 @@ fn plan_link(r: &Report, names: &[String], all_names: bool) -> LinkPlan {
   let name_keys: HashSet<String> = r.name_only.iter().map(|p| decompose(&p.person)).collect();
   let confirmed = r.name_only.iter().filter(|p| all_names || named(p));
   let all: Vec<&Pair> = r.linked.iter().chain(&r.matched).chain(confirmed).collect();
-  let done = |p: &Pair| p.has_marker && !p.needs_group && p.has_inetloc;
+  let done = |p: &Pair| p.has_marker && !p.needs_group && p.has_inetloc == Some(true);
   let strict: HashSet<String> = r
     .linked
     .iter()
@@ -868,7 +896,7 @@ fn link(store: &mut dyn Store, o: &Options, group: &str, config: &Config) -> Res
         if marker.is_some() || p.needs_group {
           store.link(&p.contact, marker.as_ref(), p.needs_group.then_some(group))?;
         }
-        if p.has_inetloc {
+        if p.has_inetloc == Some(true) {
           Ok(())
         } else {
           write_inetloc(&p.inetloc, &p.contact)
@@ -893,10 +921,10 @@ fn print_link(plan: &LinkPlan, group: &str, outcome: Option<&Outcome>, backup: O
     if p.needs_group {
       w.push("group");
     }
-    if !p.has_inetloc {
+    if p.has_inetloc != Some(true) {
       w.push(".inetloc");
     }
-    format!("[{}; {}]", p.how, w.join(" + "))
+    format!("[{}; {}]", p.how.as_str(), w.join(" + "))
   };
   let by_person = |person: &str| plan.to_link.iter().find(|p| p.person == person);
   if let Some(outcome) = outcome {
@@ -1519,9 +1547,105 @@ pub(crate) mod tests {
     assert!(
       r.matched
         .iter()
-        .any(|m| m.person == p.key && m.contact == c.id && m.how == "linkedin"),
+        .any(|m| m.person == p.key && m.contact == c.id && m.how == How::Linkedin),
       "no match by the slug in its other form: {r:?}"
     );
+  }
+
+  /// AT-01.1 (ST0003 AC-01.1): matches() finds a person each of the five
+  /// ways, and the JSON names each way in 2.0.0's word. matches() leaves
+  /// every .inetloc not read, check() reads one as absent or as opening its
+  /// card, and the JSON's hasInetloc reads false for not read and absent
+  /// alike, as at 2.0.0.
+  #[test]
+  fn each_way_has_its_word_and_an_inetloc_not_read_is_not_absent() -> Result<()> {
+    let root = std::env::temp_dir().join(format!("pplr-sync-ways-{}", std::process::id()));
+    let at = |key: &str| {
+      let mut p = person(key, "");
+      p.dir = root.join(key);
+      p
+    };
+    let linked = at("L/Linked, Lena");
+    let mut email = at("E/Email, Eve");
+    email.header.emails.push("eve@example.com".to_owned());
+    let mut slug = at("S/Slug, Sam");
+    slug.header.linkedin = "sam-slug".to_owned();
+    let mut phone = at("P/Phone, Pat");
+    phone.header.phones.push("07700900123".to_owned());
+    let name = at("N/Name, Nia");
+    let mut by_url = card("c-linked", &[]);
+    by_url.urls.push(LabelledValue {
+      label: "pplr".to_owned(),
+      value: marker_url(&linked.key),
+    });
+    let mut by_email = card("c-email", &[]);
+    by_email.emails.push("eve@example.com".to_owned());
+    let mut by_phone = card("c-phone", &[]);
+    by_phone.phones.push("07700900123".to_owned());
+    let mut by_name = card("c-name", &[]);
+    by_name.given = "Nia".to_owned();
+    by_name.family = "Name".to_owned();
+    let opens = inetloc_path(&email);
+    let people = [linked, email, slug, phone, name];
+    let cards = [
+      by_url,
+      by_email,
+      card("c-slug", &["sam-slug"]),
+      by_phone,
+      by_name,
+    ];
+
+    // Each pair in the JSON as (person, how, hasInetloc), by person
+    let rows = |r: &Report| {
+      let json = r.to_json();
+      let mut rows: Vec<(Value, Value, Value)> = ["linked", "matched", "nameOnly"]
+        .into_iter()
+        .flat_map(|section| json[section].as_array().cloned().unwrap_or_default())
+        .map(|p| {
+          (
+            p["person"].clone(),
+            p["how"].clone(),
+            p["hasInetloc"].clone(),
+          )
+        })
+        .collect();
+      rows.sort_by_key(|row| row.0.to_string());
+      rows
+    };
+    let words = |eve_opens: bool| {
+      vec![
+        (json!("E/Email, Eve"), json!("email"), json!(eve_opens)),
+        (json!("L/Linked, Lena"), json!("linked"), json!(false)),
+        (json!("N/Name, Nia"), json!("name"), json!(false)),
+        (json!("P/Phone, Pat"), json!("phone"), json!(false)),
+        (json!("S/Slug, Sam"), json!("linkedin"), json!(false)),
+      ]
+    };
+    // Each pair's card, with what is known of its .inetloc
+    let read = |r: &Report| {
+      r.linked
+        .iter()
+        .chain(&r.matched)
+        .chain(&r.name_only)
+        .map(|p| (p.contact.clone(), p.has_inetloc))
+        .collect::<Vec<_>>()
+    };
+
+    let matched = matches(&people, &cards, DEFAULT_GROUP);
+    assert_eq!(rows(&matched), words(false));
+    assert!(
+      read(&matched).iter().all(|(_, known)| known.is_none()),
+      "matches() read an .inetloc: {:?}",
+      read(&matched)
+    );
+    write_inetloc(&opens, "c-email")?;
+    let checked = check(&people, &cards, DEFAULT_GROUP);
+    assert_eq!(rows(&checked), words(true));
+    for (contact, known) in read(&checked) {
+      assert_eq!(known, Some(contact == "c-email"), "{contact}");
+    }
+    std::fs::remove_dir_all(&root)?;
+    Ok(())
   }
 
   #[test]
