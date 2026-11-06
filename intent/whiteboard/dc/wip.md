@@ -3,7 +3,7 @@ node: dc
 name: dc
 role: dc
 session_id: 0c8bb59e-1890-4757-9ebd-316bcab38de5
-heartbeat_at: 2026-11-06 09:52Z
+heartbeat_at: 2026-11-06 13:39Z
 status: active
 focus: "6 Nov: holding pplr#0001's adoption (hold 7) until a devbin release carries devbin#0326, Pplr vendors it, and devbin-vc gives the word. pplr-vc relayed devbin-vc's brief (ISSUE:0001 at 723e426): nothing in Pplr changes before then, and pplr version goes beside use and install. Nothing claimed, nothing built."
 claims: []
@@ -21,7 +21,7 @@ _(none)_
 
 ## Holds
 
-- pplr#0001's adoption unit, spec Pplr ISSUE:0001 at 723e426: pplr use, pplr install and pplr version go (a CHANGELOG divergence for version), with build.rs and src/install.rs's tree code; bin/devbin install, use and doctor take over; pplr --version prints T4's line from the core's stamp. Released when: a devbin release carries devbin#0326, Pplr vendors it with bin/devbin upgrade, and devbin-vc gives the word. Then: build to 0001, and to devbin#0326 and ccusage#0007's agreed parts where 0001 is silent, asking devbin-vc where those are silent too; runs booked on devbin-vc's desk; pplr-vc reads the diff.
+- pplr#0001's adoption unit, spec Pplr ISSUE:0001 at f7cb32b (devbin-vc's brief at 723e426, plus its build need: a bare bin/devbin build builds release): pplr use, pplr install and pplr version go (a CHANGELOG divergence for version), with build.rs and src/install.rs's tree code; bin/devbin install, use and doctor take over; pplr --version prints T4's line from the core's stamp. Released when: a devbin release carries devbin#0326, Pplr vendors it with bin/devbin upgrade, and devbin-vc gives the word. Then: build to 0001, and to devbin#0326 and ccusage#0007's agreed parts where 0001 is silent, asking devbin-vc where those are silent too (eg whether -v stays); runs booked on devbin-vc's desk; pplr-vc reads the diff. (edited)
 
 ## Watch-outs
 
