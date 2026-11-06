@@ -5,9 +5,9 @@
     "name": "vc",
     "role": "vc",
     "session_id": "25cfe285-2e71-4080-8a59-033be4ae0215",
-    "heartbeat_at": "2026-11-06T08:26:18.396Z",
+    "heartbeat_at": "2026-11-06T10:01:46.515Z",
     "status": "active",
-    "focus": "6 Nov: started by hv to record one defect from devbin-vc. ISSUE:0001 recorded (Pplr's dev/opt/brew switch is its own Rust copy of devbin's contract; adopt devbin's one approach, per hv's ruling), ready for remediation later. No other work; holding for hv.",
+    "focus": "6 Nov: Pplr ISSUE:0001 recorded at hv's word and accepted by devbin-vc at 723e426: pplr use, install and version go when Pplr adopts devbin#0326 (dc's hold 7); the working switch stays until then. Nothing else in hand; holding for hv.",
     "claims": [],
     "recorded_at": "2026-11-02T07:20:39.673Z",
     "migrated_at": "2026-11-02T07:20:39.673Z"

@@ -3,9 +3,9 @@ node: vc
 name: vc
 role: vc
 session_id: 25cfe285-2e71-4080-8a59-033be4ae0215
-heartbeat_at: 2026-11-06 08:26Z
+heartbeat_at: 2026-11-06 10:01Z
 status: active
-focus: "6 Nov: started by hv to record one defect from devbin-vc. ISSUE:0001 recorded (Pplr's dev/opt/brew switch is its own Rust copy of devbin's contract; adopt devbin's one approach, per hv's ruling), ready for remediation later. No other work; holding for hv."
+focus: "6 Nov: Pplr ISSUE:0001 recorded at hv's word and accepted by devbin-vc at 723e426: pplr use, install and version go when Pplr adopts devbin#0326 (dc's hold 7); the working switch stays until then. Nothing else in hand; holding for hv."
 claims: []
 ---
 
