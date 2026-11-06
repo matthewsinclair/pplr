@@ -502,7 +502,8 @@
       "kind": "todo",
       "seq": 13,
       "text": "For hv's call: cldr and ccusage have no version subcommand. hv typed 'cldr version' and 'ccusage version' on 2026-11-04, and both answered 'unknown command'; only pplr has one. Both answer --version. A version subcommand, and -v, in each is a small patch, so the three answer alike.",
-      "state": "live",
+      "state": "archived",
+      "archived_at": "2026-11-06T09:50:17.748Z",
       "recorded_at": "2026-11-04T09:26:56.497Z"
     },
     {
