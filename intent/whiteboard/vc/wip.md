@@ -2,10 +2,10 @@
 node: vc
 name: vc
 role: vc
-session_id: 9417a4f6-ca66-4fc9-8f2e-e1c88bf255dd
-heartbeat_at: 2026-11-04 19:53Z
+session_id: 25cfe285-2e71-4080-8a59-033be4ae0215
+heartbeat_at: 2026-11-06 08:26Z
 status: active
-focus: "EOD 4 Nov, folded and holding for tomorrow. Next: Molt 1.4.3 re-cut on macos-15 (todo 15), then the rhadamanth rollout and ISSUE:0003's restart on hv's go; devbin 0.1.20's remaining issues on vc's desk (todo 16)."
+focus: "6 Nov: started by hv to record one defect from devbin-vc. ISSUE:0001 recorded (Pplr's dev/opt/brew switch is its own Rust copy of devbin's contract; adopt devbin's one approach, per hv's ruling), ready for remediation later. No other work; holding for hv."
 claims: []
 ---
 

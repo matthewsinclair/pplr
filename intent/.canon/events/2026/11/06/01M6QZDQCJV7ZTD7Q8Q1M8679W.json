@@ -1,0 +1,15 @@
+{
+  "id": "01M6QZDQCJV7ZTD7Q8Q1M8679W",
+  "ts": "2026-11-06T08:25:53.810Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "issues.add",
+  "subject": {
+    "type": "issue",
+    "id": "0001"
+  },
+  "payload": {
+    "severity": "medium",
+    "title": "Pplr's dev/opt/brew switch is its own Rust copy of devbin's contract and differs from devbin's; adopt devbin's one approach"
+  }
+}
