@@ -1,0 +1,16 @@
+{
+  "id": "01M6RHHR304A2M33CJZ7SW6YYX",
+  "ts": "2026-11-06T13:42:39.968Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.edit",
+  "subject": {
+    "type": "node",
+    "id": "vc"
+  },
+  "payload": {
+    "kind": "todo",
+    "seq": 11,
+    "text": "Pplr's adoption of devbin 0323 (the core carries a Rust CLI's ship). 0323 shipped in devbin v0.1.20 (closed 2026-11-05), which Pplr has vendored since 64794b6, but Pplr's bin/.devbin/cmd/{lock-sync,macos,post-cut} copies are still in the tree. Per 0323, a project deletes them at its next vendor update and declares its ship in config instead: its macOS binaries (pplr, the pplr-contacts sidecar and the prebuilt Pplr Links.app) and one notarytool keychain profile, macos.notary_profile, which hv stores once through devbin's store-creds. That executes decision 29's (4). Done when Pplr cuts a release with no project ship command left, signed, notarised, accepted by Gatekeeper and its formula published. Not started: Pplr fixes nothing until hv schedules it."
+  }
+}

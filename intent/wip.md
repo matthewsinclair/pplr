@@ -1,5 +1,5 @@
 ---
-verblock: "2026-11-04:v1.5: matts - EOD: Molt 1.4.3's re-cut, devbin 0.1.20, ISSUE:0003's restart"
+verblock: "2026-11-06:v1.6: matts - globalfold: ISSUE:0001 and 0002 open, devbin 0323's adoption next"
 ---
 
 # Work In Progress
@@ -8,13 +8,11 @@ DOING and TODO only; finished work lives in its commit, its closed issue or its 
 
 ## Current Focus
 
-**Molt 1.4.3's re-cut, then ISSUE:0003's rollout; devbin 0.1.20's open issues**
+**Pplr is taking notes and issues, and fixes none until hv schedules them**
 
-- Molt 1.4.3 (Molt's own nodes, vc decision 31): 0088, 0089 and 0091 are merged on Molt's main and the merged tree ran green under both bashes. hv's first cut stopped when GitHub stranded the candidate's `macos-latest` job; hv ruled to pin Molt's macOS job to `macos-15` and cut again with `bin/devbin release v1.4.3`. molt-vc owns the route (vc todo 15).
-- After the cut, on rhadamanth: hv's `brew upgrade molt`, molt-dc's cherry-pick of the held Molt-matts commit, Molt-matts' uncommitted `config/arngz/desks/homere.yaml` committed or restored, hv's molt upgrade, then ccusage-vc's session restart (ISSUE:0003 step 3) on hv's go; steps 4 and 5 each on hv's OK (vc todo 15).
-- devbin 0.1.20: hv rules no cut until all 19 open devbin issues are in it; their runs come to vc's desk unit by unit (vc todo 16). Then hv's cut, the fleet's vendored devbin, and the three taps republished without their CI exceptions.
-- devbin 0323 after that cut: the core carries a Rust CLI's ship, retiring pplr's, Cldr's and ccusage's `bin/.devbin/cmd/{lock-sync,macos,post-cut}`, with the notarytool keychain profile and the signer review findings (vc todo 11).
-- vc holds the pen for pplr, cldr and ccusage, slot control on the estate desk, and coordination with Molt's and devbin's nodes. Scope rule: simpler or easier only (vc decision 2).
+- ISSUE:0001: Pplr's own `pplr use`, `pplr install` and `pplr version` go when Pplr adopts devbin#0326, replaced by `bin/devbin use` and `bin/devbin install` run in the checkout, with `pplr --version` printing the core's line. It waits for the devbin release that carries 0326 (its units have landed on devbin's main, its docs to come, unpushed); dc then builds it to the issue on devbin-vc's word (dc's hold 7). Until then the working switch stays and no verb is added.
+- ISSUE:0002: Pplr's refusals print `Error: <message>`, matching neither devbin's convention nor Intent's. Recorded only: which convention Pplr takes is hv's call when the fix is scheduled.
+- devbin 0323's adoption (vc todo 11): devbin v0.1.20 carries the core's ship of a Rust CLI, and Pplr vendors 0.1.20, but Pplr's `bin/.devbin/cmd/{lock-sync,macos,post-cut}` copies are still in the tree. Adopting it deletes them, declares Pplr's ship in config, and moves the signer to one notarytool keychain profile, which hv stores once; it is done when Pplr cuts a release with no project ship command left. hv's to schedule.
 
 ## Active Steel Threads
 
@@ -22,13 +20,12 @@ DOING and TODO only; finished work lives in its commit, its closed issue or its 
 
 ## Upcoming Work
 
-- hv's call: a `version` subcommand for cldr and ccusage, as pplr has (vc todo 13).
 - The Linux release assets and their workflow, in a later release.
 
 ## Notes
 
 - Nothing from `~/Dropbox/Career/People` ever enters this repo (D11); `bin/devbin people-leak` guards every commit.
-- Build and test through `bin/devbin`. Each cargo or bats run takes a slot from vc (`intent estate slots`).
+- Build and test through `bin/devbin`. Each cargo or bats run takes a slot on the estate desk (`intent estate slots`), which devbin-vc runs.
 - Before a cut, verify the tree as the cut stamps it: `bin/devbin version set X.Y.Z` and `bin/devbin lock-sync` in the verification clone, then `test all` again.
 - Slot results are written only from measured exit status; commits are gated with `&&` and made with `git commit --only` (the index is shared).
 - Pplr's CI runs macOS on `macos-15` (8a1760f), as Cldr's and Ccusage's do: GitHub stranded `macos-latest` jobs four times on 2026-11-04.
