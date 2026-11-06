@@ -13,5 +13,26 @@
   },
   "items": [],
   "sent": [],
-  "handled": []
+  "handled": [
+    {
+      "id": "01M6G1W88ZC8EYB3JPE6DNT68W",
+      "sender": "cc",
+      "handled_at": "2026-11-06T13:45:02.214Z"
+    },
+    {
+      "id": "01M6GF7YY11SV8B0MPGPT83N31",
+      "sender": "vc",
+      "handled_at": "2026-11-06T13:45:02.239Z"
+    },
+    {
+      "id": "01M6GG7N9SAG6ME2D0RFVZP9JS",
+      "sender": "vc",
+      "handled_at": "2026-11-06T13:45:02.239Z"
+    },
+    {
+      "id": "01M6GK0GPWMYJFKVK0QZG2QET3",
+      "sender": "dc",
+      "handled_at": "2026-11-06T13:44:24.866Z"
+    }
+  ]
 }
