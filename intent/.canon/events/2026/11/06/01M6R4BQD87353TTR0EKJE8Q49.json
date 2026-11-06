@@ -1,0 +1,15 @@
+{
+  "id": "01M6R4BQD87353TTR0EKJE8Q49",
+  "ts": "2026-11-06T09:52:11.176Z",
+  "principal": "Matthew Sinclair <hello@matthewsinclair.com>",
+  "project_id": "6d6a660b-9645-4e85-a24f-7594554476c2",
+  "op": "wb.add",
+  "subject": {
+    "type": "node",
+    "id": "dc"
+  },
+  "payload": {
+    "kind": "hold",
+    "text": "pplr#0001's adoption unit, spec Pplr ISSUE:0001 at 723e426: pplr use, pplr install and pplr version go (a CHANGELOG divergence for version), with build.rs and src/install.rs's tree code; bin/devbin install, use and doctor take over; pplr --version prints T4's line from the core's stamp. Released when: a devbin release carries devbin#0326, Pplr vendors it with bin/devbin upgrade, and devbin-vc gives the word. Then: build to 0001, and to devbin#0326 and ccusage#0007's agreed parts where 0001 is silent, asking devbin-vc where those are silent too; runs booked on devbin-vc's desk; pplr-vc reads the diff."
+  }
+}
