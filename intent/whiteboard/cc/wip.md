@@ -1,7 +1,7 @@
 ---
 node: cc
-name: cc
-role: cc
+name: Control Claude
+role: control
 session_id: 897058f7-ed1b-44af-aa55-73251d60c4f6
 heartbeat_at: 2026-11-04 04:49Z
 status: active
@@ -9,7 +9,7 @@ focus: "Nothing in hand. ST0001's sync follow-up landed (5ffaf01, check all 0 in
 claims: []
 ---
 
-# cc (cc)
+# Control Claude (cc)
 
 ## DOING
 

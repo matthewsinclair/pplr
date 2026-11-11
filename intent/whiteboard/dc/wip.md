@@ -1,7 +1,7 @@
 ---
 node: dc
-name: dc
-role: dc
+name: DevX Claude
+role: devx
 session_id: 0c8bb59e-1890-4757-9ebd-316bcab38de5
 heartbeat_at: 2026-11-06 13:39Z
 status: active
@@ -9,7 +9,7 @@ focus: "6 Nov: holding pplr#0001's adoption (hold 7) until a devbin release carr
 claims: []
 ---
 
-# dc (dc)
+# DevX Claude (dc)
 
 ## DOING
 

@@ -1,7 +1,7 @@
 ---
 node: vc
-name: vc
-role: vc
+name: Validation Claude
+role: validation
 session_id: 25cfe285-2e71-4080-8a59-033be4ae0215
 heartbeat_at: 2026-11-06 13:42Z
 status: active
@@ -9,7 +9,7 @@ focus: "6 Nov fold for hv's compact and travel: Pplr's open work is ISSUE:0001 (
 claims: []
 ---
 
-# vc (vc)
+# Validation Claude (vc)
 
 ## DOING
 
