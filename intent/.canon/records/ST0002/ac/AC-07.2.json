@@ -1,0 +1,9 @@
+{
+  "id": "AC-07.2",
+  "text": "The signer is project code in bash or zsh (`bin/.devbin/cmd/macos`, no Python). It runs on rhadamanth only, notarises every release build with `notarytool`, and the release cannot attach an unsigned macOS asset.",
+  "kind": "non-test",
+  "state": {
+    "is": "satisfied",
+    "evidence": "bin/.devbin/cmd/macos is zsh and refuses on CI, off macOS and without the identity; in hv's 2.0.0 release sitting on 2026-11-03 (vc slot 01M6GM1SJZYN8GS5NHE69DDNR8) it notarised both builds with notarytool (the proof at main and the release at dd6dc5b, submission 7feafe51-18a8-4e39-bae8-c8500c07fc47, each Accepted). pack refuses a binary that fails verify, spctl included (6b1328f), and packs the signed asset alone into dist/release, the only folder bin/devbin release attach --from dist/release takes; an ad hoc asset goes to dist/adhoc (ef9bb46)"
+  }
+}

@@ -1,6 +1,7 @@
 {
-  "schema": "intent/issue@3.0",
-  "number": 1,
+  "schema": "intent/issue@4.0",
+  "id": "0001",
+  "realised": true,
   "slug": "pplr-s-dev-opt-brew-switch-is-its-own-rust-copy",
   "title": "Pplr's dev/opt/brew switch is its own Rust copy of devbin's contract and differs from devbin's; adopt devbin's one approach",
   "status": "open",

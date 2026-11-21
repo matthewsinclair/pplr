@@ -1,0 +1,9 @@
+{
+  "id": "01",
+  "title": "Release and install design for pplr",
+  "scope": "S",
+  "status": "done",
+  "objective": "Settle how pplr is installed and released, item by item against devbin's dev/opt/brew contract, and agree the install layout with ST0001 WP02.",
+  "body": "**Scope**\n\n- Confirm or amend this thread's design: the T1 to T10 table and decisions E1 to E8.\n- **Settle the layout** with ST0001 WP02:\n  - the tree root, `bin/pplr`, `bin/pplr-contacts` and the manifest path;\n  - the runtime-set function and its inputs (cargo's dep-info plus the sidecar source).\n- **Settle the signing details**, with Intent's `bin/.devbin/cmd/macos` and its release as the worked example:\n  - each binary's identifier and designated requirement;\n  - where the notary credentials come from;\n  - the order of build, sign, notarise, attach and publish under devbin's release core.\n- **Confirm the asset targets** (E1), or bring evidence to drop one.\n\n**Criteria**: AC-01.1.\n\n**Not in scope**: building anything. This WP decides; WP02 to WP07 build.\n",
+  "preamble": ""
+}

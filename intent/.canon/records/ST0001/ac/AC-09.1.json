@@ -1,0 +1,8 @@
+{
+  "id": "AC-09.1",
+  "text": "Sync reaches Contacts only through the store interface. The JSON store reads and writes the dump format, and the Swift sidecar does only dump, backup and group, built ahead of time and never at run time.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "AT-10.1",
+  "kind": "test",
+  "file": "tests/cli.rs",
+  "covers": [
+    "AC-10.1"
+  ],
+  "status": "green",
+  "note": "sync_is_native_and_its_goldens_replay; red first (slot 01M6EM6ETPRBA5NTFK20RXXX2Q, only the NFD inetloc name differed), then green in a cold clean clone: cargo test 79 unit and 24 integration passed; bats 101/101 against Rust and legacy (slot 01M6EMBD3APESKVD5EC9RDE16C)"
+}

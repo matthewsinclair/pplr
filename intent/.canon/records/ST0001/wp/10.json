@@ -1,0 +1,9 @@
+{
+  "id": "10",
+  "title": "Sync: check, link, pull, photos and backup",
+  "scope": "L",
+  "status": "done",
+  "objective": "Port the matching, linking, pulling, photo and backup modes of `pplr sync` to Rust, over the store interface.",
+  "body": "**Scope**\n\n- **`check`**: the pplr URL, email, LinkedIn and phone tiers, then the name alone; ambiguity; group orphans; the text report and `--json`.\n- **`link`**: the plan and the dry run; `--apply` with a backup first; `--name`, `--all-names` and `--limit`; stop after three failures; write the `.inetloc`.\n- **`pull`**: `--name`, `--skip` and `--limit`; the doubtful-UK rule; byte-identical About edits; a copy of each About first.\n- **`photos`** and **`backup`**.\n- **Exit codes** match the engine's (recon section 6).\n- Remove these modes from the sidecar's source.\n\n**Criteria**: AC-10.1.\n",
+  "preamble": ""
+}

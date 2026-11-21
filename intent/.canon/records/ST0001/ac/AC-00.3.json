@@ -1,0 +1,8 @@
+{
+  "id": "AC-00.3",
+  "text": "Parity: the bats suite passes against the Rust binary: every test on macOS, and on Linux every test that needs no macOS service. A test retired as shell-specific is withdrawn on the record, with its reason.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

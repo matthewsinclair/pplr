@@ -1,0 +1,9 @@
+{
+  "id": "AC-00.2",
+  "text": "T10 holds on rhadamanth: `pplr use dev`, `use opt` and `use brew` each give the right version line, a clean doctor and a passing shadow check.",
+  "kind": "non-test",
+  "state": {
+    "is": "satisfied",
+    "evidence": "hv's 2.0.0 release sitting on 2026-11-03 (vc slot 01M6GM1SJZYN8GS5NHE69DDNR8), step 7: bin/devbin t10-probe ~/Devel/prj/Pplr, with the opt tree installed at ~/Devel/scratch/pplr-opt: dev, opt and brew each ok on use, on a version line naming the tree (pplr 2.0.0 (dev|opt|brew, dd6dc5b96a2f)), on doctor's Install section and on the shadow check; it ended on brew"
+  }
+}

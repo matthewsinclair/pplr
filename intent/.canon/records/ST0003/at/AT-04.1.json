@@ -1,0 +1,10 @@
+{
+  "id": "AT-04.1",
+  "kind": "test",
+  "file": "src/fs.rs",
+  "covers": [
+    "AC-04.1"
+  ],
+  "status": "green",
+  "note": "fs::tests::each_walk_keeps_its_commands_rules: on one tree, grep's list in name order with dot names below the top, links' with no dot name and a symlinked note kept as its file, search's with dot names, no symlink and a skip folder passed over, named_after's by prefix, a symlink too, a folder before its contents; none enters a symlinked folder; red at two mutants of d1ee974 in slot 01M6JJ8NE9K011PKR0R11S2C1B: 9054310 (the walk enters a symlinked folder) exit 101, grep's list gaining A/link-dir/b.md, and 73f0083 (no name order) exit 101, grep's list in the folder's order; green at 69b17c0, 2.0.0's own four walks with the test, exit 0; green at d1ee974 (on main as d2f432f) in the same slot: check all exit 0, test all exit 0 (cargo lib 112 passed 1 ignored, cli 39 passed 1 ignored with the golden replay, bats 107 ok 0 not ok 1 skip)"
+}

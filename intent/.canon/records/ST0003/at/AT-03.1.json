@@ -1,0 +1,10 @@
+{
+  "id": "AT-03.1",
+  "kind": "test",
+  "file": "src/tools.rs",
+  "covers": [
+    "AC-03.1"
+  ],
+  "status": "green",
+  "note": "tools::tests::the_gate_passes_on_macos_and_elsewhere_refuses_with_the_message_alone: tools::macos_only, the one gate, is Ok on macOS and elsewhere an Err displaying exactly the command's message, which main prints before exit 1; beside it AT-00.7 in tests/pplr_core.bats holds each gate's whole 2.0.0 stderr line and exit 1 on CI's Linux leg; red at mutant 1994dff of 34a130f (macos_only refuses on macOS too) in slot 01M6JHGVSWP34ZRH39C8VM3GMT: exit 101, Err against Ok; green at 34a130f (on main as 90919e6) in the same slot: check all exit 0, test all exit 0 (cargo lib 111 passed 1 ignored, cli 39 passed 1 ignored, bats 106 ok 0 not ok 1 skip); AT-00.7's rows proven on macOS at that mutant with its Darwin skip lifted, 1 of 1 ok; each of 2.0.0's five refusal texts verbatim once as macos_only's argument"
+}

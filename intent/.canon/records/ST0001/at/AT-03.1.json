@@ -1,0 +1,10 @@
+{
+  "id": "AT-03.1",
+  "kind": "test",
+  "file": "tests/cli.rs",
+  "covers": [
+    "AC-03.1"
+  ],
+  "status": "green",
+  "note": "every_golden_of_a_ported_command_replays: 54 cases captured (tests/golden); proved green over all 54 through the fallback from a clean checkout of deebdee, and red on a mutated copy naming both changed cases"
+}

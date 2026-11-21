@@ -1,0 +1,8 @@
+{
+  "id": "AC-01.3",
+  "text": "One setting, PPLR_UNDER_TEST, points the bats suite at any pplr, and the default is the checkout's dev build, target/debug/pplr.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

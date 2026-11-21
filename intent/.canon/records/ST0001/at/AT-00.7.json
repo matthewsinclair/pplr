@@ -1,0 +1,10 @@
+{
+  "id": "AT-00.7",
+  "kind": "test",
+  "file": "tests/pplr_core.bats",
+  "covers": [
+    "AC-00.7"
+  ],
+  "status": "green",
+  "note": "tests/pplr_core.bats, AC-00.7 on Linux, every command that needs a macOS service exits non-zero naming why: one row per macOS gate the binary has (the Contacts store, the handler, the Finder icons, the clipboard, open and Mail's index), each command exiting non-zero with a phrase naming why; on macOS it skips, naming why, and each command's own tests cover it there; that every other command works on Linux is the ubuntu bats run (AT-00.3); red on CI 41606822506 (116a607, on the red-only branch candidate/wp13-at007-red, never merged and since deleted), a mutant dropping the handler's macOS gate: ubuntu-latest's bats step failed, this test the one not ok, and macos-latest succeeded, where it skips; vc read the same from that run's ubuntu log (vc decision 24, slot 01M6GGZR1QFQDVKABB7418NN3N); green on CI 41619489383 (a18cc88) and CI 41621882730 (eb15640): ubuntu-latest ran it and passed it, 106 of 106"
+}

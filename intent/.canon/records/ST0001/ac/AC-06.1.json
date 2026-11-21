@@ -1,0 +1,8 @@
+{
+  "id": "AC-06.1",
+  "text": "tag and tags run natively in Rust, and their goldens and bats tests pass.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

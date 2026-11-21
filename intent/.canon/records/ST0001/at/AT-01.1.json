@@ -1,0 +1,9 @@
+{
+  "id": "AT-01.1",
+  "kind": "test",
+  "file": "tests/harness.bats",
+  "covers": [
+    "AC-01.1"
+  ],
+  "status": "green"
+}

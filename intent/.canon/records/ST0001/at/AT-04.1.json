@@ -1,0 +1,10 @@
+{
+  "id": "AT-04.1",
+  "kind": "test",
+  "file": "tests/cli.rs",
+  "covers": [
+    "AC-04.1"
+  ],
+  "status": "green",
+  "note": "the_read_commands_are_native_and_their_goldens_replay: red at 57de2ad (none native), green with WP04 (12 native; 8 golden cases replay); bats 101/101 against Rust and legacy"
+}

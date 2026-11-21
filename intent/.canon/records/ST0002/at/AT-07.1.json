@@ -1,0 +1,10 @@
+{
+  "id": "AT-07.1",
+  "kind": "test",
+  "file": "bin/.devbin/cmd/macos",
+  "covers": [
+    "AC-07.1"
+  ],
+  "status": "green",
+  "note": "bin/.devbin/cmd/macos verify: each binary pplr ships (pplr, pplr-contacts, Pplr Links.app) is held to its designated requirement from packaging/macos/signing (Developer ID Application: Geodica Pty Ltd (76BQL8L47U)) with codesign --verify --strict -R, the hardened runtime and the entitlement read back, and spctl; red at 15eb284 (on main as ef9bb46) in slot 01M6GJ1NAVRTACSS8QGR6Y7XX0: bin/devbin macos verify on an ad hoc build from bin/devbin skeleton --adhoc exit 1, pplr does not meet its designated requirement; green at dd6dc5b, the release commit (tag v2.0.0), in hv's 2.0.0 release sitting on 2026-11-03 (vc slot 01M6GM1SJZYN8GS5NHE69DDNR8): bin/devbin macos prepare signed pplr, pplr-contacts and Pplr Links.app with the Developer ID, verify passed each designated requirement with the hardened runtime and the entitlement, notarytool Accepted (submission 7feafe51-18a8-4e39-bae8-c8500c07fc47), and pack's verify passed spctl before packing; brew install and brew test re-ran codesign --verify --strict -R on all three"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "AC-14.2",
+  "text": "pplr email --json is a versioned contract (a schema field, documented fields and exit codes): it exits non-zero naming the cause on no Full Disk Access or an unrecognised Envelope Index schema, and never returns rows from a schema it did not verify.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

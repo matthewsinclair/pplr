@@ -1,0 +1,8 @@
+{
+  "id": "AC-00.7",
+  "text": "Linux honesty: on Linux, every command that needs a macOS service exits non-zero with a message naming why, and every other command works.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

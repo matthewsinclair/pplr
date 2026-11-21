@@ -1,0 +1,8 @@
+{
+  "id": "AC-03.1",
+  "text": "One helper gates every command that needs a macOS service, and each refusal keeps 2.0.0's message and exit code.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

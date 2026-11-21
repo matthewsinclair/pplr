@@ -1,0 +1,10 @@
+{
+  "id": "AT-00.6",
+  "kind": "test",
+  "file": "tests/cli.rs",
+  "covers": [
+    "AC-00.6"
+  ],
+  "status": "green",
+  "note": "tests/cli.rs, an_installed_pplr_needs_no_checkout_and_no_legacy_setting: an opt tree's pplr, run from outside any checkout with PPLR_ROOT, PPLR_BIN_DIR and PPLR_TEMPLATE_DIR naming a decoy legacy layout, runs nothing from it and reads nothing from it: an unknown command is refused, new writes its About from the binary's own template, and help --details is the README the binary holds; red at main 42aa87e with C5's tests/cli.rs (1331536), in a scratch clone with its own target/: cargo test exit 101 at the assertion that an unknown command is refused, where it printed nothing; re-made by vc in a fresh clone with main's tests/cli.rs over 42aa87e, the test failing by its own panic (vc decision 24, slot 01M6GGZR1QFQDVKABB7418NN3N); green at a18cc88 on CI 41619489383 and at eb15640 on CI 41621882730: cargo tests success on both runners; and in vc's fresh clones of b245b53 (slot 01M6GE2NVVM2K1MPBDJ5QDDS82) and 4beaa87 (slot 01M6GFQMRRR55HXZS556KM1PFJ), devbin test rust exit 0"
+}

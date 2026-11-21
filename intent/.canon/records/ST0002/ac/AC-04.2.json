@@ -1,0 +1,9 @@
+{
+  "id": "AC-04.2",
+  "text": "The tap matthewsinclair/homebrew-pplr is described as \"Homebrew tap for pplr\".",
+  "kind": "non-test",
+  "state": {
+    "is": "satisfied",
+    "evidence": "hv's 2.0.0 release sitting on 2026-11-03 (vc slot 01M6GM1SJZYN8GS5NHE69DDNR8), step 5: gh repo view matthewsinclair/homebrew-pplr --json description printed {\"description\":\"Homebrew tap for pplr\"}, and vc read the same through gh api; the tap's CI waits for devbin's manifest-header fix (vc decision 24)"
+  }
+}

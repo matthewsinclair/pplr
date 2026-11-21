@@ -1,0 +1,10 @@
+{
+  "id": "AT-01.3",
+  "kind": "test",
+  "file": "tests/harness.bats",
+  "covers": [
+    "AC-01.3"
+  ],
+  "status": "green",
+  "note": "tests/harness.bats, AT-01.3 PPLR_UNDER_TEST picks the implementation, and the default is the dev build; re-measured when WP13 reworded AC-01.3 (vc decision 13 item 3): red at main 251ea31, whose default was the legacy, with C1's harness test copied in, in a scratch clone: bats tests/harness.bats exit 1, this test the one not ok; green with C1 (d596c35) at a18cc88 on CI 41619489383 and at eb15640 on CI 41621882730, both runners, and in vc's fresh clones of b245b53 and 4beaa87"
+}

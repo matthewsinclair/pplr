@@ -1,0 +1,10 @@
+{
+  "id": "AC-05.1",
+  "text": "A scaffold build installs from a locally rendered formula in a scratch tap on rhadamanth, T10's three trees are proved, and nothing is tagged or pushed on the real repository.",
+  "kind": "non-test",
+  "state": {
+    "is": "withdrawn",
+    "reason": "superseded by the real install from the tap (AC-00.1, AC-00.2): hv ruled no rehearsal, vc decision 24",
+    "by": "vc"
+  }
+}

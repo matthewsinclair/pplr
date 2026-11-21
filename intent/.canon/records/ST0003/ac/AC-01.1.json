@@ -1,0 +1,8 @@
+{
+  "id": "AC-01.1",
+  "text": "Pair.how is an enum that names the five ways once, and the JSON and the report print 2.0.0's words; has_inetloc tells not read from absent.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

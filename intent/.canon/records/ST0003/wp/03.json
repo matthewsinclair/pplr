@@ -1,0 +1,9 @@
+{
+  "id": "03",
+  "title": "One macOS gate for every command that needs a macOS service",
+  "scope": "S",
+  "status": "done",
+  "objective": "One helper gates every command that needs a macOS service (contacts, handler, icons and open), and each refusal keeps 2.0.0's message and exit code (AC-03.1).",
+  "body": "",
+  "preamble": ""
+}

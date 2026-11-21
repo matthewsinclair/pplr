@@ -1,0 +1,9 @@
+{
+  "id": "12",
+  "title": "Doctor and Finder icons",
+  "scope": "S",
+  "status": "done",
+  "objective": "Rebuild `doctor` for the binary, and port the Finder icon commands.",
+  "body": "**Scope**\n\n- **`doctor`**, in Cldr's pattern: a pure function returns the checks, and each row says what to fix. It checks:\n  - the data root and its letter folders, and `.index`;\n  - that `vocabulary.yaml` and `cadence.yaml` parse, and that the index files are valid;\n  - legacy `*/Index` folders, and people with no About;\n  - `PPLR_DIR` and `PPLR_DATA` disagreeing (D8), and legacy `~/Library` folders (D5);\n  - the external tools (`claude`, `fileicon`, `mail-recent`, `osascript`) and the sidecar.\n- **`doctor --fix`** creates the letter folders and `.index`, and reindexes. ST0002 adds the rows for the tree, the manifest and the shadow check.\n- **Tests**: the doctor bats tests that check bash internals are rewritten to check behaviour, or withdrawn with the reason recorded.\n- **Icons**: `applyicons`, `setpicfordir` and `setpicsfordirs`, through `fileicon`, with multi-word names fixed. Icons come from `PPLR_ICON_DIR`, else `_pplr/icons`, else the embedded set.\n\n**Criteria**: AC-12.1.\n",
+  "preamble": ""
+}

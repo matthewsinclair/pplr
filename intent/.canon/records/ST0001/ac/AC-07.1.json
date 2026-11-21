@@ -1,0 +1,8 @@
+{
+  "id": "AC-07.1",
+  "text": "contact runs natively in Rust, and the contact goldens and bats tests pass; `log --email` is covered by AC-14.1.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

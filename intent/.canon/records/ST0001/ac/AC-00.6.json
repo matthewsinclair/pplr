@@ -1,0 +1,8 @@
+{
+  "id": "AC-00.6",
+  "text": "Install-independence: the binary runs from any directory and any install location, with no PPLR_ROOT, PPLR_BIN_DIR, PPLR_TEMPLATE_DIR or checkout. PPLR_DATA, then PPLR_DIR, names the data. Templates, icons and the README come from the binary, or from the data tree's _pplr/ overrides.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

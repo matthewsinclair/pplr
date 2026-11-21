@@ -1,0 +1,8 @@
+{
+  "id": "AC-08.1",
+  "text": "rename, links and handler run natively in Rust; their goldens and bats tests pass, and handler --install registers the tree's prebuilt, signed Pplr Links.app by its stable path, never a Cellar path (ST0002 ruling 7).",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

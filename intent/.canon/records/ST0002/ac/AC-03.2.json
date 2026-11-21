@@ -1,0 +1,8 @@
+{
+  "id": "AC-03.2",
+  "text": "The version line reads `pplr <version> (<tree>, <sha12>[+dirty])` in dev, opt and brew, built from stamps taken at build time, with the tree named by the one tree function.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

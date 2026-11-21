@@ -1,6 +1,7 @@
 {
-  "schema": "intent/issue@3.0",
-  "number": 2,
+  "schema": "intent/issue@4.0",
+  "id": "0002",
+  "realised": true,
   "slug": "pplr-s-refusals-print-error-message-on-stderr-an",
   "title": "Pplr's refusals print 'Error: <message>', on stderr and on stdout, matching neither devbin's convention nor Intent's",
   "status": "open",

@@ -1,0 +1,10 @@
+{
+  "id": "AT-00.3",
+  "kind": "test",
+  "file": ".github/workflows/tests.yml",
+  "covers": [
+    "AC-00.3"
+  ],
+  "status": "green",
+  "note": ".github/workflows/tests.yml, its last step, the bats suite against the Rust pplr on ubuntu-latest and macos-latest: on Linux only a test that needs a macOS service skips, naming why; macos-latest has no fileicon, so the macOS half is bin/devbin test shell on a Mac that has it (vc decision 19); red at 221312f (branch wp13) with a count mutant (src/index.rs's run_count printing the count plus a constant), in a scratch clone with its own target/: the bats suite against the Rust pplr exit 1, the two pplr count tests the only ones not ok; re-made by vc in a fresh clone, pplr count off by one, 104 of 106 with the two count tests not ok (vc decision 24, slot 01M6GGZR1QFQDVKABB7418NN3N); green, the Linux half: ubuntu-latest at a18cc88 on CI 41619489383 and at eb15640 on CI 41621882730, 106 of 106, the one skip AT-12.2's icon test (macOS only); the macOS half: devbin test shell in vc's fresh clones of b245b53 (slot 01M6GE2NVVM2K1MPBDJ5QDDS82) and 4beaa87 (slot 01M6GFQMRRR55HXZS556KM1PFJ), on a Mac with fileicon, 106 of 106, the one skip the AC-00.7 Linux test, by design; macos-latest on both runs 106 of 106, skipping that test and, for want of fileicon, AT-12.2's"
+}

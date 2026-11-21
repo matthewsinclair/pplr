@@ -1,0 +1,10 @@
+{
+  "id": "AT-00.1",
+  "kind": "test",
+  "file": "tests/nopython.bats",
+  "covers": [
+    "AC-00.1"
+  ],
+  "status": "green",
+  "note": "tests/nopython.bats, AT-00.1 devbin check nopython passes the tree and refuses Python by path and line: the tree passes; in a seeded scratch repo a planted .py, a Python shebang, a uv line and a python3 line are each refused, naming the path and line, while a marked line, Markdown and the words' other forms pass; CI runs bin/devbin check nopython as its own step; red at main 42aa87e, the tree before WP13, with C4's tool and devbin option copied in, in a scratch clone: devbin check nopython exit 1, 28 findings (the four .py files under src/pplr-*, and the python and uv lines in the bin/pplr_* scripts, the capture and the tests); re-made by vc in a fresh clone under C4's (56055f4) tool and option, 28 findings (vc decision 24, slot 01M6GGZR1QFQDVKABB7418NN3N); green at a18cc88 on CI 41619489383 and at eb15640 on CI 41621882730: the No Python step and this test success on both runners; and in vc's fresh clones of b245b53 (slot 01M6GE2NVVM2K1MPBDJ5QDDS82) and 4beaa87 (slot 01M6GFQMRRR55HXZS556KM1PFJ), devbin check all exit 0 with nopython clean, and devbin test shell 106 of 106"
+}

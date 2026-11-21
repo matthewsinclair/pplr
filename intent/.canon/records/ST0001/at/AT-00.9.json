@@ -1,0 +1,10 @@
+{
+  "id": "AT-00.9",
+  "kind": "test",
+  "file": "tests/people_leak.bats",
+  "covers": [
+    "AC-00.9"
+  ],
+  "status": "green",
+  "note": "tests/people_leak.bats, AT-00.9 people-leak refuses a staged file holding someone from PPLR_DATA, and passes a clean one: in a scratch git repo against the sandbox's synthetic People tree, a staged file holding a folder name, an About's name, a marker or an About's email is refused, naming its path, and a clean one passes; red at 221312f (branch wp13) with a mutant that never matches (the guard's per-file count set to 0), in a scratch clone: bats exit 1, the test not ok as a planted file passed; re-made by vc in a fresh clone with the match disabled (vc decision 24, slot 01M6GGZR1QFQDVKABB7418NN3N); green at a18cc88 on CI 41619489383 and at eb15640 on CI 41621882730, both runners; and devbin test shell 106 of 106 in vc's fresh clones of b245b53 (slot 01M6GE2NVVM2K1MPBDJ5QDDS82) and 4beaa87 (slot 01M6GFQMRRR55HXZS556KM1PFJ)"
+}

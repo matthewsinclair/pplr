@@ -1,0 +1,8 @@
+{
+  "id": "AC-12.1",
+  "text": "doctor, applyicons, setpicfordir and setpicsfordirs run natively in Rust. doctor reports one row per check, each saying what to fix, and its bats tests test behaviour, not bash internals.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

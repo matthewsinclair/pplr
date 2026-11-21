@@ -1,0 +1,10 @@
+{
+  "id": "AC-02.2",
+  "text": "Every command not yet ported runs its legacy script through the Rust binary, with the environment bin/pplr sets, so the whole bats suite passes against the Rust binary.",
+  "kind": "test",
+  "state": {
+    "is": "withdrawn",
+    "reason": "The fallback went with the legacy code in WP13's C1 (d596c35): every command is native, so none runs a legacy script, and the fallback's test went with it (vc decisions 12 and 13)",
+    "by": "vc"
+  }
+}

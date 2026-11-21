@@ -1,0 +1,9 @@
+{
+  "id": "09",
+  "title": "The Contacts store and the Swift I/O sidecar",
+  "scope": "M",
+  "status": "done",
+  "objective": "Put every Contacts read and write behind one store interface: a JSON store for tests and Linux, and, for the live store, the existing Swift cut down to an I/O sidecar built ahead of time.",
+  "body": "**Scope**\n\n- **`contacts/`**:\n  - the `Card` model, which is the dump format;\n  - the store trait: load the cards, back up, ensure the group, and apply link, card and photo writes;\n  - `JsonStore`, which reads and writes `PPLR_CONTACTS_JSON` as the engine's fixture path does today;\n  - `SidecarStore`.\n- **The sidecar**:\n  - move `main.swift` to `swift/pplr-contacts/main.swift`;\n  - keep `dump`, including the cross-account id resolution, and `backup`;\n  - add a `group` mode, which prints the PPLR group's id in the default container and makes the group if it is missing;\n  - keep the access refusal, exit 3;\n  - drop everything else as WP08, WP10 and WP11 port it.\n- **Writes from Rust**: the Contacts.app scripts (link, card create and update, photo) and the `sips` TIFF step.\n- **Build**:\n  - in dev, devbin's build compiles the sidecar beside the binary;\n  - ST0002's install puts it in the tree;\n  - a missing sidecar is an error naming the step that builds it;\n  - on Linux, the live store refuses by name.\n- The live check (AC-09.2) is read-only: no `--apply`.\n\n**Criteria**: AC-09.1 and AC-09.2.\n\n**As built**: AC-09.1 is covered by AT-09.1 (fd67819, `src/contacts/sidecar.rs`), red at C2's parent d596c35. AC-09.2 rests on hv's live round trip after C11 and the live parity's run 4 (aa42c5a). The sidecar was cut to dump, backup and group in WP13's C2 (294b421).\n",
+  "preamble": ""
+}

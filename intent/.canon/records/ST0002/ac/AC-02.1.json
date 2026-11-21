@@ -1,0 +1,8 @@
+{
+  "id": "AC-02.1",
+  "text": "`bin/devbin release check` and `bin/devbin doctor` pass with the release and formula config, and tests.yml fires on candidate/** and runs the cargo gates and the bats suite on macOS and Linux.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

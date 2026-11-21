@@ -1,0 +1,8 @@
+{
+  "id": "AC-07.1",
+  "text": "Every macOS binary pplr ships (`pplr`, `pplr-contacts` and the `Pplr Links.app` from `pplr handler`) is signed with Developer ID Application: Geodica Pty Ltd (76BQL8L47U), with the hardened runtime and a secure timestamp, and passes `codesign --verify --strict -R <requirement>` and `spctl`.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

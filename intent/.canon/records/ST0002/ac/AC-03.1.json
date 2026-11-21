@@ -1,0 +1,8 @@
+{
+  "id": "AC-03.1",
+  "text": "`pplr install` publishes only from a clean dev tree and writes the T3 manifest, and it refuses an existing prefix without --force, or a prefix another tool wrote.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

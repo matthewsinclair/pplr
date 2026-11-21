@@ -1,0 +1,8 @@
+{
+  "id": "AC-03.1",
+  "text": "Goldens exist for every writing and reporting command over the synthetic tree, captured from the legacy code, and a test in tests/cli.rs replays each against the Rust binary, skipping only commands still on the fallback.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

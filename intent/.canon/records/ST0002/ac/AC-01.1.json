@@ -1,0 +1,9 @@
+{
+  "id": "AC-01.1",
+  "text": "The release and install design (E1 to E8, the T1 to T10 table, the install layout) is settled on this thread, with hv's answers to its open questions recorded.",
+  "kind": "non-test",
+  "state": {
+    "is": "satisfied",
+    "evidence": "install-release.md on ST0002 (settled; vc accepted amendments 1-5; hv's rulings 5574e38)"
+  }
+}

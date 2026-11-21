@@ -1,0 +1,8 @@
+{
+  "id": "AC-00.1",
+  "text": "No Python: `git ls-files '*.py'` is empty, no committed file runs `python3` or `uv`, and the project's check gate fails on either.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

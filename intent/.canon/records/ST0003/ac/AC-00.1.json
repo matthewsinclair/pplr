@@ -1,0 +1,10 @@
+{
+  "id": "AC-00.1",
+  "text": "Behaviour is preserved: every frozen golden replays unchanged, apart from a ruled divergence's, which changes in its own commit naming the ruling; check all and test all exit 0 at the thread's tip, measured in a fresh clone.",
+  "kind": "test",
+  "state": {
+    "is": "withdrawn",
+    "reason": "Created as kind test by mistake: it is judged on measured runs and on the goldens left unchanged, not on one test, as ST0002's thread-level criteria were. Re-created as the non-test AC-00.2, with the same text.",
+    "by": "vc"
+  }
+}

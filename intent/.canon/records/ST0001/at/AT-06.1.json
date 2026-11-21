@@ -1,0 +1,10 @@
+{
+  "id": "AT-06.1",
+  "kind": "test",
+  "file": "tests/cli.rs",
+  "covers": [
+    "AC-06.1"
+  ],
+  "status": "green",
+  "note": "tag_and_tags_are_native_and_their_goldens_replay: red at b93fc2e (tags on the fallback, reindex delegating), green with WP06 (23/54 goldens replay, the six tags cases and both reindex cases among them); bats 101/101 on both implementations from a scratch worktree"
+}

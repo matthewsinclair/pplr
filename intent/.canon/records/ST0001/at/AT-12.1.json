@@ -1,0 +1,9 @@
+{
+  "id": "AT-12.1",
+  "kind": "test",
+  "file": "tests/pplr_doctor.bats",
+  "covers": [
+    "AC-12.1"
+  ],
+  "status": "green"
+}

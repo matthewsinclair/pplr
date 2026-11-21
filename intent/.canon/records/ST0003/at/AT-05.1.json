@@ -1,0 +1,10 @@
+{
+  "id": "AT-05.1",
+  "kind": "test",
+  "file": "src/tree.rs",
+  "covers": [
+    "AC-05.1"
+  ],
+  "status": "green",
+  "note": "tree::tests::the_engine_pictures_and_the_index_take_one_picture: on one tree, two pictures, one named otherwise and none, the engine (tree::people), the index (index::letters) and pplr pictures (its img line) take the same file, the first picture in About/ by name; with none the index names <First Surname> (Picture).jpg, as 2.0.0 did; red at ea6ed7b, 2.0.0's pplr pictures and index with the test, in slot 01M6JKBDGVM723DT43DAE776NB: exit 101, the index naming ./L/Lovelace, Ada/About/Ada Lovelace (Picture).jpg where the engine takes A (Picture).png; green at 585cb6d (on main as 2dab7ed) in the same slot: check all exit 0, test all exit 0 (cargo lib 113 passed 1 ignored, cli 39 passed 1 ignored with the golden replay unchanged, bats 107 ok 0 not ok 1 skip)"
+}

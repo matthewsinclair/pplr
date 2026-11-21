@@ -1,0 +1,9 @@
+{
+  "id": "AC-02.2",
+  "text": "tools/lock-sync (zsh) rewrites Cargo.lock for a version bump and prints Cargo.lock, and the CHANGELOG opens 2.0.0 as `## [2.0.0] - unreleased`.",
+  "kind": "non-test",
+  "state": {
+    "is": "satisfied",
+    "evidence": "scratch-clone runs for 111b72e: version-only lock rewrite printing Cargo.lock; new-dependency refusal restoring the lock byte for byte; CHANGELOG opens ## [2.0.0] - unreleased"
+  }
+}

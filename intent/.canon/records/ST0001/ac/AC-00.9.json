@@ -1,0 +1,8 @@
+{
+  "id": "AC-00.9",
+  "text": "Code and data never mix: no name, marker, email or other content from the People tree is in Pplr's tree or history, tests use synthetic data alone, and a leak check that reads PPLR_DATA at run time fails the pre-commit gate on any match.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

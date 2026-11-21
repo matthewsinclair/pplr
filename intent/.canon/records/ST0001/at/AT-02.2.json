@@ -1,0 +1,11 @@
+{
+  "id": "AT-02.2",
+  "kind": "non-test",
+  "file": "tests/cli.rs",
+  "prose": "The fallback's test in tests/cli.rs, the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status, went with the fallback in WP13's C1 (d596c35): there is no test left to run, and AC-02.2, which it covered, is withdrawn",
+  "covers": [
+    "AC-02.2"
+  ],
+  "status": "n-a",
+  "note": "the_fallback_gives_a_script_bin_pplrs_environment_and_its_exit_status, with the bats suite against the Rust pplr: an unported command runs its legacy script from the data root, with bin/pplr's variables, its arguments and its exit status; red by a measured mutant of c3450c9 (code tree a3ab0fb's) dropping PPLR_CALLER_DIR, the variable bin/pplr exports, from src/fallback.rs, in dc's scratch clone with its own target/ (slot 01M6G6G8XJVAKJ0Z67R7SPVF4R): cargo test exit 101, the assertion at tests/cli.rs:155 found caller= empty; green at c3450c9 unmutated in the same slot (the control, exit 0), and at 6464721 on CI 41598011297 and 37aaeff on CI 41598905802: cargo tests and the bats suite against the Rust pplr success on both runners; n/a at WP13: the fallback and this test went in C1 (d596c35), and AC-02.2 is withdrawn for that reason (vc decisions 12 and 13); the row is re-kinded non-test to hold n/a, and the doc comment C1 left above the next test is removed"
+}

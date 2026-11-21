@@ -1,0 +1,10 @@
+{
+  "id": "AT-04.1",
+  "kind": "test",
+  "file": "packaging/homebrew/pplr.rb",
+  "covers": [
+    "AC-04.1"
+  ],
+  "status": "green",
+  "note": "packaging/homebrew/pplr.rb: rendered by bin/devbin formula render with nothing typed, its install lays the asset out through devbin's @@INSTALL@@ (the T3 manifest, 0755, the link) and runs verify_signatures, codesign --verify --strict -R against REQUIREMENTS, which src/doctor.rs's the_formula_checks_the_same_requirements_the_signer_signs_to holds equal to packaging/macos/signing; its test re-verifies and runs the version line; red at 15eb284 (on main as ef9bb46) in slot 01M6GJ1NAVRTACSS8QGR6Y7XX0: those requirement strings refuse an ad hoc build (bin/devbin macos verify exit 1, pplr does not meet its designated requirement); the render from bin/devbin skeleton --adhoc exit 0, no placeholder left, ruby -c clean, macOS alone; green at v2.0.0 in hv's 2.0.0 release sitting on 2026-11-03 (vc slot 01M6GM1SJZYN8GS5NHE69DDNR8): bin/devbin formula publish rendered the template with nothing typed and pushed Formula/pplr.rb to the tap (main 4fc7022); brew install matthewsinclair/pplr/pplr ran codesign --verify --strict -R on pplr, pplr-contacts and Pplr Links.app and installed 15 files with the manifest; brew test passed; brew's pplr --version read pplr 2.0.0 (brew, dd6dc5b96a2f), and doctor confirmed the manifest matches every runtime file"
+}

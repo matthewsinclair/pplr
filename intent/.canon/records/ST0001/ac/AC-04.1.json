@@ -1,0 +1,8 @@
+{
+  "id": "AC-04.1",
+  "text": "resolve, count, about, cp, open, linkedin, edit, meetings, refresh, grep, help and version run natively in Rust, and their goldens and bats tests pass.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "AT-02.1",
+  "kind": "test",
+  "file": ".github/workflows/tests.yml",
+  "covers": [
+    "AC-02.1"
+  ],
+  "status": "green",
+  "note": "tests.yml's test job on ubuntu-latest and macos-latest, fail-fast off: devbin check format, clippy, autotests and targetdir, then devbin test rust and devbin test shell (the bats suite against the Rust pplr); red at acec3ca on CI 41595332795: ubuntu-latest's Cargo tests step failed (the replay's goldens: a name the manifest gives decomposed missed the precomposed file git checks out, which ext4 tells apart), macos-latest success; green at 6464721 on CI 41598011297 (the fix 64be72f, with 3121fb9's bats fixes) and at 37aaeff on CI 41598905802, every step success on both runners; devbin check all and test all exit 0 at a3ab0fb in vc's fresh clone (vc decision 6)"
+}

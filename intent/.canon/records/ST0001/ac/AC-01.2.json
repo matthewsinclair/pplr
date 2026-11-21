@@ -1,0 +1,8 @@
+{
+  "id": "AC-01.2",
+  "text": "No test or runner deletes outside its own temporary directory: an inherited PPLR_TEST_DATA, or any other path from the environment, is never a deletion target.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

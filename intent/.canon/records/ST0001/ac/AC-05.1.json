@@ -1,0 +1,8 @@
+{
+  "id": "AC-05.1",
+  "text": "json, index, reindex, new, pictures and search run natively in Rust, and their goldens and bats tests pass; a search query is never interpolated into a command line.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

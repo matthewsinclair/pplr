@@ -1,0 +1,8 @@
+{
+  "id": "AC-14.1",
+  "text": "pplr reads recent and inbox mail itself, read-only, from Mail's Envelope Index (no mail-recent, no Python). email's listing and cache and contact log --email N and --email <Message-ID> match their goldens, against a synthetic SQLite fixture.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

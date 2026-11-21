@@ -1,0 +1,8 @@
+{
+  "id": "AC-02.1",
+  "text": "`bin/devbin check all` and `bin/devbin test all` run the cargo gates (fmt; clippy with unsafe forbidden and unwrap and expect denied; test) and the bats suite against the Rust binary, and both pass on macOS and on Linux CI.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

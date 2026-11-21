@@ -1,0 +1,8 @@
+{
+  "id": "AC-03.3",
+  "text": "`pplr use dev|opt|brew` moves only the link set {pplr} in ~/.local/bin, and refuses a missing tree or a brew copy that would not answer. Doctor's shadow check fails on a link that is shadowed or split across trees.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

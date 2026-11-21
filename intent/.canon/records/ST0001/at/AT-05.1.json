@@ -1,0 +1,10 @@
+{
+  "id": "AT-05.1",
+  "kind": "test",
+  "file": "tests/cli.rs",
+  "covers": [
+    "AC-05.1"
+  ],
+  "status": "green",
+  "note": "the_index_new_pictures_and_search_commands_are_native_and_their_goldens_replay: red at 3302f2e (none native), green with WP05 (15/54 goldens replay; reindex's index.json byte-equal to jq's print; search's query only ever in the prompt); bats 101/101 on both implementations from a scratch worktree"
+}

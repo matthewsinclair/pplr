@@ -1,0 +1,8 @@
+{
+  "id": "AC-01.1",
+  "text": "The bats runner and CI exit non-zero when any test fails.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

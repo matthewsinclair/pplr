@@ -1,0 +1,8 @@
+{
+  "id": "AC-11.1",
+  "text": "sync --plan and --apply-plan run in Rust. The workbook's four sheets, review columns, Decision list and highlighting match the legacy workbook by content.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

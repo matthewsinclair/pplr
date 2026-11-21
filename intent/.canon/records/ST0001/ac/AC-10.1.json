@@ -1,0 +1,8 @@
+{
+  "id": "AC-10.1",
+  "text": "sync --check, --link, --pull, --photos and --backup run in Rust against the JSON store, and their goldens and bats tests pass.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

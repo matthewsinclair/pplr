@@ -1,0 +1,8 @@
+{
+  "id": "AC-00.2",
+  "text": "One binary: every command the shell pplr offered (the 30 in recon section 4) is served by the Rust `pplr` with the same arguments and flags, and no `bin/pplr*` script, `lib/engine.sh` or run-time build remains.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

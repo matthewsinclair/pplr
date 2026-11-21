@@ -19,7 +19,7 @@
     }
   ],
   "intent_dir": "intent",
-  "intent_version": "3.3.1",
+  "intent_version": "3.5.0",
   "languages": [
     "rust",
     "shell",

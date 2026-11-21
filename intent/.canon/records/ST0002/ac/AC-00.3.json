@@ -1,0 +1,9 @@
+{
+  "id": "AC-00.3",
+  "text": "rhadamanth runs brew's pplr, with no link into the old checkout. The user docs name brew alone (T1), and docs/releasing.md covers dev and opt for the maintainer.",
+  "kind": "non-test",
+  "state": {
+    "is": "satisfied",
+    "evidence": "hv's 2.0.0 release sitting on 2026-11-03 (vc slot 01M6GM1SJZYN8GS5NHE69DDNR8), step 7: pplr --version read pplr 2.0.0 (brew, dd6dc5b96a2f) with ~/.local/bin/pplr gone, so nothing links into the old checkout; doctor's Install section passed (brew answers, the manifest and all three signatures); the pplr:// handler is brew's Pplr Links.app, the one lsregister lists. The docs landed in 02c2771: the README names Homebrew alone, and docs/releasing.md covers dev, opt, signing and the cut"
+  }
+}

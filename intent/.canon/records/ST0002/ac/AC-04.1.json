@@ -1,0 +1,8 @@
+{
+  "id": "AC-04.1",
+  "text": "packaging/homebrew/pplr.rb is a devbin `assets` template, rendered through `bin/devbin formula render` with nothing typed. Its install verifies every macOS binary's signature against its designated requirement and writes the T3 manifest, and its test re-verifies the signatures and runs the version line.",
+  "kind": "test",
+  "state": {
+    "is": "computed"
+  }
+}

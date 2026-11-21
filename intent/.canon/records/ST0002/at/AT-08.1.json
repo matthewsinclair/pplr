@@ -1,0 +1,10 @@
+{
+  "id": "AT-08.1",
+  "kind": "test",
+  "file": "tests/project_commands.bats",
+  "covers": [
+    "AC-08.1"
+  ],
+  "status": "green",
+  "note": "tests/project_commands.bats: tools/ is gone, and every command in bin/.devbin/cmd/, the list read from the directory, resolves through bin/devbin from its project handler, by bin/devbin help --why; red at the series' base f15ccf8, the test copied into a worktree of it: bats exit 1, tools/ still there (slot 01M6GDHWBFZ8K4KW8FK93DP20B); green at a5dbb50 in the same slot: bats exit 0, and in devbin test all, bats 106 of 106 with 1 skip, the AC-00.7 Linux test; on main as 492df0e, which equals a5dbb50 outside intent/ at 3cd9879"
+}

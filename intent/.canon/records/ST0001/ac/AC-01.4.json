@@ -1,0 +1,9 @@
+{
+  "id": "AC-01.4",
+  "text": "The baseline against the legacy code is recorded on this thread for rhadamanth and both CI runners, with a one-line triage for each failing test.",
+  "kind": "non-test",
+  "state": {
+    "is": "satisfied",
+    "evidence": "baseline.md on ST0001: rhadamanth slot 01M6EBWZSD9THBN1Q549VEK46T (99/99 legacy); CI run 41467789463 on 1a545a6 (macOS 93 ok / 9 not ok, Ubuntu 61 ok / 41 not ok, 13 skipped each), each failure triaged"
+  }
+}
