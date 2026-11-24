@@ -624,7 +624,10 @@ fn render(root: &Path, dry: bool, config: &Config) -> Result<ExitCode> {
   );
   if !dry {
     pages(root, &vocab, &config.today().to_string())?;
-    index(root)?;
+    let code = index(root)?;
+    if code != ExitCode::SUCCESS {
+      return Ok(code);
+    }
   }
   Ok(ExitCode::SUCCESS)
 }

@@ -257,7 +257,11 @@ mod tests {
     })?;
     let people = people(&root)?;
     let index = crate::index::letters(&root);
-    crate::pictures::run(&[], &config)?;
+    assert_eq!(
+      crate::pictures::run(&[], &config)?,
+      std::process::ExitCode::SUCCESS,
+      "pplr pictures' exit code"
+    );
     for (key, stem, _, want) in cases {
       let engine = people
         .iter()
