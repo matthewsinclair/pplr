@@ -26,3 +26,16 @@ load test_helper
     done
     [ "$checked" -gt 0 ] || { echo "bin/.devbin/cmd/ holds no command to check" >&2; return 1; }
 }
+
+# pplr's publish and switch are devbin's (devbin#0326, pplr#0001): the
+# install: block in bin/.devbin/config.yaml declares pplr's link, and
+# bin/devbin use, run in this checkout, reads it. Under a HOME of its own there
+# is no link, so the report says brew answers for pplr, whether or not this
+# machine has Homebrew's pplr (which decides only its exit).
+@test "bin/devbin use in the checkout reads pplr's link set from its install: block" {
+    run env HOME="$BATS_TEST_TMPDIR" bash -c "cd '$PPLR_ROOT' && bin/devbin use"
+    [ "${lines[0]}" = "use: no link for pplr, so brew" ] || [[ "${lines[0]}" == "use: no link for pplr, so brew, and "* ]] || {
+        echo "bin/devbin use did not read pplr's link set: $output" >&2
+        return 1
+    }
+}

@@ -66,5 +66,25 @@ formula:
   mode: assets
   assets:
     - "pplr-{version}-aarch64-apple-darwin.tar.gz"
-  bin:
-    - bin/pplr
+
+# pplr itself, for devbin's dev/opt/brew (devbin#0326, pplr#0001): run in this
+# checkout, `bin/devbin install` publishes the opt tree at the prefix, and
+# `bin/devbin use dev|opt|brew` points ~/.local/bin/pplr at a tree. The tree
+# holds the binary and, on macOS, its Contacts sidecar and the pplr:// handler
+# app, all three built by bin/devbin build into target/release. The manifest is
+# .pplr-install, the default.
+install:
+  prefix: ~/Devel/opt/pplr
+  links:
+    pplr: target/release/pplr
+  files:
+    contacts:
+      path: bin/pplr-contacts
+      from: target/release/pplr-contacts
+      platforms:
+        - macos
+    links-app:
+      path: "Pplr Links.app"
+      from: "target/release/Pplr Links.app"
+      platforms:
+        - macos

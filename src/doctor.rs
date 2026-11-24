@@ -98,81 +98,49 @@ pub fn check(config: &Config, fix: bool) -> Result<Vec<Section>> {
   ])
 }
 
-/// The running tree and its version line (T4), its manifest against its files
-/// (T3), and the link switch's shadow check (T5).
+/// The running pplr's version line (T4). Its tree, its manifest against its
+/// files (T3) and the link switch's shadow check (T5) are devbin's to check:
+/// `bin/devbin doctor`, run in pplr's checkout (devbin#0326, pplr#0001).
 fn install_rows() -> Vec<Row> {
-  use crate::install::{self, Kind, Links};
-  let line = install::version_line();
-  let Ok(layout) = Layout::running() else {
-    return vec![row(
-      Status::Fail,
-      format!("{line}: cannot find the running pplr's tree"),
-    )];
-  };
-  let (kind, manifest) = install::kind(&layout.root);
-  let mut rows = Vec::new();
-  match (kind, &manifest) {
-    (Kind::Unknown, _) => rows.push(row(
-      Status::Fail,
-      format!("{line}: this pplr is in no tree pplr knows (no manifest, and not a checkout)"),
-    )),
-    (Kind::Opt | Kind::Brew, Some(m)) => {
-      rows.push(row(Status::Pass, line));
-      let drifted = install::drift(&layout.root, m);
-      if drifted.is_empty() {
-        rows.push(row(Status::Pass, "The manifest matches every runtime file"));
-      } else {
-        let fix = if kind == Kind::Brew {
-          "brew reinstall pplr"
-        } else {
-          "pplr install --force, from dev"
-        };
-        rows.push(row(
-          Status::Fail,
-          format!(
-            "Files differ from the manifest: {} ({fix})",
-            drifted.join(", ")
-          ),
-        ));
-      }
-    }
-    _ => {
-      rows.push(row(Status::Pass, line));
-      // In dev the line names the commit the binary was built from (T4)
-      let head = Command::new("git")
-        .arg("-C")
-        .arg(&layout.root)
-        .args(["rev-parse", "HEAD"])
-        .output()
-        .ok()
-        .filter(|o| o.status.success())
-        .map(|o| String::from_utf8_lossy(&o.stdout).trim().to_owned());
-      match head {
-        Some(head) if head != install::SOURCE_COMMIT => rows.push(row(
-          Status::Warn,
-          format!("HEAD has moved past this build ({head:.12}): rebuild with bin/devbin build"),
-        )),
-        Some(_) => {}
-        None => rows.push(row(
-          Status::Fail,
-          "git cannot read this checkout, so its version line names no commit",
-        )),
-      }
-    }
-  }
+  let line = crate::cli::version_line();
+  let tree = tree_word(&line);
+  let mut rows = vec![if tree == Some("unknown") {
+    row(
+      Status::Warn,
+      format!(
+        "{line}: built by a plain cargo build, so it names no tree (build it with bin/devbin build)"
+      ),
+    )
+  } else {
+    row(Status::Pass, line.clone())
+  }];
   if cfg!(target_os = "macos") {
-    rows.extend(signatures(kind, &layout.root));
-  }
-  if let Some(home) = std::env::var_os("HOME") {
-    let report = Links::new(PathBuf::from(home).join(".local/bin")).report();
-    let status = if report.ok {
-      Status::Pass
-    } else {
-      Status::Fail
-    };
-    rows.push(row(status, report.text.replace('\n', "; ")));
+    match Layout::running() {
+      Ok(layout) => rows.extend(signatures(tree == Some("brew"), &layout.root)),
+      Err(_) => rows.push(row(
+        Status::Fail,
+        format!("{line}: cannot find the running pplr's tree to check its signatures"),
+      )),
+    }
   }
   rows
+}
+
+/// The tree a version line names: `<name> <version> (<tree>, <sha12>[+dirty])`.
+fn tree_word(line: &str) -> Option<&str> {
+  let (_, rest) = line.rsplit_once(" (")?;
+  rest.split_once(", ").map(|(tree, _)| tree)
+}
+
+/// The binaries a release signs, relative to a tree's root: pplr, and on
+/// macOS its Contacts sidecar and the pplr:// handler app.
+fn signed_set() -> Vec<&'static str> {
+  let mut set = vec!["bin/pplr"];
+  if cfg!(target_os = "macos") {
+    set.push("bin/pplr-contacts");
+    set.push(crate::layout::APP);
+  }
+  set
 }
 
 /// How pplr's binaries are signed: the one source, shared with the signer.
@@ -187,16 +155,15 @@ fn signing_fact(key: &str) -> Option<&'static str> {
 
 /// Each binary's signature against its designated requirement (ST0002 E2). A
 /// dev build is the linker's ad-hoc signature until the release signs it.
-fn signatures(kind: crate::install::Kind, root: &Path) -> Vec<Row> {
-  use crate::install::Kind;
+fn signatures(brew: bool, root: &Path) -> Vec<Row> {
   // Only a release is signed; dev, and opt published from dev, carry the linker's signature
-  if kind != Kind::Brew {
+  if !brew {
     return vec![row(
       Status::Pass,
       "Signatures: a dev or opt build is not Developer ID signed (a release is: bin/devbin macos prepare)",
     )];
   }
-  crate::install::runtime_set()
+  signed_set()
     .iter()
     .map(|item| {
       let binary = item.trim_start_matches("bin/");
@@ -681,7 +648,7 @@ mod tests {
           .replace("\\\"", "\"")
       })
       .collect();
-    for path in crate::install::runtime_set() {
+    for path in signed_set() {
       let binary = path.trim_start_matches("bin/");
       let id = signing_fact(&format!("id.{binary}")).unwrap_or_default();
       let entry = format!("\"{binary}\"");
@@ -702,7 +669,7 @@ mod tests {
 
   #[test]
   fn every_shipped_binary_has_an_identifier_and_a_requirement_to_sign_against() {
-    for path in crate::install::runtime_set() {
+    for path in signed_set() {
       let binary = path.trim_start_matches("bin/");
       let id = signing_fact(&format!("id.{binary}"));
       assert!(id.is_some(), "{binary}");

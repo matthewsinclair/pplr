@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Removed
+
+- `pplr install`, `pplr use` and `pplr version`. The publish and the switch are devbin's: `bin/devbin install` and `bin/devbin use dev|opt|brew`, run in a pplr checkout, from the one implementation every Homebrew'd tool uses (devbin#0326, pplr#0001). `pplr --version` and `pplr -v` print the version line as before. Dropping the shell version's `pplr version` is a ruled divergence (hv, 2026-11-06).
+- `PPLR_OPT_PREFIX`. The opt prefix is `install.prefix` in `bin/.devbin/config.yaml`.
+
+### Changed
+
+- The version line, `pplr <version> (<tree>, <sha12>[+dirty])`, comes from devbin's stamp: `bin/devbin build` stamps it, and an opt or brew tree's manifest carries it. A plain `cargo build` prints `(unknown, unknown)`. `pplr-contacts --version` prints the same line under its own name.
+- `pplr doctor`'s Install section is the version line and the signatures. `bin/devbin doctor`, run in a checkout, checks the trees, the manifests and the link's shadow.
+- `bin/devbin build` builds release, into `target/release/`, the dev tree that `bin/devbin use dev` links.
+- The formula's caveats name `bin/devbin use brew`.
+
 ## [2.0.2] - 2026-11-04
 
 ### Fixed

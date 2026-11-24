@@ -4,11 +4,12 @@
 use crate::Result;
 use crate::config::Config;
 use crate::{
-  contact, doctor, email, grep, handler, icons, index, install, links, marker, meetings, new, open,
+  contact, doctor, email, grep, handler, icons, index, links, marker, meetings, new, open,
   pictures, refresh, rename, search, sync, tags,
 };
 use std::io::{IsTerminal, Write};
 use std::process::{Command as Process, ExitCode, Stdio};
+use std::sync::OnceLock;
 
 pub struct Command {
   pub name: &'static str,
@@ -79,11 +80,6 @@ pub const COMMANDS: &[Command] = &[
     name: "index",
     usage: "generate index.md based on contents of $PPLR_DIR",
     run: index::run_index,
-  },
-  Command {
-    name: "install",
-    usage: "publish this dev build as an opt tree (maintainer)\n[--prefix <dir>]  the opt tree, else $PPLR_OPT_PREFIX\n[--force]         replace an opt tree pplr wrote\n[--managed-by brew]  for the Homebrew formula",
-    run: install::install,
   },
   Command {
     name: "json",
@@ -170,16 +166,6 @@ pub const COMMANDS: &[Command] = &[
     usage: "each person's tags, from About/tags.yaml, against _pplr/vocabulary.yaml\ncheck                 every tags.yaml against the vocabulary\nshow \"Surname, First\" a person's tags, by facet\nrender [--dry-run]    the generated \"- Tags:\" line in each About\nindex                 .index/tags_index.json: everyone, with marker, role, company, picture, tags\napply FILE [--dry-run] write tags.yaml from a reviewed JSON list (hand tags kept)",
     run: tags::run_tags,
   },
-  Command {
-    name: "use",
-    usage: "point ~/.local/bin/pplr at a tree, or report the one it serves\n[dev|opt|brew]  the tree; brew removes the link so Homebrew's pplr answers",
-    run: install::use_tree,
-  },
-  Command {
-    name: "version",
-    usage: "display the pplr version",
-    run: run_version,
-  },
 ];
 
 /// The README, the one source of `help --details` (design D6).
@@ -193,15 +179,31 @@ pub fn native(name: &str) -> Option<&'static Command> {
 /// What a missing or unknown command prints after its error, as `bin/pplr` did.
 const USAGE: &str = "Usage: pplr <cmd>";
 
-/// The commands that run where there is no People tree: those about pplr
-/// itself (ST0002 WP03), and doctor, which reports a missing tree as a row.
-const WITHOUT_DATA: &[&str] = &["doctor", "help", "install", "use", "version"];
+/// The commands that run where there is no People tree: help, and doctor,
+/// which reports a missing tree as a row. The version line (`-v`, `--version`)
+/// runs before any of them.
+const WITHOUT_DATA: &[&str] = &["doctor", "help"];
 
-pub fn run(args: Vec<String>) -> Result<ExitCode> {
-  let config = Config::from_env()?;
+/// The reader main hands run: T4's, the contract's word for word, which must
+/// live in the binary, where CARGO_BIN_NAME is set (devbin#0326).
+static VERSION_LINE: OnceLock<fn() -> String> = OnceLock::new();
+
+/// This binary's version line, devbin's docs/dev-opt-brew.md T4.
+pub fn version_line() -> String {
+  VERSION_LINE.get().map_or_else(
+    || "pplr: no version line, since pplr::cli::run was not called".to_owned(),
+    |line| line(),
+  )
+}
+
+pub fn run(args: Vec<String>, version_line: fn() -> String) -> Result<ExitCode> {
+  // A second run in one process hands the same reader, so the first set stands
+  let _ = VERSION_LINE.set(version_line);
   if matches!(args.first().map(String::as_str), Some("-v" | "--version")) {
-    return run_version(&[], &config);
+    println!("{}", self::version_line());
+    return Ok(ExitCode::SUCCESS);
   }
+  let config = Config::from_env()?;
   let Some(name) = args.first() else {
     println!("{USAGE}");
     return Ok(ExitCode::FAILURE);
@@ -228,13 +230,6 @@ fn data_missing(config: &Config) -> Option<ExitCode> {
     );
     ExitCode::FAILURE
   })
-}
-
-/// `pplr version`, `-v`, `--version`: `pplr <version> (<tree>, <sha12>[+dirty])`, the
-/// version from Cargo.toml, the one source (design D7), and the tree from its manifest (T4).
-fn run_version(_args: &[String], _config: &Config) -> Result<ExitCode> {
-  println!("{}", install::version_line());
-  Ok(ExitCode::SUCCESS)
 }
 
 /// `pplr help [cmd]... | --details`.

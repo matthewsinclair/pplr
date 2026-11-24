@@ -104,7 +104,6 @@ pplr's own folders start with `_` or `.`, and the people commands and the index 
 | `handler`        | register the app that opens `pplr://` links                                  |
 | `help`           | the commands, one command's options, or this README                          |
 | `index`          | the Markdown index of everyone, to stdout                                    |
-| `install`        | the maintainer's: publish a checkout's build (`docs/releasing.md`)           |
 | `json`           | the JSON index of everyone, to stdout                                        |
 | `linkedin`       | open a person's LinkedIn page                                                |
 | `links`          | rewrite Markdown links into the tree as `pplr://` URLs                       |
@@ -122,8 +121,6 @@ pplr's own folders start with `_` or `.`, and the people commands and the index 
 | `sync`           | compare pplr with Apple Contacts; link, plan, apply, pull, photos and backup |
 | `tag`            | show or edit one person's tags                                               |
 | `tags`           | everyone's tags: check, show, render, index and apply                        |
-| `use`            | the maintainer's: choose which build `pplr` runs (`docs/releasing.md`)       |
-| `version`        | the version, the tree it runs from and its commit                            |
 
 ### People
 
@@ -457,15 +454,14 @@ pplr help search    # One command
 pplr help --details # This README
 ```
 
-#### `pplr version`
+#### `pplr --version`
 
 ```bash
-pplr version     # pplr 2.0.0 (brew, 1a2b3c4d5e6f): the version, the tree it runs from and its commit
+pplr --version   # pplr 2.0.0 (brew, 1a2b3c4d5e6f): the version, the tree it runs from and its commit
 pplr -v          # The same
-pplr --version   # The same
 ```
 
-`pplr install` and `pplr use` are the maintainer's: see [`docs/releasing.md`](https://github.com/matthewsinclair/pplr/blob/main/docs/releasing.md).
+The publish and the switch between a checkout, an opt tree and Homebrew's pplr are devbin's, `bin/devbin install` and `bin/devbin use`, run in a pplr checkout, and are the maintainer's: see [`docs/releasing.md`](https://github.com/matthewsinclair/pplr/blob/main/docs/releasing.md).
 
 ## File Formats
 

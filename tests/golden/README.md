@@ -79,7 +79,7 @@ The bash scripts read a fake `date` that answered `2026-06-15 09:30:00` local ti
 | `handler`                                                   | The app ships prebuilt and signed, and `handler --install` only registers it (hv; design 3.4). |
 | `search`                                                    | Its answer comes from `claude`.                                                                |
 | `doctor`                                                    | It reports on the machine it runs on.                                                          |
-| `help`, `version`                                           | `help` is generated from the Rust command table and `version` reads `Cargo.toml` (design D7).  |
+| `help`, `--version`                                         | `help` is generated from the Rust command table and `--version` is the build's stamped line.   |
 
 ## Legacy behaviour the goldens hold
 

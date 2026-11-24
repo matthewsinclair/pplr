@@ -156,23 +156,80 @@ fn a_marker_that_does_not_resolve_stops_the_command() -> Result<()> {
   Ok(())
 }
 
-// AT-03.2 (ST0002 AC-03.2): the version line, from the stamps taken at build time.
+// The version line, devbin's T4, from devbin's stamp (devbin#0326, pplr#0001).
+// The test binary is built in the same cargo run as pplr, so the line it was
+// handed in DEVBIN_VERSION_LINE, or none, is the one pplr was handed.
 #[test]
 fn version_and_its_flags_print_the_version_line() -> Result<()> {
-  use pplr::install::{Kind, SOURCE_COMMIT, SOURCE_DIRTY, line};
-  // The dev build names the version in Cargo.toml and the commit it was built from (T4)
-  let expected = line(
-    env!("CARGO_PKG_VERSION"),
-    Kind::Dev,
-    None,
-    SOURCE_COMMIT,
-    SOURCE_DIRTY,
-  );
+  let expected = match option_env!("DEVBIN_VERSION_LINE") {
+    Some(line) if !line.is_empty() => line.to_owned(),
+    _ => format!("pplr {} (unknown, unknown)", env!("CARGO_PKG_VERSION")),
+  };
   let sandbox = Sandbox::new()?;
-  for args in [&["version"][..], &["-v"], &["--version"]] {
-    let out = run(sandbox.pplr().args(args))?;
-    assert!(out.status.success());
-    assert_eq!(text(&out.stdout), format!("{expected}\n"));
+  for flag in ["-v", "--version"] {
+    let out = run(sandbox.pplr().arg(flag))?;
+    assert!(out.status.success(), "{flag}");
+    assert_eq!(text(&out.stdout), format!("{expected}\n"), "{flag}");
+  }
+  Ok(())
+}
+
+/// pplr's own tree at `root`: its binary at bin/pplr, as an opt or brew tree
+/// lays it out (devbin's T1).
+fn tree_of_pplr(root: &std::path::Path) -> Result<PathBuf> {
+  let bin = root.join("bin");
+  fs::create_dir_all(&bin).named(&bin)?;
+  let pplr = bin.join("pplr");
+  fs::copy(env!("CARGO_BIN_EXE_pplr"), &pplr).named(&pplr)?;
+  Ok(pplr)
+}
+
+// In an opt or brew tree, the version line is the one its manifest records,
+// under the binary's own name, and a manifest another tool wrote is not read.
+#[test]
+fn version_in_a_tree_prints_its_manifests_line() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let root = sandbox.path("opt");
+  let pplr = tree_of_pplr(&root)?;
+  let manifest = root.join(".pplr-install");
+  let recorded = "pplr 9.8.7 (opt, 0123456789ab)";
+  fs::write(
+    &manifest,
+    format!("# tool: pplr\n# version: 9.8.7\n# line: {recorded}\n"),
+  )
+  .named(&manifest)?;
+  let out = run(Command::new(&pplr).arg("--version").env_clear())?;
+  assert!(out.status.success());
+  assert_eq!(text(&out.stdout), format!("{recorded}\n"));
+  // Another tool's manifest names no line of pplr's
+  fs::write(&manifest, format!("# tool: other\n# line: {recorded}\n")).named(&manifest)?;
+  let out = run(Command::new(&pplr).arg("--version").env_clear())?;
+  assert_ne!(text(&out.stdout), format!("{recorded}\n"));
+  assert!(
+    text(&out.stdout).starts_with("pplr "),
+    "{}",
+    text(&out.stdout)
+  );
+  Ok(())
+}
+
+// The publish, the switch and the version report are devbin's (bin/devbin
+// install, use and --version), so pplr has no verb for any of them.
+#[test]
+fn use_install_and_version_are_no_commands_of_pplrs() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  for name in ["use", "install", "version"] {
+    assert!(
+      pplr::cli::native(name).is_none(),
+      "{name} is still a command"
+    );
+    let out = run(sandbox.pplr().arg(name))?;
+    assert_eq!(out.status.code(), Some(1), "{name}");
+    assert_eq!(
+      text(&out.stdout),
+      format!("Error: Command '{name}' not found.\nUsage: pplr <cmd>\n"),
+      "{name}"
+    );
   }
   Ok(())
 }
@@ -1227,14 +1284,15 @@ fn live_contacts_round_trip_through_the_sidecar_store() -> pplr::Result<()> {
   Ok(())
 }
 
-/// AT-04.1 (ST0001 AC-04.1): the twelve read commands run natively, and every
-/// golden made of them alone replays; the bats suite (bin/devbin test shell) covers
-/// them against the binary too.
+/// AT-04.1 (ST0001 AC-04.1): the read commands run natively, and every golden
+/// made of them alone replays; the bats suite (bin/devbin test shell) covers them
+/// against the binary too. The twelfth, `version`, is the --version flag since
+/// devbin#0326 (pplr#0001).
 #[test]
 fn the_read_commands_are_native_and_their_goldens_replay() -> Result<()> {
-  const WP04: [&str; 12] = [
+  const WP04: [&str; 11] = [
     "resolve", "count", "about", "cp", "open", "linkedin", "edit", "meetings", "refresh", "grep",
-    "help", "version",
+    "help",
   ];
   for name in WP04 {
     assert!(pplr::cli::native(name).is_some(), "{name} is not native");
@@ -1278,233 +1336,6 @@ fn reindex_writes_index_json_as_jq_prints_it_and_index_md() -> Result<()> {
       "{file}"
     );
   }
-  Ok(())
-}
-
-// ST0002 WP03: the dev/opt/brew trees, the manifest, `install` and `use`.
-
-/// The crate's version, which each tree here is published and printed at: a
-/// version written by hand passes only until the release stamps the next.
-const VERSION: &str = env!("CARGO_PKG_VERSION");
-
-/// The running test binary's own pplr, laid out as a tree at `prefix`.
-fn publish_tree(prefix: &std::path::Path, managed_by: &str, force: bool) -> Result<()> {
-  let sources = [("bin/pplr", PathBuf::from(env!("CARGO_BIN_EXE_pplr")))];
-  pplr::install::publish(
-    &sources,
-    prefix,
-    VERSION,
-    "0123456789abcdef0123456789abcdef01234567",
-    managed_by,
-    force,
-  )
-  .map_err(|e| e.to_string().into())
-}
-
-// AT-03.1 (ST0002 AC-03.1): install publishes from dev only, writes the T3
-// manifest, and replaces only its own prefix, only with --force (this test and
-// the two after it).
-#[test]
-fn publish_writes_the_runtime_set_and_its_manifest_and_names_the_tree_opt() -> Result<()> {
-  use pplr::install::{Kind, MANIFEST, Manifest, drift, kind};
-  let sandbox = Sandbox::new()?;
-  let prefix = sandbox.path("opt");
-  publish_tree(&prefix, "pplr", false)?;
-  let manifest =
-    Manifest::parse(&fs::read_to_string(prefix.join(MANIFEST))?).ok_or("no manifest")?;
-  assert_eq!(
-    (manifest.tool.as_str(), manifest.managed_by.as_str()),
-    ("pplr", "pplr")
-  );
-  assert_eq!(
-    manifest
-      .files
-      .iter()
-      .map(|(_, p)| p.as_str())
-      .collect::<Vec<_>>(),
-    ["bin/pplr"]
-  );
-  assert_eq!(kind(&prefix).0, Kind::Opt);
-  assert!(drift(&prefix, &manifest).is_empty());
-  fs::write(prefix.join("bin/pplr"), "tampered")?;
-  assert_eq!(drift(&prefix, &manifest), ["bin/pplr"]);
-  Ok(())
-}
-
-#[test]
-fn publish_replaces_only_its_own_prefix_and_only_with_force() -> Result<()> {
-  let sandbox = Sandbox::new()?;
-  let prefix = sandbox.path("opt");
-  publish_tree(&prefix, "pplr", false)?;
-  let again = publish_tree(&prefix, "pplr", false)
-    .err()
-    .map(|e| e.to_string())
-    .unwrap_or_default();
-  assert!(again.contains("--force"), "{again}");
-  publish_tree(&prefix, "pplr", true)?;
-
-  let foreign = sandbox.path("foreign");
-  fs::create_dir_all(&foreign)?;
-  fs::write(foreign.join("notes.txt"), "not pplr's")?;
-  let refused = publish_tree(&foreign, "pplr", true)
-    .err()
-    .map(|e| e.to_string())
-    .unwrap_or_default();
-  assert!(refused.contains("did not install"), "{refused}");
-
-  let keg = sandbox.path("keg");
-  publish_tree(&keg, "brew", false)?;
-  let brews = publish_tree(&keg, "pplr", true)
-    .err()
-    .map(|e| e.to_string())
-    .unwrap_or_default();
-  assert!(brews.contains("brew upgrade"), "{brews}");
-  Ok(())
-}
-
-#[test]
-fn install_needs_a_prefix_and_runs_only_from_dev() -> Result<()> {
-  let sandbox = Sandbox::new()?;
-  let out = run(sandbox.pplr().arg("install"))?;
-  assert!(!out.status.success());
-  assert!(
-    text(&out.stderr).contains("PPLR_OPT_PREFIX"),
-    "{}",
-    text(&out.stderr)
-  );
-
-  let opt = sandbox.path("opt");
-  publish_tree(&opt, "pplr", false)?;
-  let from_opt = run(
-    Command::new(opt.join("bin/pplr"))
-      .env_clear()
-      .env("PATH", std::env::var_os("PATH").unwrap_or_default())
-      .env("HOME", sandbox.path("home"))
-      .args(["install", "--prefix"])
-      .arg(sandbox.path("other")),
-  )?;
-  assert!(
-    text(&from_opt.stderr).contains("from a dev checkout only"),
-    "{}",
-    text(&from_opt.stderr)
-  );
-  Ok(())
-}
-
-/// A fake Homebrew prefix holding pplr's keg, linked as brew links it.
-fn fake_brew(sandbox: &Sandbox) -> Result<PathBuf> {
-  let brew = sandbox.path("brew");
-  let keg = brew.join("Cellar/pplr").join(VERSION);
-  publish_tree(&keg.join("libexec"), "brew", false)?;
-  fs::create_dir_all(brew.join("opt"))?;
-  fs::create_dir_all(brew.join("bin"))?;
-  std::os::unix::fs::symlink(&keg, brew.join("opt/pplr"))?;
-  std::os::unix::fs::symlink(
-    brew.join("opt/pplr/libexec/bin/pplr"),
-    brew.join("bin/pplr"),
-  )?;
-  Ok(brew)
-}
-
-// AT-03.3 (ST0002 AC-03.3): use moves the one link, refuses a brew copy that
-// would not answer, and the shadow check fails a shadowed link (this test and
-// the next).
-#[test]
-fn use_points_the_one_link_and_use_brew_hands_back_to_homebrew() -> Result<()> {
-  let sandbox = Sandbox::new()?;
-  let opt = sandbox.path("opt");
-  publish_tree(&opt, "pplr", false)?;
-  let brew = fake_brew(&sandbox)?;
-  let links = sandbox.path("home/.local/bin");
-  let path = format!(
-    "{}:{}:/usr/bin:/bin",
-    links.display(),
-    brew.join("bin").display()
-  );
-  let pplr = || {
-    let mut c = sandbox.pplr();
-    c.env("PATH", &path)
-      .env("PPLR_OPT_PREFIX", &opt)
-      .env("HOMEBREW_PREFIX", &brew);
-    c
-  };
-
-  let to_opt = run(pplr().args(["use", "opt"]))?;
-  assert!(to_opt.status.success(), "{}", text(&to_opt.stderr));
-  assert!(
-    text(&to_opt.stdout).starts_with(&format!("pplr {VERSION} (opt, 0123456789ab)")),
-    "{}",
-    text(&to_opt.stdout)
-  );
-  assert_eq!(fs::read_link(links.join("pplr"))?, opt.join("bin/pplr"));
-  let report = run(pplr().arg("use"))?;
-  assert!(
-    text(&report.stdout).starts_with("pplr -> opt"),
-    "{}",
-    text(&report.stdout)
-  );
-
-  let to_brew = run(pplr().args(["use", "brew"]))?;
-  assert!(to_brew.status.success(), "{}", text(&to_brew.stderr));
-  assert!(
-    text(&to_brew.stdout).starts_with(&format!("pplr {VERSION} (brew, 0123456789ab)")),
-    "{}",
-    text(&to_brew.stdout)
-  );
-  assert!(links.join("pplr").symlink_metadata().is_err());
-  Ok(())
-}
-
-#[test]
-fn use_brew_keeps_the_link_when_no_brew_copy_would_answer_and_bare_use_finds_a_shadow() -> Result<()>
-{
-  let sandbox = Sandbox::new()?;
-  let opt = sandbox.path("opt");
-  publish_tree(&opt, "pplr", false)?;
-  let links = sandbox.path("home/.local/bin");
-  let empty_brew = sandbox.path("nobrew");
-  fs::create_dir_all(&empty_brew)?;
-  let shadow = sandbox.path("shadow");
-  fs::create_dir_all(&shadow)?;
-  fs::write(shadow.join("pplr"), "#!/bin/sh\n")?;
-  fs::set_permissions(shadow.join("pplr"), fs::Permissions::from_mode(0o755))?;
-  let pplr = |path: String| {
-    let mut c = sandbox.pplr();
-    c.env("PATH", path)
-      .env("PPLR_OPT_PREFIX", &opt)
-      .env("HOMEBREW_PREFIX", &empty_brew);
-    c
-  };
-  let ours = format!("{}:/usr/bin:/bin", links.display());
-  assert!(
-    run(pplr(ours.clone()).args(["use", "opt"]))?
-      .status
-      .success()
-  );
-
-  let refused = run(pplr(ours).args(["use", "brew"]))?;
-  assert!(!refused.status.success());
-  assert!(
-    text(&refused.stderr).contains("is kept"),
-    "{}",
-    text(&refused.stderr)
-  );
-  assert!(links.join("pplr").symlink_metadata().is_ok());
-
-  let shadowed = run(
-    pplr(format!(
-      "{}:{}:/usr/bin:/bin",
-      shadow.display(),
-      links.display()
-    ))
-    .arg("use"),
-  )?;
-  assert!(!shadowed.status.success());
-  assert!(
-    text(&shadowed.stdout).contains("shadowed"),
-    "{}",
-    text(&shadowed.stdout)
-  );
   Ok(())
 }
 
@@ -1588,7 +1419,7 @@ fn commands_about_pplr_itself_run_where_there_is_no_people_tree() -> Result<()> 
     c.env("PPLR_DATA", &missing);
     c
   };
-  let version = run(pplr().arg("version"))?;
+  let version = run(pplr().arg("--version"))?;
   assert!(version.status.success(), "{}", text(&version.stdout));
   assert!(
     text(&version.stdout).starts_with("pplr "),
@@ -1917,59 +1748,6 @@ fn pull_leaves_an_about_that_is_not_utf8_as_it_is_and_names_it() -> Result<()> {
   Ok(())
 }
 
-#[test]
-fn publish_lays_out_an_app_bundle_file_by_file_with_each_mode_kept() -> Result<()> {
-  use pplr::install::{MANIFEST, Manifest, drift};
-  let sandbox = Sandbox::new()?;
-  let app = sandbox.path("built/Pplr Links.app");
-  fs::create_dir_all(app.join("Contents/MacOS"))?;
-  fs::write(app.join("Contents/Info.plist"), "<plist/>")?;
-  fs::set_permissions(
-    app.join("Contents/Info.plist"),
-    fs::Permissions::from_mode(0o644),
-  )?;
-  fs::write(app.join("Contents/MacOS/applet"), "#!/bin/sh\n")?;
-  fs::set_permissions(
-    app.join("Contents/MacOS/applet"),
-    fs::Permissions::from_mode(0o755),
-  )?;
-  let prefix = sandbox.path("opt");
-  let sources = [
-    ("bin/pplr", PathBuf::from(env!("CARGO_BIN_EXE_pplr"))),
-    ("Pplr Links.app", app),
-  ];
-  pplr::install::publish(
-    &sources,
-    &prefix,
-    VERSION,
-    "0123456789abcdef0123456789abcdef01234567",
-    "pplr",
-    false,
-  )
-  .map_err(|e| e.to_string())?;
-  let manifest =
-    Manifest::parse(&fs::read_to_string(prefix.join(MANIFEST))?).ok_or("no manifest")?;
-  let paths: Vec<&str> = manifest.files.iter().map(|(_, p)| p.as_str()).collect();
-  assert_eq!(
-    paths,
-    [
-      "Pplr Links.app/Contents/Info.plist",
-      "Pplr Links.app/Contents/MacOS/applet",
-      "bin/pplr"
-    ]
-  );
-  assert!(drift(&prefix, &manifest).is_empty());
-  let mode = |p: &str| fs::metadata(prefix.join(p)).map(|m| m.permissions().mode() & 0o777);
-  assert_eq!(
-    (
-      mode("Pplr Links.app/Contents/MacOS/applet")?,
-      mode("Pplr Links.app/Contents/Info.plist")?
-    ),
-    (0o755, 0o644)
-  );
-  Ok(())
-}
-
 /// ST0001 WP13, vc decision 14 (a D10 fix): `pplr tags` and `pplr contact`
 /// with no command print their usage naming the pplr command, where the port
 /// had kept the legacy helper's name, in its layout, and exit 0 as it did.
@@ -2018,7 +1796,9 @@ fn tags_and_contact_with_no_command_print_their_usage_naming_pplr() -> Result<()
 /// legacy dispatcher, command script, fallback or run-time engine build.
 #[test]
 fn one_binary_serves_every_shell_command_and_no_legacy_script_remains() -> Result<()> {
-  // Recon section 4's catalogue: the commands the shell pplr offered
+  // Recon section 4's catalogue: the commands the shell pplr offered, less
+  // `version`, which is the --version flag since devbin#0326 (pplr#0001; a
+  // ruled divergence, in CHANGELOG.md)
   const SHELL_COMMANDS: &[&str] = &[
     "about",
     "applyicons",
@@ -2049,7 +1829,6 @@ fn one_binary_serves_every_shell_command_and_no_legacy_script_remains() -> Resul
     "sync",
     "tag",
     "tags",
-    "version",
   ];
   let unserved: Vec<&str> = SHELL_COMMANDS
     .iter()
@@ -2081,7 +1860,7 @@ fn one_binary_serves_every_shell_command_and_no_legacy_script_remains() -> Resul
 fn an_installed_pplr_needs_no_checkout_and_no_legacy_setting() -> Result<()> {
   let sandbox = Sandbox::new()?;
   let prefix = sandbox.path("opt");
-  publish_tree(&prefix, "pplr", false)?;
+  tree_of_pplr(&prefix)?;
   // The decoy: a command script that leaves a mark, a person template and a README
   let decoy = sandbox.path("decoy");
   let mark = sandbox.path("decoy-ran");

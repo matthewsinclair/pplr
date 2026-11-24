@@ -9,6 +9,7 @@
 //   pplr-contacts backup --backup-dir DIR  every card to a dated .vcf in DIR
 //   pplr-contacts group [--group NAME]     the group's id in the default
 //                                          account (iCloud), made if missing
+//   pplr-contacts --version                devbin's T4 line (version.swift)
 //
 // A card linked across accounts comes back from the unified fetch with a
 // merged id that Contacts.app cannot address, so `dump` resolves each card to
@@ -220,8 +221,10 @@ do {
         print("Backup: \(try backup(to: backupDir))")
     case "group":
         print(try homeGroupID(openStore(), group))
+    case "--version":
+        print(versionLine())
     default:
-        FileHandle.standardError.write(Data("usage: pplr-contacts dump\n       pplr-contacts backup --backup-dir DIR\n       pplr-contacts group [--group NAME]\n".utf8))
+        FileHandle.standardError.write(Data("usage: pplr-contacts dump\n       pplr-contacts backup --backup-dir DIR\n       pplr-contacts group [--group NAME]\n       pplr-contacts --version\n".utf8))
         exit(2)
     }
 } catch {

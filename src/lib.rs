@@ -11,7 +11,6 @@ pub mod grep;
 pub mod handler;
 pub mod icons;
 pub mod index;
-pub mod install;
 pub mod layout;
 pub mod links;
 pub mod mail;

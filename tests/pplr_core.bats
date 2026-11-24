@@ -56,20 +56,23 @@ bats_require_minimum_version 1.5.0
 }
 
 # The version line, `pplr <Cargo.toml's version> (<tree>, <sha12>[+dirty])`
-# (devbin T4, ST0002 WP03).
+# (devbin T4), from devbin's stamp (devbin#0326, pplr#0001): a build bin/devbin
+# build did not stamp, as the suite's own debug build is, reads
+# `(unknown, unknown)`.
 assert_version_output() {
     local version
     version=$(sed -n 's/^version = "\(.*\)"$/\1/p' "$PPLR_ROOT/Cargo.toml" | head -1)
-    [[ "$output" =~ ^pplr\ ${version//./\\.}\ \((dev|opt|brew),\ ([0-9a-f]{12}(\+dirty)?|unknown)\)$ ]] || {
+    [[ "$output" =~ ^pplr\ ${version//./\\.}\ \((dev|opt|brew|unknown),\ ([0-9a-f]{12}(\+dirty)?|unknown)\)$ ]] || {
         echo "not a version line for $version: $output" >&2
         return 1
     }
 }
 
-@test "pplr version displays the implementation's version" {
+@test "pplr version is no command of pplr's: the version line is --version (devbin#0326)" {
     run "$PPLR" version
-    [ "$status" -eq 0 ]
-    assert_version_output
+    [ "$status" -eq 1 ]
+    [ "${lines[0]}" = "Error: Command 'version' not found." ]
+    [ "${lines[1]}" = "Usage: pplr <cmd>" ]
 }
 
 @test "pplr -v displays version" {

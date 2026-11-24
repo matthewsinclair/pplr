@@ -1,9 +1,11 @@
 # packaging/homebrew/pplr.rb: the template of pplr's Homebrew formula
 # (ST0002 WP04, design E1 and T8). bin/devbin formula render fills it from a
 # release: @@VERSION@@, each asset's @@SHA256:...@@ from the release's
-# SHA256SUMS, @@INSTALL@@ (the assets into libexec, 0755 on bin/pplr, the T3
-# manifest with managed_by: brew, the link in bin). This header is dropped
-# from the render. Edit this file, never a rendered one.
+# SHA256SUMS, and @@INSTALL@@, the install body devbin generates from the
+# install: block in bin/.devbin/config.yaml (devbin#0326: the tree into
+# libexec, 0755 on bin/pplr, the T3 manifest with its line and managed_by:
+# brew, the link in bin). This header is dropped from the render. Edit this
+# file, never a rendered one.
 #
 # REQUIREMENTS repeats packaging/macos/signing's designated requirements,
 # which a Ruby formula cannot read; a cargo test fails when the two differ.
@@ -51,8 +53,8 @@ class Pplr < Formula
     <<~EOS
       pplr reads your People tree from $PPLR_DATA (default ~/Dropbox/Career/People).
 
-      If you also run pplr from a checkout, `pplr use brew` hands the pplr
-      command back to Homebrew.
+      If you also run pplr from a checkout, `bin/devbin use brew`, run in that
+      checkout, hands the pplr command back to Homebrew.
 
       On macOS, the first `pplr sync` asks for access to Contacts for
       pplr-contacts; allow it in System Settings > Privacy & Security > Contacts.

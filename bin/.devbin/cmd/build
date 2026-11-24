@@ -1,28 +1,49 @@
 #!/usr/bin/env zsh
-# devbin: summary = cargo build, then the Contacts sidecar beside the binary on macOS
+# devbin: summary = cargo build --release, then the Contacts sidecar and the pplr:// app beside the binary on macOS
 # devbin: group = Build
 #
-# Build pplr, and on macOS its Contacts sidecar beside it, ahead of time
-# (ST0001 design D2 and 3.2): nothing compiles at run time. Arguments go to
-# cargo build, eg --release; the sidecar lands in the same target/<profile>/.
+# Build pplr, and on macOS its Contacts sidecar and the pplr:// handler app
+# beside it, ahead of time (ST0001 design D2 and 3.2): nothing compiles at run
+# time. It builds release, into target/release, which is the dev tree devbin's
+# install: block names (devbin#0326, pplr#0001), so a bare bin/devbin build
+# makes every product bin/devbin install publishes. Arguments go to cargo
+# build; --release, which every build here already is, is taken and dropped,
+# so the older spelling (post-cut, macos) still works. The bats suite builds
+# its own debug pplr (bin/.devbin/cmd/bats-rust).
 
 emulate -L zsh
 setopt err_exit no_unset pipe_fail
 
 root=${0:A:h:h:h:h}
 cd $root
-cargo build --quiet "$@"
+cargo build --quiet --release ${@:#--release}
 
 [[ $(uname) == Darwin ]] || { print "build: no Contacts sidecar off macOS (it needs the Contacts framework)"; exit 0 }
-profile=debug
-(( ${@[(Ie)--release]} )) && profile=release
-src=swift/pplr-contacts/main.swift
+profile=release
+srcs=(swift/pplr-contacts/main.swift swift/pplr-contacts/version.swift)
 # Its Info.plist is linked in, so macOS can name it and show the Contacts prompt
 plist=swift/pplr-contacts/Info.plist
 out=target/$profile/pplr-contacts
-if [[ ! -x $out || $src -nt $out || $plist -nt $out ]]; then
+# The sidecar's version line (devbin's T4, devbin#0326): the line bin/devbin
+# build hands this build in DEVBIN_VERSION_LINE, compiled in as versionStamp,
+# or `pplr <version> (unknown, unknown)` without one, as a plain cargo build of
+# pplr prints. The file is rewritten only when the line changes, so an
+# unchanged line rebuilds nothing.
+stamp=target/$profile/pplr-contacts-stamp.swift
+line=${DEVBIN_VERSION_LINE:-}
+if [[ -z $line ]]; then
+  version=$(awk -F'"' '/^version = / { print $2; exit }' Cargo.toml)
+  [[ -n $version ]] || { print -u2 "build: Cargo.toml names no version"; exit 1 }
+  line="pplr $version (unknown, unknown)"
+fi
+line=${line//\\/\\\\}
+want="let versionStamp = \"${line//\"/\\\"}\""
+if [[ ! -f $stamp || $(<$stamp) != $want ]]; then
+  print -r -- $want >$stamp
+fi
+if [[ ! -x $out || $plist -nt $out || $stamp -nt $out || ${srcs[1]} -nt $out || ${srcs[2]} -nt $out ]]; then
   print "build: compiling the Contacts sidecar into $out"
-  swiftc -O -swift-version 5 -o $out $src -framework Contacts \
+  swiftc -O -swift-version 5 -o $out $srcs $stamp -framework Contacts \
     -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __info_plist -Xlinker $plist
 fi
 

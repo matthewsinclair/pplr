@@ -9,7 +9,7 @@
 # PPLR_UNDER_TEST names the pplr executable the suite tests, and defaults to
 # the checkout's dev build, target/debug/pplr, which bin/devbin test shell builds
 # first. Point it at another build to test that, eg an opt tree's:
-#   PPLR_UNDER_TEST="$PPLR_OPT_PREFIX/bin/pplr" bats -r tests/
+#   PPLR_UNDER_TEST=~/Devel/opt/pplr/bin/pplr bats -r tests/
 
 # The checkout these tests belong to
 PPLR_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
