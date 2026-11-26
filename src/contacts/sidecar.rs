@@ -272,9 +272,15 @@ mod tests {
       );
     }
 
-    // The sidecar's own mode switch names the three, read from its source
+    // The sidecar's own mode switch names the three, read from its source,
+    // and `--version`, the version line every binary prints (devbin's T4,
+    // pplr#0001), which is no mode: the store never asks for it
     let main_swift = Path::new(env!("CARGO_MANIFEST_DIR")).join("swift/pplr-contacts/main.swift");
-    let labels = mode_switch_labels(&std::fs::read_to_string(main_swift)?)?;
+    let mut labels = mode_switch_labels(&std::fs::read_to_string(main_swift)?)?;
+    assert!(
+      labels.remove("--version"),
+      "swift/pplr-contacts/main.swift's switch has no --version case"
+    );
     assert_eq!(
       labels, modes,
       "swift/pplr-contacts/main.swift's mode switch names other modes than AC-09.1's"
