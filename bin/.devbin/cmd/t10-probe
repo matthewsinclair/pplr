@@ -6,16 +6,19 @@
 # devbin's own publish and switch (devbin#0326, pplr#0001), run in pplr's
 # checkout.
 #
-#   bin/devbin t10-probe
+#   bin/devbin t10-probe [all|dev-opt|brew]
 #
 # `bin/devbin build`, then `bin/devbin install --force` to the install:
-# block's prefix. Then, for dev, opt and brew in turn, `bin/devbin use <tree>`,
-# with pplr --version naming that tree and `bin/devbin doctor` passing, its
-# shadow check and version-line check included. It PUBLISHES the opt tree and
-# MOVES ~/.local/bin/pplr, so on the maintainer's machine it changes which
-# pplr answers. It ends on brew, where the switch rests. Each step's verdict is
-# printed, and it exits non-zero if any failed. The brew leg reads `(brew, `
-# only once a release carrying this pplr is installed by Homebrew.
+# block's prefix. Then, for each tree, `bin/devbin use <tree>`, with
+# pplr --version naming that tree and `bin/devbin doctor` passing, its shadow
+# check and version-line check included. `all` (the default) runs dev, opt and
+# brew; `dev-opt` publishes and runs dev and opt, then hands the command back to
+# Homebrew; `brew` runs the brew leg alone. It PUBLISHES the opt tree and MOVES
+# ~/.local/bin/pplr, so on the maintainer's machine it changes which pplr
+# answers. It ends on brew, where the switch rests. Each step's verdict is
+# printed, then one verdict line for the run, and it exits non-zero if any step
+# failed. The brew leg reads `(brew, ` only once a release carrying this pplr is
+# installed by Homebrew.
 
 emulate -L zsh
 setopt no_unset pipe_fail
@@ -24,17 +27,26 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 root=${0:A:h:h:h:h}
 cd $root
 
+case ${1:-all} in
+  all) trees=(dev opt brew) publish=1 ;;
+  dev-opt) trees=(dev opt) publish=1 ;;
+  brew) trees=(brew) publish=0 ;;
+  *) print -u2 -r -- "usage: bin/devbin t10-probe [all|dev-opt|brew]"; exit 2 ;;
+esac
+
 failed=0
 probe() {
   local what=$1; shift
   if "$@"; then print "  ok    $what"; else print "  FAIL  $what"; failed=1; fi
 }
 
-print -r -- "== publish"
-probe "bin/devbin build" bin/devbin build
-probe "bin/devbin install --force" bin/devbin install --force
+if (( publish )); then
+  print -r -- "== publish"
+  probe "bin/devbin build" bin/devbin build
+  probe "bin/devbin install --force" bin/devbin install --force
+fi
 
-for tree in dev opt brew; do
+for tree in $trees; do
   print -r -- "== use $tree"
   probe "use $tree" bin/devbin use $tree
   rehash
@@ -43,4 +55,12 @@ for tree in dev opt brew; do
   print -r -- "  $(command pplr --version)"
   probe "bin/devbin doctor" bin/devbin doctor
 done
+
+# The switch rests at brew. After the dev and opt legs alone, hand the
+# command back to Homebrew; this is not a leg, so it gives no verdict.
+if [[ $trees[-1] != brew ]]; then
+  bin/devbin use brew >/dev/null || print -r -- "  note  bin/devbin use brew failed: pplr is left on $trees[-1]"
+fi
+
+print -r -- "t10-probe pplr ${1:-all}: $( (( failed )) && print FAIL || print PASS )"
 exit $failed

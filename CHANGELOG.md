@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `pplr doctor`'s Install section is the version line and the signatures. `bin/devbin doctor`, run in a checkout, checks the trees, the manifests and the link's shadow.
 - `bin/devbin build` builds release, into `target/release/`, the dev tree that `bin/devbin use dev` links.
 - The formula's caveats name `bin/devbin use brew`.
+- `bin/devbin t10-probe`, devbin's T10 proof for pplr, takes `all` (the default), `dev-opt` or `brew` to run those legs, and ends with one verdict line. After the dev and opt legs alone it hands the command back to Homebrew.
 
 ## [2.0.2] - 2026-11-04
 
