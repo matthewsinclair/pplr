@@ -263,7 +263,7 @@ pub fn run_tags(args: &[String], config: &Config) -> Result<ExitCode> {
     ("check", _) => check(root),
     ("show", [name, ..]) => show(root, name),
     ("render", _) => render(root, dry, config),
-    ("index", _) => index(root),
+    ("index", _) => index(root).map(|()| ExitCode::SUCCESS),
     ("edit", [name, changes @ ..]) if !changes.is_empty() => {
       let changes: Vec<String> = changes.iter().map(|c| (*c).clone()).collect();
       edit(root, name, &changes)
@@ -624,10 +624,7 @@ fn render(root: &Path, dry: bool, config: &Config) -> Result<ExitCode> {
   );
   if !dry {
     pages(root, &vocab, &config.today().to_string())?;
-    let code = index(root)?;
-    if code != ExitCode::SUCCESS {
-      return Ok(code);
-    }
+    index(root)?;
   }
   Ok(ExitCode::SUCCESS)
 }
@@ -903,7 +900,7 @@ struct IndexDoc {
 
 /// .index/tags_index.json: everyone, with marker, role, company, picture and
 /// tags by facet, in Python's `json.dump(indent=1, ensure_ascii=False)` form.
-fn index(root: &Path) -> Result<ExitCode> {
+fn index(root: &Path) -> Result<()> {
   let vocab = Vocabulary::load(root)?;
   let rel = |p: &Path| p.strip_prefix(root).unwrap_or(p).display().to_string();
   let mut out = Vec::new();
@@ -967,7 +964,7 @@ fn index(root: &Path) -> Result<ExitCode> {
     "pplr tags index: {} people in .index/tags_index.json",
     doc.people_count
   );
-  Ok(ExitCode::SUCCESS)
+  Ok(())
 }
 
 #[cfg(test)]
