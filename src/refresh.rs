@@ -46,7 +46,7 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
       };
       let (name, dir) = folder_of_name(&config.data, name);
       if !dir.is_dir() {
-        println!("Error: no such person: {name}");
+        crate::complain(&format!("no such person: {name}"));
         return Ok(ExitCode::FAILURE);
       }
       let day = config.today().to_string();

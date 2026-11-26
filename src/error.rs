@@ -6,6 +6,13 @@ pub fn clean(text: &str) -> String {
   text.chars().filter(|c| !c.is_control()).collect()
 }
 
+/// A refusal, or a warning a command gives before it carries on, in devbin's
+/// shape: `pplr: <message>` on stderr, as `main` prints an error (pplr#0002,
+/// hv's ruling A of 2026-11-26). The caller gives the exit code.
+pub fn complain(message: &str) {
+  eprintln!("pplr: {}", clean(message));
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;

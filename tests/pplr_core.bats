@@ -71,7 +71,7 @@ assert_version_output() {
 @test "pplr version is no command of pplr's: the version line is --version (devbin#0326)" {
     run "$PPLR" version
     [ "$status" -eq 1 ]
-    [ "${lines[0]}" = "Error: Command 'version' not found." ]
+    [ "${lines[0]}" = "pplr: Command 'version' not found." ]
     [ "${lines[1]}" = "Usage: pplr <cmd>" ]
 }
 

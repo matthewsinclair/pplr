@@ -89,7 +89,7 @@ pub fn run_cp(args: &[String], config: &Config) -> Result<ExitCode> {
   };
   let file = about_file(&config.data, first, surname, kind);
   if !file.is_file() {
-    eprintln!("Error: File not found: {}", file.display());
+    crate::complain(&format!("File not found: {}", file.display()));
     return Ok(ExitCode::FAILURE);
   }
   let quoted = format!("\"{}\"", file.display());
@@ -140,7 +140,7 @@ pub fn run_open(args: &[String], config: &Config) -> Result<ExitCode> {
   };
   let file = about_file(&config.data, first, surname, kind);
   if !file.is_file() {
-    eprintln!("Error: File not found: {}", file.display());
+    crate::complain(&format!("File not found: {}", file.display()));
     return Ok(ExitCode::FAILURE);
   }
   open_target(&file.display().to_string())

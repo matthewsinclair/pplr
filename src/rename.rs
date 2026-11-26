@@ -156,7 +156,7 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
     match r.canonicalize() {
       Ok(physical) if physical.is_dir() => roots.push(physical),
       _ => {
-        println!("Error: no such directory: {}", r.display());
+        crate::complain(&format!("no such directory: {}", r.display()));
         return Ok(ExitCode::FAILURE);
       }
     }
@@ -166,7 +166,7 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
     match Name::parse(arg) {
       Some(name) => parsed.push(name),
       None => {
-        eprintln!("Error: '{arg}' is not \"Surname, First\"");
+        crate::complain(&format!("'{arg}' is not \"Surname, First\""));
         return Ok(ExitCode::FAILURE);
       }
     }
@@ -174,15 +174,15 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
   let (old, new) = (&parsed[0], &parsed[1]);
   let (old_dir, new_dir) = (config.data.join(old.key()), config.data.join(new.key()));
   if !old_dir.is_dir() {
-    println!("Error: no such person: {}", old.key());
+    crate::complain(&format!("no such person: {}", old.key()));
     return Ok(ExitCode::FAILURE);
   }
   if old.key() == new.key() {
-    println!("Error: the names are the same");
+    crate::complain("the names are the same");
     return Ok(ExitCode::FAILURE);
   }
   if new_dir.symlink_metadata().is_ok() {
-    println!("Error: {} already exists", new.key());
+    crate::complain(&format!("{} already exists", new.key()));
     return Ok(ExitCode::FAILURE);
   }
 

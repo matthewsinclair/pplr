@@ -23,10 +23,10 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
   };
   let dir = folder_of(&config.data, first, surname);
   if dir.is_dir() {
-    println!(
-      "Error: Person '{first} {surname}' already exists at '{}'.",
+    crate::complain(&format!(
+      "Person '{first} {surname}' already exists at '{}'.",
       dir.display()
-    );
+    ));
     return Ok(ExitCode::FAILURE);
   }
   // The author is read before anything is written, so a refusal leaves no folder

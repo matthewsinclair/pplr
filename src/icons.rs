@@ -24,7 +24,7 @@ pub fn applyicons(args: &[String], config: &Config) -> Result<ExitCode> {
   };
   let person = person_dir(&config.data, first, surname);
   if !person.is_dir() {
-    println!("Error: Directory for '{first} {surname}' not found.");
+    crate::complain(&format!("Directory for '{first} {surname}' not found."));
     return Ok(ExitCode::FAILURE);
   }
   println!("Applying icons to {}...", person.display());
@@ -33,10 +33,10 @@ pub fn applyicons(args: &[String], config: &Config) -> Result<ExitCode> {
     .iter()
     .any(|name| !icons.path(name).is_file())
   {
-    println!(
-      "Error: Required icon files not found in {}.",
+    crate::complain(&format!(
+      "Required icon files not found in {}.",
       icons.dir().display()
-    );
+    ));
     return Ok(ExitCode::FAILURE);
   }
 
@@ -44,7 +44,7 @@ pub fn applyicons(args: &[String], config: &Config) -> Result<ExitCode> {
   if about.is_dir() {
     println!("Applying About icon to {}...", about.display());
     set_icon(&about, &icons.path(ABOUT))
-      .unwrap_or_else(|_| println!("Error: Failed to apply About icon."));
+      .unwrap_or_else(|_| crate::complain("Failed to apply About icon."));
   } else {
     println!("Warning: About directory not found for {first} {surname}.");
   }
@@ -53,7 +53,7 @@ pub fn applyicons(args: &[String], config: &Config) -> Result<ExitCode> {
   if meetings.is_dir() {
     println!("Applying Meetings icon to {}...", meetings.display());
     set_icon(&meetings, &icons.path(MEETING))
-      .unwrap_or_else(|_| println!("Error: Failed to apply Meetings icon."));
+      .unwrap_or_else(|_| crate::complain("Failed to apply Meetings icon."));
     println!(
       "Applying Calendar icon to directories and files in {}...",
       meetings.display()
@@ -67,10 +67,10 @@ pub fn applyicons(args: &[String], config: &Config) -> Result<ExitCode> {
         continue;
       }
       set_icon(&item, &icons.path(CALENDAR)).unwrap_or_else(|_| {
-        println!(
-          "Error: Failed to apply Calendar icon to {}.",
+        crate::complain(&format!(
+          "Failed to apply Calendar icon to {}.",
           item.display()
-        )
+        ))
       });
     }
   } else {
@@ -130,7 +130,7 @@ pub fn setpicsfordirs(_args: &[String], config: &Config) -> Result<ExitCode> {
         .map_or((name.as_str(), ""), |(s, f)| (s.trim(), f.trim()));
       if let Err(message) = set_picture(&config.data, first, surname, false) {
         println!("{message}");
-        println!("Error: Failed to set icon for {name}");
+        crate::complain(&format!("Failed to set icon for {name}"));
       }
     }
   }
@@ -151,13 +151,7 @@ fn set_picture(data: &Path, first: &str, surname: &str, verbose: bool) -> Result
   log(format!("Target directory: \"{}\"", target.display()));
   log(format!("About directory: \"{}\"", about.display()));
   if !target.is_dir() {
-    return Err(
-      format!(
-        "Error: Target directory '{}' does not exist.",
-        target.display()
-      )
-      .into(),
-    );
+    return Err(format!("Target directory '{}' does not exist.", target.display()).into());
   }
   // By suffix, not name: an accented name typed one way need not match the bytes on disk
   let picture = sorted_entries(&about)
@@ -173,7 +167,7 @@ fn set_picture(data: &Path, first: &str, surname: &str, verbose: bool) -> Result
   let Some(picture) = picture else {
     return Err(
       format!(
-        "Error: No picture file found for '{first} {surname}' in '{}'.",
+        "No picture file found for '{first} {surname}' in '{}'.",
         about.display()
       )
       .into(),
@@ -181,7 +175,7 @@ fn set_picture(data: &Path, first: &str, surname: &str, verbose: bool) -> Result
   };
   log(format!("Found picture file: \"{}\"", picture.display()));
   log("Setting folder icon...".to_owned());
-  set_icon(&target, &picture).map_err(|_| "Error: Failed to set folder icon")?;
+  set_icon(&target, &picture).map_err(|_| "Failed to set folder icon")?;
   log(format!(
     "Successfully set the picture for '{first} {surname}' as the directory icon."
   ));

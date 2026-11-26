@@ -238,7 +238,7 @@ fn find_person(root: &Path, name: &str) -> std::result::Result<PathBuf, ExitCode
   if dir.is_dir() {
     Ok(dir)
   } else {
-    eprintln!("pplr tags: no such person: {name}");
+    crate::complain(&format!("tags: no such person: {name}"));
     Err(ExitCode::FAILURE)
   }
 }
@@ -275,11 +275,11 @@ pub fn run_tags(args: &[String], config: &Config) -> Result<ExitCode> {
         "edit" => "edit PERSON +tag -tag",
         _ => "apply FILE [--dry-run]",
       };
-      println!("pplr tags: {command} needs more: pplr tags {needs}");
+      crate::complain(&format!("tags: {command} needs more: pplr tags {needs}"));
       Ok(ExitCode::from(2))
     }
     _ => {
-      println!("pplr tags: unknown command {}", repr(command));
+      crate::complain(&format!("tags: unknown command {}", repr(command)));
       Ok(ExitCode::from(2))
     }
   }
@@ -423,7 +423,7 @@ fn edit(root: &Path, name: &str, changes: &[String]) -> Result<ExitCode> {
     let op = chars.next();
     let tag = chars.as_str().to_lowercase();
     if !matches!(op, Some('+' | '-')) || tag.is_empty() {
-      eprintln!("pplr tag: say +tag or -tag, not {}", repr(change));
+      crate::complain(&format!("tag: say +tag or -tag, not {}", repr(change)));
       return Ok(ExitCode::FAILURE);
     }
     if op == Some('+') {
@@ -433,7 +433,7 @@ fn edit(root: &Path, name: &str, changes: &[String]) -> Result<ExitCode> {
           .get(&tag)
           .map(|f| format!("; the vocabulary folds it into {}", f.join(", ")))
           .unwrap_or_default();
-        eprintln!("pplr tag: {tag} is not in the vocabulary{hint}");
+        crate::complain(&format!("tag: {tag} is not in the vocabulary{hint}"));
         return Ok(ExitCode::FAILURE);
       }
       tags.retain(|t| t.tag != tag);

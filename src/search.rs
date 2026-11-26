@@ -66,27 +66,27 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
   let dir = config.data.display().to_string();
   let index_path = config.data.join(".index/tags_index.json");
   let Ok(index) = std::fs::read_to_string(&index_path) else {
-    println!("Error: Tags index not found at {}", index_path.display());
-    println!("Run 'pplr reindex' to create the search index.");
+    crate::complain(&format!("Tags index not found at {}", index_path.display()));
+    eprintln!("Run 'pplr reindex' to create the search index.");
     return Ok(ExitCode::FAILURE);
   };
 
   let reply = match ask_claude(&prompt(&query, &index)) {
     Asked::Missing => {
-      println!(
-        "Error: Claude CLI not found. Please install Claude CLI to use natural language search."
+      crate::complain(
+        "Claude CLI not found. Please install Claude CLI to use natural language search.",
       );
       None
     }
     Asked::Failed(response) => {
-      println!("Error calling Claude: {response}");
+      crate::complain(&format!("calling Claude failed: {response}"));
       None
     }
     Asked::Answered(response) => match parse_reply(&response) {
       Some(reply) => Some(reply),
       None => {
-        println!("Error: Invalid JSON response from Claude");
-        println!("Raw response: {response}");
+        crate::complain("Invalid JSON response from Claude");
+        eprintln!("Raw response: {response}");
         None
       }
     },

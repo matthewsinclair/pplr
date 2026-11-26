@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Every refusal is `pplr: <message>` on stderr, devbin's shape, and no message starts with `Error: ` (pplr#0002, hv's ruling A of 2026-11-26). This is a ruled divergence from the legacy output. Refusals that were on stdout are now on stderr. A refusal that came back from a command as an error no longer prints as `pplr: Error: <message>`. The usage refusals of `pplr tags` and `pplr contact` keep exit 2, as `pplr: tags: <message>` and `pplr: contact: <message>`. `pplr tag`'s refusals read `pplr: tag: <message>`. A warning before a command carries on (eg search with no Claude CLI) is in the same shape on stderr, and the command's answer stays on stdout. The goldens new-existing, tags-unknown-sub and tag-unknown change with it.
 - The version line, `pplr <version> (<tree>, <sha12>[+dirty])`, comes from devbin's stamp: `bin/devbin build` stamps it, and an opt or brew tree's manifest carries it. A plain `cargo build` prints `(unknown, unknown)`. `pplr-contacts --version` prints the same line under its own name.
 - `pplr doctor`'s Install section is the version line and the signatures. `bin/devbin doctor`, run in a checkout, checks the trees, the manifests and the link's shadow.
 - `bin/devbin build` builds release, into `target/release/`, the dev tree that `bin/devbin use dev` links.

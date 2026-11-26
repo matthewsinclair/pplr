@@ -209,7 +209,8 @@ pub fn run(args: Vec<String>, version_line: fn() -> String) -> Result<ExitCode> 
     return Ok(ExitCode::FAILURE);
   };
   let Some(command) = native(name) else {
-    println!("Error: Command '{name}' not found.\n{USAGE}");
+    crate::complain(&format!("Command '{name}' not found."));
+    println!("{USAGE}");
     return Ok(ExitCode::FAILURE);
   };
   if !WITHOUT_DATA.contains(&command.name)
@@ -224,10 +225,10 @@ pub fn run(args: Vec<String>, version_line: fn() -> String) -> Result<ExitCode> 
 /// Every command runs from the data root, so a missing one stops it, as `bin/pplr` stopped.
 fn data_missing(config: &Config) -> Option<ExitCode> {
   (!config.data.is_dir()).then(|| {
-    println!(
-      "Error: Could not change to directory {}.",
+    crate::complain(&format!(
+      "Could not change to directory {}.",
       config.data.display()
-    );
+    ));
     ExitCode::FAILURE
   })
 }

@@ -401,7 +401,7 @@ fn find_person(root: &Path, name: &str) -> std::result::Result<PathBuf, ExitCode
   if dir.is_dir() {
     Ok(dir)
   } else {
-    eprintln!("Error: no such person: {name}");
+    crate::complain(&format!("no such person: {name}"));
     Err(ExitCode::FAILURE)
   }
 }
@@ -436,7 +436,7 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
       let emailed = match emailed(args, &config.cache_dir) {
         Ok(emailed) => emailed,
         Err(why) => {
-          eprintln!("{why}");
+          crate::complain(&why.to_string());
           return Ok(ExitCode::FAILURE);
         }
       };
@@ -446,10 +446,10 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
     ("context", [name, ..]) => context(root, name, today),
     ("render", _) => render(root, today),
     _ => {
-      println!(
-        "pplr contact: unknown command {}",
+      crate::complain(&format!(
+        "contact: unknown command {}",
         Value::Str(command.clone()).py_repr()
-      );
+      ));
       Ok(ExitCode::from(2))
     }
   }
@@ -614,7 +614,7 @@ fn emailed(args: &[String], cache_dir: &Path) -> Result<Option<Emailed>> {
     [] => return Ok(None),
     [reference] => *reference,
     _ => {
-      return Err("Error: --email is given more than once: a contact log links one message".into());
+      return Err("--email is given more than once: a contact log links one message".into());
     }
   };
   if reference.is_empty() || !reference.bytes().all(|b| b.is_ascii_digit()) {
@@ -625,11 +625,11 @@ fn emailed(args: &[String], cache_dir: &Path) -> Result<Option<Emailed>> {
   }
   let n = reference
     .parse()
-    .map_err(|e| format!("Error: --email {reference}: {e}"))?;
+    .map_err(|e| format!("--email {reference}: {e}"))?;
   let hit = crate::email::listed(cache_dir, n)?;
   let date = hit.date.parse::<Date>().map_err(|e| {
     format!(
-      "Error: message {n} of the last pplr email listing has no date ({}): {e}",
+      "message {n} of the last pplr email listing has no date ({}): {e}",
       hit.date
     )
   })?;
@@ -667,11 +667,13 @@ fn log(
         listed: Some(n), ..
       }),
     ) => {
-      eprintln!("Error: message {n} is with no one in pplr: give the person");
+      crate::complain(&format!(
+        "message {n} is with no one in pplr: give the person"
+      ));
       return Ok(ExitCode::FAILURE);
     }
     (None, _) => {
-      eprintln!("Error: who? Give the person, or --email N from a pplr email listing");
+      crate::complain("who? Give the person, or --email N from a pplr email listing");
       return Ok(ExitCode::FAILURE);
     }
   };
@@ -705,7 +707,7 @@ fn log(
   }
   let date = date.unwrap_or(today);
   if !VIAS.contains(&via.as_str()) {
-    eprintln!("Error: --via is one of {}", VIAS.join(", "));
+    crate::complain(&format!("--via is one of {}", VIAS.join(", ")));
     return Ok(ExitCode::FAILURE);
   }
   if let Some(last) = c.last_date().filter(|last| *last > date) {

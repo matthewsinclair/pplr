@@ -33,4 +33,4 @@ pub mod yaml;
 
 mod error;
 mod fold_table;
-pub use error::{Error, Result, clean};
+pub use error::{Error, Result, clean, complain};

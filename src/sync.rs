@@ -130,7 +130,7 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
       return Ok(ExitCode::SUCCESS);
     }
     Err(mistake) => {
-      println!("Error: {mistake}");
+      crate::complain(&mistake.to_string());
       usage();
       return Ok(ExitCode::FAILURE);
     }
@@ -142,7 +142,7 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
   match run_mode(&mode, &o, config) {
     Ok(code) => Ok(code),
     Err(e) if e.downcast_ref::<AccessDenied>().is_some() => {
-      eprintln!("{e}");
+      crate::complain(&e.to_string());
       Ok(ExitCode::from(NO_ACCESS))
     }
     Err(e) => Err(e),
@@ -1343,12 +1343,12 @@ fn apply_plan(
 ) -> Result<ExitCode> {
   let path = std::env::current_dir()?.join(o.workbook.as_deref().unwrap_or_default());
   if !path.is_file() {
-    println!("Error: no such workbook: {}", path.display());
+    crate::complain(&format!("no such workbook: {}", path.display()));
     return Ok(ExitCode::FAILURE);
   }
   let decisions = match workbook::decisions(&path) {
     Err(e) if e.is::<workbook::Mistake>() => {
-      eprintln!("{e}");
+      crate::complain(&e.to_string());
       return Ok(ExitCode::FAILURE);
     }
     read => read?,

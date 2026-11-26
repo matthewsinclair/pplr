@@ -189,21 +189,21 @@ pub fn listed(cache_dir: &Path, n: usize) -> Result<Listed> {
   let path = cache_dir.join(CACHE);
   let unreadable = |e: &dyn std::fmt::Display| {
     format!(
-      "Error: cannot read the last pplr email listing, {}: {e}",
+      "cannot read the last pplr email listing, {}: {e}",
       path.display()
     )
   };
   let bytes = match std::fs::read(&path) {
     Ok(bytes) => bytes,
     Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
-      return Err("Error: no pplr email listing yet: run pplr email first".into());
+      return Err("no pplr email listing yet: run pplr email first".into());
     }
     Err(e) => return Err(unreadable(&e).into()),
   };
   let rows: Vec<Listed> = serde_json::from_slice(&bytes).map_err(|e| unreadable(&e))?;
   let count = rows.len();
   rows.into_iter().find(|r| r.n == n).ok_or_else(|| {
-    format!("Error: the last pplr email listing has no message {n} (it has 1 to {count})").into()
+    format!("the last pplr email listing has no message {n} (it has 1 to {count})").into()
   })
 }
 

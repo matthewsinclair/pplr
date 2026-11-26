@@ -94,9 +94,10 @@ fn an_unknown_command_is_named_and_fails() -> Result<()> {
   let out = run(sandbox.pplr().arg("nosuchcommand"))?;
   assert_eq!(out.status.code(), Some(1));
   assert_eq!(
-    text(&out.stdout),
-    "Error: Command 'nosuchcommand' not found.\nUsage: pplr <cmd>\n"
+    text(&out.stderr),
+    "pplr: Command 'nosuchcommand' not found.\n"
   );
+  assert_eq!(text(&out.stdout), "Usage: pplr <cmd>\n");
   Ok(())
 }
 
@@ -107,12 +108,13 @@ fn a_missing_data_directory_is_named_and_fails() -> Result<()> {
   let out = run(sandbox.pplr().env("PPLR_DATA", &missing).arg("count"))?;
   assert_eq!(out.status.code(), Some(1));
   assert_eq!(
-    text(&out.stdout),
+    text(&out.stderr),
     format!(
-      "Error: Could not change to directory {}.\n",
+      "pplr: Could not change to directory {}.\n",
       missing.display()
     )
   );
+  assert_eq!(text(&out.stdout), "");
   Ok(())
 }
 
@@ -226,10 +228,11 @@ fn use_install_and_version_are_no_commands_of_pplrs() -> Result<()> {
     let out = run(sandbox.pplr().arg(name))?;
     assert_eq!(out.status.code(), Some(1), "{name}");
     assert_eq!(
-      text(&out.stdout),
-      format!("Error: Command '{name}' not found.\nUsage: pplr <cmd>\n"),
+      text(&out.stderr),
+      format!("pplr: Command '{name}' not found.\n"),
       "{name}"
     );
+    assert_eq!(text(&out.stdout), "Usage: pplr <cmd>\n", "{name}");
   }
   Ok(())
 }
@@ -1437,12 +1440,13 @@ fn commands_about_pplr_itself_run_where_there_is_no_people_tree() -> Result<()> 
   // a command about the People tree still refuses, naming it
   let count = run(pplr().arg("count"))?;
   assert_eq!(
-    text(&count.stdout),
+    text(&count.stderr),
     format!(
-      "Error: Could not change to directory {}.\n",
+      "pplr: Could not change to directory {}.\n",
       missing.display()
     )
   );
+  assert_eq!(text(&count.stdout), "");
   Ok(())
 }
 
@@ -1620,10 +1624,11 @@ fn sync_refuses_a_missing_value_or_a_bad_limit_and_writes_nothing() -> Result<()
   ] {
     let refused = sync(args)?;
     let out = text(&refused.stdout);
-    assert_eq!(refused.status.code(), Some(1), "{args:?}: {out}");
+    let err = text(&refused.stderr);
+    assert_eq!(refused.status.code(), Some(1), "{args:?}: {err}{out}");
     assert!(
-      out.starts_with("Error: ") && out.contains("\nUsage: pplr sync"),
-      "{args:?}: {out}"
+      err.starts_with("pplr: ") && !err.contains("Error: ") && out.starts_with("Usage: pplr sync"),
+      "{args:?}: {err}{out}"
     );
     assert_eq!(
       fs::read_to_string(&contacts)?,
@@ -1895,10 +1900,8 @@ fn an_installed_pplr_needs_no_checkout_and_no_legacy_setting() -> Result<()> {
   };
 
   let unknown = installed(&["decoy"])?;
-  assert_eq!(
-    text(&unknown.stdout),
-    "Error: Command 'decoy' not found.\nUsage: pplr <cmd>\n"
-  );
+  assert_eq!(text(&unknown.stderr), "pplr: Command 'decoy' not found.\n");
+  assert_eq!(text(&unknown.stdout), "Usage: pplr <cmd>\n");
   assert_eq!(unknown.status.code(), Some(1));
   assert!(!mark.exists(), "the decoy's script ran");
 
@@ -2048,5 +2051,116 @@ fn links_searches_no_symlinked_directory() -> Result<()> {
   let listing = text(&out.stdout);
   assert!(listing.contains("inside.md"), "{listing}");
   assert!(!listing.contains("away.md"), "{listing}");
+  Ok(())
+}
+
+/// pplr#0002, hv's ruling A (2026-11-26): every refusal, and every warning a
+/// command gives before it carries on, is `pplr: <message>` on stderr, devbin's
+/// shape, with nothing on stdout but what the command was asked for. One case
+/// for each way pplr used to say `Error: `.
+#[test]
+fn a_refusal_is_pplr_and_its_message_on_stderr_whichever_way_it_was_said() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  let data = sandbox.data();
+  let refs = data.display().to_string();
+
+  // Was eprintln!("Error: ..."), on stderr
+  let out = run(
+    sandbox
+      .pplr()
+      .args(["rename", "--refs", &refs, "bad", "Also, Bad"]),
+  )?;
+  assert_eq!(out.status.code(), Some(1));
+  assert_eq!(text(&out.stderr), "pplr: 'bad' is not \"Surname, First\"\n");
+  assert_eq!(text(&out.stdout), "");
+
+  // Was println!("Error: ..."), on stdout
+  let out = run(
+    sandbox
+      .pplr()
+      .args(["rename", "--refs", &refs, "Nobody, No", "Else, Some"]),
+  )?;
+  assert_eq!(out.status.code(), Some(1));
+  assert_eq!(text(&out.stderr), "pplr: no such person: N/Nobody, No\n");
+  assert_eq!(text(&out.stdout), "");
+
+  // Was returned as the error itself, "Error: ..."
+  let out = run(sandbox.pplr().args(["contact", "log", "--email", "3"]))?;
+  assert_eq!(out.status.code(), Some(1));
+  assert_eq!(
+    text(&out.stderr),
+    "pplr: no pplr email listing yet: run pplr email first\n"
+  );
+  assert_eq!(text(&out.stdout), "");
+
+  // A usage refusal keeps exit 2, now on stderr in the same shape
+  let out = run(sandbox.pplr().args(["contact", "frobnicate"]))?;
+  assert_eq!(out.status.code(), Some(2));
+  assert_eq!(
+    text(&out.stderr),
+    "pplr: contact: unknown command 'frobnicate'\n"
+  );
+  assert_eq!(text(&out.stdout), "");
+  Ok(())
+}
+
+/// pplr#0002: a warning before search carries on (no claude on PATH) is on
+/// stderr in the same shape, and the fallback's answer stays on stdout.
+#[test]
+fn a_warning_before_search_carries_on_is_on_stderr_and_the_answer_on_stdout() -> Result<()> {
+  let sandbox = Sandbox::new()?;
+  fs::create_dir_all(sandbox.data().join(".index"))?;
+  fs::write(
+    sandbox.data().join(".index/tags_index.json"),
+    "{\"people_count\": 0, \"people\": []}\n",
+  )?;
+  let empty = sandbox.path("no-claude");
+  fs::create_dir_all(&empty)?;
+  let out = run(
+    sandbox
+      .pplr()
+      .env("PATH", &empty)
+      .args(["search", "anyone"]),
+  )?;
+  assert_eq!(out.status.code(), Some(0), "{}", text(&out.stderr));
+  assert_eq!(
+    text(&out.stderr),
+    "pplr: Claude CLI not found. Please install Claude CLI to use natural language search.\n"
+  );
+  let stdout = text(&out.stdout);
+  assert!(
+    stdout.contains("Falling back to basic tag search..."),
+    "{stdout}"
+  );
+  assert!(!stdout.contains("Error"), "{stdout}");
+  Ok(())
+}
+
+/// pplr#0002's guard: no source file puts `Error` at the start of a string, so
+/// no refusal can say it in the old way again. Every refusal goes through
+/// pplr::complain, or is returned for main to print.
+#[test]
+fn no_source_file_starts_a_string_with_error() -> Result<()> {
+  fn walk(dir: &std::path::Path, found: &mut Vec<String>) -> Result<()> {
+    for entry in fs::read_dir(dir)? {
+      let path = entry?.path();
+      if path.is_dir() {
+        walk(&path, found)?;
+      } else if path.extension().is_some_and(|e| e == "rs") {
+        for (n, line) in fs::read_to_string(&path)?.lines().enumerate() {
+          if line.contains("\"Error") {
+            found.push(format!("{}:{}: {}", path.display(), n + 1, line.trim()));
+          }
+        }
+      }
+    }
+    Ok(())
+  }
+  let mut found = Vec::new();
+  walk(
+    &std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("src"),
+    &mut found,
+  )?;
+  assert!(found.is_empty(), "{}", found.join("\n"));
   Ok(())
 }

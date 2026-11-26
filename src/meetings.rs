@@ -23,11 +23,11 @@ pub fn run(args: &[String], config: &Config) -> Result<ExitCode> {
   };
   let (start, end) = (start.replace('-', ""), end.replace('-', ""));
   if !is_digits(&start) {
-    println!("Error: Invalid date format");
+    crate::complain("Invalid date format");
     return Ok(usage());
   }
   if !is_digits(&end) {
-    println!("Error: End date must contain only digits (after removing hyphens)");
+    crate::complain("End date must contain only digits (after removing hyphens)");
     return Ok(usage());
   }
   let lines = meetings(&config.data, &first_day(&start), last_day(&end).as_deref());
